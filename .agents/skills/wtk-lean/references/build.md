@@ -11,9 +11,9 @@ for the model to obey, you are rebuilding the thing this skill removed.
 Fixed: the checks, the `Test policy` rows, and the proofs each check names. Lowering either is
 renegotiation with the user, visible in the diff.
 
-Yours: order, decomposition, how many commits, where files go, naming, error shapes, which
-helper gets extracted. The repo's conventions answer most of it and the rest is reversible and
-reviewed in the diff.
+Yours, within explicit [construction constraints](../../wtk/references/construction-constraints.md):
+order, decomposition, how many commits, where files go, naming, error shapes and helper extraction.
+Check that reference before dependent work when reuse, order or approval is prescribed.
 
 The plan's shape sections have a rule each, and the split matters because it is what keeps one
 file both approved and current.
@@ -138,9 +138,8 @@ Then append the three `## Handoff` lines - boundary, what the user settled mid-b
 abandoned. They go in the artifact rather than in the next builder's prompt: a briefing written
 into a prompt survives exactly one boundary, and the third builder needs the first one's.
 
-**When compaction happens anyway,** re-read `checks.md` and the diff before continuing. You
-cannot see the limit approaching, but you can see that a compaction occurred - so build the
-recovery on the signal that exists.
+**After compaction or on resume,** use [context recovery](../../wtk/references/context-handoff.md)
+before continuing. Keep the batch handoff boundary above; recovery alone does not require a new agent.
 
 ## Then stop
 

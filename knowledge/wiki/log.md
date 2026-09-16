@@ -1,5 +1,9 @@
 # Update log
 
+## 2026-09-16
+
+* **Ingestion**: Added [Construction constraints](/architecture/construction-constraints.md) from a maintainer-supplied incident, connecting explicit construction requirements to fixed checks, delegation boundaries, scoped evidence and context recovery. The incident remains reported rather than independently verified.
+
 ## 2026-09-13
 
 * **Maintenance**: Repointed existing concept sources to the five shared contracts now owned by `wtk/references`; source claims and raw records are unchanged.

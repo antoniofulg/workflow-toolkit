@@ -25,6 +25,9 @@ The verdict goes back to the orchestrator and the user, never to a builder. A FA
 the author is the author deciding what to do about the author's work, and the round that follows
 happens inside the session the separation existed to break.
 
+For explicit reuse, construction-order or approval requirements, apply
+[construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
+
 **Read the profile first** - the project declares it in `AGENTS.md`, and `light` is the default.
 Step 1 runs under `ui`; the `Coverage` join, the `Test policy` verdicts and fault injection run
 under `standard` and `ui`; everything else runs always. The report names the profile, so a step

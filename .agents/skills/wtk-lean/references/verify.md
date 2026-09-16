@@ -34,6 +34,9 @@ gate that is visible is worth more than one that pretends.
 
 ## Read the profile first
 
+For explicit reuse, construction-order or approval requirements, apply
+[construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
+
 `checks.md` carries a `Profile:` line, and `light` is the default. Step 1 runs under `ui`. The
 `Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and
 `ui`. Everything else runs always: the proofs at `HEAD`, each named test shown to exist and have
