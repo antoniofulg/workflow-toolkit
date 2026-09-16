@@ -4,6 +4,27 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-09-16
+
+### Fixed
+
+- Explicit reuse, construction-order and approval requirements remain binding through planning,
+  delegation, implementation and verification in Lean and modular workflows.
+- Verification checks actual shared implementation and recorded prerequisite/approval evidence
+  under every profile, instead of treating appearance or behavioral tests as sufficient proof.
+
+### Added
+
+- Shared context recovery reconciles contracts, Git, evidence, blocked work and authorization after
+  compaction or resume. Phase boundaries checkpoint existing artifacts without mandatory session replacement.
+- Host-neutral ownership transfers preserve frozen feature routes and require successor acknowledgement.
+- Packaged references and generated instruction pointers include construction constraints and context recovery.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.0.5 install` and review the managed diff.
+- These changes add instruction-level safeguards, not automatic context telemetry or approval enforcement.
+
 ## [1.0.4] - 2026-09-14
 
 ### Changed
