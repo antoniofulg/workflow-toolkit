@@ -16,6 +16,11 @@ one fresh Verifier proves the complete feature. There is no task breakdown or co
 At execution or verification start, read [execution metrics](../wtk/references/execution-metrics.md);
 include the assigned stage receipt in handoffs so the coordinator can report the delivery breakdown.
 
+For explicit reuse, construction-order or approval requirements, apply
+[construction constraints](../wtk/references/construction-constraints.md) at Plan, Checks, Build
+and Verify. At phase boundaries or context recovery, use
+[context handoff](../wtk/references/context-handoff.md).
+
 ## Core contract
 
 1. Every check is one observable claim with a concrete value and a proof whose exit code settles it.

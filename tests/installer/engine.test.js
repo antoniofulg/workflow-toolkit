@@ -41,6 +41,35 @@ test('shared workflow references move with provenance-safe retirement', () => {
   }
 });
 
+test('core installs recovery and construction references for fresh and existing instructions', () => {
+  const references = ['context-handoff.md', 'construction-constraints.md'].map((name) => `.agents/skills/wtk/references/${name}`);
+  for (const existing of [false, true]) {
+    const consumer = target();
+    try {
+      if (existing) fs.writeFileSync(path.join(consumer, 'AGENTS.md'), '# Consumer rules\n\nKeep consumer context.\n');
+      const result = buildPlan({ sourceRoot, targetRoot: consumer, selectedModules: ['core'] });
+      const instructions = result.staged['AGENTS.md'].toString();
+      if (existing) assert.ok(instructions.startsWith('# Consumer rules\n\nKeep consumer context.\n'));
+      for (const relative of references) {
+        assert.ok(instructions.includes(relative), relative);
+        assert.deepEqual(result.staged[relative], fs.readFileSync(path.join(sourceRoot, relative)));
+        assert.equal(result.manifest.files[relative].layer, 'core');
+        const content = result.staged[relative].toString();
+        for (const [, href] of content.matchAll(/\]\(([^)]+)\)/g)) {
+          const destination = path.posix.normalize(path.posix.join(path.posix.dirname(relative), href.split('#')[0]));
+          assert.ok(result.manifest.files[destination], `${relative} -> ${destination}`);
+        }
+      }
+      writeResult(consumer, result);
+      const repeated = buildPlan({ sourceRoot, targetRoot: consumer, selectedModules: ['core'] });
+      assert.equal(repeated.staged['AGENTS.md'], undefined);
+      for (const relative of references) assert.equal(repeated.staged[relative], undefined);
+    } finally {
+      fs.rmSync(consumer, { recursive: true, force: true });
+    }
+  }
+});
+
 test('UT-001 dependency closure includes core once', () => assert.deepEqual(resolveModules(['quality', 'extras']), ['core', 'quality', 'extras']));
 test('UT-002 fresh target plans not installed modules', () => { const result = buildPlan({ sourceRoot, targetRoot: target(), selectedModules: ['core'] }).plan; assert.equal(result.assessments[0].status, 'not installed'); });
 test('UT-003 manifest loader accepts the empty schema', () => { const root = target(); assert.deepEqual(loadManifest(root).layers, []); });

@@ -15,6 +15,11 @@ the coordinator. The checklist fixes obligations; implementation decomposition i
 Before execution, read [execution metrics](../wtk/references/execution-metrics.md) and return the
 assigned stage receipt with the normal handoff.
 
+When the source requires reuse, construction order or approval, apply
+[construction constraints](../wtk/references/construction-constraints.md) during Extract, Build
+and verification handoff. At phase boundaries or context recovery, use
+[context handoff](../wtk/references/context-handoff.md).
+
 ## Profile and handoff
 
 The project declares `profile: light|standard|ui` and optional `handoff: on|off` in `AGENTS.md` or
@@ -80,8 +85,8 @@ concrete context limit or planned transfer requires it. Pack **whole slices** un
 budget (150k tokens by default); never split a slice. Before handoff, record closed checks, user decisions, and
 abandoned approaches. Handoff occurs only on green, with every proof in the batch passing; the next
 builder reads the checklist and landed diff, not a narrative. If one slice exceeds the budget, report
-that the upstream task cut it too coarsely. `handoff: off` keeps one builder in one session; after
-compaction, re-read the checklist and diff.
+that the upstream task cut it too coarsely. `handoff: off` keeps one builder in one session;
+recover after compaction through the shared context handoff reference above.
 
 ## Verify
 

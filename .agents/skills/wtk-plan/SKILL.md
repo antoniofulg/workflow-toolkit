@@ -33,6 +33,10 @@ Keep new capabilities outside the task unless the user authorizes them. Preserve
 intent and use the task as the decision record; linked sources retain the reasoning. If they later
 diverge on a binding decision, resolve that conflict before building.
 
+When the source requires reuse, construction order or approval, apply
+[construction constraints](../wtk/references/construction-constraints.md) while writing criteria.
+At phase boundaries, resume or compaction, use [context recovery](../wtk/references/context-handoff.md).
+
 ## Slice and task boundaries
 
 A slice is one observable outcome, not a layer such as schema or endpoints. Enumerate the source's
