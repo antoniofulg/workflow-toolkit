@@ -89,9 +89,9 @@ Default: one builder owns the complete S1 slice; no planned transfer.
 
 ## Build state
 
-Round 1 remediation is complete in the local build. The revised focused Python proofs, QA skill
-contract proof, and exact `./tests/installer/package.test.js` helper-package proof are green. The
-adapter now enforces non-consequential fixtures and explicit dedicated CDP in both modes, returns
-the frozen Playwright-first fallback order, calls `Agent.run()` once, and emits only allowlisted
-evidence across the subprocess boundary. A fresh non-author Verifier remains responsible for the
-complete feature range and independent oracle evidence.
+Round 2 remediation is complete in the local build. The revised focused Python proofs, QA skill
+contract proof, exact IT-026 helper-package proof, full installer suite, both Lean validators, and
+diff check are green. The adapter now requires exact dedicated browser declarations, proves the
+Playwright-first selector with Orca/Maestri/manual outcomes, rejects arbitrary trace fields, and
+emits valid JSON for malformed CLI input and oversized evidence. A fresh non-author Verifier remains
+responsible for the complete feature range and independent oracle evidence.

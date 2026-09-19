@@ -146,11 +146,11 @@ None - the Python helper is internal to the existing `wtk-qa-execute` adapter co
 
 ## Build state
 
-Round 1 remediation uses `.agents/skills/wtk-qa-execute/jev_adapter.py` as the optional process
-boundary. It reuses the consumer-installed `jev_ultrafast.Agent(url, goal)`, permits Jev only for
-explicitly non-consequential fixtures over an explicit dedicated headless-by-default or headed CDP
-endpoint, aliases the Gateway text-helper key only in process memory, and writes only an allowlisted
-trace after containment checks. The wrapper calls `Agent.run()` once and keeps the completed result
-unverified until the existing independent oracle runs; missing/unsafe preflight selects the ordered
-Playwright MCP then declared Orca/Maestri/manual fallback. No runtime dependency, installer action,
-browser bridge, or live provider/browser call was added.
+Round 2 remediation keeps `.agents/skills/wtk-qa-execute/jev_adapter.py` as the optional process
+boundary. It requires exact `dedicated: True` declarations for browser mappings, delegates every
+fallback choice to the Playwright-first ordered selector, emits only fixed allowlisted trace keys,
+and returns valid JSON for malformed input and oversized evidence. The wrapper still permits Jev
+only for explicitly non-consequential fixtures over dedicated headless-by-default or headed CDP,
+calls `Agent.run()` once, aliases the Gateway key only in process memory, and keeps completed output
+unverified until the independent oracle runs. No runtime dependency, installer action, browser
+bridge, or live provider/browser call was added.

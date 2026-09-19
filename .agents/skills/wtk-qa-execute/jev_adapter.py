@@ -79,7 +79,9 @@ def redact(value: Any, env: Mapping[str, str] | None = None) -> Any:
 
 def _bounded_json(value: Any, env: Mapping[str, str]) -> str:
     encoded = json.dumps(redact(value, env), ensure_ascii=False, sort_keys=True, default=str)
-    return encoded[:MAX_TRACE_CHARS]
+    if len(encoded) <= MAX_TRACE_CHARS:
+        return encoded
+    return json.dumps({"schema": 1, "truncated": True}, separators=(",", ":"))
 
 
 def _result(
@@ -143,8 +145,10 @@ def _normalize_browser(browser: Any, env: Mapping[str, str]) -> tuple[str, str |
         mode, endpoint = browser.strip().lower(), None
     elif isinstance(browser, Mapping):
         mode = _string(browser.get("mode", "headless")).strip().lower()
-        if any(key in browser for key in ("profile", "browser_profile", "user_data_dir", "personal")):
-            raise AdapterInputError("personal/default browser attachment is unsupported")
+        if set(browser) != {"mode", "cdp_url", "dedicated"}:
+            raise AdapterInputError("browser declaration fields are unsupported")
+        if browser.get("dedicated") is not True:
+            raise AdapterInputError("dedicated browser declaration is required")
         endpoint = _string(browser.get("cdp_url", "")).strip() or None
     else:
         raise AdapterInputError("dedicated CDP endpoint is required")
@@ -270,11 +274,12 @@ def select_fallback_adapter(available: Iterable[str]) -> str:
     return next((candidate for candidate in FALLBACK_ORDER if candidate in values), "manual")
 
 
-def select_existing_adapter(result: Mapping[str, Any], existing_adapter: str) -> str:
-    """Keep compatibility with callers that provide one declared fallback adapter."""
+def select_existing_adapter(result: Mapping[str, Any], existing_adapter: str | Iterable[str]) -> str:
+    """Select a declared fallback through the same ordered selector used by the caller."""
     if result.get("status") != "unavailable":
         return _string(result.get("adapter", ADAPTER))
-    return existing_adapter if existing_adapter in FALLBACK_ORDER else "playwright-mcp"
+    available = existing_adapter if not isinstance(existing_adapter, str) else [existing_adapter]
+    return select_fallback_adapter(available)
 
 
 def _declared_fallback(value: str) -> str:
@@ -295,7 +300,7 @@ def _unavailable(limitation: str, env: Mapping[str, str], existing_adapter: str)
         limitation=limitation,
         env=env,
         fallback_order=list(FALLBACK_ORDER),
-        fallback_adapter="playwright-mcp",
+        fallback_adapter=select_existing_adapter({"status": "unavailable"}, existing_adapter),
         declared_fallback=_declared_fallback(existing_adapter),
         execution_path="preflight",
     )
@@ -403,8 +408,16 @@ def run_jev(
     return result
 
 
+class _JsonArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise AdapterInputError(f"invalid adapter input: {message}")
+
+    def exit(self, status: int = 0, message: str | None = None) -> None:
+        raise AdapterInputError("invalid adapter input")
+
+
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run one optional Jev Ultrafast QA journey.")
+    parser = _JsonArgumentParser(description="Run one optional Jev Ultrafast QA journey.")
     parser.add_argument("--url", required=True)
     parser.add_argument("--goal", required=True)
     parser.add_argument("--journey-scope", choices=["non-consequential", "consequential"])

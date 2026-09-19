@@ -66,8 +66,8 @@ class AdapterTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def browser(self, mode: str = "headless") -> dict[str, str]:
-        return {"mode": mode, "cdp_url": self.environment["BU_CDP_URL"]}
+    def browser(self, mode: str = "headless") -> dict[str, object]:
+        return {"mode": mode, "cdp_url": self.environment["BU_CDP_URL"], "dedicated": True}
 
     def run_adapter(
         self,
@@ -194,10 +194,16 @@ class AdapterTests(unittest.TestCase):
                 self.assertEqual(result["status"], "unavailable")
                 self.assertEqual(result["limitation"], expected)
                 self.assertEqual(result["fallback_order"], list(jev_adapter.FALLBACK_ORDER))
-                self.assertEqual(result["fallback_adapter"], "playwright-mcp")
+                self.assertEqual(result["fallback_adapter"], "declared-orca")
                 self.assertEqual(result["declared_fallback"], "declared-orca")
-                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca", "manual"]), "declared-orca")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca", "playwright-mcp"]), "playwright-mcp")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca"]), "declared-orca")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri"]), "declared-maestri")
                 self.assertEqual(jev_adapter.select_fallback_adapter(["manual"]), "manual")
+                self.assertEqual(
+                    jev_adapter.select_existing_adapter({"status": "unavailable"}, ["declared-orca", "playwright-mcp"]),
+                    "playwright-mcp",
+                )
                 self.assert_secret_free(result)
 
     def test_done_requires_independent_oracle(self) -> None:
@@ -272,9 +278,15 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(missing_endpoint["status"], "unavailable")
         self.assertEqual(missing_endpoint["limitation"], "missing prerequisite: dedicated CDP endpoint is required")
 
-        personal = self.run_adapter(browser={"mode": "personal", "profile": "personal"}, factory=unexpected_factory)
-        self.assertEqual(personal["status"], "unavailable")
-        self.assertIn("personal/default browser attachment", personal["limitation"])
+        for declaration in (
+            {"mode": "headless", "cdp_url": self.environment["BU_CDP_URL"], "dedicated": False},
+            {"mode": "headless", "cdp_url": self.environment["BU_CDP_URL"]},
+            {"mode": "headless", "cdp_url": self.environment["BU_CDP_URL"], "dedicated": True, "profile": "personal"},
+        ):
+            with self.subTest(declaration=declaration):
+                unsafe = self.run_adapter(browser=declaration, factory=unexpected_factory)
+                self.assertEqual(unsafe["status"], "unavailable")
+                self.assertEqual(unsafe["fallback_adapter"], "playwright-mcp")
 
         safe = self.run_adapter(states=[{"status": "DONE"}])
         self.assertEqual(safe["status"], "completed")
@@ -283,7 +295,7 @@ class AdapterTests(unittest.TestCase):
     def _write_child_shims(self, root: Path) -> tuple[Path, Path]:
         module = root / "jev_ultrafast.py"
         module.write_text(
-            """import os\nimport sys\n\nclass Agent:\n    def __init__(self, url, goal):\n        self.url = url\n        self.goal = goal\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        return None\n\n    def run(self):\n        print(os.environ.get('FAKE_STDOUT', ''), end='')\n        print(os.environ.get('FAKE_STDERR', ''), file=sys.stderr, end='')\n        yield {\n            'status': 'RUNNING',\n            'authorization': os.environ.get('AUTH_SENTINEL', ''),\n            'cookie': os.environ.get('COOKIE_SENTINEL', ''),\n            'token': os.environ.get('TOKEN_SENTINEL', ''),\n            'credential': os.environ.get('CREDENTIAL_SENTINEL', ''),\n        }\n        if os.environ.get('FAKE_JEV_OUTCOME') == 'failed':\n            raise RuntimeError(os.environ.get('FAKE_EXCEPTION', 'provider failure'))\n        yield {'status': 'DONE', 'elapsed_ms': 1}\n""",
+            """import os\nimport sys\n\nclass Agent:\n    def __init__(self, url, goal):\n        self.url = url\n        self.goal = goal\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        return None\n\n    def run(self):\n        print(os.environ.get('FAKE_STDOUT', ''), end='')\n        print(os.environ.get('FAKE_STDERR', ''), file=sys.stderr, end='')\n        yield {\n            'status': 'RUNNING',\n            'benign_upstream_field': 'must-not-enter-evidence',\n            'nested_benign': {'page_text': 'untrusted page text must-not-enter-evidence'},\n            'authorization': os.environ.get('AUTH_SENTINEL', ''),\n            'cookie': os.environ.get('COOKIE_SENTINEL', ''),\n            'token': os.environ.get('TOKEN_SENTINEL', ''),\n            'credential': os.environ.get('CREDENTIAL_SENTINEL', ''),\n        }\n        if os.environ.get('FAKE_JEV_OUTCOME') == 'failed':\n            raise RuntimeError(os.environ.get('FAKE_EXCEPTION', 'provider failure'))\n        yield {'status': 'DONE', 'elapsed_ms': 1}\n""",
             encoding="utf-8",
         )
         bin_dir = root / "bin"
@@ -293,7 +305,15 @@ class AdapterTests(unittest.TestCase):
         harness.chmod(0o700)
         return module, bin_dir
 
-    def _run_cli(self, root: Path, *, outcome: str, missing_key: str | None = None, invalid: bool = False) -> subprocess.CompletedProcess[str]:
+    def _run_cli(
+        self,
+        root: Path,
+        *,
+        outcome: str,
+        missing_key: str | None = None,
+        invalid: bool = False,
+        malformed: bool = False,
+    ) -> subprocess.CompletedProcess[str]:
         shim_root = root / "shims"
         shim_root.mkdir()
         _, harness_dir = self._write_child_shims(shim_root)
@@ -337,36 +357,52 @@ class AdapterTests(unittest.TestCase):
             "--evidence-dir",
             str(evidence_dir),
         ]
+        if malformed:
+            args.append("--unknown-option")
         return subprocess.run(args, cwd=root, env=env, text=True, capture_output=True, check=False)
 
     def test_terminal_status_and_redaction_matrix(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             cases = [
-                ("completed", None, False, 0),
-                ("unavailable", "TYPESAFE_API_KEY", False, 2),
-                ("failed", None, False, 1),
-                ("ignored", None, True, 2),
+                ("completed", None, False, 0, False),
+                ("unavailable", "TYPESAFE_API_KEY", False, 2, False),
+                ("failed", None, False, 1, False),
+                ("ignored", None, True, 2, False),
+                ("malformed", None, False, 2, True),
             ]
-            for outcome, missing_key, invalid, exit_code in cases:
+            for outcome, missing_key, invalid, exit_code, malformed in cases:
                 with self.subTest(outcome=outcome):
                     case_root = root / outcome
                     case_root.mkdir()
-                    completed = self._run_cli(case_root, outcome=outcome, missing_key=missing_key, invalid=invalid)
+                    completed = self._run_cli(
+                        case_root,
+                        outcome=outcome,
+                        missing_key=missing_key,
+                        invalid=invalid,
+                        malformed=malformed,
+                    )
                     self.assertEqual(completed.returncode, exit_code)
                     lines = [line for line in completed.stdout.splitlines() if line.strip()]
                     self.assertEqual(len(lines), 1)
                     self.assertEqual(completed.stderr, "")
                     result = json.loads(lines[0])
-                    expected_status = "invalid" if invalid else "unavailable" if missing_key else outcome
+                    expected_status = "invalid" if invalid or malformed else "unavailable" if missing_key else outcome
                     self.assertEqual(result["status"], expected_status)
                     for key in ("adapter", "status", "evidence", "limitation"):
                         self.assertIn(key, result)
                     self.assert_secret_free(completed.stdout + completed.stderr)
                     self.assert_secret_free(result)
+                    self.assertNotIn("must-not-enter-evidence", completed.stdout + completed.stderr)
                     for path in result["evidence"]:
                         evidence = (case_root / path).read_text(encoding="utf-8")
                         self.assert_secret_free(evidence)
+                        self.assertNotIn("must-not-enter-evidence", evidence)
+
+            with mock.patch.object(jev_adapter, "MAX_TRACE_CHARS", 10):
+                oversized = self.run_adapter(evidence_dir=self.evidence_root / "oversized")
+            self.assertEqual(oversized["status"], "completed")
+            json.loads((self.checkout / oversized["evidence"][0]).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
