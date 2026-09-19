@@ -441,6 +441,10 @@ describe("canonical QA skills", () => {
     expect(packageJson.files).toContain(".agents/skills/wtk-qa-execute");
     expect(qaExecute).toContain("installs neither dependency");
     expect(qaExecute).toMatch(/existing\s+fallback/);
+    expect(qaExecute).toContain("non-consequential fixture journey");
+    expect(qaExecute).toContain("Playwright MCP first");
+    expect(qaExecute).toContain("declared Orca, Maestri, or manual");
+    expect(qaExecute).toContain("dedicated CDP endpoint");
     expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("jev-ultrafast");
     expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("browser-harness");
   });

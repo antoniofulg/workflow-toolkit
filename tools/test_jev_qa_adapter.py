@@ -20,6 +20,10 @@ import jev_adapter  # noqa: E402
 
 TYPESAFE_SENTINEL = "typesafe-sentinel-qa"
 GATEWAY_SENTINEL = "gateway-sentinel-qa"
+AUTH_SENTINEL = "authorization-sentinel-qa"
+COOKIE_SENTINEL = "cookie-sentinel-qa"
+TOKEN_SENTINEL = "token-sentinel-qa"
+CREDENTIAL_SENTINEL = "credential-sentinel-qa"
 
 
 class FakeAgent:
@@ -30,26 +34,21 @@ class FakeAgent:
         self.goal = goal
         self.states = states
         self.error = error
-        self.entered = False
-        self.exited = False
-        self.stop_calls = 0
+        self.run_calls = 0
         self.__class__.created.append(self)
 
     def __enter__(self) -> "FakeAgent":
-        self.entered = True
         return self
 
     def __exit__(self, *_: object) -> None:
-        self.exited = True
+        return None
 
     def run(self):
+        self.run_calls += 1
         for state in self.states:
             yield state
         if self.error is not None:
             raise self.error
-
-    def stop(self) -> None:
-        self.stop_calls += 1
 
 
 class AdapterTests(unittest.TestCase):
@@ -67,8 +66,8 @@ class AdapterTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def browser(self) -> dict[str, str]:
-        return {"mode": "dedicated-headless-cdp", "cdp_url": self.environment["BU_CDP_URL"]}
+    def browser(self, mode: str = "headless") -> dict[str, str]:
+        return {"mode": mode, "cdp_url": self.environment["BU_CDP_URL"]}
 
     def run_adapter(
         self,
@@ -77,13 +76,15 @@ class AdapterTests(unittest.TestCase):
         error: Exception | None = None,
         environment: dict[str, str] | None = None,
         browser: object | None = None,
+        journey_scope: str | None = "non-consequential",
         module_available: bool = True,
         harness_available: bool = True,
         evidence_dir: Path | None = None,
-        existing_adapter: str = "playwright",
+        existing_adapter: str = "playwright-mcp",
+        factory: object | None = None,
     ) -> dict[str, object]:
         env = dict(self.environment if environment is None else environment)
-        fake_factory = lambda url, goal: FakeAgent(url, goal, states or [{"status": "DONE"}], error)
+        fake_factory = factory or (lambda url, goal: FakeAgent(url, goal, states or [{"status": "DONE"}], error))
         return jev_adapter.run_jev(
             "http://127.0.0.1:3000",
             "Open the QA fixture and stop when the expected record is visible.",
@@ -91,6 +92,7 @@ class AdapterTests(unittest.TestCase):
             checkout_root=self.checkout,
             evidence_root=self.evidence_root,
             browser=browser if browser is not None else self.browser(),
+            journey_scope=journey_scope,
             existing_adapter=existing_adapter,
             env=env,
             agent_factory=fake_factory,
@@ -99,16 +101,27 @@ class AdapterTests(unittest.TestCase):
         )
 
     def assert_secret_free(self, value: object) -> None:
-        encoded = json.dumps(value, sort_keys=True)
-        self.assertNotIn(TYPESAFE_SENTINEL, encoded)
-        self.assertNotIn(GATEWAY_SENTINEL, encoded)
+        encoded = json.dumps(value, sort_keys=True).lower()
+        for sentinel in (
+            TYPESAFE_SENTINEL,
+            GATEWAY_SENTINEL,
+            AUTH_SENTINEL,
+            COOKIE_SENTINEL,
+            TOKEN_SENTINEL,
+            CREDENTIAL_SENTINEL,
+        ):
+            self.assertNotIn(sentinel, encoded)
 
     def test_ready_run_emits_secret_free_contract(self) -> None:
-        seen: dict[str, str | None] = {}
+        seen: list[dict[str, str | None]] = []
 
         def factory(url: str, goal: str) -> FakeAgent:
-            seen["text_key"] = os.environ.get("TEXT_MODEL_API_KEY")
-            return FakeAgent(url, goal, [{"status": "DONE", "note": GATEWAY_SENTINEL}])
+            seen.append({
+                "text_key": os.environ.get("TEXT_MODEL_API_KEY"),
+                "cdp_url": os.environ.get("BU_CDP_URL"),
+                "cdp_ws": os.environ.get("BU_CDP_WS"),
+            })
+            return FakeAgent(url, goal, [{"status": "DONE", "authorization": AUTH_SENTINEL}])
 
         with mock.patch.dict(os.environ, self.environment, clear=False), mock.patch.object(
             jev_adapter, "_default_agent_factory", side_effect=factory
@@ -116,56 +129,75 @@ class AdapterTests(unittest.TestCase):
             result = jev_adapter.run_jev(
                 "http://127.0.0.1:3000",
                 "Open the QA fixture and stop when the expected record is visible.",
-                evidence_dir=self.evidence_root / "run",
+                evidence_dir=self.evidence_root / "headless",
                 checkout_root=self.checkout,
                 evidence_root=self.evidence_root,
-                browser=self.browser(),
-                existing_adapter="playwright",
+                journey_scope="non-consequential",
+                browser=None,
                 agent_factory=None,
                 module_available=True,
                 harness_available=True,
+                env=self.environment,
+            )
+            headed = jev_adapter.run_jev(
+                "http://127.0.0.1:3000",
+                "Open the QA fixture and stop when the expected record is visible.",
+                evidence_dir=self.evidence_root / "headed",
+                checkout_root=self.checkout,
+                evidence_root=self.evidence_root,
+                journey_scope="non-consequential",
+                browser=self.browser("headed"),
+                agent_factory=factory,
+                module_available=True,
+                harness_available=True,
+                env=self.environment,
             )
 
-        self.assertEqual(result["adapter"], "jev-ultrafast")
-        self.assertEqual(result["status"], "completed")
-        self.assertEqual(result["limitation"], "")
-        self.assertTrue(result["evidence"])
-        self.assertEqual(seen["text_key"], GATEWAY_SENTINEL)
-        self.assert_secret_free(result)
-        evidence = (self.checkout / result["evidence"][0]).read_text(encoding="utf-8")
-        self.assertNotIn(GATEWAY_SENTINEL, evidence)
-        self.assertNotIn(TYPESAFE_SENTINEL, evidence)
+        for attempt in (result, headed):
+            self.assertEqual(attempt["adapter"], "jev-ultrafast")
+            self.assertEqual(attempt["status"], "completed")
+            self.assertEqual(attempt["limitation"], "")
+            self.assertTrue(attempt["evidence"])
+            evidence_path = self.checkout / attempt["evidence"][0]
+            self.assertTrue(evidence_path.is_file())
+            self.assertTrue(str(evidence_path).startswith(str(self.evidence_root)))
+            self.assert_secret_free(attempt)
+            self.assert_secret_free(json.loads(evidence_path.read_text(encoding="utf-8")))
+        self.assertEqual(seen[0]["text_key"], GATEWAY_SENTINEL)
+        self.assertEqual(seen[0]["cdp_url"], self.environment["BU_CDP_URL"])
+        self.assertEqual(seen[1]["cdp_url"], self.environment["BU_CDP_URL"])
+        self.assertEqual(seen[1]["cdp_ws"], "")
 
     def test_missing_prerequisite_matrix_falls_back(self) -> None:
         cases = [
-            ("TYPESAFE_API_KEY", {"TYPESAFE_API_KEY": ""}, "TYPESAFE_API_KEY"),
-            ("AI_GATEWAY_API_KEY", {"AI_GATEWAY_API_KEY": ""}, "AI_GATEWAY_API_KEY"),
-            ("dedicated browser/profile", {}, "dedicated browser/profile"),
-            ("jev_ultrafast module", {}, "jev_ultrafast module"),
-            ("Browser Harness", {}, "Browser Harness"),
+            ("TYPESAFE_API_KEY", {"TYPESAFE_API_KEY": ""}, "missing prerequisite: TYPESAFE_API_KEY", "non-consequential"),
+            ("AI_GATEWAY_API_KEY", {"AI_GATEWAY_API_KEY": ""}, "missing prerequisite: AI_GATEWAY_API_KEY", "non-consequential"),
+            ("non-consequential policy", {}, "policy: non-consequential fixture declaration required", None),
+            ("dedicated CDP endpoint", {"BU_CDP_URL": ""}, "missing prerequisite: dedicated CDP endpoint is required", "non-consequential"),
+            ("jev_ultrafast module", {}, "missing prerequisite: jev_ultrafast module", "non-consequential"),
+            ("Browser Harness", {}, "missing prerequisite: Browser Harness", "non-consequential"),
         ]
-        for name, changes, expected in cases:
+        for name, changes, expected, scope in cases:
             with self.subTest(name=name):
                 environment = dict(self.environment)
                 environment.update(changes)
-                browser = self.browser()
-                module = True
-                harness = True
-                if name == "dedicated browser/profile":
-                    browser = {"mode": "personal-profile", "profile": "personal"}
-                elif name == "jev_ultrafast module":
-                    module = False
-                elif name == "Browser Harness":
-                    harness = False
+                module = name != "jev_ultrafast module"
+                harness = name != "Browser Harness"
                 result = self.run_adapter(
                     environment=environment,
-                    browser=browser,
+                    journey_scope=scope,
+                    browser="headless" if name == "dedicated CDP endpoint" else self.browser(),
                     module_available=module,
                     harness_available=harness,
+                    existing_adapter="declared-orca",
                 )
                 self.assertEqual(result["status"], "unavailable")
-                self.assertIn(expected, result["limitation"])
-                self.assertEqual(jev_adapter.select_existing_adapter(result, "orca"), "orca")
+                self.assertEqual(result["limitation"], expected)
+                self.assertEqual(result["fallback_order"], list(jev_adapter.FALLBACK_ORDER))
+                self.assertEqual(result["fallback_adapter"], "playwright-mcp")
+                self.assertEqual(result["declared_fallback"], "declared-orca")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca", "manual"]), "declared-orca")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["manual"]), "manual")
                 self.assert_secret_free(result)
 
     def test_done_requires_independent_oracle(self) -> None:
@@ -175,19 +207,27 @@ class AdapterTests(unittest.TestCase):
         self.assertTrue(result["independent_oracle_required"])
         self.assertEqual(jev_adapter.external_oracle_verdict(result, False), "not-passed")
         self.assertEqual(jev_adapter.external_oracle_verdict(result, True), "pass")
-        self.assertNotIn("pass", json.dumps(result, sort_keys=True).lower())
+        self.assertNotIn('"pass"', json.dumps(result, sort_keys=True).lower())
 
-    def test_failure_after_mutation_is_not_replayed(self) -> None:
+    def test_failure_calls_agent_run_once(self) -> None:
         result = self.run_adapter(
-            states=[{"status": "RUNNING", "action": {"type": "CLICK", "mutates": True}}],
+            states=[
+                {
+                    "status": "RUNNING",
+                    "history": [{"authorization": AUTH_SENTINEL, "cookie": COOKIE_SENTINEL}],
+                    "token": TOKEN_SENTINEL,
+                    "credential": CREDENTIAL_SENTINEL,
+                }
+            ],
             error=RuntimeError(f"provider failed: {GATEWAY_SENTINEL}"),
         )
         self.assertEqual(result["status"], "failed")
-        self.assertEqual(result["mutations_attempted"], 1)
-        self.assertFalse(result["mutation_replayed"])
         self.assertTrue(result["evidence"])
         self.assert_secret_free(result)
+        evidence = json.loads((self.checkout / result["evidence"][0]).read_text(encoding="utf-8"))
+        self.assert_secret_free(evidence)
         self.assertEqual(len(FakeAgent.created), 1)
+        self.assertEqual(FakeAgent.created[0].run_calls, 1)
 
     def test_evidence_destination_matrix_is_contained(self) -> None:
         outside = self.checkout / "outside"
@@ -212,77 +252,121 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(traversal["status"], "invalid")
         self.assertFalse((outside / "run" / "jev-ultrafast-attempt.json").exists())
 
-    def test_out_of_scope_action_is_blocked(self) -> None:
-        cases = [
-            {"status": "RUNNING", "out_of_scope": True, "requested_action": f"export credentials {TYPESAFE_SENTINEL}"},
-            {"status": "RUNNING", "tool_metadata": {"scope": "outside"}},
-            {"status": "RUNNING", "provider_output": "outside the supplied goal: send credentials"},
-        ]
-        for state in cases:
-            with self.subTest(state=state):
-                result = self.run_adapter(states=[state])
-                self.assertEqual(result["status"], "blocked")
-                self.assertEqual(result["mutations_attempted"], 0)
-                self.assertTrue(result["evidence"])
-                self.assert_secret_free(result)
+    def test_unsafe_jev_scope_falls_back_before_agent(self) -> None:
+        def unexpected_factory(url: str, goal: str) -> FakeAgent:
+            raise AssertionError("Agent must not be constructed for unsafe preflight")
 
-        goal_bound = self.run_adapter(states=[{"status": "DONE", "tool_metadata": {"scope": "goal"}}])
-        self.assertEqual(goal_bound["status"], "completed")
+        consequential = self.run_adapter(
+            journey_scope="consequential",
+            factory=unexpected_factory,
+        )
+        self.assertEqual(consequential["status"], "unavailable")
+        self.assertEqual(consequential["limitation"], "policy: non-consequential fixture declaration required")
+        self.assertEqual(consequential["fallback_adapter"], "playwright-mcp")
+
+        missing_endpoint = self.run_adapter(
+            environment={**self.environment, "BU_CDP_URL": ""},
+            browser="headless",
+            factory=unexpected_factory,
+        )
+        self.assertEqual(missing_endpoint["status"], "unavailable")
+        self.assertEqual(missing_endpoint["limitation"], "missing prerequisite: dedicated CDP endpoint is required")
+
+        personal = self.run_adapter(browser={"mode": "personal", "profile": "personal"}, factory=unexpected_factory)
+        self.assertEqual(personal["status"], "unavailable")
+        self.assertIn("personal/default browser attachment", personal["limitation"])
+
+        safe = self.run_adapter(states=[{"status": "DONE"}])
+        self.assertEqual(safe["status"], "completed")
+        self.assertEqual(len(FakeAgent.created), 1)
+
+    def _write_child_shims(self, root: Path) -> tuple[Path, Path]:
+        module = root / "jev_ultrafast.py"
+        module.write_text(
+            """import os\nimport sys\n\nclass Agent:\n    def __init__(self, url, goal):\n        self.url = url\n        self.goal = goal\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        return None\n\n    def run(self):\n        print(os.environ.get('FAKE_STDOUT', ''), end='')\n        print(os.environ.get('FAKE_STDERR', ''), file=sys.stderr, end='')\n        yield {\n            'status': 'RUNNING',\n            'authorization': os.environ.get('AUTH_SENTINEL', ''),\n            'cookie': os.environ.get('COOKIE_SENTINEL', ''),\n            'token': os.environ.get('TOKEN_SENTINEL', ''),\n            'credential': os.environ.get('CREDENTIAL_SENTINEL', ''),\n        }\n        if os.environ.get('FAKE_JEV_OUTCOME') == 'failed':\n            raise RuntimeError(os.environ.get('FAKE_EXCEPTION', 'provider failure'))\n        yield {'status': 'DONE', 'elapsed_ms': 1}\n""",
+            encoding="utf-8",
+        )
+        bin_dir = root / "bin"
+        bin_dir.mkdir()
+        harness = bin_dir / "browser-harness"
+        harness.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        harness.chmod(0o700)
+        return module, bin_dir
+
+    def _run_cli(self, root: Path, *, outcome: str, missing_key: str | None = None, invalid: bool = False) -> subprocess.CompletedProcess[str]:
+        shim_root = root / "shims"
+        shim_root.mkdir()
+        _, harness_dir = self._write_child_shims(shim_root)
+        evidence_root = root / ".qa-evidence"
+        evidence_dir = root / ".." / "outside" if invalid else evidence_root / outcome
+        env = dict(os.environ)
+        env.update(
+            {
+                "TYPESAFE_API_KEY": TYPESAFE_SENTINEL,
+                "AI_GATEWAY_API_KEY": GATEWAY_SENTINEL,
+                "BU_CDP_URL": "http://127.0.0.1:9223",
+                "FAKE_JEV_OUTCOME": outcome,
+                "FAKE_STDOUT": AUTH_SENTINEL,
+                "FAKE_STDERR": COOKIE_SENTINEL,
+                "FAKE_EXCEPTION": TOKEN_SENTINEL,
+                "AUTH_SENTINEL": AUTH_SENTINEL,
+                "COOKIE_SENTINEL": COOKIE_SENTINEL,
+                "TOKEN_SENTINEL": TOKEN_SENTINEL,
+                "CREDENTIAL_SENTINEL": CREDENTIAL_SENTINEL,
+                "PYTHONPATH": str(shim_root),
+                "PATH": str(harness_dir) + os.pathsep + env.get("PATH", ""),
+            }
+        )
+        if missing_key:
+            env.pop(missing_key, None)
+        args = [
+            sys.executable,
+            str(ADAPTER),
+            "--url",
+            "http://127.0.0.1:3000",
+            "--goal",
+            "Open the fixture.",
+            "--journey-scope",
+            "non-consequential",
+            "--browser",
+            "headless",
+            "--checkout-root",
+            str(root),
+            "--evidence-root",
+            str(evidence_root),
+            "--evidence-dir",
+            str(evidence_dir),
+        ]
+        return subprocess.run(args, cwd=root, env=env, text=True, capture_output=True, check=False)
 
     def test_terminal_status_and_redaction_matrix(self) -> None:
-        cases = [
-            ("completed", self.run_adapter()),
-            ("unavailable", self.run_adapter(environment={**self.environment, "TYPESAFE_API_KEY": ""})),
-            (
-                "failed",
-                self.run_adapter(
-                    states=[{"status": "RUNNING"}],
-                    error=RuntimeError(f"error {TYPESAFE_SENTINEL}"),
-                ),
-            ),
-            ("invalid", self.run_adapter(evidence_dir=self.checkout / ".." / "escape")),
-            ("blocked", self.run_adapter(states=[{"out_of_scope": True, "status": "RUNNING"}])),
-        ]
-        for status, result in cases:
-            with self.subTest(status=status):
-                self.assertEqual(result["status"], status)
-                for key in ("adapter", "status", "evidence", "limitation"):
-                    self.assertIn(key, result)
-                self.assert_secret_free(result)
-
-        escaped = self.checkout / ".." / "escape"
-        cli_env = dict(os.environ)
-        cli_env.update(self.environment)
-        completed = subprocess.run(
-            [
-                sys.executable,
-                str(ADAPTER),
-                "--url",
-                "http://127.0.0.1:3000",
-                "--goal",
-                "Open the fixture.",
-                "--browser",
-                "dedicated-headless-cdp",
-                "--evidence-root",
-                str(self.evidence_root),
-                "--evidence-dir",
-                str(escaped),
-                "--checkout-root",
-                str(self.checkout),
-            ],
-            cwd=self.checkout,
-            env=cli_env,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        self.assertEqual(completed.returncode, jev_adapter.EXIT_CODES["invalid"])
-        lines = [line for line in completed.stdout.splitlines() if line.strip()]
-        self.assertEqual(len(lines), 1)
-        self.assertEqual(json.loads(lines[0])["status"], "invalid")
-        self.assertEqual(completed.stderr, "")
-        self.assertNotIn(TYPESAFE_SENTINEL, completed.stdout + completed.stderr)
-        self.assertNotIn(GATEWAY_SENTINEL, completed.stdout + completed.stderr)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            cases = [
+                ("completed", None, False, 0),
+                ("unavailable", "TYPESAFE_API_KEY", False, 2),
+                ("failed", None, False, 1),
+                ("ignored", None, True, 2),
+            ]
+            for outcome, missing_key, invalid, exit_code in cases:
+                with self.subTest(outcome=outcome):
+                    case_root = root / outcome
+                    case_root.mkdir()
+                    completed = self._run_cli(case_root, outcome=outcome, missing_key=missing_key, invalid=invalid)
+                    self.assertEqual(completed.returncode, exit_code)
+                    lines = [line for line in completed.stdout.splitlines() if line.strip()]
+                    self.assertEqual(len(lines), 1)
+                    self.assertEqual(completed.stderr, "")
+                    result = json.loads(lines[0])
+                    expected_status = "invalid" if invalid else "unavailable" if missing_key else outcome
+                    self.assertEqual(result["status"], expected_status)
+                    for key in ("adapter", "status", "evidence", "limitation"):
+                        self.assertIn(key, result)
+                    self.assert_secret_free(completed.stdout + completed.stderr)
+                    self.assert_secret_free(result)
+                    for path in result["evidence"]:
+                        evidence = (case_root / path).read_text(encoding="utf-8")
+                        self.assert_secret_free(evidence)
 
 
 if __name__ == "__main__":

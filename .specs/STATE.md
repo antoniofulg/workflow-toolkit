@@ -3,13 +3,13 @@
 ## Handoff
 
 - **Feature**: `optional-jev-qa-adapter`; active plan at `.specs/features/optional-jev-qa-adapter/plan.md` with security specification and provisional threat model beside it.
-- **Phase / Task**: Build complete for the single S1 slice; `checks.md` and `plan.md` carry the additive build state, with independent verification still pending.
-- **Completed**: One observable slice only: a consuming project may use Jev Ultrafast when its keys, declared dedicated QA browser/profile, module, and Browser Harness are available; otherwise `wtk-qa-execute` retains the existing adapter. Jev remains a driver and independent readback after reload remains the only path to `pass`. The optional helper is packaged under `wtk-qa-execute` without owning installation or runtime dependencies.
-- **Evidence**: `validate_plan.py` and `validate_checks.py` exited 0 with zero errors and warnings; all seven focused Python proofs and both QA skill contract proofs passed; the installer package proof passed with Bun's explicit `./tests/installer/package.test.js` path; `git diff --check` exited 0.
-- **Constraints**: Reuse `jev_ultrafast.Agent`; install no framework or dependency; read secrets only from process environment; do not replay browser mutations; keep evidence checkout-owned and secret-free; no live browser proof is possible in this source pack.
-- **Next step**: Dispatch one fresh non-author Verifier for the complete S1 range and independent oracle evidence.
-- **Blockers**: None expected; browser isolation is resolved: Jev prefers a dedicated headless Chromium CDP endpoint, a dedicated headed QA profile is allowed when necessary, and ordinary personal profiles are forbidden.
-- **Branch / state**: `feat/optional-jev-qa-adapter`; the local Build commit carries the helper, proofs, and feature artifacts. Local edits and commits only are authorized; no push, deployment, provider call, or production mutation is authorized.
+- **Phase / Task**: Independent standard-profile verification round 1 failed at `7fbb73c9`; round 1 remediation is complete at the local Build boundary and awaits fresh re-verification.
+- **Completed**: One observable slice only: a consuming project may use Jev Ultrafast for explicitly non-consequential fixtures over dedicated CDP when its keys, module, and Browser Harness are available; otherwise `wtk-qa-execute` retains Playwright MCP first, then declared Orca/Maestri/manual fallback. Jev remains a driver and independent readback after reload remains the only path to `pass`. Evidence is allowlisted and the wrapper calls `Agent.run()` once.
+- **Evidence**: `.specs/features/optional-jev-qa-adapter/verification.md` records round 1's truthful FAIL and findings. Round 1 remediation proofs pass: seven focused Python proofs, the Jev/oracle skill contract, the exact helper package proof, both Lean validators, and `git diff --check`; no live provider/browser call was made.
+- **Constraints**: Reuse `jev_ultrafast.Agent`; Jev only for non-consequential fixtures; dedicated headless CDP by default and dedicated headed CDP only on explicit request; Playwright MCP first fallback, then declared Orca/Maestri/manual; install no dependency; process-environment secrets only; one wrapper `Agent.run()` call; allowlisted secret-free evidence; no live browser proof in this source pack.
+- **Next step**: Run scoped independent re-verification over the changed contract and every prior non-PASS verdict.
+- **Blockers**: None. The user explicitly approved narrowing v1 to upstream `Agent` guarantees and selecting Playwright MCP as the first fallback.
+- **Branch / state**: `feat/optional-jev-qa-adapter`; remediation artifacts and this handoff remain local and uncommitted until the Build batch commit. No push, deployment, provider call, or production mutation is authorized.
 
 ## Decisions
 
