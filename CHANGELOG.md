@@ -4,6 +4,32 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-19
+
+### Added
+
+- Optional Jev-assisted QA journeys can classify bounded, non-consequential fixture observations
+  through typed TypeSafe judgments while an independent oracle retains the pass/fail verdict.
+- The Jev adapter defaults to a dedicated headless Playwright CDP endpoint, supports explicit headed
+  runs, records allowlisted evidence, and falls back through Playwright MCP, Orca, Maestri, or manual QA.
+
+### Changed
+
+- Discovery and Lean planning skills use the current upstream slice-oriented contracts and clearer
+  verifier routing and fixture defaults.
+- Shared user configuration lives under `~/.config/workflow-toolkit/`.
+
+### Fixed
+
+- Jev preflight, trace validation, browser fallback, and evidence handling fail closed without
+  exposing provider secrets or allowing the classifier to own the QA verdict.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.1.0 install` and review the managed diff.
+- Move any user-owned QA environment file to `~/.config/workflow-toolkit/qa.env`; credentials remain
+  local and are not copied into consumers or package archives.
+
 ## [1.0.5] - 2026-09-16
 
 ### Fixed
