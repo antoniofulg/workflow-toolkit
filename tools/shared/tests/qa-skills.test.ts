@@ -95,6 +95,7 @@ const activeAuthorityRoots = [
 const historicalAuthorityAllowlist = [
   /^CHANGELOG\.md$/,
   /^\.specs\//,
+  /^knowledge\/raw\//,
   /^docs\/qa\/(?:evidence|reports|charters|bugs)\//,
   /^docs\/qa\/journeys\//,
   /^docs\/qa\/scenarios\/(?!REL-report-current-workflow-release\.md$)/,

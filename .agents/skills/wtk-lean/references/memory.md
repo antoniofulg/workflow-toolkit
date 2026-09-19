@@ -56,7 +56,8 @@ creates inconsistency nobody can see.
 
 Follow [context recovery](../../wtk/references/context-handoff.md) to reconcile the active
 contract, handoff, Git and evidence before the next action. It owns checkpoint contents and
-session-transfer rules; keep this file's section-scoped write and decision-log rules.
+session-transfer rules; keep this file's section-scoped write and decision-log rules. For Lean
+features, `checks.md` remains the proof-state authority after recovery.
 
 ## Lessons
 
