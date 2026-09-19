@@ -420,6 +420,31 @@ describe("canonical QA skills", () => {
     expect(qaExecute).toMatch(/identifying the new snapshot and resetting the environment/);
   });
 
+  it("IT-023 keeps Jev as a driver and the oracle independent", () => {
+    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
+    const session = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/references/session-protocol.md"));
+
+    expect(qaExecute).toContain("jev_adapter.py");
+    expect(qaExecute).toContain("completed/DONE result is driver evidence only");
+    expect(qaExecute).toContain("never a QA pass");
+    expect(qaExecute).toContain("independent read path and reload");
+    expect(qaExecute).toContain("does not provide a Playwright MCP, Orca Browser, or Maestri Portal bridge");
+    expect(session).toContain("independent read path and after a reload");
+  });
+
+  it("IT-024 packages the optional Jev QA adapter without owning installation", () => {
+    const packageJson = JSON.parse(readRepositoryFile("package.json")) as { files: string[]; dependencies?: Record<string, string> };
+    const qaExecute = readRepositoryFile(qaExecutePath);
+    const helper = ".agents/skills/wtk-qa-execute/jev_adapter.py";
+
+    expect(existsSync(join(repositoryRoot, helper))).toBe(true);
+    expect(packageJson.files).toContain(".agents/skills/wtk-qa-execute");
+    expect(qaExecute).toContain("installs neither dependency");
+    expect(qaExecute).toMatch(/existing\s+fallback/);
+    expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("jev-ultrafast");
+    expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("browser-harness");
+  });
+
   it("routes execution receipts and delivery reporting to one bundled metrics reference", () => {
     const reference = ".agents/skills/wtk/references/execution-metrics.md";
     expect(existsSync(join(repositoryRoot, reference))).toBe(true);

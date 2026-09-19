@@ -38,6 +38,28 @@ status, and bug records durable.
 QA execution validates the product; it does not write product code, install a framework, invent a
 command, or replace the automated gate.
 
+## Optional Jev adapter
+
+When a consuming project explicitly declares the optional Jev adapter, invoke
+[`jev_adapter.py`](jev_adapter.py) for one bounded browser journey. The helper reads credentials
+from the process environment only: `TYPESAFE_API_KEY` drives Jev decisions and
+`AI_GATEWAY_API_KEY` is aliased in process memory as the text helper credential, so a stored
+`TEXT_MODEL_API_KEY` is not required. The caller or secret manager may load a central environment
+file before starting the process; this skill does not parse `.env` files.
+
+Jev requires a dedicated browser boundary: prefer a separately launched headless Chromium exposed
+through `BU_CDP_URL` or `BU_CDP_WS`, or use a dedicated headed QA profile when the journey needs
+one. Never attach a personal browser profile. Jev Ultrafast uses its consumer-installed
+`jev_ultrafast.Agent(url, goal)` and Browser Harness; the helper installs neither dependency and
+does not provide a Playwright MCP, Orca Browser, or Maestri Portal bridge. If a consuming project
+prefers its declared Orca or Maestri adapter, keep that host-native adapter as the existing
+fallback.
+
+The helper reports the actual adapter, execution path, evidence, fallback reason, and limitation.
+Its `completed`/`DONE` result is driver evidence only: it is never a QA `pass`. Continue through
+the independent read path and reload before a Verifier records a scenario verdict. A provider or
+browser failure after an interaction preserves one bounded attempt and is not replayed.
+
 ## Procedure
 
 ### 1. Preflight the cycle

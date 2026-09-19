@@ -2,14 +2,14 @@
 
 ## Handoff
 
-- **Feature**: `workflow-toolkit-lean`, completed; transient plan, checks, and verification are retained in Git at `46420c75`, not as active feature state.
-- **Phase / Task**: Closed locally after independent verification, QA, and durable promotion.
-- **Completed**: Workflow Toolkit replacement, original Ponytail names, `.wtk.toml.example` / `.wtk.toml`, and authorized knowledge updates. AD-035 through AD-037 and `knowledge/wiki/decisions/workflow-toolkit-contract.md` retain the accepted contracts. Independent technical verification at `46420c75` passed 19/19 checks and killed 5/5 injected faults; the native verification validator passed again before cleanup.
-- **Evidence**: QA commit `32c49fb1` records 13/13 passing scenarios across `docs/qa/reports/2026-09-13-workflow-toolkit-adoption.md`, `2026-09-13-workflow-toolkit-lean.md`, and `2026-09-13-workflow-toolkit-release.md`. The final `bun run test:all` exited 0: 124 Bun tests, 201 Node tests, and all 15 Python/script suites passed; two non-failing ResourceWarnings remain. Release-command defect fixed at `e9e1c4ac` and independently retested; original failure evidence is preserved.
-- **Cleanup**: Only `.specs/features/workflow-toolkit-lean/` is removed after promotion; other pending features and historical records are preserved. No archive or compatibility artifacts are created.
-- **Next step**: Human-scheduled work. No push, publication, or other remote delivery is authorized by this cycle.
-- **Blockers**: None.
-- **Branch**: `feat/workflow-toolkit-lean`.
+- **Feature**: `optional-jev-qa-adapter`; active plan at `.specs/features/optional-jev-qa-adapter/plan.md` with security specification and provisional threat model beside it.
+- **Phase / Task**: Build complete for the single S1 slice; `checks.md` and `plan.md` carry the additive build state, with independent verification still pending.
+- **Completed**: One observable slice only: a consuming project may use Jev Ultrafast when its keys, declared dedicated QA browser/profile, module, and Browser Harness are available; otherwise `wtk-qa-execute` retains the existing adapter. Jev remains a driver and independent readback after reload remains the only path to `pass`. The optional helper is packaged under `wtk-qa-execute` without owning installation or runtime dependencies.
+- **Evidence**: `validate_plan.py` and `validate_checks.py` exited 0 with zero errors and warnings; all seven focused Python proofs and both QA skill contract proofs passed; the installer package proof passed with Bun's explicit `./tests/installer/package.test.js` path; `git diff --check` exited 0.
+- **Constraints**: Reuse `jev_ultrafast.Agent`; install no framework or dependency; read secrets only from process environment; do not replay browser mutations; keep evidence checkout-owned and secret-free; no live browser proof is possible in this source pack.
+- **Next step**: Dispatch one fresh non-author Verifier for the complete S1 range and independent oracle evidence.
+- **Blockers**: None expected; browser isolation is resolved: Jev prefers a dedicated headless Chromium CDP endpoint, a dedicated headed QA profile is allowed when necessary, and ordinary personal profiles are forbidden.
+- **Branch / state**: `feat/optional-jev-qa-adapter`; the local Build commit carries the helper, proofs, and feature artifacts. Local edits and commits only are authorized; no push, deployment, provider call, or production mutation is authorized.
 
 ## Decisions
 
