@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 117,
+  "next_id": 120,
   "lessons": [
     {
       "id": "L-001",
@@ -2103,6 +2103,60 @@
       ],
       "created": "2026-09-13T03:11:13Z",
       "last_seen": "2026-09-13T03:11:13Z"
+    },
+    {
+      "id": "L-117",
+      "key": "ac_gap::when an adapter requires isolation test explicit false declarations as well as missing and valid declarations",
+      "text": "When an adapter requires isolation, test explicit false declarations as well as missing and valid declarations.",
+      "signal": "ac_gap",
+      "scope": "qa-adapters",
+      "status": "candidate",
+      "features": [
+        "optional-jev-qa-adapter"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md Round 2 C6 dedicated=False gap (qa-adapters)"
+      ],
+      "created": "2026-09-19T17:08:35Z",
+      "last_seen": "2026-09-19T17:08:35Z"
+    },
+    {
+      "id": "L-118",
+      "key": "surviving_mutant::test evidence allowlists with arbitrary benign named upstream fields so removing the allowlist fails",
+      "text": "Test evidence allowlists with arbitrary benign-named upstream fields so removing the allowlist fails.",
+      "signal": "surviving_mutant",
+      "scope": "qa-adapters",
+      "status": "candidate",
+      "features": [
+        "optional-jev-qa-adapter"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md Round 2 evidence-allowlist mutant (qa-adapters)"
+      ],
+      "created": "2026-09-19T17:08:35Z",
+      "last_seen": "2026-09-19T17:08:35Z"
+    },
+    {
+      "id": "L-119",
+      "key": "ac_gap::assert each ordered adapter fallback independently at the executable selector boundary",
+      "text": "Assert each ordered adapter fallback independently at the executable selector boundary.",
+      "signal": "ac_gap",
+      "scope": "qa-adapters",
+      "status": "candidate",
+      "features": [
+        "optional-jev-qa-adapter"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md Round 2 C2 fallback-order gap (qa-adapters)"
+      ],
+      "created": "2026-09-19T17:08:36Z",
+      "last_seen": "2026-09-19T17:08:36Z"
     }
   ]
 }

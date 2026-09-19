@@ -96,7 +96,7 @@ half-featured button cannot compile. The lint is the part that actually holds.
 
 ## Global config
 
-`~/.config/my-workflow/config.toml` is global across Claude, Codex, and Cursor. Per-checkout
+`~/.config/workflow-toolkit/config.toml` is global across Claude, Codex, and Cursor. Per-checkout
 `.wtk.toml` holds overrides only. `[defaults] effort = "high"` and
 `[defaults.<provider>] model = "..."` cover every role; per-role tables override. The CLI walks
 `git worktree list` and re-renders every checkout. Feature `workflow.json` snapshots keep freezing

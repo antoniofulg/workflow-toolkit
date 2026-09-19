@@ -35,7 +35,7 @@ diverge on a binding decision, resolve that conflict before building.
 
 When the source requires reuse, construction order or approval, apply
 [construction constraints](../wtk/references/construction-constraints.md) while writing criteria.
-At phase boundaries, resume or compaction, use [context recovery](../wtk/references/context-handoff.md).
+At handoff, resume or compaction, use [context recovery](../wtk/references/context-handoff.md).
 
 ## Slice and task boundaries
 

@@ -2,14 +2,14 @@
 
 ## Handoff
 
-- **Feature**: `workflow-toolkit-lean`, completed; transient plan, checks, and verification are retained in Git at `46420c75`, not as active feature state.
-- **Phase / Task**: Closed locally after independent verification, QA, and durable promotion.
-- **Completed**: Workflow Toolkit replacement, original Ponytail names, `.wtk.toml.example` / `.wtk.toml`, and authorized knowledge updates. AD-035 through AD-037 and `knowledge/wiki/decisions/workflow-toolkit-contract.md` retain the accepted contracts. Independent technical verification at `46420c75` passed 19/19 checks and killed 5/5 injected faults; the native verification validator passed again before cleanup.
-- **Evidence**: QA commit `32c49fb1` records 13/13 passing scenarios across `docs/qa/reports/2026-09-13-workflow-toolkit-adoption.md`, `2026-09-13-workflow-toolkit-lean.md`, and `2026-09-13-workflow-toolkit-release.md`. The final `bun run test:all` exited 0: 124 Bun tests, 201 Node tests, and all 15 Python/script suites passed; two non-failing ResourceWarnings remain. Release-command defect fixed at `e9e1c4ac` and independently retested; original failure evidence is preserved.
-- **Cleanup**: Only `.specs/features/workflow-toolkit-lean/` is removed after promotion; other pending features and historical records are preserved. No archive or compatibility artifacts are created.
-- **Next step**: Human-scheduled work. No push, publication, or other remote delivery is authorized by this cycle.
-- **Blockers**: None.
-- **Branch**: `feat/workflow-toolkit-lean`.
+- **Feature**: `optional-jev-qa-adapter`; locally complete and closed.
+- **Phase / Task**: Build, two remediation batches, independent standard-profile verification, closing QA, durable promotion, and transient feature cleanup are complete.
+- **Completed**: One observable slice only: a consuming project may use Jev Ultrafast for explicitly non-consequential fixtures over dedicated CDP when its keys, module, and Browser Harness are available; otherwise `wtk-qa-execute` retains Playwright MCP first, then declared Orca/Maestri/manual fallback. Jev remains a driver and independent readback after reload remains the only path to `pass`. Evidence is allowlisted and the wrapper calls `Agent.run()` once.
+- **Evidence**: Round 3 Technical Verification PASS proves 8/8 checks, kills 5/5 faults, and leaves 0 confirmed security findings; `validate_verification.py` exits 0. QA report `docs/qa/reports/2026-09-19-optional-jev-qa-adapter.md` passes the packed quality install, installed-helper preflight/readback, exact package membership, cleanup, and residue checks. The broader QA contract result remains truthfully recorded as 33 pass / 3 unrelated pre-existing failures.
+- **Constraints**: Reuse `jev_ultrafast.Agent`; Jev only for non-consequential fixtures; dedicated headless CDP by default and dedicated headed CDP only on explicit request; Playwright MCP first fallback, then declared Orca/Maestri/manual; install no dependency; process-environment secrets only; one wrapper `Agent.run()` call; allowlisted secret-free evidence; no live browser proof in this source pack.
+- **Next step**: Human-scheduled delivery or a consumer-project live Jev/Playwright pilot. No remote delivery is authorized in this cycle.
+- **Blockers**: None. Live Jev/Browser Harness/Playwright execution remains a consumer-project limitation, not a source-pack readiness claim.
+- **Branch / state**: `feat/optional-jev-qa-adapter` at `680076a0` before the pending local closeout commit; `.specs/features/optional-jev-qa-adapter/` is removed per AD-037. No push, deployment, provider call, publication, or production mutation is authorized.
 
 ## Decisions
 

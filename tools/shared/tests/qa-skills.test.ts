@@ -95,6 +95,7 @@ const activeAuthorityRoots = [
 const historicalAuthorityAllowlist = [
   /^CHANGELOG\.md$/,
   /^\.specs\//,
+  /^knowledge\/raw\//,
   /^docs\/qa\/(?:evidence|reports|charters|bugs)\//,
   /^docs\/qa\/journeys\//,
   /^docs\/qa\/scenarios\/(?!REL-report-current-workflow-release\.md$)/,
@@ -418,6 +419,35 @@ describe("canonical QA skills", () => {
     expect(qaExecute).toMatch(/independent paths on the same frozen snapshot/);
     expect(qaExecute).toMatch(/same non-author Verifier may resume/);
     expect(qaExecute).toMatch(/identifying the new snapshot and resetting the environment/);
+  });
+
+  it("IT-023 keeps Jev as a driver and the oracle independent", () => {
+    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
+    const session = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/references/session-protocol.md"));
+
+    expect(qaExecute).toContain("jev_adapter.py");
+    expect(qaExecute).toContain("completed/DONE result is driver evidence only");
+    expect(qaExecute).toContain("never a QA pass");
+    expect(qaExecute).toContain("independent read path and reload");
+    expect(qaExecute).toContain("does not provide a Playwright MCP, Orca Browser, or Maestri Portal bridge");
+    expect(session).toContain("independent read path and after a reload");
+  });
+
+  it("IT-024 packages the optional Jev QA adapter without owning installation", () => {
+    const packageJson = JSON.parse(readRepositoryFile("package.json")) as { files: string[]; dependencies?: Record<string, string> };
+    const qaExecute = readRepositoryFile(qaExecutePath);
+    const helper = ".agents/skills/wtk-qa-execute/jev_adapter.py";
+
+    expect(existsSync(join(repositoryRoot, helper))).toBe(true);
+    expect(packageJson.files).toContain(".agents/skills/wtk-qa-execute");
+    expect(qaExecute).toContain("installs neither dependency");
+    expect(qaExecute).toMatch(/existing\s+fallback/);
+    expect(qaExecute).toContain("non-consequential fixture journey");
+    expect(qaExecute).toContain("Playwright MCP first");
+    expect(qaExecute).toContain("declared Orca, Maestri, or manual");
+    expect(qaExecute).toContain("dedicated CDP endpoint");
+    expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("jev-ultrafast");
+    expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("browser-harness");
   });
 
   it("routes execution receipts and delivery reporting to one bundled metrics reference", () => {
@@ -1133,6 +1163,7 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_symlink_manifest.py",
       "tools/test_deep_review_token_metrics.py",
       "tools/test_gate_cache.py",
+      "tools/test_jev_qa_adapter.py",
       "tools/test_phase_skills.py",
       "tools/test_remediation.py",
       "tools/test_repository_intelligence.py",
