@@ -74,16 +74,16 @@ import sys
 # Each entry is a tuple of acceptable heading names (first is canonical).
 REQUIRED_SECTIONS = [
     ("Problem", "Problem Statement"),
-    ("Out of scope", "Out of Scope"),
-    ("Assumptions", "Assumptions & Open Questions"),
-    ("Criteria", "User Stories"),
-    ("Traceability", "Requirement Traceability"),
-    ("Observable",),
     ("Flow",),
+    ("Impact",),
     ("Relations",),
     ("Surface",),
     ("Landing",),
-    ("Impact",),
+    ("Criteria", "User Stories"),
+    ("Traceability", "Requirement Traceability"),
+    ("Out of scope", "Out of Scope"),
+    ("Assumptions", "Assumptions & Open Questions"),
+    ("Observable",),
 ]
 ADVISORY_SECTIONS = ["Sources"]
 

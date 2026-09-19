@@ -211,12 +211,20 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 
 ## Handoff
 
-Default: one builder; no planned transfer. Only when a concrete context limit or transfer requires
-it, record the intended whole-slice split and estimate, for example:
+Size, with the arithmetic, written after the checks exist and before any code. The coordinator
+chooses the cut; the user chooses the execution mechanism only when the estimate exceeds the
+declared budget.
 
-- S1-S3 = 118k, all in Billing; S4 enters Webhooks at 140k -> hand off after S3
+Under the budget - one builder, no ask:
 
-<Append when handing off:>
+- S1 = 10k, all in Billing; S2 enters Webhooks at 25k total, under the 150k budget - one builder
+
+Over the budget - stop, ask (handoff vs one builder), then record the choice:
+
+- S1-S3 = 118k, all in Billing; S4 enters Webhooks at 190k -> proposed cut after S3
+- Mechanism: handoff | one builder (compaction accepted) - <the user's choice>
+
+<Appended by each builder as it finishes, three lines each:>
 
 - **Boundary:** C1-C7 closed at `<sha>`
 - **Settled mid-build:** <every clarification the user gave that did not become a Landing row or an edited check>

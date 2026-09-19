@@ -1,6 +1,6 @@
 {
-  "source": "https://github.com/tech-leads-club/agent-skills/tree/main/skills/tlc-spec-lean",
-  "sourceCommit": "0ab82f644cd9caf94c65347a50ad934800b0cbc4",
-  "contentHash": "56db00c3b8c5e76c41f05aeddf1ba1c21be420f4afee48a5695c693a7391a50f",
+  "source": "https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/(development)/tlc-spec-lean",
+  "sourceCommit": "ff0ef495d5a1b7d6d0ae3527e9d0f81d41a83a13",
+  "contentHash": "28368cb86a9d441fce24426eb502a39a5e7f9ffe0ad5d682fead2ce76c5b085b",
   "license": "CC-BY-4.0"
 }
