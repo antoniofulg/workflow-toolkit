@@ -134,7 +134,7 @@ CASES = [
      lambda s: s.replace("THEN the system SHALL set the subscription status", "THEN we set the subscription status"),
      1, "has no SHALL"),
     ("validate_plan", "plan.md", "assumption with no rationale",
-     lambda s: s.replace("| the provider already retried 3 times before it reports a failure |", "|  |"),
+     lambda s: s.replace("| this team tracks billing-related support cases |", "|  |"),
      1, "empty 'Rationale'"),
     ("validate_plan", "plan.md", "missing Traceability section",
      lambda s: s.replace("## Traceability", "## Requirements Map"),

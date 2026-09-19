@@ -99,7 +99,7 @@ Replay of a delivery is a no-op; a payload without a subscription id is rejected
 
 | Assumption | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Grace period after the first failure | none - suspend on the first failed charge | the provider already retried 3 times before it reports a failure | y |
+| Owner of the post-launch outcome review | billing operations | this team tracks billing-related support cases | n |
 | Status for a member who was never charged | stays `Active` | absence of a charge is not a failure | y |
 
 **Open questions:** none - all resolved or logged above.
