@@ -6,6 +6,20 @@ No task list, no phase plan, no per-task review tables, no `Files to touch` decl
 each edit. The checks are the bar; the route is your call. If you find yourself writing a plan
 for the model to obey, you are rebuilding the thing this skill removed.
 
+## Before the first line of code
+
+The checks exist, so the size is visible. Write `## Handoff` with `wc -c / 4` arithmetic for the
+files each whole slice touches. Then:
+
+- The cumulative estimate fits the declared budget -> one builder. Do not ask or offer a transfer.
+- The estimate exceeds it -> stop before code. Ask the user to choose **handoff** at the recorded
+  whole-slice boundary or **one builder** with accepted compaction/context-loss risk. Record the
+  choice in `## Handoff`.
+
+The coordinator chooses the cut and uses the host's supported handoff mechanism plus configured
+role/provider. Never split a slice. A slice that alone exceeds the budget is too coarse; report that
+instead of splitting it mid-outcome.
+
 ## What is fixed and what is not
 
 Fixed: the checks, the `Test policy` rows, and the proofs each check names. Lowering either is
@@ -128,7 +142,8 @@ Two ways through it, and they are not equivalent. Automatic compaction summarise
 *artifact*, at a boundary you chose. This skill is built for the second - that is why `Landing`
 rows are appended before the code that closes them rather than at the end.
 
-**Handing off.** Only on green, with every proof in the batch passing. The next builder reads
+**Handing off.** Execute the mechanism recorded at the size gate. Transfer only on green, with every
+proof in the batch passing. The next builder reads
 `checks.md` and the **diff of what already landed** - never a narrative summary. The diff is the
 state, and it carries the hundred reversible choices that sit below the `Landing` bar: naming,
 error shape, where the helper went. Those are exactly what drifts between builders and exactly
@@ -138,8 +153,9 @@ Then append the three `## Handoff` lines - boundary, what the user settled mid-b
 abandoned. They go in the artifact rather than in the next builder's prompt: a briefing written
 into a prompt survives exactly one boundary, and the third builder needs the first one's.
 
-**After compaction or on resume,** use [context recovery](../../wtk/references/context-handoff.md)
-before continuing. Keep the batch handoff boundary above; recovery alone does not require a new agent.
+If the user chose one builder over a budget miss, compaction is the accepted path. **After
+compaction or on resume,** use [context recovery](../../wtk/references/context-handoff.md) before
+continuing. Keep the batch handoff boundary above; recovery alone does not require a new agent.
 
 ## Then stop
 
@@ -149,6 +165,9 @@ step, after the last batch of the whole feature, over the full check set. A Veri
 the builder that just closed the final batch inherits that builder's scope even though it
 inherits none of its tokens, and reports a pass over four checks that reads exactly like a pass
 over forty. See [verify.md](verify.md).
+
+The builder always stops here. When the final batch returns green, the coordinator dispatches the
+fresh Verifier in that same turn. Do not ask or wait for a separate "verify work" prompt.
 
 ## What was deliberately removed
 
