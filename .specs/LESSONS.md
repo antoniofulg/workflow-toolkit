@@ -710,6 +710,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: .specs/features/workflow-toolkit-lean/verification.md:92 (C12) (role-routing)
 - last seen: 2026-09-13T03:11:13Z
 
+### L-117 - When an adapter requires isolation, test explicit false declarations as well as missing and valid declarations.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `qa-adapters` · harmful: 0
+- features: optional-jev-qa-adapter
+- evidence: verification.md Round 2 C6 dedicated=False gap (qa-adapters)
+- last seen: 2026-09-19T17:08:35Z
+
+### L-118 - Test evidence allowlists with arbitrary benign-named upstream fields so removing the allowlist fails.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `qa-adapters` · harmful: 0
+- features: optional-jev-qa-adapter
+- evidence: verification.md Round 2 evidence-allowlist mutant (qa-adapters)
+- last seen: 2026-09-19T17:08:35Z
+
+### L-119 - Assert each ordered adapter fallback independently at the executable selector boundary.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `qa-adapters` · harmful: 0
+- features: optional-jev-qa-adapter
+- evidence: verification.md Round 2 C2 fallback-order gap (qa-adapters)
+- last seen: 2026-09-19T17:08:36Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

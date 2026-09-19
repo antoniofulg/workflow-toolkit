@@ -2,14 +2,14 @@
 
 ## Handoff
 
-- **Feature**: `optional-jev-qa-adapter`; active plan at `.specs/features/optional-jev-qa-adapter/plan.md` with security specification and provisional threat model beside it.
-- **Phase / Task**: Independent standard-profile verification rounds 1 and 2 failed at `7fbb73c9` and `d3c8b776`; round 2 remediation is complete at the local Build boundary and awaits fresh re-verification.
+- **Feature**: `optional-jev-qa-adapter`; locally complete and closed.
+- **Phase / Task**: Build, two remediation batches, independent standard-profile verification, closing QA, durable promotion, and transient feature cleanup are complete.
 - **Completed**: One observable slice only: a consuming project may use Jev Ultrafast for explicitly non-consequential fixtures over dedicated CDP when its keys, module, and Browser Harness are available; otherwise `wtk-qa-execute` retains Playwright MCP first, then declared Orca/Maestri/manual fallback. Jev remains a driver and independent readback after reload remains the only path to `pass`. Evidence is allowlisted and the wrapper calls `Agent.run()` once.
-- **Evidence**: `.specs/features/optional-jev-qa-adapter/verification.md` records the truthful verifier FAILs and findings. Round 2 remediation proofs pass: seven focused Python proofs, the Jev/oracle skill contract, the exact helper package proof, the full installer suite, both Lean validators, and `git diff --check`; no live provider/browser call was made.
+- **Evidence**: Round 3 Technical Verification PASS proves 8/8 checks, kills 5/5 faults, and leaves 0 confirmed security findings; `validate_verification.py` exits 0. QA report `docs/qa/reports/2026-09-19-optional-jev-qa-adapter.md` passes the packed quality install, installed-helper preflight/readback, exact package membership, cleanup, and residue checks. The broader QA contract result remains truthfully recorded as 33 pass / 3 unrelated pre-existing failures.
 - **Constraints**: Reuse `jev_ultrafast.Agent`; Jev only for non-consequential fixtures; dedicated headless CDP by default and dedicated headed CDP only on explicit request; Playwright MCP first fallback, then declared Orca/Maestri/manual; install no dependency; process-environment secrets only; one wrapper `Agent.run()` call; allowlisted secret-free evidence; no live browser proof in this source pack.
-- **Next step**: Run scoped independent re-verification over the changed contract and every prior non-PASS verdict.
-- **Blockers**: None. The user explicitly approved narrowing v1 to upstream `Agent` guarantees and selecting Playwright MCP as the first fallback.
-- **Branch / state**: `feat/optional-jev-qa-adapter`; round 2 Build edits remain local until the remediation batch commit, while verifier-owned `verification.md` remains untracked and untouched. No push, deployment, provider call, or production mutation is authorized.
+- **Next step**: Human-scheduled delivery or a consumer-project live Jev/Playwright pilot. No remote delivery is authorized in this cycle.
+- **Blockers**: None. Live Jev/Browser Harness/Playwright execution remains a consumer-project limitation, not a source-pack readiness claim.
+- **Branch / state**: `feat/optional-jev-qa-adapter` at `680076a0` before the pending local closeout commit; `.specs/features/optional-jev-qa-adapter/` is removed per AD-037. No push, deployment, provider call, publication, or production mutation is authorized.
 
 ## Decisions
 
