@@ -349,7 +349,7 @@ describe("canonical QA skills", () => {
     expect(notice).toContain("Felipe Rodrigues");
     expect(notice).toContain("CC BY 4.0");
     expect(notice).toContain(
-      "https://github.com/tech-leads-club/agent-skills/tree/main/skills/tlc-spec-lean",
+      "https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/(development)/tlc-spec-lean",
     );
     expect(activeContract).not.toMatch(/phase[- ]batch|Batch complete|opt[- ]in/i);
     expect(activeContract).not.toMatch(/after the last task of the feature/i);

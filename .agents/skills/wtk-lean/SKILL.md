@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.0.0'
+  version: '1.1.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
@@ -29,8 +29,9 @@ and Verify. At phase boundaries or context recovery, use
 3. Approved `checks.md` and `Test policy` rows are fixed. New `Landing`, `Relations`, and `Surface`
    rows may be added when building discovers a door, entity, or route; approved rows are never
    rewritten. Keep `Flow` and `Impact` current when the path changes.
-4. The coordinator dispatches one fresh Verifier over `<feature base>..HEAD` with every check after
-   the last slice. The builder reports and stops; verification is never optional or self-authored.
+4. The coordinator dispatches one fresh Verifier over `<feature base>..HEAD` with every check in
+   the same turn after the feature's last commit. The builder reports and stops; verification is
+   never optional, delayed for another prompt, or self-authored.
 5. The declared profile is a floor. Its report names the profile and `validate_verification.py` must
    exit 0. An approved spec authorizes local edits and commits only; push, deploy, and production
    data changes require explicit authorization.
@@ -66,7 +67,7 @@ thin, ask the user to raise it rather than silently changing the profile.
 ├── LESSONS.md                  # rendered by scripts/lessons.py - never hand-edit
 ├── lessons.json                # machine-owned
 └── features/<feature>/
-    ├── plan.md                 # problem, EARS criteria, surfaces walked, then flow, relations, surface, landing, impact
+    ├── plan.md                 # problem, flow, impact, remaining shape, criteria, then audit tables
     ├── checks.md               # claims + proofs, the coverage join, test policy, swept
     └── verification.md         # the Verifier's report
 ```
@@ -75,12 +76,13 @@ Create each file when its phase produces content. For a change under roughly thr
 one-way door, write only `checks.md` with an `## Intent` paragraph and skip `plan.md` - one
 bounded escape, not a sizing matrix.
 
-The plan is the human review boundary: write criteria before shape, then record the shape that
-implements them. Its fixed sections are `Problem`, `Out of scope`, `Assumptions`, `Criteria`,
-`Traceability`, `Observable`, `Flow`, `Relations`, `Surface`, `Landing`, and `Impact`. `Flow` is
-the path, `Relations` the entities and one-way constraints, `Surface` the route/signature/statuses,
-`Landing` the literal irreversible choices and rejected alternatives, and `Impact` what existing
-terms or data change. Placement and reversible implementation detail stay in the diff.
+The plan is the human review boundary. Write the problem, walk the surfaces, write criteria, then
+record the shape that implements them. File order serves the reviewer: `Problem`, `Flow`, `Impact`,
+`Relations`, `Surface`, `Landing`, `Criteria`, `Traceability`, `Out of scope`, `Assumptions`,
+`Observable`, and `Sources`. `Flow` is the path, `Relations` the entities and one-way constraints,
+`Surface` the route/signature/statuses, `Landing` the literal irreversible choices and rejected
+alternatives, and `Impact` what existing terms or data change. Placement and reversible
+implementation detail stay in the diff.
 
 `checks.md` derives proof-backed checks from the plan and joins every enumerated route, entity,
 status, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
@@ -93,13 +95,15 @@ be recorded as a `Landing` decision.
 - **Plan:** human review of EARS criteria, boundary, surfaces, nine implicit dimensions, and the
   five shape sections. Ask only genuine decisions; use `n/a - <reason>` where a dimension does not
   apply. Full procedure and closure gate: [plan.md](references/plan.md).
-- **Checks:** derive proof-backed claims, join every enumerated set member, and record swept
-  landings: [checks.md](references/checks.md).
-- **Build:** tests come from checks; implementation decomposition is yours. Keep new `Landing`,
-  `Relations`, and `Surface` rows additive before closing code, then use the scope guardrail and
-  handoff procedure: [build.md](references/build.md).
-- **Verify:** after the feature's last slice, the coordinator sends one fresh Verifier over the
-  full range with every check; procedure and report schema: [verify.md](references/verify.md).
+- **Checks:** derive proof-backed claims, join every enumerated set member, record swept landings,
+  and close with `## Handoff` arithmetic: [checks.md](references/checks.md).
+- **Build:** after the size gate resolves the execution mechanism, tests come from checks and
+  implementation decomposition is yours. Keep new `Landing`, `Relations`, and `Surface` rows
+  additive before closing code, then use the scope guardrail and handoff procedure:
+  [build.md](references/build.md).
+- **Verify:** in the same turn after the feature's last commit, the coordinator sends one fresh
+  Verifier over the full range with every check; procedure and report schema:
+  [verify.md](references/verify.md).
 - **Memory:** decisions, handoff, and lessons live in [memory.md](references/memory.md).
 
 ## Scripts
@@ -125,14 +129,19 @@ unavailable, perform the same checks by inspection and report the degraded path.
 
 ## Sub-agents and handoff
 
-One builder owns whole slices sequentially. Estimate context and record a split under `## Handoff`
-only when a concrete context limit or planned transfer requires it, not before every build.
-If reading exceeds the declared budget (default 150k tokens), hand off only between slices.
-Before handoff, the outgoing builder records closed checks, user decisions, and
-abandoned approaches, and continues only after every proof in the batch is green. The next builder
-reads the artifact and landed diff, not a narrative. Never split a slice or create a task DAG. The
-coordinator owns checkpoint synchronization and the final full-range Verifier; builders report and
-stop.
+Estimate the files each slice touches from `wc -c / 4`, and record the arithmetic under
+`## Handoff` after checks exist and before Build. When the cumulative estimate fits the declared
+budget (default 150k tokens), one builder owns all whole slices sequentially; do not ask or offer a
+transfer. When it exceeds the budget, stop before code and ask the user to choose the execution
+mechanism: sequential whole-slice handoff at the recorded surface boundary, or one builder with
+accepted compaction/context-loss risk. The coordinator chooses the cut, records the user's mechanism
+choice, and uses the host's supported handoff mechanism and configured role/provider.
+
+Handoffs occur only between slices and only after every proof in the batch is green. The outgoing
+builder records closed checks, user decisions, and abandoned approaches. The next builder reads the
+artifact and landed diff, not a narrative. Never split a slice or create a task DAG. The coordinator
+owns checkpoint synchronization and dispatches the final full-range Verifier in the same turn after
+the last batch returns green; builders report and stop.
 
 ## Knowledge chain
 

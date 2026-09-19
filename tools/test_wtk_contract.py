@@ -17,6 +17,7 @@ class WtkContractTests(unittest.TestCase):
         plan = read(".agents/skills/wtk-plan/SKILL.md")
         implement = read(".agents/skills/wtk-implement/SKILL.md")
         self.assertIn(".design/<name>.md", discover)
+        self.assertIn("organised by **vertical slice**", discover)
         self.assertIn(".tasks/<name>.md", plan)
         self.assertIn(".checks/<feature>.md", implement)
         self.assertNotIn(".specs/features/<feature>/plan.md", plan)
@@ -27,6 +28,8 @@ class WtkContractTests(unittest.TestCase):
         implement = read(".agents/skills/wtk-implement/SKILL.md")
         self.assertIn("whole slices", lean)
         self.assertIn("fresh Verifier over `<feature base>..HEAD` with every check", lean)
+        self.assertIn("same turn after the feature's last commit", lean)
+        self.assertIn("When it exceeds the budget", lean)
         self.assertIn("A build agent never spawns another agent at all", implement)
         self.assertIn("coherent pieces", implement)
 
