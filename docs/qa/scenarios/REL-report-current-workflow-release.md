@@ -6,13 +6,13 @@ persona: Repository reader
 journey: J-review-workflow-release
 expected: The newest changelog release matches the package manifest, while Bun 1.4's lockfile identifies the root package and dependency graph; the documented install, knowledge, scoped-validation, frozen-lockfile, and package commands expose the current source pack without checkout residue.
 entry_points: CHANGELOG.md; README.md; package.json; bun.lock; bunfig.toml
-qa_status: skipped
+qa_status: pass
 bug_ids: BUG-20260824-release-overstates-lifecycle-qa; BUG-20260825-adoption-omits-parallel-pilot; BUG-20260829-bun-history-gate-rejects-new-qa-charters; BUG-20260903-history-gate-forbids-resetting-baseline-scenarios; BUG-20260904-adopt-apply-requires-designer-before-migration; BUG-20260913-changelog-uses-wrong-npx-package
 fix_status: fixed
 retest_status: pass
 fix_commits: e9e1c4ac
-evidence: docs/qa/evidence/2026-09-13-workflow-toolkit-release/release-retest-summary.md
-last_report: docs/qa/reports/2026-09-13-workflow-toolkit-release.md
+evidence: docs/qa/evidence/2026-09-19-release-1-1-0/release-readback.md
+last_report: docs/qa/reports/2026-09-19-release-1-1-0.md
 overlaps:
 ---
 
@@ -36,12 +36,19 @@ scenario makes no `0.10.1` QA PASS claim. The historical `0.9.2` report and evid
 Version-neutral owner for public release consistency. For release `1.1.0`, the reader compares the
 newest changelog heading with the package manifest, checks Bun's root package and dependency graph
 metadata, and checks release claims against
-the shipped public contracts. The release walk reuses the current adoption verdict as a
-canaries instead of repeating their feature-level runtime probes.
+the shipped public contracts. The release walk reuses current adoption verdicts as canaries
+instead of repeating their feature-level runtime probes.
 
 Release `1.1.0` uses scoped instruction, version and package validation under incremental impact
 selection. Fresh release QA covers identity, package membership and disposable-consumer readback;
 the feature-level Jev report remains the behavioral authority for the optional adapter.
+
+QA Execute on 2026-09-19 passed release `1.1.0` at `ea132ad3`. The 146-member exact local archive,
+source and extracted manifests, README, changelog, Bun lockfile, and installer constant agree on
+the release identity. The package and adopted quality layer contain the Jev helper, contain no
+environment or credential file, and preserve its documented fallback and independent-oracle
+boundary. A fresh CLI process reloaded the disposable consumer as up to date with no changes.
+Registry/tag consistency and all remote or publication actions remain outside this local cycle.
 
 Release `0.10.1` changes this promise and is skipped for QA under explicit user direction. The release
 owner records scoped identity, package membership, and residue evidence; no closing full gate or
