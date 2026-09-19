@@ -1,12 +1,21 @@
 # Cua + Jev local benchmark — 2026-09-19
 
+## Final disposition
+
+**Rejected.** Cua is not part of Workflow Toolkit, is not a supported fallback, and must not be
+installed in consuming projects. Its official Jev recipe launched a graphical isolated Chromium
+session, violating the approved headless-default benchmark constraint. The Cua arm is retained below
+only as historical evidence of the rejected experiment, not as a valid adoption comparison.
+
+Cua Driver was fully uninstalled after this decision. Its daemon, application bundle, CLI link,
+package state, cache, telemetry identity, and macOS Accessibility/Screen Recording/AppleEvents grants
+were removed.
+
 ## Verdict
 
 Keep deterministic Playwright as the default web QA runner. Bounded Jev adds about 1.3 seconds to
-this two-action fixture and remains viable for adaptive choice. Cua + Jev is materially slower and
-heavier on this web-only task, so retain it as an optional advanced adapter for pre-action policy,
-isolated computer use, and native desktop/Electron journeys rather than a cheaper Playwright
-replacement.
+this two-action fixture and remains viable for adaptive choice. Reject Cua: it was materially slower
+and heavier and did not satisfy the headless-default benchmark contract.
 
 ## Environment
 
@@ -87,11 +96,8 @@ resource sample, not a hardware benchmark.
 
 1. Keep deterministic Playwright tests unchanged and authoritative.
 2. Prefer bounded Jev + Playwright when a web journey needs adaptive semantic choice.
-3. Use Cua + Jev when pre-action capability policy, isolated whole-computer state, native desktop,
-   Electron, or cross-application work justifies roughly 1.3 GiB sampled RAM and higher latency.
-4. Do not make Cua mandatory in Workflow Toolkit or install it in consuming projects automatically.
-5. Benchmark Cua next on a desktop or cross-application journey; this simple form exercises its cost
-   but little of its unique value.
+3. Reject Cua as a Workflow Toolkit adapter or fallback and do not install it in consuming projects.
+4. Do not continue Cua benchmarking without a new explicit human decision.
 
 ## Evidence and limitations
 
