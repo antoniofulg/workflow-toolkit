@@ -32,7 +32,9 @@ MAX_TRACE_CHARS = 12000
 EVIDENCE_NAME = "jev-ultrafast-attempt.json"
 EXIT_CODES = {"completed": 0, "unavailable": 2, "failed": 1, "invalid": 2}
 REDACT_ENV_NAMES = ("TYPESAFE_API_KEY", "AI_GATEWAY_API_KEY", "TEXT_MODEL_API_KEY")
-FALLBACK_ORDER = ("playwright-mcp", "declared-orca", "declared-maestri", "manual")
+FALLBACK_ORDER = ("playwright-mcp", "declared-ide-native", "manual")
+IDE_NATIVE_ORDER = ("orca", "maestri")
+IDE_NATIVE_ALIASES = {"declared-orca": "orca", "declared-maestri": "maestri"}
 SAFE_MODES = {"headless", "headed"}
 SAFE_STATUSES = {"RUNNING", "DONE", "COMPLETED", "FAILED"}
 SAFE_OPERATIONS = {"CLICK", "TYPE_TEXT", "SELECT", "UPLOAD", "SUBMIT", "NAVIGATE", "OBSERVE"}
@@ -269,9 +271,11 @@ def _safe_trace_state(state: Any, index: int) -> dict[str, Any]:
 
 
 def select_fallback_adapter(available: Iterable[str]) -> str:
-    """Select the first available consumer-owned fallback in the frozen order."""
-    values = {str(item).strip().lower() for item in available}
-    return next((candidate for candidate in FALLBACK_ORDER if candidate in values), "manual")
+    """Select Playwright or exactly one declared IDE-native adapter, then manual."""
+    values = {IDE_NATIVE_ALIASES.get(str(item).strip().lower(), str(item).strip().lower()) for item in available}
+    if "playwright-mcp" in values:
+        return "playwright-mcp"
+    return next((candidate for candidate in IDE_NATIVE_ORDER if candidate in values), "manual")
 
 
 def select_existing_adapter(result: Mapping[str, Any], existing_adapter: str | Iterable[str]) -> str:
@@ -284,7 +288,8 @@ def select_existing_adapter(result: Mapping[str, Any], existing_adapter: str | I
 
 def _declared_fallback(value: str) -> str:
     name = _string(value).strip().lower()
-    return name if name in FALLBACK_ORDER else "manual"
+    name = IDE_NATIVE_ALIASES.get(name, name)
+    return name if name in {"playwright-mcp", *IDE_NATIVE_ORDER, "manual"} else "manual"
 
 
 def external_oracle_verdict(result: Mapping[str, Any], independent_readback_matches: bool) -> str:

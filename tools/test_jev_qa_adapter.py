@@ -194,11 +194,12 @@ class AdapterTests(unittest.TestCase):
                 self.assertEqual(result["status"], "unavailable")
                 self.assertEqual(result["limitation"], expected)
                 self.assertEqual(result["fallback_order"], list(jev_adapter.FALLBACK_ORDER))
-                self.assertEqual(result["fallback_adapter"], "declared-orca")
-                self.assertEqual(result["declared_fallback"], "declared-orca")
+                self.assertEqual(result["fallback_adapter"], "orca")
+                self.assertEqual(result["declared_fallback"], "orca")
                 self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca", "playwright-mcp"]), "playwright-mcp")
-                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca"]), "declared-orca")
-                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri"]), "declared-maestri")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca"]), "orca")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri"]), "maestri")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri", "declared-orca"]), "orca")
                 self.assertEqual(jev_adapter.select_fallback_adapter(["manual"]), "manual")
                 self.assertEqual(
                     jev_adapter.select_existing_adapter({"status": "unavailable"}, ["declared-orca", "playwright-mcp"]),

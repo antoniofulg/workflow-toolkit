@@ -1990,6 +1990,45 @@ class WtkWorkflowConfigContractTests(unittest.TestCase):
     def test_default_verification_profile_is_standard_and_stays_pinned_on_resume(self) -> None:
         test_default_verification_profile_is_standard_and_stays_pinned_on_resume()
 
+    def test_qa_browser_adapter_contract(self) -> None:
+        root = make_root()
+        accepted = ("auto", "jev", "playwright-mcp", "orca", "maestri", "manual")
+        valid_values = ", ".join(accepted)
+        try:
+            write_config(root)
+            self.assertEqual(workflow_config._read_config(root)["qa"]["browser_adapter"], "auto")
+
+            for value in accepted:
+                with self.subTest(value=value):
+                    write_config(root, extra=f'\n[qa]\nbrowser_adapter = "{value}"\n')
+                    self.assertEqual(workflow_config._read_config(root)["qa"]["browser_adapter"], value)
+
+            for value in ("jev-ultrafast", "unapproved"):
+                with self.subTest(value=value):
+                    write_config(root, extra=f'\n[qa]\nbrowser_adapter = "{value}"\n')
+                    with self.assertRaises(workflow_config.ConfigError) as error:
+                        workflow_config._read_config(root)
+                    self.assertIn(valid_values, str(error.exception))
+
+            write_config(root, extra='\n[qa]\ncredential = "credential-sentinel"\n')
+            with self.assertRaises(workflow_config.ConfigError) as error:
+                workflow_config._read_config(root)
+            self.assertIn(valid_values, str(error.exception))
+            self.assertNotIn("credential-sentinel", str(error.exception))
+        finally:
+            shutil.rmtree(root)
+
+    def test_qa_default_preserves_existing_local_config(self) -> None:
+        root = make_packet_root()
+        try:
+            local_config = root / ".wtk.toml"
+            original = local_config.read_bytes()
+            workflow_config.sync_agents(root)
+            self.assertEqual(local_config.read_bytes(), original)
+            self.assertEqual(workflow_config._read_config(root)["qa"]["browser_adapter"], "auto")
+        finally:
+            shutil.rmtree(root)
+
 
 if __name__ == "__main__":
     tests = [function for name, function in sorted(globals().items()) if name.startswith("test_")]
