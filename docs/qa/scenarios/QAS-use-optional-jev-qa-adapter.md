@@ -11,8 +11,8 @@ bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence:
-last_report:
+evidence: docs/qa/evidence/2026-09-19-default-jev-auto-qa/package-summary.json; docs/qa/evidence/2026-09-19-default-jev-auto-qa/config-reader-matrix.json; docs/qa/evidence/2026-09-19-default-jev-auto-qa/installed-readback.json; docs/qa/evidence/2026-09-19-default-jev-auto-qa/preflight-results.json
+last_report: docs/qa/reports/2026-09-19-default-jev-auto-qa.md
 overlaps: ADP-install-versioned-workflow-package; ADP-layered-workflow-adoption
 ---
 
@@ -25,3 +25,8 @@ after reload remains the only source of a QA pass.
 The 2026-09-19 report remains evidence for the earlier package-only promise. This checkout has no
 consumer fixture app, browser, Jev runtime, Browser Harness, or live Playwright MCP, so this updated
 promise stays `untested` until a consumer-level walk verifies the automatic route and verdict.
+
+The default-`auto` offline cycle recorded in `2026-09-19-default-jev-auto-qa.md` passes the exact
+package, two-reader config matrix, adoption preservation, installed-policy readback, and fail-closed
+preflight legs. It does not supersede the earlier package-only evidence and does not convert the
+unwalked live Jev, safe-timeout, no-replay, or independent browser-oracle legs into a pass.

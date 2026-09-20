@@ -2,14 +2,14 @@
 
 ## Handoff
 
-- **Feature**: `default-jev-qa`; both slices built on `feat/default-jev-qa`.
-- **Phase / Task**: Build complete; fresh independent verification remains.
-- **Completed**: Both config readers default `[qa].browser_adapter` to `auto`, validate the six stable values, and preserve an existing local config. `auto` selects Jev first, then Playwright MCP, one host-declared IDE-native adapter, and manual. Only a typed Jev-construction timeout permits Playwright fallback; every result retains oracle-owned verdict and secret-free evidence.
-- **Evidence**: C1-C7 named proofs pass; scoped Python config reports 64 passed, Bun config 9 passed, QA skills 38 passed, Jev adapter 9 passed, and installer packet/terminal suites 78 passed. `validate_plan.py` and `validate_checks.py` exit 0.
+- **Feature**: `default-jev-qa`; locally complete and closed on `feat/default-jev-qa`.
+- **Phase / Task**: Build, independent standard-profile verification, closing QA, durable promotion, and transient feature cleanup are complete.
+- **Completed**: Both config readers default `[qa].browser_adapter` to `auto`, validate the six stable values, and preserve an existing local config. `auto` selects Jev first, then Playwright MCP, one host-declared IDE-native adapter, and manual. Only a typed Jev-construction timeout permits Playwright fallback; every result retains oracle-owned verdict and secret-free evidence. AD-038, maintained instructions/tests, and durable QA records own the lasting contract.
+- **Evidence**: Independent verification proves C1-C7, 16/16 coverage sets, 4/4 test-policy rows, 5/5 killed faults, and 0 confirmed security findings; `validate_verification.py` exits 0. Fresh suites pass 64 Python config, 9 Bun config, 38 QA-skill, 9 Jev-adapter, and 78 installer packet/terminal tests. Closing QA passes every authorized offline package/config/preflight/readback leg with no defect; `QAS-use-optional-jev-qa-adapter` truthfully remains `untested` for the unavailable live browser route.
 - **Constraints**: Stable config names only; no `jev-ultrafast` alias; `auto` walks Jev -> Playwright MCP -> one host-declared IDE-native adapter -> manual; direct values force one adapter; Jev stays limited to dedicated non-consequential fixtures; auto-fallback only for unavailable or proven pre-action timeout; independent oracle owns pass; install no browser/provider dependency; expose no secrets or raw exceptions.
-- **Next step**: Dispatch one fresh Verifier over the full feature range. The QA scenario remains `untested` because this source checkout has no consumer fixture app or live browser adapters.
-- **Blockers**: None; independent verification has not run in this session.
-- **Branch / state**: `feat/default-jev-qa`; S1 base commit is `7ef7175b101c2eb745edf6089038d2be8d66cfd9` and both implementation slices are present. No push, deployment, provider call, publication, or production mutation is authorized.
+- **Next step**: Human-scheduled consumer live Jev/Playwright QA or authorized delivery. No remote delivery is authorized in this cycle.
+- **Blockers**: None. Live Jev, safe-timeout continuation, unsafe no-replay, downstream adapters, and browser-oracle evidence remain a consumer-project QA limitation.
+- **Branch / state**: `feat/default-jev-qa`; implementation commits are `7ef7175b101c2eb745edf6089038d2be8d66cfd9` and `f39fef06b7183a87889c346b90835af0699fa59c`; feature artifacts are removed after promotion per AD-037. No push, deployment, provider call, publication, or production mutation is authorized.
 
 ## Decisions
 
