@@ -23,6 +23,17 @@ delegation instead of requiring a new prompt for every harmless call. Include
 limits, cancellation/retry behavior, audit metadata without secrets, and a valid
 authorized control alongside negative tests.
 
+## AI context, retrieval and memory
+
+When the system assembles prompts, retrieves context or uses persistent memory, specify the
+trust/provenance of every context source and keep data from becoming higher-priority
+instructions. Require tenant/session filters at retrieval and memory write/read,
+authorization rechecks after sharing or role changes, and deletion propagation to
+summaries, embeddings and derived stores. Define measurable context/output sizes,
+model-call counts, delegation depth and spend per task or session. Negative tests cover hostile retrieved text,
+cross-session context, poisoned memory, stale authorization and generated output
+reaching a renderer or execution sink; suspicious prose alone is not a failed control.
+
 ## MCP — when a client/server is present
 
 Identify remote HTTP versus locally launched stdio and the protocol version.

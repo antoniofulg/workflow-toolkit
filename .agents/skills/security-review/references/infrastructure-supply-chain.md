@@ -25,7 +25,18 @@ Inspect token permissions, secret availability, workflow triggers, artifact/cach
 trust and action pinning in the actual runner context. An unpinned action alone
 is hardening unless a concrete compromise path is established.
 
+Trace dependency sources, generated inputs, caches/workspaces and build outputs to
+the exact promoted artifact. Check build/promotion identity separation, signing and
+attestation binding, mutable release inputs, update metadata, rollback protection,
+and plugin/extension authority. A missing signature is hardening unless an attacker
+can substitute an artifact across an evidenced trust boundary.
+
 For IaC/cloud, map public ingress/storage, identity grants, state access and secret
 outputs to deployable resources. Wildcards require policy and reachability context.
 Separate build/dev risks from runtime risks; never apply plans or run deployment
 commands during review.
+
+Inspect object-link scope and the final selected overlay; a safe base manifest does
+not constrain an unsafe deployment override. Use [runtime isolation](infrastructure-runtime.md)
+for shared workload identity, provider-event, metadata/control-plane, namespace,
+admission and container-runtime checks.

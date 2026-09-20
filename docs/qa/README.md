@@ -84,10 +84,8 @@ Command facts remain in their executable manifests or CI authorities.
 - Durable reports and statuses: `docs/qa/reports/`, `docs/qa/scenarios/`, and immutable charters.
 - The `workflow-toolkit` package is not published. Do not fetch a registry package, publish, push,
   open or merge a pull request, deploy, or mutate production during QA.
-- Network access and external-skill installation are not authorized. Inspect the separately printed
-  security command and confirm `security-spec`, `security-threat-model`, `security-implementation`,
-  and `security-review` remain absent; do not execute
-  `scripts/install_security_skills.py`.
+- Network access is not authorized during QA. Confirm the five packaged security skill trees install
+  through core without a child registry, Git, npm, npx, bunx, or standalone security installer.
 - This workflow does not install a framework or invent commands. Use the source CLI or local packed
   package, existing PTY pattern, public Python CLIs, and filesystem readback.
 - Agent-selection discrimination is partly instruction-visible and partly nondeterministic. Report

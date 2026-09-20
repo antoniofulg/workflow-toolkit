@@ -18,6 +18,13 @@ authorize writes. Preserve existing scoped delegation; require a confirmation or
 capability tied to concrete arguments only where the action policy requires it.
 Invalidate stale approval when identity, tool, target or material arguments change.
 
+For prompt assembly, retrieval and persistent memory, retain context provenance and
+keep lower-trust data from becoming policy. Enforce tenant/session filters on reads
+and writes, recheck authorization for derived summaries/embeddings and propagate
+deletion or revocation. Bound context/output, recursive delegation, model calls and
+paid work. Render generated output as untrusted data unless an explicit execution
+boundary validates and authorizes it.
+
 Bound work/output, retries and concurrent calls. For consequential effects, use
 idempotency and recheck current policy before committing. Cancellation is not a
 rollback guarantee. Log action/decision metadata with redaction, never raw secrets.

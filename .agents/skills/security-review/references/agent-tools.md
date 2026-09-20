@@ -20,6 +20,13 @@ annotation is not enforcement; metadata mismatch alone needs a harmful path.
 Existing explicit delegation may legitimately authorize an action without another
 dialog. Report a missing confirmation only against an evidenced policy and bypass.
 
+For prompt assembly, retrieval and persistent memory, trace context provenance,
+priority, tenant/session filters, write authority, derived summaries/embeddings and
+deletion. Confirm that hostile retrieved content, cross-session context or poisoned
+memory reaches an unauthorized disclosure/action or unsafe renderer; suspicious
+text alone is not exploitation. Check recursive delegation, model/tool calls,
+context/output and operator-spend bounds.
+
 ## MCP branch
 
 For HTTP, confirm wrong-resource token acceptance, missing required scopes or

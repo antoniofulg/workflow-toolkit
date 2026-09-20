@@ -9,9 +9,19 @@ Turn feature intent into observable security requirements and negative tests.
 Stay at Specify/test-contract level; do not search code for vulnerabilities or
 choose libraries when the requirement only needs to state an observable outcome.
 
-When the feature exposes or consumes agent tools, including MCP or WebMCP, read
-[agent and tool requirements](references/agent-tools.md). Select only the relevant
-provider/consumer and protocol sections; retain the normal output contract.
+When the feature assembles prompts, retrieves context, uses persistent memory or
+exposes/consumes agent tools, read [AI, agent and tool requirements](references/agent-tools.md).
+Select only the relevant AI, provider/consumer and protocol sections; retain the
+normal output contract.
+
+For other changed surfaces, read only the matching contract reference:
+
+- Login, federation, recovery, browser or client state:
+  [identity and client contracts](references/identity-client-contracts.md).
+- RPC, queues, retries, stored copies, deletion or resource budgets:
+  [distributed data contracts](references/distributed-data-contracts.md).
+- CI/release, cloud/IAM, native code, mobile, desktop or local IPC:
+  [platform integrity contracts](references/platform-integrity-contracts.md).
 
 1. Identify introduced or changed surfaces from the requested feature. Record
    assets, actors, sensitive data, untrusted inputs, external integrations and

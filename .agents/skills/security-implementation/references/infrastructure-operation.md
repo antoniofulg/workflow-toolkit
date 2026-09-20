@@ -13,6 +13,16 @@ to untrusted build inputs; preserve dependency integrity checks. When changing a
 dependency, verify supported APIs and current advisory information instead of
 using package age or a historical watchlist as evidence.
 
+Bind generated source, caches, workspaces and build outputs to trusted inputs.
+Separate build from promotion authority; sign and attest the artifact that is
+actually released, verify update metadata at consumption and preserve a controlled
+rollback path. Plugins and extensions receive only their declared capabilities.
+
+For cloud/IaC, scope workload and cross-account identities, ingress, provider events,
+metadata access, object links, namespaces/labels, admission policy, control-plane
+reach, container capabilities and writable mounts. Verify the final selected overlay;
+a safe base template does not constrain an unsafe production override.
+
 Disable development/debug exposure in production, keep diagnostics restricted
 and verify trusted hosts and forwarded headers against the real proxy topology.
 Do not flag missing TLS/HSTS automatically for local environments or proxy TLS

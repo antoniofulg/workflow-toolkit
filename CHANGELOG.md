@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-20
+
+### Added
+
+- Every Workflow Toolkit installation now includes the reviewed `security-audit-coordinator`,
+  `security-spec`, `security-threat-model`, `security-implementation`, and `security-review` skills.
+- Browser QA configuration defaults to `auto`: Jev first, Playwright MCP next, then one declared
+  Orca or Maestri adapter, then manual.
+
+### Changed
+
+- Security skills are package-owned core capabilities installed offline through the normal preview,
+  conflict, backup, rollback, alias, and adoption-manifest flow.
+- Jev construction timeouts may fall back to Playwright MCP; timeouts after the action loop starts
+  remain fail-closed until the fixture is inspected or reset.
+
+### Removed
+
+- The separate networked `install_security_skills.py` path and uncovered-security-gate warning.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.2.0 install` and review the managed security-skill additions.
+- Remove automation that invokes `scripts/install_security_skills.py`; no replacement step is needed.
+
 ## [1.1.0] - 2026-09-19
 
 ### Added

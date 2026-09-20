@@ -6,7 +6,7 @@ persona: Workflow adopter
 journey: J-adopt-workflow
 expected: An exact local workflow-toolkit package exposes only the wtk executable, completes a guided install without registry access, and reads back the reviewed package identity and managed tree from outside the source checkout.
 entry_points: README.md#quick-start; package.json; bun pm pack --filename <pack-dir>/workflow-toolkit-1.0.0.tgz --ignore-scripts; node <runner>/package/bin/wtk.js install
-qa_status: pass
+qa_status: untested
 bug_ids:
 fix_status:
 retest_status:
@@ -30,8 +30,8 @@ explicit conflicts before final confirmation. Cancel or exclude to prove zero wr
 replacement only after its backup action is visible. Pristine retired workflow files are removed
 only when their ownership hashes match.
 
-The package does not install external security skills or run lifecycle hooks. Those skills remain a
-separate explicitly authorized step.
+The package installs five reviewed security skills through core without a child network installer.
+Existing modified destinations remain subject to the normal preview/conflict/backup contract.
 
 The `lean-consumer-installation` cycle changes archive membership, installed paths, previous-layout
 retirement, and repeat-apply output. Reset to `untested`; prior evidence remains historical. QA must

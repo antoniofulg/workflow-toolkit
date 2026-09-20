@@ -14,6 +14,13 @@ For cross-origin messages, trace origin/source validation and the resulting acti
 a listener alone is not exploitation. Verify browser credential behavior for CSRF
 and credentialed cross-origin requests; CORS is not authorization.
 
+Constrain service-worker registration and scope; partition its caches by identity.
+Validate WebSocket origin where browser credentials authenticate the connection.
+For attacker-controlled object keys, trace a reachable prototype-pollution gadget.
+Bind navigation and opener actions to the expected origin. Check server-enforced
+frame policy where UI redress would authorize a consequential act. A missing frame
+header or broad listener without an affected boundary remains hardening.
+
 When a library default determines exploitability, consult current official docs
 for the installed version and verify the application's configuration. Record
 missing evidence separately instead of assuming every framework escapes—or none do.

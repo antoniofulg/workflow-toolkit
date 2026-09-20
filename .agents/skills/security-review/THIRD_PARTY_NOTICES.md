@@ -19,6 +19,19 @@ Reused principles: researched versus reported scope, source-to-sink evidence,
 confidence, contextual severity and suppression of false positives.
 Topic, language and container material was consolidated into surface-based guidance.
 
+## Cloudflare security-audit
+
+[Source snapshot](https://github.com/cloudflare/security-audit-skill/tree/c1c8a8c1471069fb0e188eeaff69b8e8db6564a8/skills/security-audit),
+commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8`, checked 2026-09-19.
+Copyright (c) 2025-2026 Cloudflare, Inc.; source licensed MIT with the
+[full permission and disclaimer](licenses/Cloudflare-MIT.txt).
+
+Reused topics: identity/HTTP protocols, RPC/messaging, data lifecycle, resource
+availability, native/binary and local-platform attack surfaces plus broader AI,
+browser, release and cloud review. Changes: original condensed review guidance,
+static evidence retained as sufficient for complete paths, and whole-codebase
+orchestration moved to a separate skill. No source prompt or schema was copied.
+
 ## GitHub Awesome Copilot
 
 [Source snapshot](https://github.com/github/awesome-copilot/tree/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/security-review),

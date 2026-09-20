@@ -30,6 +30,9 @@ historical. The current approved set has four exact names, so this promise is re
 Reconfirm all four are absent after source and packed adoption, inspect the printed package-local
 command and gate-unavailable warning, and do not execute the networked security installer.
 
+Retired — Workflow Toolkit 1.2.0 bundles the five reviewed security skills in core and removes the
+separate installer path. Historical reports remain evidence of the former boundary only.
+
 QA Execute on 2026-09-13 confirmed the four external skill trees and aliases remained absent and
 the exact separate command printed after two successful source-CLI installs. Both transcripts
 omitted the required gate-unavailable or gate-uncovered warning. See

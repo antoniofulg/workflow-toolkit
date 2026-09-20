@@ -4,9 +4,9 @@ area: DOC
 title: Read explicit credits and a product-neutral workflow scope
 persona: Repository reader
 journey: J-review-workflow-release
-expected: The README, pack guide, and QA skills distinguish bundled local adaptations from their linked sources and from four separately authorized pinned skills named security-spec, security-threat-model, security-implementation, and security-review without naming a consuming product or stack.
+expected: The README, pack guide, notices, lock, archive, and installed tree identify five bundled reviewed security skills, their upstream provenance, and the product-neutral workflow scope consistently.
 entry_points: README.md; docs/toolkit/pack.md; skills-lock.json; .agents/skills/wtk-qa-plan/SKILL.md; .agents/skills/wtk-qa-execute/SKILL.md; NOTICE.md
-qa_status: skipped
+qa_status: untested
 bug_ids: BUG-20260909-interactive-installer-omits-security-command
 fix_status: fixed
 retest_status: pass
@@ -43,3 +43,7 @@ That report and evidence remain historical for the former three-skill set. The c
 provenance promise names four external skills and adds project-owned `prompt-review` to the optional
 extras catalog. Reset to `untested` pending an independent README, pack guide, lockfile, archive, and
 installed-tree readback.
+
+Workflow Toolkit 1.2.0 replaces the external-skill boundary with five bundled reviewed skills,
+including `security-audit-coordinator`. Fresh QA must reconcile README, pack guide, notices, lock,
+archive membership, and installed aliases.

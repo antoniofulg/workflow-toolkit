@@ -24,8 +24,6 @@ Then include **Needs verification**, **Hardening recommendations**, and
 Report inspected paths/surfaces, tools and versions/date, failed/unavailable checks,
 runtime versus build/test coverage, network restrictions and exclusions.
 
-For full-audit only, include the [audit additions](full-audit.md#audit-report-additions).
-
 With zero confirmed findings, say “No confirmed vulnerabilities found in the
 examined scope,” followed by actual coverage and limitations. Never imply an
 unperformed dependency audit or blanket security guarantee.

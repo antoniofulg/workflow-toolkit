@@ -32,5 +32,5 @@ lower it because login is required. Confidence is independent from severity.
 
 Before reporting, seek counterevidence: middleware order; shared authorization;
 query scopes; escaped rendering; parameterized calls; parser settings; network
-controls; dead code; fixture-only usage. Recheck every candidate in full-audit.
+controls; dead code; fixture-only usage. Recheck every candidate before reporting.
 Summaries count only confirmed findings, not threats, hardening or uncertainties.

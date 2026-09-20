@@ -1,12 +1,12 @@
 ---
 id: ADP-install-pinned-external-security-skills
 area: ADP
-title: Install exactly the reviewed external security skills
+title: Install exactly the reviewed bundled security skills
 persona: Workflow adopter
 journey: J-enable-external-security-skills
-expected: The unauthorised command makes no changes, while the exact authorized command installs only three skill trees and matching Claude links whose source, path, CLI version, commit, and tree hash match skills-lock.json.
-entry_points: scripts/install_security_skills.py; skills-lock.json; .agents/skills/; .claude/skills/
-qa_status: pass
+expected: Guided installation publishes exactly five reviewed security skill trees and matching Claude links whose source, path, CLI version, commit, and tree hash match skills-lock.json without a networked second step.
+entry_points: npx workflow-toolkit install; skills-lock.json; .agents/skills/; .claude/skills/
+qa_status: untested
 bug_ids: BUG-20260822-security-installer-rejects-active-npx
 fix_status: fixed
 retest_status: pass
@@ -16,5 +16,6 @@ last_report: docs/qa/reports/2026-08-22-external-security-skills.md
 overlaps:
 ---
 
-Owns the public authorization, provenance, and installed-result promises in `SSK-02`, `SSK-03`,
-and `SSK-06`, including visible rejection of moving or unreviewed metadata.
+Owns packaged provenance and installed-result promises for the five reviewed security skills.
+Historical evidence covers the retired standalone installer only; the bundled core path requires a
+fresh exact-package walk.

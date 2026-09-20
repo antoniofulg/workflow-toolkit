@@ -37,37 +37,45 @@
       "skillPath": "skills/ponytail-review/SKILL.md",
       "computedHash": "4646594fcd75455533f7ff1425f4f1c5ba0fa65f88241bf262b1c4fc275f049a"
     },
+    "security-audit-coordinator": {
+      "source": "antoniofulg/security-lifecycle",
+      "sourceType": "github",
+      "skillPath": "skills/security-audit-coordinator/SKILL.md",
+      "cliVersion": "1.5.23",
+      "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
+      "computedHash": "491d60e2a70c459adf2a93999347ac8c43dfc4bd764a0894d3335a1d570bbb61"
+    },
     "security-implementation": {
       "source": "antoniofulg/security-lifecycle",
       "sourceType": "github",
       "skillPath": "skills/security-implementation/SKILL.md",
       "cliVersion": "1.5.23",
-      "ref": "8b356c2c8f17a788cb14db86316b3add39f620e1",
-      "computedHash": "ddf57fe08fdb0fe021d1de88feb8886d383659672be226766e2874f450c29fae"
+      "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
+      "computedHash": "f0bfed3977e599c3c6edefec373a4d6630b46385367cc5e2d71aaa9035d4c86e"
     },
     "security-review": {
       "source": "antoniofulg/security-lifecycle",
       "sourceType": "github",
       "skillPath": "skills/security-review/SKILL.md",
       "cliVersion": "1.5.23",
-      "ref": "8b356c2c8f17a788cb14db86316b3add39f620e1",
-      "computedHash": "1db6b0cb15f2d87b4443e548a89b89e3bbe105ef8545931ce636e6fdc5fc7cd9"
+      "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
+      "computedHash": "03dfd6618116004aefea74f075660a89e724ab99dfbd0c726206ff21594d5508"
     },
     "security-spec": {
       "source": "antoniofulg/security-lifecycle",
       "sourceType": "github",
       "skillPath": "skills/security-spec/SKILL.md",
       "cliVersion": "1.5.23",
-      "ref": "8b356c2c8f17a788cb14db86316b3add39f620e1",
-      "computedHash": "8df258cc7ecea5578b44642f264ad9a68afe21be5bf2a1a89305ffd73feff3f5"
+      "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
+      "computedHash": "89282e3cdf4f217d209950f918e1348bc3fe486662c7d00822cef449c16fd8b5"
     },
     "security-threat-model": {
       "source": "antoniofulg/security-lifecycle",
       "sourceType": "github",
       "skillPath": "skills/security-threat-model/SKILL.md",
       "cliVersion": "1.5.23",
-      "ref": "8b356c2c8f17a788cb14db86316b3add39f620e1",
-      "computedHash": "b75faf328ac069d5f163a10936516b2a5ef57e7dba97f2932e53a8d0791b169a"
+      "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
+      "computedHash": "fbf78b50ad2e4c6439a32989a9024ba4eabe4596ae96ffba8a3f848a41322f7c"
     },
     "wtk": {
       "source": "./local",
