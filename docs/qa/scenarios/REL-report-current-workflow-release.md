@@ -33,7 +33,7 @@ Release `0.10.1` preparation intentionally skips a QA Plan/Execute cycle under e
 direction. Scoped package and contract evidence is recorded separately by the release owner; this
 scenario makes no `0.10.1` QA PASS claim. The historical `0.9.2` report and evidence remain intact.
 
-Version-neutral owner for public release consistency. For release `1.3.0`, the reader compares the
+Version-neutral owner for public release consistency. For release `1.3.1`, the reader compares the
 newest changelog heading with the package manifest, checks Bun's root package and dependency graph
 metadata, and checks release claims against
 the shipped public contracts. The release walk reuses current adoption verdicts as canaries

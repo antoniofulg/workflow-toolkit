@@ -664,4 +664,20 @@
 - **Scope**: Lifecycle adviser, core distribution and phase routing. Browser QA remains governed
   separately by AD-038; this decision grants no model-selected action execution or gate authority.
 - **Date**: 2026-09-20
+- **Status**: superseded by AD-040
+
+### AD-040
+
+- **Decision**: The shared Jev adviser reference assigns ordinary tool selection to confirmed
+  gateway-managed sessions and higher-level decisions to the explicit adviser. Other sessions
+  retain standalone consultation. This supersedes AD-039's universal explicit-consultation scope;
+  existing workflow, action and approval authority remains unchanged.
+- **Reason**: The user is adopting `jev-gateway` across projects and requested a hotfix to avoid
+  asking both integrations to decide the same ordinary tool choice.
+- **Trade-off**: This is instruction-level ownership, not a proxy bypass or measured token saving.
+  Installation alone does not prove current-session routing. Combined live behavior needs its own
+  observation; the gateway can still inspect an adviser invocation as an ordinary tool request.
+- **Scope**: Shared adviser policy and its consumer-facing promise. No gateway installation,
+  executable helper changes, new configuration, or browser QA adapter changes.
+- **Date**: 2026-09-20
 - **Status**: active
