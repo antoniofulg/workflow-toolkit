@@ -119,11 +119,11 @@ inclusion; semantic instruction review does not claim to prove real agent compli
 | ID | Slice | Criteria | Status |
 | --- | --- | --- | --- |
 | JEV-01 | S1 | 1–10 | Complete |
-| JEV-02 | S2 | 11–14 | Pending |
+| JEV-02 | S2 | 11–14 | Complete |
 | SEC-001 | S1 | 7 | Complete |
 | SEC-002 | S1 | 8, 9 | Complete |
 | SEC-003 | S1 | 4, 5, 6 | Complete |
-| SEC-004 | S2 | 10, 12 | Pending |
+| SEC-004 | S2 | 10, 12 | Complete |
 
 ## Out of scope
 

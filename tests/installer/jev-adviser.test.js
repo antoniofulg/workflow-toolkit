@@ -276,6 +276,36 @@ test('JEV-005 sends only bounded synthetic context to the fixed endpoint and nev
   assert.ok(!reflectedChoice.stdout.includes(reflectedChoiceKey));
 });
 
+test('JEV-006 direct lifecycle entrypoints resolve the shared Jev guidance with an example per phase', () => {
+  const sharedPath = path.join(root, '.agents/skills/wtk/references/jev-adviser.md');
+  const shared = fs.readFileSync(sharedPath, 'utf8');
+  const entrypoints = [
+    '.agents/skills/wtk/SKILL.md',
+    '.agents/skills/wtk-discover/SKILL.md',
+    '.agents/skills/wtk-plan/SKILL.md',
+    '.agents/skills/wtk-lean/SKILL.md',
+    '.agents/skills/wtk-lean/references/plan.md',
+    '.agents/skills/wtk-lean/references/checks.md',
+    '.agents/skills/wtk-lean/references/build.md',
+    '.agents/skills/wtk-lean/references/verify.md',
+    '.agents/skills/wtk-implement/SKILL.md',
+    '.agents/skills/wtk-deep-review/SKILL.md',
+    '.agents/skills/wtk-qa/SKILL.md',
+    '.agents/skills/wtk-qa-plan/SKILL.md',
+    '.agents/skills/wtk-qa-execute/SKILL.md',
+    '.agents/skills/wtk-ship/SKILL.md',
+  ];
+  for (const relative of entrypoints) {
+    const file = path.join(root, relative);
+    const markdown = fs.readFileSync(file, 'utf8');
+    const links = [...markdown.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]);
+    const target = links.find((link) => link.endsWith('jev-adviser.md'));
+    assert.ok(target, relative);
+    assert.equal(path.resolve(path.dirname(file), target), sharedPath, relative);
+  }
+  for (const phase of phases) assert.ok(shared.includes(`| \`${phase}\` |`), phase);
+});
+
 test('JEV-007 stages a working preview in a core-only consumer without QA or quality', () => {
   const consumer = fs.mkdtempSync(path.join(os.tmpdir(), 'jev-core-consumer-'));
   try {

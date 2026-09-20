@@ -1,5 +1,7 @@
 # Plan
 
+For semantic planning decisions, follow the [Jev-first guidance](../../wtk/references/jev-adviser.md) before choosing a path.
+
 **Goal:** the one artifact a human reads to understand the work and object to it, **before** any
 claim carries a test selector. Two halves: what must be true, then what is being built.
 

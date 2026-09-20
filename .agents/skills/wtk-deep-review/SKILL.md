@@ -11,6 +11,8 @@ Review at CodeRabbit grade with bounded, assertive posture: funnel the diff, dis
 
 Steps 1–4 drive an idempotent artifact pipeline under `<out>`: every stage gate is a bundled-script exit 0, valid agent outputs are never re-run, and an interrupted round resumes by re-running the same commands.
 
+For semantic review and triage decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
+
 `<skill-dir>` below means the directory containing this SKILL.md; run every bundled command from the repo root.
 
 ## Inputs (all optional)

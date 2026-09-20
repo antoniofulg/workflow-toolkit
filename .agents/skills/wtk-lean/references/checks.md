@@ -1,5 +1,7 @@
 # Checks
 
+For semantic check-design decisions, follow the [Jev-first guidance](../../wtk/references/jev-adviser.md) before choosing a path.
+
 **Goal:** one small, frozen, external obligation set. Every claim carries the proof that
 settles it, and every enumerated set is joined member by member, so an omission leaves an empty
 cell instead of a confident sentence.

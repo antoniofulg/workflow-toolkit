@@ -45,3 +45,4 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 | `AD-036` | active | Replace the task-granular workflow with Workflow Toolkit: package `workflow-toolkit` version `1.0.0`, CLI and on-demand entry `wtk`, and pr… |
 | `AD-037` | active | Feature planning and verification artifacts are transient. |
 | `AD-038` | active | `.wtk.toml` owns the consuming project's browser QA adapter selection through `[qa].browser_adapter`. |
+| `AD-039` | active | Jev is the default adviser for semantic decisions throughout the development lifecycle whenever available, including directly invoked phase… |

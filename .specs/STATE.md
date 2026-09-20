@@ -647,3 +647,21 @@
   adoption, QA contracts, and workflow documentation.
 - **Date**: 2026-09-19
 - **Status**: active
+
+### AD-039
+
+- **Decision**: Jev is the default adviser for semantic decisions throughout the development
+  lifecycle whenever available, including directly invoked phase procedures. Consult it before
+  selecting context or an investigation path, not only when the agent is uncertain. The shared
+  adviser reference in the core `wtk` skill owns operational guidance; deterministic checks and
+  existing agent, verification and authorization responsibilities retain their authority.
+- **Reason**: The user requested lifecycle-wide decision assistance and explicitly required Jev
+  to be used by default when available. Earlier context selection can avoid unnecessary reasoning
+  and reads; an extra opinion after that work cannot establish a token saving.
+- **Trade-off**: Each consultation incurs inference overhead. Record provider usage without
+  claiming net savings until measured against comparable agent-only work; unavailable inference
+  leaves the existing reasoning path usable. The caller reuses its environment credential source.
+- **Scope**: Lifecycle adviser, core distribution and phase routing. Browser QA remains governed
+  separately by AD-038; this decision grants no model-selected action execution or gate authority.
+- **Date**: 2026-09-20
+- **Status**: active

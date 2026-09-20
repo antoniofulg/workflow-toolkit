@@ -99,10 +99,17 @@ only; no repository-wide test-policy change is proposed.
   now require semantic-decision consultation even when the agent already has a preferred answer;
   this is an explicit user amendment, not a builder relaxation. Existing trusted central credential
   is loaded by the caller; no new store or per-call approval. Deterministic work is not an AI judgment.
-- S1 checkpoint: C1-C5 passed with their named `JEV-001` through `JEV-005` tests; the combined
-  targeted run passed 5/5. `validate_checks.py jev-lifecycle` exited 0 before Build.
+- S1 boundary: C1-C5 closed at `ab13ba3`; each exact `JEV-001` through `JEV-005` proof passed
+  1/1, and the combined targeted run passed 5/5. `validate_checks.py jev-lifecycle` exited 0.
 - Coordinator live smoke (synthetic input only): `node .agents/skills/wtk/scripts/advise.mjs --phase build --send`
   exited 0 in 0.813s; model `jev-1.13.0`, choice `inspect_concurrency`,
   Choice confidence 1, evidence-sufficiency Noul 0.95, usage 506 input / 75 output tokens. No
   repository content was sent. This is not evidence of token savings; no repeat is needed.
-- Next: implement S2, then coordinator dispatches the fresh full-feature Verifier.
+- S2 checkpoint: C6 and C7 passed their named `JEV-006` and `JEV-007` proofs, 1/1 each; C8 passed
+  `JEV-008` in `tests/installer/package.test.js`, 1/1. Phase guidance routes through the shared
+  reference; the independent Verifier still owns semantic conformance review. The added QA scenario
+  remains `untested` until an independent host-agent walk.
+- Slice-order deviation: `JEV-007` was added to the shared adviser test file in S1 before the S2
+  reference existed, so that proof was pending in the isolated S1 tree. It passes in this completed
+  S2 tree; committed history is preserved.
+- Next: coordinator dispatches the fresh full-feature Verifier.
