@@ -76,4 +76,3 @@ preview, missing-key, hash, route-inspection, and residue legs; stop the depende
 legs. Record exact commands, public paths, exit codes, evidence, independent readback, and
 limitations. Update only the owning scenario from observed results. Any defect returns as one
 batched Implementer handoff; the QA observer does not fix product code.
-

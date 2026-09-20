@@ -108,4 +108,3 @@ under `docs/qa/evidence/2026-09-20-jev-lifecycle/`, write the execution report t
 `QAS-consult-jev-adviser` fields justified by observed results. Report the selected interface,
 runner, exact command/path, evidence, residue, and the live host/provider limitation. Stop and batch
 any product defect for a new Implementer; do not fix product code or expand into network execution.
-
