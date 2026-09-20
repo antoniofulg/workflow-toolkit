@@ -33,7 +33,7 @@ Release `0.10.1` preparation intentionally skips a QA Plan/Execute cycle under e
 direction. Scoped package and contract evidence is recorded separately by the release owner; this
 scenario makes no `0.10.1` QA PASS claim. The historical `0.9.2` report and evidence remain intact.
 
-Version-neutral owner for public release consistency. For release `1.2.0`, the reader compares the
+Version-neutral owner for public release consistency. For release `1.3.0`, the reader compares the
 newest changelog heading with the package manifest, checks Bun's root package and dependency graph
 metadata, and checks release claims against
 the shipped public contracts. The release walk reuses current adoption verdicts as canaries
@@ -46,6 +46,12 @@ the feature-level Jev report remains the behavioral authority for the optional a
 Release `1.2.0` changes package membership, core installation, security provenance, and public
 version identity. Fresh release QA must verify the exact archive and clean-consumer install before
 registry/tag/GitHub publication readback.
+
+Release `1.3.0` adds the core Jev adviser and default lifecycle guidance. Validate the exact clean
+archive, adviser/reference membership, credential-free consumer installation, and registry/tag
+identity. The feature's technical and offline QA receipts remain in
+`docs/qa/reports/2026-09-20-jev-lifecycle-plan.md` and `2026-09-20-jev-lifecycle.md`;
+they do not establish actual host-agent compliance or measured token savings.
 
 QA Execute on 2026-09-19 passed release `1.1.0` at `ea132ad3`. The 146-member exact local archive,
 source and extracted manifests, README, changelog, Bun lockfile, and installer constant agree on
