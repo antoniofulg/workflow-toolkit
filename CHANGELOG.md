@@ -4,6 +4,28 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-20
+
+### Added
+
+- A core Jev adviser command for typed semantic decisions across planning, build, verification,
+  review, QA, and shipping, with local previews, bounded API calls, and usage reporting.
+
+### Changed
+
+- Lifecycle phase instructions now consult Jev first whenever available, including direct phase
+  invocation and decisions where the agent already has a preferred answer. Deterministic checks
+  remain code-owned; agents retain action, approval, and verification authority.
+- Consultations precede expensive context loading or investigation. Net token savings require
+  comparing total Jev and main-agent usage; no measured savings are claimed by this release.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.3.0 install` and review the managed core and phase-instruction changes.
+- Reuse `TYPESAFE_API_KEY` from the caller environment or the trusted existing
+  `~/.config/workflow-toolkit/qa.env`. No new key, browser runtime, or Vercel credential is required
+  for the lifecycle adviser. Existing browser QA configuration retains its separate meaning.
+
 ## [1.2.0] - 2026-09-20
 
 ### Added

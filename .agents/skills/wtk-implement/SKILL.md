@@ -12,6 +12,8 @@ metadata:
 Implement approved modular work: extract the checks, build, and leave independent verification to
 the coordinator. The checklist fixes obligations; implementation decomposition is yours.
 
+For semantic implementation decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
+
 Before execution, read [execution metrics](../wtk/references/execution-metrics.md) and return the
 assigned stage receipt with the normal handoff.
 

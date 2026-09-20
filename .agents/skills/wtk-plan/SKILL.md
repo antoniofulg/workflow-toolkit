@@ -13,6 +13,8 @@ Turn decided work into `.tasks/<name>.md` with observable criteria with concrete
 in the repository. A one-line ticket can be a decision; an unshaped wish belongs in discovery.
 This skill plans modular work and does not implement it.
 
+For semantic planning decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
+
 ## Source and scope
 
 Read the source and the code relevant to its claims. Resolve factual questions from existing code,

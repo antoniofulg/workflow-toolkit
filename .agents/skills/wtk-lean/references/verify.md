@@ -1,5 +1,7 @@
 # Verify
 
+For semantic verification decisions, follow the [Jev-first guidance](../../wtk/references/jev-adviser.md) before choosing a path.
+
 **Goal:** an independent answer to "is every check actually proven?", written as evidence rather
 than as an opinion.
 

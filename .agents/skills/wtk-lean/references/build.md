@@ -1,5 +1,7 @@
 # Build
 
+For semantic build decisions, follow the [Jev-first guidance](../../wtk/references/jev-adviser.md) before choosing a path.
+
 **Goal:** satisfy the checks. How is yours.
 
 No task list, no phase plan, no per-task review tables, no `Files to touch` declaration before

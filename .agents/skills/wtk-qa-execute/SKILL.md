@@ -11,6 +11,8 @@ Walk the current QA plan through the consuming project's public surfaces. Select
 declared by the project, capture evidence, write durable results, and return product defects to an
 Implementer without making the QA observer an author.
 
+For semantic QA decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
+
 ## Provenance
 
 Author: Antonio Fulgêncio.
