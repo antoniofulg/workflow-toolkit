@@ -32,13 +32,16 @@ PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(light|standard|ui)`?\s*$", re.
 SLUG_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
 CONFIG_VERSION = 3
 SNAPSHOT_VERSION = 3
+QA_BROWSER_ADAPTERS = ("auto", "jev", "playwright-mcp", "orca", "maestri", "manual")
+QA_BROWSER_ADAPTER_DEFAULT = "auto"
 PARALLELIZATION_DEFAULT = "disabled"
 PARALLELIZATION_MODES = ("assisted", "disabled")
 MAX_WORKERS_DEFAULT = "auto"
 AUTOMATIC_BASELINE = 2
 AUTOMATIC_CEILING = 4
-CONFIG_KEYS = {"version", "deep_review", "parallelization", "profiles", "models", "remediation"}
+CONFIG_KEYS = {"version", "deep_review", "parallelization", "profiles", "models", "remediation", "qa"}
 DEEP_REVIEW_KEYS = {"cadence"}
+QA_KEYS = {"browser_adapter"}
 PARALLELIZATION_KEYS = {"mode", "max_workers", "resource_provider"}
 REMEDIATION_KEYS = {"stall_attempts"}
 STALL_ATTEMPTS_DEFAULT = 3
@@ -133,6 +136,7 @@ def _load_config(path: Path, label: str) -> dict[str, Any]:
     if type(version) is not int or version != CONFIG_VERSION:
         raise _error("version must be integer 3; refresh the project configuration")
     _validate_config_schema(config)
+    config.setdefault("qa", {}).setdefault("browser_adapter", QA_BROWSER_ADAPTER_DEFAULT)
     return config
 
 
@@ -234,6 +238,19 @@ def _validate_config_schema(config: dict[str, Any]) -> None:
     unknown = set(config) - CONFIG_KEYS
     if unknown:
         raise _error(f"contains unknown top-level key {sorted(unknown)[0]!r}")
+
+    qa = config.get("qa", {})
+    valid_qa_values = ", ".join(QA_BROWSER_ADAPTERS)
+    if not isinstance(qa, dict):
+        raise _error(f"qa must be a table; browser_adapter must be one of: {valid_qa_values}")
+    unknown = set(qa) - QA_KEYS
+    if unknown:
+        raise _error(
+            f"qa contains unknown key {sorted(unknown)[0]!r}; browser_adapter must be one of: {valid_qa_values}"
+        )
+    browser_adapter = qa.get("browser_adapter", QA_BROWSER_ADAPTER_DEFAULT)
+    if not isinstance(browser_adapter, str) or browser_adapter not in QA_BROWSER_ADAPTERS:
+        raise _error(f"qa.browser_adapter must be one of: {valid_qa_values}")
 
     deep_review = config.get("deep_review", {})
     if deep_review is None:

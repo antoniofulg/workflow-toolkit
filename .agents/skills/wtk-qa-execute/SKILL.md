@@ -38,31 +38,47 @@ status, and bug records durable.
 QA execution validates the product; it does not write product code, install a framework, invent a
 command, or replace the automated gate.
 
-## Optional Jev adapter
+## Browser adapter selection
 
-When a consuming project explicitly declares the optional Jev adapter, invoke
-[`jev_adapter.py`](jev_adapter.py) only for a declared non-consequential fixture journey. The
-helper reads credentials from the process environment only: `TYPESAFE_API_KEY` drives Jev
+Read `[qa].browser_adapter` from the consuming project's `.wtk.toml`. An absent `[qa]` table or
+missing `browser_adapter` means `auto`. The valid values are `auto`, `jev`, `playwright-mcp`,
+`orca`, `maestri`, and `manual`; `jev-ultrafast` is not a public alias. `auto` tries Jev first for
+a declared non-consequential fixture journey, then LLM + Playwright MCP, exactly one IDE-native Orca or
+Maestri adapter exposed by the host, then manual. If both IDE-native adapters are exposed, choose
+Orca before Maestri and invoke only that one. A direct value selects only that adapter; if its
+prerequisites are unavailable, record the limitation instead of substituting another adapter.
+Use [`jev_adapter.py`](jev_adapter.py) for Jev preflight and the single bounded Jev attempt.
+
+For `auto`, Jev unavailability selects LLM + Playwright MCP as the first fallback. A typed
+`TimeoutError` raised while constructing `jev_ultrafast.Agent(url, goal)` is classified
+`pre-action-timeout`; its result sets `fallback_safe: true` and
+`fallback_adapter: "playwright-mcp"`. Jev's constructor performs initial navigation and read-only
+observation; `Agent.run()` is the action loop.
+Use the fallback only after an independent read or fixture reset confirms known isolated state.
+Once `Agent.run()` starts, a timeout is unsafe to replay even when no action was recorded. The
+result classifies recorded action history as `post-action-timeout`, missing history as
+`ambiguous-timeout`, sets `fallback_safe: false` and `fallback_adapter: null`, and selects no
+automatic fallback. If an action began or state is uncertain, stop and inspect or reset the fixture
+before another driver acts. Only `auto` follows fallback metadata; direct values select one adapter.
+The helper does not invoke MCP or IDE tools; the Verifier follows the chain using adapters exposed
+by its host.
+
+The Jev helper reads credentials from the process environment only: `TYPESAFE_API_KEY` drives Jev
 decisions and `AI_GATEWAY_API_KEY` is aliased in process memory as the text-helper credential, so
 a stored `TEXT_MODEL_API_KEY` is not required. The caller or secret manager may load a central
-environment file before starting the process; this skill does not parse `.env` files.
+environment file before starting the process; this skill does not parse `.env` files. Jev requires
+a separately launched dedicated Chromium exposed through an explicit `BU_CDP_URL` or `BU_CDP_WS`.
+A headed run is allowed only when explicitly requested and must use the same kind of dedicated CDP
+endpoint. Profile labels, personal sessions, and Browser Harness's default local-browser discovery
+are not accepted. The helper installs neither Jev Ultrafast nor Browser Harness and does not provide
+a Playwright MCP, Orca Browser, or Maestri Portal bridge; those adapters remain host-native.
 
-Jev defaults to a separately launched headless Chromium exposed through an explicit
-`BU_CDP_URL` or `BU_CDP_WS`. A headed run is allowed only when explicitly requested and must use
-the same kind of dedicated CDP endpoint. Profile labels, personal sessions, and Browser Harness's
-default local-browser discovery are not accepted. Jev Ultrafast uses its consumer-installed
-`jev_ultrafast.Agent(url, goal)` and Browser Harness; the helper installs neither dependency and
-does not provide a Playwright MCP, Orca Browser, or Maestri Portal bridge. When Jev is unavailable,
-the consuming project tries Playwright MCP first, then its declared Orca, Maestri, or manual
-adapter; this is the existing fallback order, and those adapters remain host-native rather than
-being translated through Jev.
-
-The helper reports the actual adapter, execution path, allowlisted evidence, fallback order, and
-limitation. Its `completed`/`DONE` result is driver evidence only: it is never a QA `pass`. Continue
-through the independent read path and reload before a Verifier records a scenario verdict. The
-wrapper calls `Agent.run()` once; a provider/browser failure preserves one allowlisted attempt and
-never restarts or retries that call. Evidence excludes authorization, cookie, token, and credential
-fields recursively.
+The helper reports the actual adapter, execution path, allowlisted evidence, failure classification,
+fallback eligibility, and limitation. Its `completed`/`DONE` result is driver evidence only: it is
+never a QA `pass`. Continue through the independent read path and reload before a Verifier records a
+scenario verdict. The wrapper calls `Agent.run()` once; it never restarts or retries that call.
+Evidence excludes authorization, cookie, token, and credential fields recursively, and omits raw
+exception text.
 
 ## Procedure
 

@@ -433,18 +433,53 @@ describe("canonical QA skills", () => {
     expect(session).toContain("independent read path and after a reload");
   });
 
+  it("IT-027 routes the configured QA browser adapter", () => {
+    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
+    const workflowConfig = readRepositoryFile(".agents/skills/wtk-config/scripts/workflow_config.py");
+    const installerConfig = readRepositoryFile("scripts/installer/packets.js");
+    const jevAdapter = readRepositoryFile(".agents/skills/wtk-qa-execute/jev_adapter.py");
+
+    expect(qaExecute).toContain("[qa].browser_adapter");
+    for (const value of ["auto", "jev", "playwright-mcp", "orca", "maestri", "manual"]) {
+      expect(qaExecute).toContain(value);
+    }
+    expect(qaExecute).toMatch(/auto tries Jev first/);
+    expect(qaExecute).toContain("then LLM + Playwright MCP");
+    expect(qaExecute).toContain("exactly one IDE-native Orca or Maestri adapter");
+    expect(qaExecute).toContain("Orca before Maestri");
+    expect(qaExecute).toContain("A direct value selects only that adapter");
+    expect(qaExecute).toContain("jev-ultrafast is not a public alias");
+    expect(workflowConfig).toContain('QA_BROWSER_ADAPTERS = ("auto", "jev", "playwright-mcp", "orca", "maestri", "manual")');
+    expect(installerConfig).toContain("const QA_BROWSER_ADAPTERS = ['auto', 'jev', 'playwright-mcp', 'orca', 'maestri', 'manual']");
+    expect(jevAdapter).toContain("from jev_ultrafast import Agent");
+  });
+
+  it("IT-028 forbids unsafe Jev replay", () => {
+    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
+    const jevAdapter = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/jev_adapter.py"));
+
+    expect(qaExecute).toContain("pre-action-timeout");
+    expect(qaExecute).toContain("fallback_safe: true");
+    expect(qaExecute).toContain("fallback_safe: false");
+    expect(qaExecute).toContain("fallback_adapter");
+    expect(qaExecute).toContain("Once Agent.run() starts, a timeout is unsafe to replay");
+    expect(qaExecute).toContain("stop and inspect or reset the fixture before another driver acts");
+    expect(jevAdapter).toContain("pre-action-timeout");
+    expect(jevAdapter).toContain("post-action-timeout");
+    expect(jevAdapter).toContain("ambiguous-timeout");
+    expect(qaExecute).toContain("omits raw exception text");
+  });
+
   it("IT-024 packages the optional Jev QA adapter without owning installation", () => {
     const packageJson = JSON.parse(readRepositoryFile("package.json")) as { files: string[]; dependencies?: Record<string, string> };
-    const qaExecute = readRepositoryFile(qaExecutePath);
+    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
     const helper = ".agents/skills/wtk-qa-execute/jev_adapter.py";
 
     expect(existsSync(join(repositoryRoot, helper))).toBe(true);
     expect(packageJson.files).toContain(".agents/skills/wtk-qa-execute");
-    expect(qaExecute).toContain("installs neither dependency");
-    expect(qaExecute).toMatch(/existing\s+fallback/);
+    expect(qaExecute).toContain("installs neither Jev Ultrafast nor Browser Harness");
     expect(qaExecute).toContain("non-consequential fixture journey");
-    expect(qaExecute).toContain("Playwright MCP first");
-    expect(qaExecute).toContain("declared Orca, Maestri, or manual");
+    expect(qaExecute).toContain("exactly one IDE-native Orca or Maestri adapter");
     expect(qaExecute).toContain("dedicated CDP endpoint");
     expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("jev-ultrafast");
     expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("browser-harness");

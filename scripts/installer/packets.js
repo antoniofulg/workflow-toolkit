@@ -6,6 +6,7 @@ import { safePath } from './engine.js';
 export const PROVIDERS = ['claude', 'codex', 'cursor'];
 export const ROLES = ['planner', 'implementer', 'verifier', 'explorer', 'deep_reviewer', 'designer'];
 export const AGENT_NAMES = { deep_reviewer: 'deep-reviewer' };
+const QA_BROWSER_ADAPTERS = ['auto', 'jev', 'playwright-mcp', 'orca', 'maestri', 'manual'];
 const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'];
 const modelRe = /^[^\\\s[\]"\x00-\x1f\x7f]+$/;
 const runtimePath = (provider, role) => `.${provider}/agents/${AGENT_NAMES[role] || role}.${provider === 'codex' ? 'toml' : 'md'}`;
@@ -15,8 +16,15 @@ const error = (message) => { throw new Error(`wtk-config: ${message}`); };
 export function validateWorkflowConfig(config) {
   if (!config || typeof config !== 'object' || Array.isArray(config)) error('configuration must contain a table');
   if (config.version !== 3) error('version must be integer 3; refresh the project configuration');
-  const allowed = new Set(['version', 'deep_review', 'parallelization', 'profiles', 'models', 'remediation']);
+  const allowed = new Set(['version', 'deep_review', 'parallelization', 'profiles', 'models', 'remediation', 'qa']);
   const unknown = Object.keys(config).find((key) => !allowed.has(key)); if (unknown) error(`contains unknown top-level key '${unknown}'`);
+  if (config.qa === undefined) config.qa = {};
+  const validQaValues = QA_BROWSER_ADAPTERS.join(', ');
+  if (!config.qa || typeof config.qa !== 'object' || Array.isArray(config.qa)) error(`qa must be a table; browser_adapter must be one of: ${validQaValues}`);
+  const unknownQaKey = Object.keys(config.qa).find((key) => key !== 'browser_adapter');
+  if (unknownQaKey) error(`qa contains unknown key '${unknownQaKey}'; browser_adapter must be one of: ${validQaValues}`);
+  if (config.qa.browser_adapter === undefined) config.qa.browser_adapter = 'auto';
+  if (typeof config.qa.browser_adapter !== 'string' || !QA_BROWSER_ADAPTERS.includes(config.qa.browser_adapter)) error(`qa.browser_adapter must be one of: ${validQaValues}`);
   if (!config.models || typeof config.models !== 'object') error('models must be a table containing every provider');
   for (const provider of PROVIDERS) {
     const values = config.models[provider]; if (!values || typeof values !== 'object') error(`models.${provider} must be a table`);

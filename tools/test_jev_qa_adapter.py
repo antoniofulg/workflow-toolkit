@@ -194,11 +194,12 @@ class AdapterTests(unittest.TestCase):
                 self.assertEqual(result["status"], "unavailable")
                 self.assertEqual(result["limitation"], expected)
                 self.assertEqual(result["fallback_order"], list(jev_adapter.FALLBACK_ORDER))
-                self.assertEqual(result["fallback_adapter"], "declared-orca")
-                self.assertEqual(result["declared_fallback"], "declared-orca")
+                self.assertEqual(result["fallback_adapter"], "orca")
+                self.assertEqual(result["declared_fallback"], "orca")
                 self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca", "playwright-mcp"]), "playwright-mcp")
-                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca"]), "declared-orca")
-                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri"]), "declared-maestri")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-orca"]), "orca")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri"]), "maestri")
+                self.assertEqual(jev_adapter.select_fallback_adapter(["declared-maestri", "declared-orca"]), "orca")
                 self.assertEqual(jev_adapter.select_fallback_adapter(["manual"]), "manual")
                 self.assertEqual(
                     jev_adapter.select_existing_adapter({"status": "unavailable"}, ["declared-orca", "playwright-mcp"]),
@@ -234,6 +235,58 @@ class AdapterTests(unittest.TestCase):
         self.assert_secret_free(evidence)
         self.assertEqual(len(FakeAgent.created), 1)
         self.assertEqual(FakeAgent.created[0].run_calls, 1)
+
+    def test_pre_action_timeout_allows_playwright_fallback(self) -> None:
+        def timed_out_factory(url: str, goal: str) -> FakeAgent:
+            raise TimeoutError(f"Page.navigate timed out: {TOKEN_SENTINEL}")
+
+        result = self.run_adapter(factory=timed_out_factory)
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["failure_class"], "pre-action-timeout")
+        self.assertTrue(result["fallback_safe"])
+        self.assertEqual(result["fallback_adapter"], "playwright-mcp")
+        self.assertEqual(result["fallback_order"], list(jev_adapter.FALLBACK_ORDER))
+        self.assertFalse(result["agent_run_started"])
+        self.assertEqual(result["action_state"], "not-started")
+        self.assertEqual(FakeAgent.created, [])
+        self.assert_secret_free(result)
+        evidence = json.loads((self.checkout / result["evidence"][0]).read_text(encoding="utf-8"))
+        self.assert_secret_free(evidence)
+        self.assertNotIn(TOKEN_SENTINEL, json.dumps(evidence))
+
+    def test_unsafe_timeout_forbids_automatic_fallback(self) -> None:
+        cases = (
+            (
+                "post-action-timeout",
+                [
+                    {
+                        "status": "RUNNING",
+                        "history": [{"kind": "click", "authorization": AUTH_SENTINEL}],
+                    }
+                ],
+                "post-action-timeout",
+                "started",
+            ),
+            ("ambiguous-timeout", [{"status": "RUNNING"}], "ambiguous-timeout", "unknown"),
+        )
+        for name, states, failure_class, action_state in cases:
+            with self.subTest(name=name):
+                result = self.run_adapter(
+                    states=states,
+                    error=TimeoutError(f"{name}: {TOKEN_SENTINEL}"),
+                )
+                self.assertEqual(result["status"], "failed")
+                self.assertEqual(result["failure_class"], failure_class)
+                self.assertFalse(result["fallback_safe"])
+                self.assertIsNone(result["fallback_adapter"])
+                self.assertIsNone(result["fallback_order"])
+                self.assertEqual(result["action_state"], action_state)
+                self.assertTrue(result["agent_run_started"])
+                self.assertEqual(FakeAgent.created[-1].run_calls, 1)
+                self.assert_secret_free(result)
+                evidence = json.loads((self.checkout / result["evidence"][0]).read_text(encoding="utf-8"))
+                self.assert_secret_free(evidence)
+                self.assertNotIn(TOKEN_SENTINEL, json.dumps(evidence))
 
     def test_evidence_destination_matrix_is_contained(self) -> None:
         outside = self.checkout / "outside"
@@ -295,7 +348,47 @@ class AdapterTests(unittest.TestCase):
     def _write_child_shims(self, root: Path) -> tuple[Path, Path]:
         module = root / "jev_ultrafast.py"
         module.write_text(
-            """import os\nimport sys\n\nclass Agent:\n    def __init__(self, url, goal):\n        self.url = url\n        self.goal = goal\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        return None\n\n    def run(self):\n        print(os.environ.get('FAKE_STDOUT', ''), end='')\n        print(os.environ.get('FAKE_STDERR', ''), file=sys.stderr, end='')\n        yield {\n            'status': 'RUNNING',\n            'benign_upstream_field': 'must-not-enter-evidence',\n            'nested_benign': {'page_text': 'untrusted page text must-not-enter-evidence'},\n            'authorization': os.environ.get('AUTH_SENTINEL', ''),\n            'cookie': os.environ.get('COOKIE_SENTINEL', ''),\n            'token': os.environ.get('TOKEN_SENTINEL', ''),\n            'credential': os.environ.get('CREDENTIAL_SENTINEL', ''),\n        }\n        if os.environ.get('FAKE_JEV_OUTCOME') == 'failed':\n            raise RuntimeError(os.environ.get('FAKE_EXCEPTION', 'provider failure'))\n        yield {'status': 'DONE', 'elapsed_ms': 1}\n""",
+            """import os
+import sys
+
+class Agent:
+    def __init__(self, url, goal):
+        self.url = url
+        self.goal = goal
+        if os.environ.get('FAKE_JEV_OUTCOME') == 'pre-action-timeout':
+            raise TimeoutError(
+                'Page.navigate timed out: ' + os.environ.get('FAKE_EXCEPTION', 'timeout')
+            )
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return None
+
+    def run(self):
+        print(os.environ.get('FAKE_STDOUT', ''), end='')
+        print(os.environ.get('FAKE_STDERR', ''), file=sys.stderr, end='')
+        yield {
+            'status': 'RUNNING',
+            'benign_upstream_field': 'must-not-enter-evidence',
+            'nested_benign': {'page_text': 'untrusted page text must-not-enter-evidence'},
+            'authorization': os.environ.get('AUTH_SENTINEL', ''),
+            'cookie': os.environ.get('COOKIE_SENTINEL', ''),
+            'token': os.environ.get('TOKEN_SENTINEL', ''),
+            'credential': os.environ.get('CREDENTIAL_SENTINEL', ''),
+        }
+        outcome = os.environ.get('FAKE_JEV_OUTCOME')
+        if outcome == 'post-action-timeout':
+            history = [{'kind': 'click', 'authorization': os.environ.get('AUTH_SENTINEL', '')}]
+            yield {'status': 'RUNNING', 'history': history}
+            raise TimeoutError(os.environ.get('FAKE_EXCEPTION', 'timeout'))
+        if outcome == 'ambiguous-timeout':
+            raise TimeoutError(os.environ.get('FAKE_EXCEPTION', 'timeout'))
+        if outcome == 'failed':
+            raise RuntimeError(os.environ.get('FAKE_EXCEPTION', 'provider failure'))
+        yield {'status': 'DONE', 'elapsed_ms': 1}
+""",
             encoding="utf-8",
         )
         bin_dir = root / "bin"
@@ -361,17 +454,43 @@ class AdapterTests(unittest.TestCase):
             args.append("--unknown-option")
         return subprocess.run(args, cwd=root, env=env, text=True, capture_output=True, check=False)
 
-    def test_terminal_status_and_redaction_matrix(self) -> None:
+    def test_fallback_terminal_and_redaction_matrix(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             cases = [
-                ("completed", None, False, 0, False),
-                ("unavailable", "TYPESAFE_API_KEY", False, 2, False),
-                ("failed", None, False, 1, False),
-                ("ignored", None, True, 2, False),
-                ("malformed", None, False, 2, True),
+                ("completed", None, False, 0, False, "completed", None, False, "unknown", None),
+                (
+                    "unavailable", "TYPESAFE_API_KEY", False, 2, False,
+                    "unavailable", "unavailable", True, "not-started", "playwright-mcp",
+                ),
+                ("failed", None, False, 1, False, "failed", "unclassified-failure", False, "unknown", None),
+                (
+                    "pre-action-timeout", None, False, 1, False,
+                    "failed", "pre-action-timeout", True, "not-started", "playwright-mcp",
+                ),
+                (
+                    "post-action-timeout", None, False, 1, False,
+                    "failed", "post-action-timeout", False, "started", None,
+                ),
+                (
+                    "ambiguous-timeout", None, False, 1, False,
+                    "failed", "ambiguous-timeout", False, "unknown", None,
+                ),
+                ("ignored", None, True, 2, False, "invalid", None, False, "not-started", None),
+                ("malformed", None, False, 2, True, "invalid", None, False, "not-started", None),
             ]
-            for outcome, missing_key, invalid, exit_code, malformed in cases:
+            for (
+                outcome,
+                missing_key,
+                invalid,
+                exit_code,
+                malformed,
+                expected_status,
+                failure_class,
+                fallback_safe,
+                action_state,
+                fallback_adapter,
+            ) in cases:
                 with self.subTest(outcome=outcome):
                     case_root = root / outcome
                     case_root.mkdir()
@@ -387,17 +506,39 @@ class AdapterTests(unittest.TestCase):
                     self.assertEqual(len(lines), 1)
                     self.assertEqual(completed.stderr, "")
                     result = json.loads(lines[0])
-                    expected_status = "invalid" if invalid or malformed else "unavailable" if missing_key else outcome
                     self.assertEqual(result["status"], expected_status)
-                    for key in ("adapter", "status", "evidence", "limitation"):
+                    self.assertEqual(result["failure_class"], failure_class)
+                    self.assertEqual(result["fallback_safe"], fallback_safe)
+                    self.assertEqual(result["fallback_adapter"], fallback_adapter)
+                    self.assertEqual(result["action_state"], action_state)
+                    expected_order = list(jev_adapter.FALLBACK_ORDER) if fallback_safe else None
+                    self.assertEqual(result["fallback_order"], expected_order)
+                    for key in (
+                        "adapter",
+                        "status",
+                        "evidence",
+                        "limitation",
+                        "failure_class",
+                        "fallback_safe",
+                        "fallback_adapter",
+                        "fallback_order",
+                        "action_state",
+                    ):
                         self.assertIn(key, result)
                     self.assert_secret_free(completed.stdout + completed.stderr)
                     self.assert_secret_free(result)
                     self.assertNotIn("must-not-enter-evidence", completed.stdout + completed.stderr)
+                    self.assertNotIn(TOKEN_SENTINEL, completed.stdout + completed.stderr)
+                    self.assertEqual(jev_adapter.external_oracle_verdict(result, False), "not-passed")
+                    self.assertEqual(
+                        jev_adapter.external_oracle_verdict(result, True),
+                        "pass" if expected_status == "completed" else "not-passed",
+                    )
                     for path in result["evidence"]:
                         evidence = (case_root / path).read_text(encoding="utf-8")
                         self.assert_secret_free(evidence)
                         self.assertNotIn("must-not-enter-evidence", evidence)
+                        self.assertNotIn(TOKEN_SENTINEL, evidence)
 
             with mock.patch.object(jev_adapter, "MAX_TRACE_CHARS", 10):
                 oversized = self.run_adapter(evidence_dir=self.evidence_root / "oversized")

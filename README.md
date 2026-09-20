@@ -196,6 +196,11 @@ ignored native runtime packets. Re-adoption preserves an existing local config b
 regenerates runtime packets from the templates and that config when `--skip-agents` is not used.
 With `--skip-agents`, sync is an explicit later operator step.
 
+The optional `[qa].browser_adapter` key defaults to `auto`. Valid values are `auto`, `jev`,
+`playwright-mcp`, `orca`, `maestri`, and `manual`. `auto` tries Jev for eligible
+non-consequential fixtures, then LLM + Playwright MCP, exactly one IDE-native adapter, then manual.
+The QA execution skill defines safe timeout continuation and the independent-verdict requirement.
+
 ```bash
 python3 .agents/skills/wtk-config/scripts/workflow_config.py \
   --root /path/to/target-project --sync-agents

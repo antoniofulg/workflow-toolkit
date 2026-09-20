@@ -1,5 +1,8 @@
 version = 3
 
+[qa]
+browser_adapter = "auto" # Valid values: auto, jev, playwright-mcp, orca, maestri, manual
+
 [parallelization]
 mode = "disabled" # the Lean builder is sequential; resource serialization remains opt-in
 max_workers = "auto" # auto starts at 2 and scales to 4 when healthy

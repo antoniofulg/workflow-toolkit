@@ -1,6 +1,6 @@
 ---
 name: wtk-config
-description: Configure Workflow Toolkit providers, models, effort, review cadence, and feature routes; use for settings or packet sync, not gates, QA policy, or planning depth.
+description: Configure Workflow Toolkit providers, models, effort, review cadence, browser adapter, and feature routes; use for settings or packet sync, not gates, QA scenarios, or planning depth.
 ---
 
 # Workflow Configuration
@@ -26,6 +26,14 @@ python3 .agents/skills/wtk-config/scripts/workflow_config.py \
 The command validates the complete matrix and every template before writing, initializes a missing
 local config from the example, reports `changed` and `unchanged` runtime paths, and is idempotent.
 Adoption runs it after installing the missing example and skill-owned packet assets.
+
+## Browser QA adapter
+
+The optional `[qa].browser_adapter` key selects the browser QA route. Its default is `auto`; the
+valid values are `auto`, `jev`, `playwright-mcp`, `orca`, `maestri`, and `manual`. `auto` tries Jev
+for eligible non-consequential fixtures, then Playwright MCP, one host-declared Orca or Maestri
+adapter, then manual. Direct values select only that adapter. Read the full execution and
+safe-fallback contract in `wtk-qa-execute/SKILL.md`.
 
 ## Remediation stall bound
 

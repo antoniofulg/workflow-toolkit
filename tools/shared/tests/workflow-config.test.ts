@@ -1,8 +1,10 @@
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it } from "bun:test";
+import { parse } from "smol-toml";
+import { readWorkflowConfig, stageAgentPackets, validateWorkflowConfig } from "../../../scripts/installer/packets.js";
 
 const repositoryRoot = process.cwd();
 const skillPath = ".agents/skills/wtk-config/SKILL.md";
@@ -54,6 +56,74 @@ function packagedFiles(): string[] {
 }
 
 describe("workflow configuration skill", () => {
+  it("accepts the QA browser adapter contract", () => {
+    const accepted = ["auto", "jev", "playwright-mcp", "orca", "maestri", "manual"] as const;
+    const validValues = accepted.join(", ");
+    const example = parse(readRepositoryFile(".wtk.toml.example")) as Record<string, any>;
+    const absent = structuredClone(example);
+    delete absent.qa;
+    expect(validateWorkflowConfig(absent).qa.browser_adapter).toBe("auto");
+
+    const missingAdapter = structuredClone(example);
+    delete missingAdapter.qa.browser_adapter;
+    expect(validateWorkflowConfig(missingAdapter).qa.browser_adapter).toBe("auto");
+
+    for (const value of accepted) {
+      const config = structuredClone(example);
+      config.qa.browser_adapter = value;
+      expect(validateWorkflowConfig(config).qa.browser_adapter).toBe(value);
+    }
+
+    for (const value of ["jev-ultrafast", "unapproved"]) {
+      const config = structuredClone(example);
+      config.qa.browser_adapter = value;
+      expect(() => validateWorkflowConfig(config)).toThrow(validValues);
+    }
+
+    const unknownKey = structuredClone(example);
+    unknownKey.qa.credential = "credential-sentinel";
+    try {
+      validateWorkflowConfig(unknownKey);
+      throw new Error("Expected unknown QA key to fail");
+    } catch (error) {
+      expect(String(error)).toContain(validValues);
+      expect(String(error)).not.toContain("credential-sentinel");
+    }
+
+    const temporary = mkdtempSync(join(tmpdir(), "wtk-qa-config-"));
+    try {
+      const withoutQa = readRepositoryFile(".wtk.toml.example").replace(
+        /^\[qa\]\nbrowser_adapter = "auto".*\n/m,
+        "",
+      );
+      writeFileSync(join(temporary, ".wtk.toml"), withoutQa);
+      expect(readWorkflowConfig(temporary).qa.browser_adapter).toBe("auto");
+    } finally {
+      rmSync(temporary, { recursive: true, force: true });
+    }
+  });
+
+  it("documents and preserves the default QA browser adapter", () => {
+    const exampleText = readRepositoryFile(".wtk.toml.example");
+    expect(exampleText).toContain('[qa]\nbrowser_adapter = "auto"');
+    expect(exampleText).toContain("Valid values: auto, jev, playwright-mcp, orca, maestri, manual");
+
+    const temporary = mkdtempSync(join(tmpdir(), "wtk-qa-adoption-"));
+    try {
+      const withoutQa = exampleText.replace(/^\[qa\]\nbrowser_adapter = "auto".*\n/m, "");
+      const configPath = join(temporary, ".wtk.toml");
+      writeFileSync(configPath, withoutQa);
+      const original = readFileSync(configPath);
+      expect(readWorkflowConfig(temporary).qa.browser_adapter).toBe("auto");
+
+      const generated = stageAgentPackets(repositoryRoot, temporary);
+      expect(generated[".wtk.toml"]).toBeUndefined();
+      expect(readFileSync(configPath)).toEqual(original);
+    } finally {
+      rmSync(temporary, { recursive: true, force: true });
+    }
+  });
+
   it("defines resolution, resume, refresh, and explicit provider failure", () => {
     const skill = readRepositoryFile(skillPath);
 

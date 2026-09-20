@@ -2,14 +2,14 @@
 
 ## Handoff
 
-- **Feature**: `optional-jev-qa-adapter`; locally complete and closed.
-- **Phase / Task**: Build, two remediation batches, independent standard-profile verification, closing QA, durable promotion, and transient feature cleanup are complete.
-- **Completed**: One observable slice only: a consuming project may use Jev Ultrafast for explicitly non-consequential fixtures over dedicated CDP when its keys, module, and Browser Harness are available; otherwise `wtk-qa-execute` retains Playwright MCP first, then declared Orca/Maestri/manual fallback. Jev remains a driver and independent readback after reload remains the only path to `pass`. Evidence is allowlisted and the wrapper calls `Agent.run()` once.
-- **Evidence**: Round 3 Technical Verification PASS proves 8/8 checks, kills 5/5 faults, and leaves 0 confirmed security findings; `validate_verification.py` exits 0. QA report `docs/qa/reports/2026-09-19-optional-jev-qa-adapter.md` passes the packed quality install, installed-helper preflight/readback, exact package membership, cleanup, and residue checks. The broader QA contract result remains truthfully recorded as 33 pass / 3 unrelated pre-existing failures.
-- **Constraints**: Reuse `jev_ultrafast.Agent`; Jev only for non-consequential fixtures; dedicated headless CDP by default and dedicated headed CDP only on explicit request; Playwright MCP first fallback, then declared Orca/Maestri/manual; install no dependency; process-environment secrets only; one wrapper `Agent.run()` call; allowlisted secret-free evidence; no live browser proof in this source pack.
-- **Next step**: Human-scheduled delivery or a consumer-project live Jev/Playwright pilot. No remote delivery is authorized in this cycle.
-- **Blockers**: None. Live Jev/Browser Harness/Playwright execution remains a consumer-project limitation, not a source-pack readiness claim.
-- **Branch / state**: `feat/optional-jev-qa-adapter` at `680076a0` before the pending local closeout commit; `.specs/features/optional-jev-qa-adapter/` is removed per AD-037. No push, deployment, provider call, publication, or production mutation is authorized.
+- **Feature**: `default-jev-qa`; locally complete and closed on `feat/default-jev-qa`.
+- **Phase / Task**: Build, independent standard-profile verification, closing QA, durable promotion, and transient feature cleanup are complete.
+- **Completed**: Both config readers default `[qa].browser_adapter` to `auto`, validate the six stable values, and preserve an existing local config. `auto` selects Jev first, then Playwright MCP, one host-declared IDE-native adapter, and manual. Only a typed Jev-construction timeout permits Playwright fallback; every result retains oracle-owned verdict and secret-free evidence. AD-038, maintained instructions/tests, and durable QA records own the lasting contract.
+- **Evidence**: Independent verification proves C1-C7, 16/16 coverage sets, 4/4 test-policy rows, 5/5 killed faults, and 0 confirmed security findings; `validate_verification.py` exits 0. Fresh suites pass 64 Python config, 9 Bun config, 38 QA-skill, 9 Jev-adapter, and 78 installer packet/terminal tests. Closing QA passes every authorized offline package/config/preflight/readback leg with no defect; `QAS-use-optional-jev-qa-adapter` truthfully remains `untested` for the unavailable live browser route.
+- **Constraints**: Stable config names only; no `jev-ultrafast` alias; `auto` walks Jev -> Playwright MCP -> one host-declared IDE-native adapter -> manual; direct values force one adapter; Jev stays limited to dedicated non-consequential fixtures; auto-fallback only for unavailable or proven pre-action timeout; independent oracle owns pass; install no browser/provider dependency; expose no secrets or raw exceptions.
+- **Next step**: Human-scheduled consumer live Jev/Playwright QA or authorized delivery. No remote delivery is authorized in this cycle.
+- **Blockers**: None. Live Jev, safe-timeout continuation, unsafe no-replay, downstream adapters, and browser-oracle evidence remain a consumer-project QA limitation.
+- **Branch / state**: `feat/default-jev-qa`; implementation commits are `7ef7175b101c2eb745edf6089038d2be8d66cfd9` and `f39fef06b7183a87889c346b90835af0699fa59c`; feature artifacts are removed after promotion per AD-037. No push, deployment, provider call, publication, or production mutation is authorized.
 
 ## Decisions
 
@@ -41,7 +41,7 @@
 - **Scope**: `.agents/skills/qa-plan/`, `.agents/skills/qa-execute/`, provider `verifier` packets,
   `docs/qa/README.md`, QA guidelines and workflow docs.
 - **Date**: 2026-08-20
-- **Status**: active
+- **Status**: superseded by AD-038
 
 ### AD-003
 
@@ -624,4 +624,26 @@
   durable lessons, and QA records are not feature cleanup targets; knowledge writes still require
   their own authorization.
 - **Date**: 2026-09-12
+- **Status**: active
+
+### AD-038
+
+- **Decision**: `.wtk.toml` owns the consuming project's browser QA adapter selection through
+  `[qa].browser_adapter`. The stable values are `auto`, `jev`, `playwright-mcp`, `orca`, `maestri`,
+  and `manual`; absence defaults to `auto`. Automatic selection walks Jev, Playwright MCP, the one
+  IDE-native adapter declared by the host (`orca` or `maestri`), then manual. Direct values select
+  only that adapter. `docs/qa/README.md` continues to own fixtures, identities,
+  setup, cleanup, and limitations. Jev remains restricted to dedicated non-consequential fixtures,
+  and automatic continuation through LLM + Playwright MCP is allowed only when Jev is unavailable
+  or a timeout is proven to precede any product action. This supersedes AD-002's prose-only adapter
+  selection location while retaining its provider-neutral skills and consumer-owned runtimes.
+- **Reason**: WTK 1.1.0 required an explicit Jev declaration without defining a machine-readable
+  declaration surface, and its navigation timeout path recorded fallback metadata without executing
+  the reliable Playwright route.
+- **Trade-off**: Workflow configuration gains QA policy and two validators must remain aligned;
+  projects without Jev prerequisites immediately use the fixed Playwright-first fallback instead of
+  treating Jev absence as terminal.
+- **Scope**: `.wtk.toml`, `wtk-config`, installer config validation, `wtk-qa-execute`, Jev adapter,
+  adoption, QA contracts, and workflow documentation.
+- **Date**: 2026-09-19
 - **Status**: active
