@@ -1,7 +1,7 @@
 # J-consult-jev-adviser
 
 **Persona:** Workflow operator
-**Goal:** Use Jev's typed advice for a semantic decision while retaining action authority.
+**Goal:** Assign tool routing and higher-level advice to Jev without duplicate explicit consultation, while retaining action authority.
 **Entry point:** Direct invocation of `/wtk-discover`, `/wtk-plan`, `/wtk-lean`, `/wtk-implement`, `/wtk-deep-review`, `/wtk-qa` or `/wtk-ship`.
 **Tags:** wtk-jev-adviser
 
@@ -13,11 +13,12 @@
 
 ## Flow
 
-1. Give a direct phase invocation one semantic decision, minimal evidence and at least two candidate paths.
-2. Read the phase skill and confirm it reaches the shared Jev-first guidance before the agent chooses.
-3. When no key is available, confirm the adviser reports unavailability and the agent continues its normal evidence-based work.
-4. In a consumer environment with an authorized provider session, confirm a configured Jev recommendation is checked against current evidence and causes no automatic action or gate verdict.
-5. Change the phase, evidence or options and confirm the earlier advice is no longer used.
+1. Establish whether this session is confirmed to route model requests through an enabled gateway; installation alone does not establish routing.
+2. Give a direct phase invocation a higher-level decision, minimal evidence and at least two candidate paths; confirm it reaches the shared adviser guidance.
+3. For a gateway-managed ordinary tool choice, confirm no duplicate explicit adviser consultation is requested, including gateway hint or passthrough. For standalone, disabled or unknown routing, retain explicit consultation when available.
+4. When no adviser key is available, confirm the adviser reports unavailability and the agent continues its normal evidence-based work.
+5. In a consumer environment with an authorized provider session, confirm a configured Jev recommendation is checked against current evidence and causes no automatic action or gate verdict.
+6. Change the phase, evidence or options and confirm the earlier advice is no longer used.
 
 ## Promises
 

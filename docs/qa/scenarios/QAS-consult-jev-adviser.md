@@ -1,10 +1,10 @@
 ---
 id: QAS-consult-jev-adviser
 area: QAS
-title: Consult Jev before choosing a semantic path
+title: Assign Jev decisions to the gateway or explicit adviser
 persona: Workflow operator
 journey: J-consult-jev-adviser
-expected: When TypeSafe is configured, the agent consults Jev before a semantic choice, checks its advice against evidence, and retains action authority.
+expected: Confirmed gateway sessions delegate ordinary tool routing without duplicate explicit consultation, while higher-level and standalone decisions use the available adviser and retain action authority.
 entry_points: direct WTK phase-skill invocation; node .agents/skills/wtk/scripts/advise.mjs --phase <phase> --send
 qa_status: untested
 bug_ids:
@@ -16,7 +16,10 @@ last_report: docs/qa/reports/2026-09-20-jev-lifecycle.md
 overlaps:
 ---
 
-This promise covers Jev-first semantic consultation across direct WTK phase invocations. The command's preview, advice, validation, security and package boundaries have automated feature proofs. No independent host-agent walk has verified this behavior; the configured provider leg also requires a consumer session with authorized provider access, so the scenario remains untested.
+This promise follows the shared consultation-ownership policy across direct WTK phase invocations.
+The command's preview, advice, validation, security and package boundaries have automated feature
+proofs. Gateway coexistence has instruction review only; no live combined host-agent walk or
+duplicate-call benchmark has verified the new policy, so the scenario remains untested.
 
 The 2026-09-20 offline QA cycle passed six-phase preview, missing-key fallback, changed-input hash,
 normalized-input stability, direct-route resolution, and shared-policy readback through the public

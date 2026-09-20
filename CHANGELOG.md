@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-20
+
+### Fixed
+
+- Confirmed `jev-gateway` sessions delegate ordinary tool selection to the gateway instead of
+  requesting a duplicate explicit adviser consultation. Higher-level planning, investigation,
+  evidence and readiness decisions still use the adviser when available.
+- Standalone, disabled and unknown gateway sessions retain explicit consultation. A gateway
+  installation or key alone does not establish active routing; hint and passthrough results
+  remain the gateway's responsibility.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.3.1 install` and review the shared adviser reference update.
+- Launch gateway-managed sessions through your configured gateway and identify that session's
+  routing state. This hotfix does not install or configure the gateway, bypass its transport,
+  change workflow authority, or claim measured savings.
+
 ## [1.3.0] - 2026-09-20
 
 ### Added

@@ -2,10 +2,27 @@
 
 **Read when:** making or reviewing a lifecycle semantic decision.
 
-For every semantic decision that chooses a path, interpretation, investigation, priority or
-recommendation, consult Jev before deciding whenever the key is available, even when you already
-have a preferred answer. Consult before costly context expansion or investigation. Deterministic
-checks and exact lookups stay code-owned and do not need inference.
+Use Jev before higher-level decisions about scope, investigation strategy, evidence adequacy,
+priorities or readiness whenever the adviser key is available, even with a preferred answer.
+Consult before costly context expansion or investigation. Deterministic checks and exact lookups
+stay code-owned. Apply the ownership rule below directly, without an inference call to choose it.
+
+## Choose the consultation owner
+
+Treat a session as gateway-managed only when the user or host confirms that this session's model
+requests use `jev-gateway` with routing enabled. Installation or an API key alone is not evidence.
+Reuse this session fact; reassess when its launcher, endpoint or routing setting changes.
+
+| Current session | Ordinary tool selection and supported argument routing | Higher-level decisions |
+| --- | --- | --- |
+| Confirmed gateway routing | Let the gateway handle eligible requests and its own fallback; skip an explicit adviser call for the same tool choice | Consult the explicit adviser |
+| Standalone, routing off, unavailable gateway, or unknown routing | Consult the explicit adviser when available, as before | Consult the explicit adviser |
+
+Gateway hint or passthrough results, including low-confidence or Jev-error fallback, do not require
+a second consultation for the same tool choice; the agent continues within existing authority.
+Gateway tool selection does not settle planning, evidence or approval questions. The gateway may
+still inspect the tool request used to invoke the
+adviser; this policy adds no transport bypass or automatic request deduplication.
 
 ## Call Jev
 
@@ -15,7 +32,8 @@ to eight candidate options with distinct identifiers and short descriptions. The
 request. Never send repository files, transcripts or unrelated context; the caller is responsible
 for keeping free text non-sensitive.
 
-The phase skill invokes the helper with the matching phase and `--send` when the key is available:
+For decisions assigned to the explicit adviser, the phase skill invokes the helper with the
+matching phase and `--send` when the key is available:
 
 ```sh
 node .agents/skills/wtk/scripts/advise.mjs --phase build --send <<'JSON'
