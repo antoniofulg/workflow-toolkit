@@ -49,9 +49,19 @@ Orca before Maestri and invoke only that one. A direct value selects only that a
 prerequisites are unavailable, record the limitation instead of substituting another adapter.
 Use [`jev_adapter.py`](jev_adapter.py) for Jev preflight and the single bounded Jev attempt.
 
-For `auto`, Jev unavailability selects LLM + Playwright MCP as the first fallback. The helper does
-not invoke MCP or IDE tools; the Verifier follows the automatic chain using adapters exposed by its
-host.
+For `auto`, Jev unavailability selects LLM + Playwright MCP as the first fallback. A typed
+`TimeoutError` raised while constructing `jev_ultrafast.Agent(url, goal)` is classified
+`pre-action-timeout`; its result sets `fallback_safe: true` and
+`fallback_adapter: "playwright-mcp"`. Jev's constructor performs initial navigation and read-only
+observation; `Agent.run()` is the action loop.
+Use the fallback only after an independent read or fixture reset confirms known isolated state.
+Once `Agent.run()` starts, a timeout is unsafe to replay even when no action was recorded. The
+result classifies recorded action history as `post-action-timeout`, missing history as
+`ambiguous-timeout`, sets `fallback_safe: false` and `fallback_adapter: null`, and selects no
+automatic fallback. If an action began or state is uncertain, stop and inspect or reset the fixture
+before another driver acts. Only `auto` follows fallback metadata; direct values select one adapter.
+The helper does not invoke MCP or IDE tools; the Verifier follows the chain using adapters exposed
+by its host.
 
 The Jev helper reads credentials from the process environment only: `TYPESAFE_API_KEY` drives Jev
 decisions and `AI_GATEWAY_API_KEY` is aliased in process memory as the text-helper credential, so
@@ -63,11 +73,12 @@ endpoint. Profile labels, personal sessions, and Browser Harness's default local
 are not accepted. The helper installs neither Jev Ultrafast nor Browser Harness and does not provide
 a Playwright MCP, Orca Browser, or Maestri Portal bridge; those adapters remain host-native.
 
-The helper reports the actual adapter, execution path, allowlisted evidence, fallback order, and
-limitation. Its `completed`/`DONE` result is driver evidence only: it is never a QA `pass`. Continue
-through the independent read path and reload before a Verifier records a scenario verdict. The
-wrapper calls `Agent.run()` once; it never restarts or retries that call. Evidence excludes
-authorization, cookie, token, and credential fields recursively, and omits raw exception text.
+The helper reports the actual adapter, execution path, allowlisted evidence, failure classification,
+fallback eligibility, and limitation. Its `completed`/`DONE` result is driver evidence only: it is
+never a QA `pass`. Continue through the independent read path and reload before a Verifier records a
+scenario verdict. The wrapper calls `Agent.run()` once; it never restarts or retries that call.
+Evidence excludes authorization, cookie, token, and credential fields recursively, and omits raw
+exception text.
 
 ## Procedure
 

@@ -99,6 +99,12 @@ def _result(
         "status": status,
         "evidence": evidence or [],
         "limitation": limitation,
+        "failure_class": None,
+        "fallback_safe": False,
+        "fallback_adapter": None,
+        "fallback_order": None,
+        "action_state": "not-started",
+        "qa_verdict": "not-passed",
         **extra,
     }
     return redact(result, env)
@@ -270,6 +276,12 @@ def _safe_trace_state(state: Any, index: int) -> dict[str, Any]:
     return record
 
 
+def _recorded_action(state: Any) -> bool:
+    """Treat any non-empty upstream action history as a possible product effect."""
+    history = state.get("history") if isinstance(state, Mapping) else None
+    return isinstance(history, (list, tuple)) and bool(history)
+
+
 def select_fallback_adapter(available: Iterable[str]) -> str:
     """Select Playwright or exactly one declared IDE-native adapter, then manual."""
     values = {IDE_NATIVE_ALIASES.get(str(item).strip().lower(), str(item).strip().lower()) for item in available}
@@ -278,10 +290,10 @@ def select_fallback_adapter(available: Iterable[str]) -> str:
     return next((candidate for candidate in IDE_NATIVE_ORDER if candidate in values), "manual")
 
 
-def select_existing_adapter(result: Mapping[str, Any], existing_adapter: str | Iterable[str]) -> str:
-    """Select a declared fallback through the same ordered selector used by the caller."""
-    if result.get("status") != "unavailable":
-        return _string(result.get("adapter", ADAPTER))
+def select_existing_adapter(result: Mapping[str, Any], existing_adapter: str | Iterable[str]) -> str | None:
+    """Select a fallback only when the result explicitly permits automatic continuation."""
+    if result.get("status") != "unavailable" and result.get("fallback_safe") is not True:
+        return None
     available = existing_adapter if not isinstance(existing_adapter, str) else [existing_adapter]
     return select_fallback_adapter(available)
 
@@ -304,10 +316,13 @@ def _unavailable(limitation: str, env: Mapping[str, str], existing_adapter: str)
         "unavailable",
         limitation=limitation,
         env=env,
+        failure_class="unavailable",
+        fallback_safe=True,
         fallback_order=list(FALLBACK_ORDER),
         fallback_adapter=select_existing_adapter({"status": "unavailable"}, existing_adapter),
         declared_fallback=_declared_fallback(existing_adapter),
         execution_path="preflight",
+        action_state="not-started",
     )
 
 
@@ -357,6 +372,11 @@ def run_jev(
     terminal = "failed"
     limitation = "provider or browser execution failed"
     run_started = False
+    phase = "agent-construction"
+    action_state = "not-started"
+    failure_class: str | None = "unclassified-failure"
+    fallback_safe = False
+    fallback_adapter: str | None = None
     updates = {
         "TEXT_MODEL_API_KEY": effective_env["AI_GATEWAY_API_KEY"],
         "TEXT_MODEL_BASE_URL": effective_env.get("TEXT_MODEL_BASE_URL", TEXT_HELPER_URL),
@@ -368,20 +388,45 @@ def run_jev(
     try:
         with _temporary_environment(updates), contextlib.redirect_stdout(captured_stdout), contextlib.redirect_stderr(captured_stderr):
             agent = factory(url, goal)
+            phase = "agent-context"
             with agent as active:
                 run_started = True
+                phase = "agent-run"
+                action_state = "unknown"
                 for index, state in enumerate(active.run(), start=1):
+                    if _recorded_action(state):
+                        action_state = "started"
                     states.append(_safe_trace_state(state, index))
                     status = _string(state.get("status", "")).upper() if isinstance(state, Mapping) else ""
                     if status in {"DONE", "COMPLETED"}:
                         terminal = "completed"
+                        failure_class = None
                         limitation = ""
                         break
                     if index >= MAX_STEPS:
                         limitation = f"bounded run stopped after {MAX_STEPS} states"
                         break
+    except TimeoutError:
+        terminal = "failed"
+        if phase == "agent-construction":
+            failure_class = "pre-action-timeout"
+            fallback_safe = True
+            fallback_adapter = select_existing_adapter(
+                {"status": "failed", "fallback_safe": True}, existing_adapter
+            )
+            limitation = "initial browser navigation timed out before product actions"
+        elif phase == "agent-run" and action_state == "started":
+            failure_class = "post-action-timeout"
+            limitation = "execution timed out after a recorded browser action"
+        else:
+            failure_class = "ambiguous-timeout"
+            action_state = "unknown"
+            limitation = "execution timed out with product-action state uncertain"
     except Exception:
         terminal = "failed"
+        failure_class = "unclassified-failure"
+        if phase == "agent-context":
+            action_state = "unknown"
         limitation = "provider or browser execution failed"
 
     trace = {
@@ -390,14 +435,34 @@ def run_jev(
         "status": terminal,
         "browser_mode": mode,
         "run_started": run_started,
+        "failure_class": failure_class,
+        "fallback_safe": fallback_safe,
+        "fallback_adapter": fallback_adapter,
+        "action_state": action_state,
         "steps": states,
     }
     try:
         evidence_path = _write_evidence(destination, trace, effective_env)
     except AdapterInputError as exc:
-        return _result("invalid", limitation=str(exc), env=effective_env, execution_path="evidence-write")
+        return _result(
+            "invalid",
+            limitation=str(exc),
+            env=effective_env,
+            execution_path="evidence-write",
+            failure_class="evidence-write-invalid",
+            action_state=action_state,
+            agent_run_started=run_started,
+        )
     except OSError:
-        return _result("failed", limitation="evidence write failed", env=effective_env, execution_path="evidence-write")
+        return _result(
+            "failed",
+            limitation="evidence write failed",
+            env=effective_env,
+            execution_path="evidence-write",
+            failure_class="evidence-write-failed",
+            action_state=action_state,
+            agent_run_started=run_started,
+        )
     checkout = Path(checkout_root).resolve()
     result = _result(
         terminal,
@@ -408,7 +473,11 @@ def run_jev(
         qa_verdict="unverified" if terminal == "completed" else "not-passed",
         independent_oracle_required=True,
         agent_run_started=run_started,
-        fallback_order=list(FALLBACK_ORDER) if terminal != "completed" else None,
+        failure_class=failure_class,
+        fallback_safe=fallback_safe,
+        fallback_adapter=fallback_adapter,
+        fallback_order=list(FALLBACK_ORDER) if fallback_safe else None,
+        action_state=action_state,
     )
     return result
 

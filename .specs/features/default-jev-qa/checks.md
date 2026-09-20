@@ -93,6 +93,9 @@ Cost: seven focused proofs across the existing Python adapter/config and Bun ins
 ## Handoff
 
 - S1 reads approximately 178 KB / 4 = 45k tokens across config readers, examples, docs, and their canonical tests; S2 adds approximately 47 KB / 4 = 12k across the adapter, skill, and focused tests; cumulative ~57k is under the 150k budget - one builder owns both slices sequentially.
-- **Boundary:** C1-C4 proved green; the S1 commit hash is returned in the implementer handoff.
-- **Settled mid-build:** No additional decisions.
-- **Abandoned:** No implementation attempts.
+- **Boundary:** C1-C4 closed at `7ef7175b101c2eb745edf6089038d2be8d66cfd9`.
+- **Settled mid-build:** No additional S1 decisions.
+- **Abandoned:** No S1 implementation attempts.
+- **Boundary:** C5-C7 proved green in the S2 commit; its hash is returned in the implementer handoff.
+- **Settled mid-build:** Only a typed timeout during Jev construction proves pre-action; no timeout text is parsed.
+- **Abandoned:** Automatic fallback after `Agent.run()` begins, because action state can be uncertain.

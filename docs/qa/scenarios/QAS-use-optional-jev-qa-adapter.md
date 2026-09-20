@@ -1,32 +1,27 @@
 ---
 id: QAS-use-optional-jev-qa-adapter
 area: QAS
-title: Use the optional Jev QA adapter safely
+title: Use the default Jev browser QA route safely
 persona: Workflow operator
 journey: J-use-optional-jev-qa-adapter
-expected: An exact local package installs the optional Jev helper and readable safety policy without browser dependencies, and its installed copy fails closed with structured fallback metadata when prerequisites or policy are unmet.
-entry_points: workflow-toolkit package; wtk install; .agents/skills/wtk-qa-execute/SKILL.md; .agents/skills/wtk-qa-execute/jev_adapter.py
-qa_status: pass
+expected: When browser_adapter is absent, WTK selects auto and uses Jev first for eligible fixtures, allows Playwright MCP only for unavailable or proven pre-action timeout, and records pass only after matching independent readback after reload.
+entry_points: consumer .wtk.toml; wtk install; .agents/skills/wtk-qa-execute/SKILL.md; .agents/skills/wtk-qa-execute/jev_adapter.py
+qa_status: untested
 bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence: docs/qa/evidence/2026-09-19-optional-jev-qa-adapter/package-summary.json; docs/qa/evidence/2026-09-19-optional-jev-qa-adapter/installer-transcript.txt; docs/qa/evidence/2026-09-19-optional-jev-qa-adapter/installed-readback.json; docs/qa/evidence/2026-09-19-optional-jev-qa-adapter/preflight-results.json; docs/qa/evidence/2026-09-19-optional-jev-qa-adapter/selected-gates.txt
-last_report: docs/qa/reports/2026-09-19-optional-jev-qa-adapter.md
+evidence:
+last_report:
 overlaps: ADP-install-versioned-workflow-package; ADP-layered-workflow-adoption
 ---
 
-This promise owns the packaged optional-adapter boundary. QA reads the exact local archive and an
-independently installed quality module, then invokes only preflight paths that cannot reach a live
-browser or provider. It confirms helper membership, policy text, no dependency installation,
-structured `unavailable` and `invalid` results, Playwright-first fallback metadata, and the external
-oracle boundary.
+This promise covers the default browser route and the packaged safety boundary. An absent setting
+resolves to `auto`, which starts with Jev for eligible non-consequential fixtures. Automatic
+continuation requires Jev unavailability or a typed pre-action timeout plus independently known
+fixture state; any possible action requires inspection or reset. A matching independent readback
+after reload remains the only source of a QA pass.
 
-Ready Jev execution, post-start provider/browser failure, and live fallback adapters are not
-reachable in this source repository. Their offline contract proofs remain Technical Verification
-evidence and cannot produce this scenario's verdict. A `pass` requires the packed install,
-preflight results, independent filesystem reload, and clean residue planned by the owning charter.
-
-QA Execute passed this bounded promise at `680076a0` on 2026-09-19. The exact packed and installed
-bytes matched, missing-authority and invalid-destination preflights failed closed, no dependency or
-external adapter ran, and a fresh post-probe readback preserved the policy and oracle boundary.
+The 2026-09-19 report remains evidence for the earlier package-only promise. This checkout has no
+consumer fixture app, browser, Jev runtime, Browser Harness, or live Playwright MCP, so this updated
+promise stays `untested` until a consumer-level walk verifies the automatic route and verdict.

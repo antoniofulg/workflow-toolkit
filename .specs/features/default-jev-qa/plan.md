@@ -114,8 +114,8 @@ selected fallback, no replay on unsafe paths, secret-free evidence, and oracle-o
 | --- | --- | --- | --- |
 | JDF-01 | S1 | 1, 2, 3 | Built (C1-C2) |
 | JDF-02 | S1 | 4, 5, 6 | Built (C3-C4) |
-| JDF-03 | S2 | 7, 8, 9 | In checks |
-| JDF-04 | S2 | 10, 11, 12 | In checks |
+| JDF-03 | S2 | 7, 8, 9 | Built (C4-C5) |
+| JDF-04 | S2 | 10, 11, 12 | Built (C6-C7) |
 
 ## Out of scope
 

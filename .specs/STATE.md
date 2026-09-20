@@ -2,14 +2,14 @@
 
 ## Handoff
 
-- **Feature**: `default-jev-qa`; S1 built on `feat/default-jev-qa`.
-- **Phase / Task**: Build; S1 closed, S2 is next.
-- **Completed**: Both config readers accept `[qa].browser_adapter`, default it to `auto`, reject values outside the six-value enum, and preserve an existing local config during sync/adoption. The example and QA routing documentation describe the stable values and one IDE-native fallback.
-- **Evidence**: C1-C4 named proofs pass; scoped Python config reports 64 passed, Bun config 9 passed, QA skills 37 passed, and Jev adapter 7 passed. `validate_plan.py` and `validate_checks.py` exit 0.
+- **Feature**: `default-jev-qa`; both slices built on `feat/default-jev-qa`.
+- **Phase / Task**: Build complete; fresh independent verification remains.
+- **Completed**: Both config readers default `[qa].browser_adapter` to `auto`, validate the six stable values, and preserve an existing local config. `auto` selects Jev first, then Playwright MCP, one host-declared IDE-native adapter, and manual. Only a typed Jev-construction timeout permits Playwright fallback; every result retains oracle-owned verdict and secret-free evidence.
+- **Evidence**: C1-C7 named proofs pass; scoped Python config reports 64 passed, Bun config 9 passed, QA skills 38 passed, Jev adapter 9 passed, and installer packet/terminal suites 78 passed. `validate_plan.py` and `validate_checks.py` exit 0.
 - **Constraints**: Stable config names only; no `jev-ultrafast` alias; `auto` walks Jev -> Playwright MCP -> one host-declared IDE-native adapter -> manual; direct values force one adapter; Jev stays limited to dedicated non-consequential fixtures; auto-fallback only for unavailable or proven pre-action timeout; independent oracle owns pass; install no browser/provider dependency; expose no secrets or raw exceptions.
-- **Next step**: Implement S2 timeout classification, safe fallback metadata, and no-replay instructions; then close C5-C7.
-- **Blockers**: None.
-- **Branch / state**: `feat/default-jev-qa`; S1 commit created, S2 implementation remains. No push, deployment, provider call, publication, or production mutation is authorized.
+- **Next step**: Dispatch one fresh Verifier over the full feature range. The QA scenario remains `untested` because this source checkout has no consumer fixture app or live browser adapters.
+- **Blockers**: None; independent verification has not run in this session.
+- **Branch / state**: `feat/default-jev-qa`; S1 base commit is `7ef7175b101c2eb745edf6089038d2be8d66cfd9` and both implementation slices are present. No push, deployment, provider call, publication, or production mutation is authorized.
 
 ## Decisions
 

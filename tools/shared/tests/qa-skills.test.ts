@@ -454,6 +454,22 @@ describe("canonical QA skills", () => {
     expect(jevAdapter).toContain("from jev_ultrafast import Agent");
   });
 
+  it("IT-028 forbids unsafe Jev replay", () => {
+    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
+    const jevAdapter = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/jev_adapter.py"));
+
+    expect(qaExecute).toContain("pre-action-timeout");
+    expect(qaExecute).toContain("fallback_safe: true");
+    expect(qaExecute).toContain("fallback_safe: false");
+    expect(qaExecute).toContain("fallback_adapter");
+    expect(qaExecute).toContain("Once Agent.run() starts, a timeout is unsafe to replay");
+    expect(qaExecute).toContain("stop and inspect or reset the fixture before another driver acts");
+    expect(jevAdapter).toContain("pre-action-timeout");
+    expect(jevAdapter).toContain("post-action-timeout");
+    expect(jevAdapter).toContain("ambiguous-timeout");
+    expect(qaExecute).toContain("omits raw exception text");
+  });
+
   it("IT-024 packages the optional Jev QA adapter without owning installation", () => {
     const packageJson = JSON.parse(readRepositoryFile("package.json")) as { files: string[]; dependencies?: Record<string, string> };
     const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));

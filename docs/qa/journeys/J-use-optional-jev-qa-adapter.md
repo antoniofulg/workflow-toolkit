@@ -1,8 +1,8 @@
 # J-use-optional-jev-qa-adapter
 
 **Persona:** Workflow operator
-**Goal:** Use the packaged optional Jev browser driver without installing a browser dependency or
-surrendering the QA verdict to the driver.
+**Goal:** Use the default Jev-first browser QA route without installing browser dependencies or
+surrendering the QA verdict to a driver.
 **Entry point:** exact local package → `wtk install` → quality module → installed
 `.agents/skills/wtk-qa-execute/`
 **Tags:** wtk-qa
@@ -25,14 +25,14 @@ surrendering the QA verdict to the driver.
 2. Run the packed public installer from a disposable Git consumer and select `quality`. Read the
    installed skill and helper through a separate process. Confirm consumer package and lock files
    remain byte-identical and no dependency, browser, provider client, or external skill appears.
-3. Read the installed instructions. Confirm Jev is optional, limited to non-consequential fixtures,
-   defaults to a dedicated headless CDP endpoint, permits headed mode only when explicitly requested
-   with a dedicated CDP endpoint, rejects personal/default browser discovery, and falls back in the
-   order Playwright MCP, declared Orca, declared Maestri, then manual.
+3. Read the installed instructions and config example. Confirm `browser_adapter` defaults to `auto`,
+   lists the six supported values, uses Jev only for non-consequential fixtures, requires a dedicated
+   CDP endpoint, and falls back through Playwright MCP, exactly one host-declared Orca or Maestri
+   adapter, then manual. If both native adapters are present, only Orca is selected.
 4. With all provider-key variables absent, invoke the installed helper for a non-consequential
    fixture using a checkout-owned evidence destination. Require exit `2`, exactly one JSON result,
-   status `unavailable`, the four required result fields, a secret-free missing-prerequisite
-   limitation, Playwright-first fallback metadata, and no evidence write or browser/provider action.
+   status `unavailable`, `fallback_safe: true`, `fallback_adapter: "playwright-mcp"`, a secret-free
+   missing-prerequisite limitation, and no evidence write or browser/provider action.
 5. Invoke the installed helper for a consequential journey with the same scrubbed environment.
    Require policy rejection before prerequisite discovery, the same structured unavailable/fallback
    shape, and no evidence write or browser/provider action.
@@ -61,5 +61,4 @@ residue canary and does not reset that scenario.
 
 This source repository has no browser surface, server, fixture application, installed Jev runtime,
 Browser Harness, or Playwright MCP adapter. Live Jev, browser, provider, and fallback execution stay
-outside this journey. Technical Verification at `680076a0` supplies the offline ready, failure,
-single-call, redaction, and prerequisite-matrix evidence; it is not relabeled as a user walk.
+outside this journey. Offline contract proofs do not change the scenario's `untested` verdict.
