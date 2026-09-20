@@ -10,3 +10,8 @@ license are pinned in [`skills-lock.json`](skills-lock.json) and its attribution
 
 Project-owned skill adaptations retain their per-file `CC-BY-4.0` frontmatter. External skill
 sources and reviewed revisions remain listed in [`skills-lock.json`](skills-lock.json).
+
+The five bundled security lifecycle skills are reviewed copies of
+[`antoniofulg/security-lifecycle`](https://github.com/antoniofulg/security-lifecycle) at commit
+`bd1ae10f1db3d38e12166b8c789f0ec9d33253e3`. Their individual notices and retained license texts
+remain inside each skill directory.

@@ -2,7 +2,7 @@
 
 ## Skills
 
-The workflow ships fourteen local capabilities:
+The workflow ships nineteen local capabilities:
 
 | Skill | Role |
 | --- | --- |
@@ -20,18 +20,18 @@ The workflow ships fourteen local capabilities:
 | `ponytail` (`full`) | Shortest code that works. Stdlib before a dependency. |
 | `prompt-review` | Audits instruction bundles for scope, overlap, loading, and authorization clarity. |
 | `wtk-ship` | Unattended run: classify work; credential-free configuration stays local, while eligible work may deliver one feature branch through one pull request. |
+| `security-audit-coordinator` | Coordinates explicit whole-codebase audits with coverage and independent verification. |
+| `security-spec` | Defines security requirements and negative tests during Specify. |
+| `security-threat-model` | Models repository-grounded threats and trust boundaries. |
+| `security-implementation` | Implements secure defaults and requested hardening. |
+| `security-review` | Reviews bounded diffs or code slices for confirmed vulnerabilities. |
 
 Canonical copies: `.agents/skills/`. Claude: symlinks in `.claude/skills/`. Cursor / Codex /
 OpenCode consume `.agents`. Do not add `.cursor/skills`.
 
-The security skills are external dependencies, not bundled capabilities. The pinned entries for
-`security-spec`, `security-threat-model`, `security-implementation`, and `security-review` live in
-`skills-lock.json`.
-The lock also pins the CLI version (`1.5.23`). Adoption prints a separate command for their
-explicitly authorized installation into the same `.agents/skills/` tree. The command uses reviewed
-commit refs and hashes; it does not install
-`latest` or update dependencies automatically. Until it succeeds, the security gate remains
-uncovered.
+The five security skills are bundled reviewed capabilities. Their `skills-lock.json` entries pin
+the upstream source, canonical path, commit, CLI version (`1.5.23`), and full-tree hash. Adoption
+installs the packaged trees through core without resolving `latest` or contacting the network.
 
 Planner / implementer / explorer / verifier / designer are five windows. Canonical packet bodies live in
 `.agents/skills/wtk-config/assets/agents/{cursor,claude,codex}/`; sync generates ignored runtime files in
@@ -78,8 +78,8 @@ remain owned by the consuming project. An interrupted publication leaves a trans
 the next run offers restoration before a new plan.
 
 Fresh consumers receive generic managed knowledge instructions and neutral consumer-owned wiki
-indexes/log files. Source concepts and dated raw observations are never copied. External security
-dependencies remain separately authorized and are not installed by this command.
+indexes/log files. Source concepts and dated raw observations are never copied. Reviewed security
+skills are managed core files and follow the same preview, conflict, backup, and rollback contract.
 
 The consuming project owns product docs, architecture, design, stack, and `make check`.
 

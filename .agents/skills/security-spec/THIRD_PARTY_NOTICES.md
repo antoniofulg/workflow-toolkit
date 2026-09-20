@@ -6,6 +6,16 @@ Original requirements and test-contract core written for security-lifecycle.
 The agent-tools reference additionally draws on the sources below. This file and
 bundled licenses travel with the skill when it is installed independently.
 
+## Extended security surfaces
+
+The identity/client, distributed-data, platform-integrity and general AI additions
+are an original requirements-level synthesis informed by
+[Cloudflare security-audit](https://github.com/cloudflare/security-audit-skill/tree/c1c8a8c1471069fb0e188eeaff69b8e8db6564a8/skills/security-audit),
+commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8`, checked 2026-09-19.
+Copyright (c) 2025-2026 Cloudflare, Inc.; source MIT license preserved in
+[full](licenses/Cloudflare-MIT.txt). Attack classes were rewritten as observable
+requirements and negative-test contracts; no source prompt was copied verbatim.
+
 ## Agent and tool sources
 
 Modified original synthesis, checked 2026-09-12:

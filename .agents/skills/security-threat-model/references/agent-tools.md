@@ -22,6 +22,13 @@ Assets include user-task authority, credentials, private data, browser context,
 filesystem/network reach and consequential business actions. Identify limits,
 retry/idempotency and cancellation behavior that affect the blast radius.
 
+For prompt assembly, retrieval and persistent memory, map context provenance,
+priority, tenant/session filters, write authority, derived summaries/embeddings and
+deletion paths. Model malicious retrieved content, cross-session context bleed and
+memory poisoning through the actual disclosure or action boundary. Record context
+and output size, model/tool-call count, delegation depth and operator-spend budgets;
+model behavior alone is not a deterministic authorization control.
+
 ## MCP branch
 
 For HTTP: map client, authorization server, MCP resource server and any upstream

@@ -13,9 +13,19 @@ Apply during Design, or Specify for new boundaries, authentication/authorization
 payments, sensitive data, uploads, code execution or significant integrations.
 This produces threats, not confirmed code vulnerabilities.
 
-For systems exposing or consuming agent tools, including MCP or WebMCP, read
-[agent and tool boundaries](references/agent-tools.md) and use only applicable
-provider/consumer and protocol sections. Keep the material-assumption check-in.
+For systems assembling prompts, retrieving context, using persistent memory or
+exposing/consuming agent tools, read [AI, agent and tool boundaries](references/agent-tools.md).
+Use only applicable AI, provider/consumer and protocol sections. Keep the
+material-assumption check-in.
+
+For other evidenced boundaries, read only the matching model reference:
+
+- Authentication/federation, browser or client trust:
+  [identity and client boundaries](references/identity-client-boundaries.md).
+- RPC, queues, retries, derived data or lifecycle:
+  [distributed data boundaries](references/distributed-data-boundaries.md).
+- CI/release, cloud/IAM, native code, mobile, desktop or local IPC:
+  [platform integrity boundaries](references/platform-integrity-boundaries.md).
 
 1. Establish scope, deployment evidence and missing context. Map components,
    entrypoints and data flows with file/line evidence. Separate runtime,

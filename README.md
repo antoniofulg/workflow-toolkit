@@ -115,20 +115,18 @@ authors and communities:
 The QA skills use their own wording and structure for this workflow; the links above identify the
 inspiration and do not claim upstream authorship.
 
-The workflow references four external security skills:
+The workflow bundles five reviewed security lifecycle skills:
 
+- `security-audit-coordinator` for explicit whole-codebase security audits;
 - `security-spec` for security requirements and negative tests during Specify;
 - `security-threat-model` for repository-grounded threats and trust boundaries;
 - `security-implementation` for secure-by-default implementation and hardening;
 - `security-review` for high-confidence residual vulnerability reviews.
 
-Reviewed copies are versioned here for local agents, but excluded from the npm package.
-Their GitHub source, canonical path, reviewed commit, CLI
-version (`1.5.23`), and content hash are authoritative in [`skills-lock.json`](skills-lock.json).
-Adoption prints a
-separate installer command; run it only after explicit authorization because it uses the network
-and writes the consumer's `.agents/skills/` tree. It does not install `latest` or silently update
-these dependencies.
+Their GitHub source, canonical path, reviewed commit, CLI version (`1.5.23`), and full-tree hash are
+authoritative in [`skills-lock.json`](skills-lock.json). The package includes those exact reviewed
+trees. `wtk install` publishes them through the normal offline core preview, conflict, backup,
+rollback, alias, and adoption-manifest flow; it never resolves `latest` or fetches security skills.
 
 ## Guided installation details
 
@@ -305,7 +303,7 @@ repository boundary. Retired workflow files are removed only when their managed 
 are pristine; edited or unproven paths conflict with zero writes.
 
 Each release lists its upgrade steps under `### Migration` in the changelog; follow them in order
-after installation. The package identity for this release is `workflow-toolkit@1.1.0` with the `wtk` executable.
+after installation. The package identity for this release is `workflow-toolkit@1.2.0` with the `wtk` executable.
 
 ## Managed paths
 
@@ -387,8 +385,7 @@ local runtime packets, and records per-file ownership in `.my-workflow/adoption.
 consumer prose through managed blocks, never removes an installed layer, and leaves package
 metadata, local config, and unknown files untouched. Always review the plan and resulting diff
 before accepting managed-path updates.
-Adoption itself does not install external security skills. It prints the exact command for the
-separate authorized step and leaves the security gate uncovered until that command succeeds.
+Adoption installs the five reviewed security skills with core. No separate network step is required.
 
 ## Skills
 
@@ -397,20 +394,10 @@ Codex and OpenCode consume `.agents`. Do not add `.cursor/skills` or other agent
 project-owned `wtk-qa-plan` and `wtk-qa-execute` skills use the consuming project's profile in
 `docs/qa/README.md`; they do not select a framework or replace the project's gate.
 
-`npx workflow-toolkit install` installs and updates only the workflow-owned `wtk` router, its Lean
-skills (`wtk-lean`, `wtk-discover`, `wtk-plan`, `wtk-implement`), Ponytail, Deep
-Review, QA, wtk-config, and wtk-ship skills. Keep those canonical copies in
-`.agents/skills/` and the Claude Code
-symlinks in `.claude/skills/`. The four external security skills are a separate authorized step:
-
-```bash
-python3 /path/to/workflow-toolkit/scripts/install_security_skills.py \
-  /path/to/target-project --yes
-```
-
-The installer uses only the reviewed refs and hashes in `skills-lock.json`; it does not resolve
-`latest` or perform automatic updates. Review its printed plan and authorize the command before
-running it. Until it succeeds, do not treat the security gate as covered.
+`npx workflow-toolkit install` installs and updates the workflow-owned `wtk` router, its Lean skills
+(`wtk-lean`, `wtk-discover`, `wtk-plan`, `wtk-implement`), Ponytail, Deep Review, QA, wtk-config,
+wtk-ship, and the five reviewed security lifecycle skills. Keep canonical copies in
+`.agents/skills/` and Claude Code symlinks in `.claude/skills/`.
 
 `wtk-ship` is vendored here. `CLAUDE.md` is the one line `@AGENTS.md` (not a symlink). Canonical
 packet templates live under `.agents/skills/wtk-config/assets/agents/{cursor,claude,codex}/`; generated implementer,

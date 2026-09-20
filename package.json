@@ -1,6 +1,6 @@
 {
   "name": "workflow-toolkit",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,6 @@
   "files": [
     "bin/wtk.js",
     "scripts/installer",
-    "scripts/install_security_skills.py",
     "skills-lock.json",
     "NOTICE.md",
     "AGENTS.md",
@@ -50,6 +49,11 @@
     ".agents/skills/ponytail-help",
     ".agents/skills/ponytail-review",
     ".agents/skills/prompt-review",
+    ".agents/skills/security-audit-coordinator",
+    ".agents/skills/security-implementation",
+    ".agents/skills/security-review",
+    ".agents/skills/security-spec",
+    ".agents/skills/security-threat-model",
     "!**/__pycache__/**",
     "!**/*.pyc"
   ],

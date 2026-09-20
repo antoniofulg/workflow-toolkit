@@ -19,5 +19,12 @@ credentials browsers attach automatically when selecting CSRF controls; CORS is
 not access control. Constrain third-party script execution through the applicable
 deployment policy and verify which headers/controls the hosting layer supplies.
 
+Constrain service-worker registration/scope and partition its caches by identity.
+Validate WebSocket origin where browser credentials authenticate the connection.
+Avoid merging attacker-controlled keys into security-sensitive objects; use objects
+without prototypes or explicit key allowlists when prototype pollution is possible.
+Bind navigation, opener and frame-sensitive actions to the expected origin and apply
+server-enforced frame policy where UI redress would authorize a consequential act.
+
 Test normal rendering alongside hostile text, URLs and message origins. Record
 the renderer/control actually used rather than importing a technology checklist.

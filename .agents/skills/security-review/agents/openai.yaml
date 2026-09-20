@@ -1,4 +1,4 @@
 interface:
   display_name: "Security Review"
   short_description: "Contextual review of confirmed vulnerabilities"
-  default_prompt: "Use $security-review to review this diff and confirm vulnerabilities."
+  default_prompt: "Use $security-review to review this bounded change and confirm vulnerabilities."

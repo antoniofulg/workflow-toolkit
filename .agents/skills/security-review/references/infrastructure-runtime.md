@@ -8,6 +8,11 @@ access and network exposure in the deployed service, VM or container. Build-stag
 privileges and declared ports do not establish runtime permissions or exposure.
 Inspect deployment overrides and final artifacts, not just source declarations.
 
+For orchestrated or edge runtimes, inspect namespace/label selection, admission
+controls, workload identity, metadata and management-plane access, service-mesh or
+trusted-proxy identity, provider-event sources and secret renewal fallback. Treat
+hosted policy absent from source as Needs verification rather than assuming defaults.
+
 Root without a concrete escalation/impact path is hardening, not an automatic
 Critical finding. If a reachable write/execute path combines with privileged
 resources, explain the blast radius without duplicate findings. An unprivileged

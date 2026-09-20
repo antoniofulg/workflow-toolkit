@@ -29,8 +29,8 @@ Hardening recommendations are best-practice deviations, not confirmed findings.
 5. Report changes, validation and limitations. Passively warn only about
    Critical/High-impact concerns encountered during the work, clearly labeling
    uncertainty and hardening recommendations. Do not expand into an audit or
-   issue confirmed-vulnerability finding cards. An explicit audit belongs to a
-   separately selected review skill.
+   issue confirmed-vulnerability finding cards. An explicit whole-codebase audit
+   belongs to a separately selected `security-audit-coordinator` skill.
 
 When correctness depends on a framework/database/runtime API or default, consult
 the consumer's preferred documentation tool and current official documentation
@@ -41,18 +41,24 @@ state the uncertainty and choose a supported safe construction; do not invent AP
 
 ## Selective references
 
-- Exposing or consuming agent tools, including MCP or WebMCP:
-  [agents and tools](references/agent-tools.md); use only applicable role/protocol
-  sections and follow its links to current official documentation when needed.
+- Prompt assembly, retrieval, persistent memory or agent tools, including MCP/WebMCP:
+  [AI, agents and tools](references/agent-tools.md); use only applicable AI,
+  role/protocol sections and follow current official documentation when needed.
 - Login, sessions, protected actions or tenant access:
   [identity and access](references/identity-access.md).
+- Federation, recovery, passkeys, API keys or mTLS:
+  [identity protocols](references/identity-protocols.md).
 - Queries, records, transactions, private caches or sensitive output:
   [data and persistence](references/data-persistence.md).
+- RPC, queues, retries, derived copies, deletion or restore:
+  [distributed data lifecycle](references/distributed-data-lifecycle.md).
 - Untrusted payloads, uploads, parsers, commands or outbound requests:
   [input and execution](references/input-execution.md).
 - Rendering, browser state, cross-origin messaging or client bundles:
   [frontend and browser](references/frontend-browser.md).
 - Deployment, TLS/proxy/cookies, secrets, privileges, dependencies or resource budgets:
   [infrastructure and operation](references/infrastructure-operation.md).
+- Native/FFI code, binaries, desktop/mobile or local IPC:
+  [native and local platforms](references/native-local-platform.md).
 
 Never expose secret values in terminal output, examples, logs or reports.
