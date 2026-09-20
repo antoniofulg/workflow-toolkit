@@ -8,9 +8,9 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
-- Confirmed `jev-gateway` sessions delegate ordinary tool selection to the gateway instead of
-  requesting a duplicate explicit adviser consultation. Higher-level planning, investigation,
-  evidence and readiness decisions still use the adviser when available.
+- Confirmed `jev-gateway` coverage takes precedence wherever the integrations overlap: gateway
+  A/B/C plus adviser C/D/E becomes gateway A/B/C and adviser D/E. The explicit adviser handles
+  only uncovered decisions; higher-level labels alone do not justify duplicate consultations.
 - Standalone, disabled and unknown gateway sessions retain explicit consultation. A gateway
   installation or key alone does not establish active routing; hint and passthrough results
   remain the gateway's responsibility.

@@ -15,7 +15,7 @@
 
 1. Establish whether this session is confirmed to route model requests through an enabled gateway; installation alone does not establish routing.
 2. Give a direct phase invocation a higher-level decision, minimal evidence and at least two candidate paths; confirm it reaches the shared adviser guidance.
-3. For a gateway-managed ordinary tool choice, confirm no duplicate explicit adviser consultation is requested, including gateway hint or passthrough. For standalone, disabled or unknown routing, retain explicit consultation when available.
+3. Where the gateway and adviser cover the same decision, confirm the gateway owns it without another explicit consultation, including hint or passthrough; the adviser handles only uncovered decisions. Check the overlap example: gateway A/B/C plus adviser C/D/E yields gateway A/B/C and adviser D/E. For standalone, disabled or unknown routing, retain explicit consultation when available.
 4. When no adviser key is available, confirm the adviser reports unavailability and the agent continues its normal evidence-based work.
 5. In a consumer environment with an authorized provider session, confirm a configured Jev recommendation is checked against current evidence and causes no automatic action or gate verdict.
 6. Change the phase, evidence or options and confirm the earlier advice is no longer used.

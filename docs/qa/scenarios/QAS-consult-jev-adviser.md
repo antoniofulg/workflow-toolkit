@@ -4,7 +4,7 @@ area: QAS
 title: Assign Jev decisions to the gateway or explicit adviser
 persona: Workflow operator
 journey: J-consult-jev-adviser
-expected: Confirmed gateway sessions delegate ordinary tool routing without duplicate explicit consultation, while higher-level and standalone decisions use the available adviser and retain action authority.
+expected: In confirmed gateway sessions the gateway owns every overlapping decision and the explicit adviser handles only uncovered decisions, while standalone consultation and action authority remain intact.
 entry_points: direct WTK phase-skill invocation; node .agents/skills/wtk/scripts/advise.mjs --phase <phase> --send
 qa_status: untested
 bug_ids:

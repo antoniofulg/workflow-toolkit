@@ -2,8 +2,9 @@
 
 **Read when:** making or reviewing a lifecycle semantic decision.
 
-Use Jev before higher-level decisions about scope, investigation strategy, evidence adequacy,
-priorities or readiness whenever the adviser key is available, even with a preferred answer.
+Use the explicit Jev adviser only for semantic decisions outside the active gateway's confirmed
+coverage, whenever the adviser key is available, even with a preferred answer. These commonly
+include scope, investigation strategy, evidence adequacy, priorities and readiness.
 Consult before costly context expansion or investigation. Deterministic checks and exact lookups
 stay code-owned. Apply the ownership rule below directly, without an inference call to choose it.
 
@@ -13,16 +14,23 @@ Treat a session as gateway-managed only when the user or host confirms that this
 requests use `jev-gateway` with routing enabled. Installation or an API key alone is not evidence.
 Reuse this session fact; reassess when its launcher, endpoint or routing setting changes.
 
-| Current session | Ordinary tool selection and supported argument routing | Higher-level decisions |
+Gateway coverage takes precedence wherever the integrations overlap. If the gateway covers A, B
+and C, while the workflow adviser covers C, D and E, assign A/B/C to the gateway and D/E to the
+adviser. Compare the actual decision, not its phase label or the tool used to perform it; calling
+something higher-level does not exempt it from this rule. Confirm coverage from the host or the
+gateway's supported behavior rather than assuming it handles every decision in a routed request.
+
+| Current session | Decisions covered by the gateway | Decisions outside gateway coverage |
 | --- | --- | --- |
-| Confirmed gateway routing | Let the gateway handle eligible requests and its own fallback; skip an explicit adviser call for the same tool choice | Consult the explicit adviser |
+| Confirmed gateway routing | Let the gateway handle the decision and its own fallback; skip the explicit adviser for that same decision | Consult the explicit adviser when available |
 | Standalone, routing off, unavailable gateway, or unknown routing | Consult the explicit adviser when available, as before | Consult the explicit adviser |
 
 Gateway hint or passthrough results, including low-confidence or Jev-error fallback, do not require
-a second consultation for the same tool choice; the agent continues within existing authority.
-Gateway tool selection does not settle planning, evidence or approval questions. The gateway may
-still inspect the tool request used to invoke the
-adviser; this policy adds no transport bypass or automatic request deduplication.
+a second consultation for the same covered decision; the agent continues within existing authority.
+Ordinary tool selection and supported argument routing are the gateway's current scope; they do
+not by themselves settle planning, evidence or approval questions. The gateway may still inspect
+the tool request used to invoke the adviser; this policy adds no transport bypass or automatic
+request deduplication.
 
 ## Call Jev
 
