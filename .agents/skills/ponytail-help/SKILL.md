@@ -1,8 +1,9 @@
 ---
 name: ponytail-help
 description: >
-  Show a one-shot reference for Ponytail modes and commands. Use for Ponytail
-  help requests; not mode changes.
+  Quick-reference card for all ponytail modes, skills, and commands.
+  One-shot display, not a persistent mode. Trigger: /ponytail-help,
+  "ponytail help", "what ponytail commands", "how do I use ponytail".
 ---
 
 # Ponytail Help
@@ -63,7 +64,7 @@ Resolution: env var > config file > `full`.
 
 Enable auto-update once: open `/plugin`, go to Marketplaces, pick ponytail, Enable auto-update. Claude Code then pulls new versions at startup (run `/reload-plugins` when it prompts). Manual refresh: `/plugin marketplace update ponytail` then `/reload-plugins`.
 
-If `/plugin` is not recognized, your Claude Code is out of date. Update it (`brew upgrade claude-code`) and restart. Other hosts use their own update flow.
+If `/plugin` is not recognized, your Claude Code is out of date. Update it (`npm install -g @anthropic-ai/claude-code@latest`, or `brew upgrade claude-code`) and restart. Other hosts use their own update flow.
 
 ## More
 

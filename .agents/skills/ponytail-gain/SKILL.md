@@ -1,8 +1,11 @@
 ---
 name: ponytail-gain
 description: >
-  Show Ponytail's benchmark scoreboard as a one-shot report. Use for Ponytail
-  gain requests; not repo analysis or mode changes.
+  Show ponytail's measured impact as a compact scoreboard: less code, less
+  cost, more speed, from the benchmark medians. One-shot display, not a
+  persistent mode, and not a per-repo number. Trigger: /ponytail-gain,
+  "ponytail gain", "what does ponytail save", "show ponytail impact",
+  "ponytail scoreboard".
 ---
 
 # Ponytail Gain

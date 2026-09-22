@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-09-22
+
+### Changed
+
+- Ponytail skill descriptions state their scope and invocation phrases more explicitly; the help
+  skill also includes the npm update command for Claude Code.
+- `wtk-deep-review` is recorded as a bundled local skill in `skills-lock.json`.
+- Removed redundant installation tests for Deep Review and security skills; the canonical installer
+  suite continues to cover package contents and installation behavior.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.1 install` to update the managed skill descriptions.
+
 ## [1.4.0] - 2026-09-22
 
 ### Added
