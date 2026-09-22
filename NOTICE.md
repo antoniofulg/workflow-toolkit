@@ -15,3 +15,6 @@ The five bundled security lifecycle skills are reviewed copies of
 [`antoniofulg/security-lifecycle`](https://github.com/antoniofulg/security-lifecycle) at commit
 `bd1ae10f1db3d38e12166b8c789f0ec9d33253e3`. Their individual notices and retained license texts
 remain inside each skill directory.
+
+The bundled `security-pentest` skill is original Apache-2.0 work from security-lifecycle
+contributors. Its license and provenance notice are retained inside its skill directory.

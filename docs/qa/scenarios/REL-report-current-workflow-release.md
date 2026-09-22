@@ -39,8 +39,8 @@ metadata, and checks release claims against
 the shipped public contracts. The release walk reuses current adoption verdicts as canaries
 instead of repeating their feature-level runtime probes.
 
-Release `1.4.1` updates the Ponytail skill descriptions, records `wtk-deep-review` as a local skill,
-and removes two redundant installation tests. Verify the packaged skill files and lock metadata,
+Release `1.4.1` updates the Ponytail skill descriptions, adds bundled `security-pentest`, records
+`wtk-deep-review` as a local skill, and removes two redundant installation tests. Verify the packaged skill files and lock metadata,
 plus the remaining installer checks for package contents and installation behavior.
 
 Release `1.4.0` adds core reuse policy and review instructions. Verify their exact archive membership,

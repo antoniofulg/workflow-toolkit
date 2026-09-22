@@ -119,18 +119,20 @@ authors and communities:
 The QA skills use their own wording and structure for this workflow; the links above identify the
 inspiration and do not claim upstream authorship.
 
-The workflow bundles five reviewed security lifecycle skills:
+The workflow bundles five reviewed security lifecycle skills and one original pentest skill:
 
 - `security-audit-coordinator` for explicit whole-codebase security audits;
 - `security-spec` for security requirements and negative tests during Specify;
 - `security-threat-model` for repository-grounded threats and trust boundaries;
 - `security-implementation` for secure-by-default implementation and hardening;
-- `security-review` for high-confidence residual vulnerability reviews.
+- `security-review` for high-confidence residual vulnerability reviews;
+- `security-pentest` for authorized testing of running web apps and APIs.
 
-Their GitHub source, canonical path, reviewed commit, CLI version (`1.5.23`), and full-tree hash are
-authoritative in [`skills-lock.json`](skills-lock.json). The package includes those exact reviewed
-trees. `wtk install` publishes them through the normal offline core preview, conflict, backup,
-rollback, alias, and adoption-manifest flow; it never resolves `latest` or fetches security skills.
+For the five reviewed skills, GitHub source, canonical path, reviewed commit, CLI version (`1.5.23`),
+and full-tree hash are authoritative in [`skills-lock.json`](skills-lock.json). The original
+`security-pentest` skill has its own [license and provenance notice](.agents/skills/security-pentest/THIRD_PARTY_NOTICES.md).
+`wtk install` publishes all six packaged trees through the normal offline core preview, conflict,
+backup, rollback, alias, and adoption-manifest flow; it never resolves `latest` or fetches security skills.
 
 ## Guided installation details
 
@@ -389,7 +391,7 @@ local runtime packets, and records per-file ownership in `.my-workflow/adoption.
 consumer prose through managed blocks, never removes an installed layer, and leaves package
 metadata, local config, and unknown files untouched. Always review the plan and resulting diff
 before accepting managed-path updates.
-Adoption installs the five reviewed security skills with core. No separate network step is required.
+Adoption installs all six security skills with core. No separate network step is required.
 
 ## Skills
 
@@ -400,7 +402,7 @@ project-owned `wtk-qa-plan` and `wtk-qa-execute` skills use the consuming projec
 
 `npx workflow-toolkit install` installs and updates the workflow-owned `wtk` router, its Lean skills
 (`wtk-lean`, `wtk-discover`, `wtk-plan`, `wtk-implement`), Ponytail, Deep Review, QA, wtk-config,
-wtk-ship, and the five reviewed security lifecycle skills. Keep canonical copies in
+wtk-ship, the five reviewed security lifecycle skills, and `security-pentest`. Keep canonical copies in
 `.agents/skills/` and Claude Code symlinks in `.claude/skills/`.
 
 `wtk-ship` is vendored here. `CLAUDE.md` is the one line `@AGENTS.md` (not a symlink). Canonical

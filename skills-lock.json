@@ -29,7 +29,7 @@
       "source": "dietrichgebert/ponytail",
       "sourceType": "github",
       "skillPath": "skills/ponytail-help/SKILL.md",
-      "computedHash": "23658b85af6e0b2be7e39f87cd80255eb45ea7ecb0f780f0186cdd38c3793ff2"
+      "computedHash": "718e45f0e1830d466400fca389be082bbbb10afce6a368ec74b80b8178dabbd8"
     },
     "ponytail-review": {
       "source": "dietrichgebert/ponytail",
@@ -52,6 +52,12 @@
       "cliVersion": "1.5.23",
       "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
       "computedHash": "f0bfed3977e599c3c6edefec373a4d6630b46385367cc5e2d71aaa9035d4c86e"
+    },
+    "security-pentest": {
+      "source": "antoniofulg/security-lifecycle",
+      "sourceType": "github",
+      "skillPath": "skills/security-pentest/SKILL.md",
+      "computedHash": "88d0da6055f2f1ac8b7098887487735cc47606a15bfa33951d30d8511bd52a93"
     },
     "security-review": {
       "source": "antoniofulg/security-lifecycle",

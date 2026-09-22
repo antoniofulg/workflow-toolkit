@@ -4,7 +4,7 @@ area: DOC
 title: Read explicit credits and a product-neutral workflow scope
 persona: Repository reader
 journey: J-review-workflow-release
-expected: The README, pack guide, notices, lock, archive, and installed tree identify five bundled reviewed security skills, their upstream provenance, and the product-neutral workflow scope consistently.
+expected: The README, pack guide, notices, lock, archive, and installed tree identify five bundled reviewed security skills, the original security-pentest skill, their respective provenance, and the product-neutral workflow scope consistently.
 entry_points: README.md; docs/toolkit/pack.md; skills-lock.json; .agents/skills/wtk-qa-plan/SKILL.md; .agents/skills/wtk-qa-execute/SKILL.md; NOTICE.md
 qa_status: untested
 bug_ids: BUG-20260909-interactive-installer-omits-security-command
@@ -47,3 +47,6 @@ installed-tree readback.
 Workflow Toolkit 1.2.0 replaces the external-skill boundary with five bundled reviewed skills,
 including `security-audit-coordinator`. Fresh QA must reconcile README, pack guide, notices, lock,
 archive membership, and installed aliases.
+
+Workflow Toolkit 1.4.1 adds original `security-pentest` to the bundled core. Check its distinct
+Apache-2.0 provenance alongside the five reviewed skills and confirm the sixth installed alias.
