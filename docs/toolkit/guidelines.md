@@ -14,6 +14,7 @@ dispatch to the owner; this page is the catalog, not a second copy of the rules.
 
 | File | Why it exists |
 | --- | --- |
+| [code-reuse.md](../../.agents/skills/wtk/references/code-reuse.md) | Find the owning implementation before adding code; verify reuse and consistency across frontend, backend, and tooling. |
 | [git.md](../../.agents/skills/wtk/references/git.md) | `type/slug` names the behaviour, never `main`, delete after merge. Isolated checkouts must not share a runtime. |
 | [artifacts.md](../../.agents/skills/wtk/references/artifacts.md) | Planning artifacts are finished when the code exists. Durable store is code, `AD-NNN`, `docs/qa/`, product/architecture/design. The inverted arrangement gated drift on documents nobody read. |
 | [WORKFLOW-MEMORY.md](guidelines/WORKFLOW-MEMORY.md) | Small slices are cheap to review and expensive to ramp. Shared memory is how reasoning survives the task boundary without becoming a second spec. |

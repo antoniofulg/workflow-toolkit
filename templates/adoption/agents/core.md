@@ -10,6 +10,7 @@ surface missing required context as a named gap.
 
 | Role/task | Select |
 | --- | --- |
+| Planning, implementing, refactoring, or reviewing code | `.agents/skills/wtk/references/code-reuse.md` |
 | Visual polish / adjustment | Design/accessibility only; stronger evidence if semantics change |
 | Customer copy | Voice reference |
 | Boundary change | Boundary architecture reference |

@@ -4,6 +4,28 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-22
+
+### Added
+
+- A shared code-reuse policy for frontend, backend, scripts, and infrastructure: find the
+  canonical owner before adding an implementation and justify required differences.
+- The core `wtk-reuse-review` skill checks implementation ownership and UI consistency in a
+  diff or named scope, with whole-codebase audits available when explicitly requested.
+
+### Changed
+
+- Lean and modular Verifiers apply reuse review within their existing pass. Findings trace
+  actual consumers, preserve domain and trust boundaries, and disclose unverified visual checks.
+- Test additions require a distinct regression justification; consolidation preserves unique
+  assertions, and recurring test execution must avoid redundant coverage and unnecessary cost.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.0 install` and review the managed core additions and verifier updates.
+- Existing applications can request `wtk-reuse-review` over the whole codebase to inventory
+  accumulated duplication; routine verification reviews only the affected responsibilities.
+
 ## [1.3.1] - 2026-09-20
 
 ### Fixed

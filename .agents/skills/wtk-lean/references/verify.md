@@ -46,6 +46,9 @@ gate that is visible is worth more than one that pretends.
 
 ## Read the profile first
 
+For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
+within this verification pass and include its findings and coverage limits in the existing report.
+
 For explicit reuse, construction-order or approval requirements, apply
 [construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
 

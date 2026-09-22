@@ -23,6 +23,7 @@ Load shared references only for the current operation:
 
 | Operation | Reference |
 | --- | --- |
+| Plan, implement, refactor, or review code | [Code reuse and ownership](references/code-reuse.md) |
 | Choose checks or reuse evidence | [Validation](references/validation.md) |
 | Report completion or commit evidence | [Evidence](references/evidence.md) |
 | Derive tests or choose their layer | [Test contract](references/test-contract.md) |

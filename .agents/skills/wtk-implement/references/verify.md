@@ -25,6 +25,9 @@ The verdict goes back to the orchestrator and the user, never to a builder. A FA
 the author is the author deciding what to do about the author's work, and the round that follows
 happens inside the session the separation existed to break.
 
+For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
+within this verification pass and include its findings and coverage limits in the existing report.
+
 For explicit reuse, construction-order or approval requirements, apply
 [construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
 

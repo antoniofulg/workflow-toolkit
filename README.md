@@ -69,6 +69,10 @@ coherent commits, then one fresh independent Technical Verifier proves the compl
 Deep Review is optional and defaults to `skip`; QA runs when the changed surface requires a user-visible
 walk; the full gate remains selected by changed behavior and concrete risk.
 
+The Verifier uses [`wtk-reuse-review`](.agents/skills/wtk-reuse-review/SKILL.md) to check changed
+responsibilities against existing implementations and shared UI treatments. Invoke it directly
+with a diff or module scope, or request a whole-codebase reuse audit to inventory existing drift.
+
 For UI work, Designer starts with constraints, reads selected references, and inspects existing
 components read-only. A design tool or isolated prototype supports exploration when useful. Three
 alternatives apply when a new screen or meaningful redesign leaves an actual design choice open;
@@ -303,7 +307,7 @@ repository boundary. Retired workflow files are removed only when their managed 
 are pristine; edited or unproven paths conflict with zero writes.
 
 Each release lists its upgrade steps under `### Migration` in the changelog; follow them in order
-after installation. The package identity for this release is `workflow-toolkit@1.3.1` with the `wtk` executable.
+after installation. The package identity for this release is `workflow-toolkit@1.4.0` with the `wtk` executable.
 
 ## Managed paths
 
