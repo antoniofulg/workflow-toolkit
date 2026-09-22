@@ -83,10 +83,9 @@
       "skillPath": ".agents/skills/wtk/SKILL.md"
     },
     "wtk-deep-review": {
-      "source": "pedronauck/skills",
-      "sourceType": "github",
-      "skillPath": "skills/mine/wtk-deep-review/SKILL.md",
-      "computedHash": "ed7164c239a15dd81c4368c0260b813f706a8843caf59b11b77db075316a4315"
+      "source": "./local",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/wtk-deep-review/SKILL.md"
     },
     "wtk-lean": {
       "source": "tech-leads-club/agent-skills",
