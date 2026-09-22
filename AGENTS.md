@@ -73,7 +73,7 @@ budget: 150k
 
 | When | Open |
 | --- | --- |
-| Writing, planning, or breaking a spec into tasks | `.agents/skills/wtk/references/test-contract.md` |
+| Writing or reviewing tests; planning specs or tasks | `.agents/skills/wtk/references/test-contract.md` |
 | Starting a task in a multi-task feature | `docs/toolkit/guidelines/WORKFLOW-MEMORY.md` |
 | Specify touches a security surface | `docs/toolkit/guidelines/SECURITY.md` — `## 2. At Specify — declare the surfaces` |
 | Writing tests for an abuse case | `docs/toolkit/guidelines/SECURITY.md` — `## 3. At the test contract — abuse cases get IDs` |
