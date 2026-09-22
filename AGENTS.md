@@ -73,6 +73,7 @@ budget: 150k
 
 | When | Open |
 | --- | --- |
+| Planning, implementing, refactoring, or reviewing code | `.agents/skills/wtk/references/code-reuse.md` |
 | Writing or reviewing tests; planning specs or tasks | `.agents/skills/wtk/references/test-contract.md` |
 | Starting a task in a multi-task feature | `docs/toolkit/guidelines/WORKFLOW-MEMORY.md` |
 | Specify touches a security surface | `docs/toolkit/guidelines/SECURITY.md` — `## 2. At Specify — declare the surfaces` |

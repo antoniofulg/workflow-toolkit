@@ -33,11 +33,16 @@ Release `0.10.1` preparation intentionally skips a QA Plan/Execute cycle under e
 direction. Scoped package and contract evidence is recorded separately by the release owner; this
 scenario makes no `0.10.1` QA PASS claim. The historical `0.9.2` report and evidence remain intact.
 
-Version-neutral owner for public release consistency. For release `1.3.1`, the reader compares the
+Version-neutral owner for public release consistency. For release `1.4.0`, the reader compares the
 newest changelog heading with the package manifest, checks Bun's root package and dependency graph
 metadata, and checks release claims against
 the shipped public contracts. The release walk reuses current adoption verdicts as canaries
 instead of repeating their feature-level runtime probes.
+
+Release `1.4.0` adds core reuse policy and review instructions. Verify their exact archive membership,
+clean-consumer installation and Claude alias, both verifier references, and public release identity.
+The isolated skill probe covers duplicated behavior, UI source overrides, and justified separation;
+it does not establish rendered application consistency or audit any consuming application's codebase.
 
 Release `1.1.0` uses scoped instruction, version and package validation under incremental impact
 selection. Fresh release QA covers identity, package membership and disposable-consumer readback;
