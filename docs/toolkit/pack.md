@@ -2,7 +2,7 @@
 
 ## Skills
 
-The workflow ships nineteen local capabilities:
+The workflow ships twenty local capabilities:
 
 | Skill | Role |
 | --- | --- |
@@ -24,14 +24,16 @@ The workflow ships nineteen local capabilities:
 | `security-spec` | Defines security requirements and negative tests during Specify. |
 | `security-threat-model` | Models repository-grounded threats and trust boundaries. |
 | `security-implementation` | Implements secure defaults and requested hardening. |
+| `security-pentest` | Tests authorized running web apps and APIs for reproducible vulnerabilities. |
 | `security-review` | Reviews bounded diffs or code slices for confirmed vulnerabilities. |
 
 Canonical copies: `.agents/skills/`. Claude: symlinks in `.claude/skills/`. Cursor / Codex /
 OpenCode consume `.agents`. Do not add `.cursor/skills`.
 
-The five security skills are bundled reviewed capabilities. Their `skills-lock.json` entries pin
+Five security skills are bundled reviewed capabilities. Their `skills-lock.json` entries pin
 the upstream source, canonical path, commit, CLI version (`1.5.23`), and full-tree hash. Adoption
 installs the packaged trees through core without resolving `latest` or contacting the network.
+The sixth, `security-pentest`, is original Apache-2.0 work with its own provenance notice.
 
 Planner / implementer / explorer / verifier / designer are five windows. Canonical packet bodies live in
 `.agents/skills/wtk-config/assets/agents/{cursor,claude,codex}/`; sync generates ignored runtime files in
