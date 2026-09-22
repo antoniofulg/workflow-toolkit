@@ -4,7 +4,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { TextDecoder } from 'node:util';
 
-export const WORKFLOW_VERSION = '1.4.0';
+export const WORKFLOW_VERSION = '1.4.1';
 export const LAYERS = ['core', 'quality', 'extras'];
 export const DEPENDENCIES = { core: [], quality: ['core'], extras: ['core'] };
 export const BLOCK_LAYERS = ['core', 'quality'];
@@ -20,12 +20,12 @@ export const KNOWLEDGE_DESTINATIONS = {
 };
 
 export const LAYER_PATHS = {
-  core: ['docs/toolkit/guidelines', 'docs/toolkit/README.md', 'docs/toolkit/repository-intelligence.md', 'docs/toolkit/decisions.md', 'docs/toolkit/guidelines.md', 'docs/toolkit/loop.md', 'docs/toolkit/purpose.md', 'docs/toolkit/reviews.md', 'knowledge/AGENTS.md', 'knowledge/raw/README.md', '.agents/skills/wtk', '.agents/skills/wtk-lean', '.agents/skills/wtk-discover', '.agents/skills/wtk-plan', '.agents/skills/wtk-implement', '.agents/skills/wtk-reuse-review', '.agents/skills/wtk-config', '.agents/skills/wtk-knowledge-check', '.agents/skills/wtk-ship', '.agents/skills/ponytail', '.agents/skills/security-audit-coordinator', '.agents/skills/security-implementation', '.agents/skills/security-review', '.agents/skills/security-spec', '.agents/skills/security-threat-model'],
+  core: ['docs/toolkit/guidelines', 'docs/toolkit/README.md', 'docs/toolkit/repository-intelligence.md', 'docs/toolkit/decisions.md', 'docs/toolkit/guidelines.md', 'docs/toolkit/loop.md', 'docs/toolkit/purpose.md', 'docs/toolkit/reviews.md', 'knowledge/AGENTS.md', 'knowledge/raw/README.md', '.agents/skills/wtk', '.agents/skills/wtk-lean', '.agents/skills/wtk-discover', '.agents/skills/wtk-plan', '.agents/skills/wtk-implement', '.agents/skills/wtk-reuse-review', '.agents/skills/wtk-config', '.agents/skills/wtk-knowledge-check', '.agents/skills/wtk-ship', '.agents/skills/ponytail', '.agents/skills/security-audit-coordinator', '.agents/skills/security-implementation', '.agents/skills/security-pentest', '.agents/skills/security-review', '.agents/skills/security-spec', '.agents/skills/security-threat-model'],
   quality: ['.agents/skills/wtk-deep-review', '.agents/skills/wtk-qa', '.agents/skills/wtk-qa-plan', '.agents/skills/wtk-qa-execute'],
   extras: ['.agents/skills/ponytail-audit', '.agents/skills/ponytail-debt', '.agents/skills/ponytail-gain', '.agents/skills/ponytail-help', '.agents/skills/ponytail-review', '.agents/skills/prompt-review'],
 };
 export const CLAUDE_SKILL_LINKS = {
-  core: ['wtk', 'wtk-lean', 'wtk-discover', 'wtk-plan', 'wtk-implement', 'wtk-reuse-review', 'wtk-config', 'wtk-knowledge-check', 'wtk-ship', 'ponytail', 'security-audit-coordinator', 'security-implementation', 'security-review', 'security-spec', 'security-threat-model'],
+  core: ['wtk', 'wtk-lean', 'wtk-discover', 'wtk-plan', 'wtk-implement', 'wtk-reuse-review', 'wtk-config', 'wtk-knowledge-check', 'wtk-ship', 'ponytail', 'security-audit-coordinator', 'security-implementation', 'security-pentest', 'security-review', 'security-spec', 'security-threat-model'],
   quality: ['wtk-deep-review', 'wtk-qa', 'wtk-qa-plan', 'wtk-qa-execute'],
   extras: ['ponytail-audit', 'ponytail-debt', 'ponytail-gain', 'ponytail-help', 'ponytail-review', 'prompt-review'],
 };

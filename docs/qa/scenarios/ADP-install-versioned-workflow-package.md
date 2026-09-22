@@ -30,7 +30,8 @@ explicit conflicts before final confirmation. Cancel or exclude to prove zero wr
 replacement only after its backup action is visible. Pristine retired workflow files are removed
 only when their ownership hashes match.
 
-The package installs five reviewed security skills through core without a child network installer.
+The package installs five reviewed security skills and the original `security-pentest` skill through
+core without a child network installer.
 Existing modified destinations remain subject to the normal preview/conflict/backup contract.
 
 The `lean-consumer-installation` cycle changes archive membership, installed paths, previous-layout

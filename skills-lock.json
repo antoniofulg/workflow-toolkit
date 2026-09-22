@@ -29,7 +29,7 @@
       "source": "dietrichgebert/ponytail",
       "sourceType": "github",
       "skillPath": "skills/ponytail-help/SKILL.md",
-      "computedHash": "10e8382b1033c9a0fec0073de6d3de3846b4f5dca7d78b6df2d476a1f4cd43c6"
+      "computedHash": "718e45f0e1830d466400fca389be082bbbb10afce6a368ec74b80b8178dabbd8"
     },
     "ponytail-review": {
       "source": "dietrichgebert/ponytail",
@@ -52,6 +52,12 @@
       "cliVersion": "1.5.23",
       "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
       "computedHash": "f0bfed3977e599c3c6edefec373a4d6630b46385367cc5e2d71aaa9035d4c86e"
+    },
+    "security-pentest": {
+      "source": "antoniofulg/security-lifecycle",
+      "sourceType": "github",
+      "skillPath": "skills/security-pentest/SKILL.md",
+      "computedHash": "88d0da6055f2f1ac8b7098887487735cc47606a15bfa33951d30d8511bd52a93"
     },
     "security-review": {
       "source": "antoniofulg/security-lifecycle",
@@ -83,10 +89,9 @@
       "skillPath": ".agents/skills/wtk/SKILL.md"
     },
     "wtk-deep-review": {
-      "source": "pedronauck/skills",
-      "sourceType": "github",
-      "skillPath": "skills/mine/wtk-deep-review/SKILL.md",
-      "computedHash": "ed7164c239a15dd81c4368c0260b813f706a8843caf59b11b77db075316a4315"
+      "source": "./local",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/wtk-deep-review/SKILL.md"
     },
     "wtk-lean": {
       "source": "tech-leads-club/agent-skills",

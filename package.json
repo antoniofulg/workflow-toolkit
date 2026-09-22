@@ -1,6 +1,6 @@
 {
   "name": "workflow-toolkit",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -52,6 +52,7 @@
     ".agents/skills/prompt-review",
     ".agents/skills/security-audit-coordinator",
     ".agents/skills/security-implementation",
+    ".agents/skills/security-pentest",
     ".agents/skills/security-review",
     ".agents/skills/security-spec",
     ".agents/skills/security-threat-model",
