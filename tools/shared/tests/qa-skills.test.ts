@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { describe, expect, it } from "bun:test";
@@ -79,9 +79,6 @@ function runBunVersionSensor(versionSource: string, replacement: string): void {
 const activeAuthorityRoots = [
   "AGENTS.md",
   "README.md",
-  "docs/adoption-prompt.md",
-  "docs/qa",
-  "docs/toolkit",
   "knowledge",
   "package.json",
   "bunfig.toml",
@@ -94,18 +91,6 @@ const historicalAuthorityAllowlist = [
   /^CHANGELOG\.md$/,
   /^\.specs\//,
   /^knowledge\/raw\//,
-  /^docs\/qa\/(?:evidence|reports|charters|bugs)\//,
-  /^docs\/qa\/journeys\//,
-  /^docs\/qa\/scenarios\/(?!REL-report-current-workflow-release\.md$)/,
-] as const;
-
-// Scenarios are exempt from the command-authority scan but stay editable: QA-SCENARIOS.md
-// requires resetting an affected scenario to `untested`, so they are never frozen history.
-const frozenQaRoots = [
-  "docs/qa/evidence",
-  "docs/qa/reports",
-  "docs/qa/charters",
-  "docs/qa/bugs",
 ] as const;
 
 function trackedRepositoryPaths(): string[] {
@@ -124,10 +109,6 @@ function isUnderRoot(relativePath: string, root: string): boolean {
 
 function isHistoricalAuthority(relativePath: string): boolean {
   return historicalAuthorityAllowlist.some((pattern) => pattern.test(relativePath));
-}
-
-function isFrozenQaArtifact(relativePath: string): boolean {
-  return frozenQaRoots.some((root) => isUnderRoot(relativePath, root));
 }
 
 function isTestSource(relativePath: string): boolean {
@@ -181,66 +162,6 @@ function documentedBunScripts(
   return [...scripts].sort();
 }
 
-const historicalQaBaseline = "b3b42c7bd0a8ab8e72d4c5367f4559df31f8d647";
-
-function changedHistoricalQaArtifacts(
-  root = repositoryRoot,
-  sourceRef = historicalQaBaseline,
-): string[] {
-  const gitOptions = { cwd: root, encoding: "utf8" as const };
-  const baselinePaths = new Set(
-    execFileSync(
-      "git",
-      ["ls-tree", "-r", "--name-only", sourceRef, "--", ...frozenQaRoots],
-      gitOptions,
-    )
-      .trim()
-      .split(/\r?\n/)
-      .filter(Boolean),
-  );
-  const committed = execFileSync(
-    "git",
-    ["diff", "--name-only", `${sourceRef}...HEAD`, "--", ...frozenQaRoots],
-    gitOptions,
-  );
-  const working = execFileSync(
-    "git",
-    ["diff", "--name-only", "HEAD", "--", ...frozenQaRoots],
-    gitOptions,
-  );
-  const staged = execFileSync(
-    "git",
-    ["diff", "--cached", "--name-only", "--", ...frozenQaRoots],
-    gitOptions,
-  );
-  return [...new Set(`${committed}${working}${staged}`.split(/\r?\n/).filter(Boolean))]
-    .filter(isFrozenQaArtifact)
-    .filter((relativePath) => baselinePaths.has(relativePath))
-    .sort();
-}
-
-function commitFixture(root: string, message: string): string {
-  execFileSync("git", ["add", "--", "."], { cwd: root, stdio: "ignore" });
-  execFileSync(
-    "git",
-    [
-      "-c",
-      "user.name=QA fixture",
-      "-c",
-      "user.email=qa-fixture@example.invalid",
-      "commit",
-      "--quiet",
-      "-m",
-      message,
-    ],
-    { cwd: root, stdio: "ignore" },
-  );
-  return execFileSync("git", ["rev-parse", "HEAD"], {
-    cwd: root,
-    encoding: "utf8",
-  }).trim();
-}
-
 describe("QA workflow artifact policy", () => {
   it("IT-025 routes behavior-preserving UI corrections by intent and evidence", () => {
     const gates = readRepositoryFile(".agents/skills/wtk/references/validation.md");
@@ -292,13 +213,11 @@ describe("QA workflow artifact policy", () => {
 
   it("IT-015 treats Lean proof state as the commit precondition", () => {
     const agents = readRepositoryFile("AGENTS.md");
-    const loop = readRepositoryFile("docs/toolkit/loop.md");
     const lean = readRepositoryFile(".agents/skills/wtk-lean/SKILL.md");
     const implementer = readRepositoryFile(".agents/skills/wtk-implement/SKILL.md");
     const memory = readRepositoryFile(".agents/skills/wtk-lean/references/memory.md");
 
     expect(agents).toContain("Feature -> Slice -> Check");
-    expect(loop).toContain("checks.md");
     expect(lean).toContain("checks.md");
     expect(lean).toContain("verification.md");
     expect(memory).toContain("checks.md");
@@ -505,15 +424,7 @@ describe("canonical QA skills", () => {
     expect(reviewRounds).toContain("A distinct finding starts at count zero and does not consume another fingerprint's counter");
     expect(reviewRounds).not.toMatch(/one global (?:remediation|blocker) counter/i);
 
-    for (const relativePath of [
-      "docs/toolkit/reviews.md",
-      "docs/toolkit/README.md",
-      "docs/toolkit/purpose.md",
-    ]) {
-      const source = readRepositoryFile(relativePath);
-      expect(source).toContain("review-rounds");
-      expect(source).toContain("fingerprint");
-    }
+    expect(readRepositoryFile(".agents/skills/wtk-ship/SKILL.md")).toContain("Confirmed Critical, Major,");
     // The router no longer restates the loop; it routes to the phase skills that own it.
     const router = readRepositoryFile(".agents/skills/wtk/SKILL.md");
     expect(router).toContain("wtk-implement");
@@ -541,9 +452,6 @@ describe("canonical QA skills", () => {
     expect(reviewRounds).toContain("Deep-review is a separate orchestrator stage, not a Verifier phase");
     expect(reviewRounds).not.toContain("The existing provider `verifier` performs all stages");
     expect(reviewRounds).not.toMatch(/provider `verifier`[^.]*wtk-deep-review/i);
-    expect(readRepositoryFile("docs/toolkit/reviews.md")).toContain(
-      "Deep-review is a separate stage, not a Verifier phase.",
-    );
     const remediation = reviewRounds.slice(
       reviewRounds.indexOf("## Escalation"),
       reviewRounds.indexOf("## Requirement and contract parity"),
@@ -700,26 +608,15 @@ describe("configurable review policy", () => {
   it("uses the canonical hierarchy and project-native workflow defaults", () => {
     const agents = readRepositoryFile("AGENTS.md");
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
-    const reviews = readRepositoryFile("docs/toolkit/reviews.md");
     const wtkShip = readRepositoryFile(".agents/skills/wtk-ship/SKILL.md");
-    const loop = readRepositoryFile("docs/toolkit/loop.md");
-    const tour = readRepositoryFile("docs/toolkit/README.md");
     const readme = readRepositoryFile("README.md");
 
     expect(agents).toContain("Feature -> Slice -> Check");
     expect(agents).toContain("Project-native agent files own provider, model, and effort settings");
     expect(reviewRounds).toContain("wtk-lean/scripts/workflow_route.py");
     expect(reviewRounds).toContain("Deep Review is on demand by default");
-    expect(reviews).toContain("wtk-lean/scripts/workflow_route.py");
-    expect(reviews).toContain("remediation uses three stalls");
-    expect(reviews).not.toContain("`slice`, `feature`, or balanced `grouped.N`");
-    expect(reviews).not.toContain("absent config defaults to `grouped.3`");
     expect(wtkShip).not.toContain("wtk-config");
 
-    expect(loop).toContain("Project-native agent files own model and effort");
-    expect(loop).toContain("Deep Review is\non demand");
-    expect(tour).toContain("Project-native agent files own model and effort");
-    expect(tour).toContain("Deep Review is on demand");
     expect(readme).toContain("native agent model and effort settings");
     expect(readme).toContain("fixed default `stall_attempts = 3`");
     expect(readme).toContain(".specs/features/<feature>/workflow.json");
@@ -739,9 +636,7 @@ describe("configurable review policy", () => {
     expect(deltaIndex).toBeGreaterThan(-1);
     expect(deltaIndex).toBeLessThan(rerunIndex);
     expect(wtkShip).toContain("selected `wtk-deep-review`");
-    expect(loop).toContain("wtk-deep-review follows resolved");
-    expect(tour).not.toContain("wtk-deep-review groups from wtk-config");
-    for (const source of [agents, reviewRounds, reviews, wtkShip, loop, tour, readme]) {
+    for (const source of [agents, reviewRounds, wtkShip, readme]) {
       expect(source).not.toContain("wtk-config");
       expect(source).not.toContain("workflow_config.py");
     }
@@ -749,9 +644,7 @@ describe("configurable review policy", () => {
 
   it("fixes every wtk-deep-review defect inside the originating feature run", () => {
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
-    const reviews = readRepositoryFile("docs/toolkit/reviews.md");
     const wtkShip = readRepositoryFile(".agents/skills/wtk-ship/SKILL.md");
-    const pack = readRepositoryFile("docs/toolkit/pack.md");
     const implement = readRepositoryFile(".agents/skills/wtk-implement/SKILL.md");
     const reviewOutput = readRepositoryFile(
       ".agents/skills/wtk-deep-review/references/output-contracts.md",
@@ -759,11 +652,8 @@ describe("configurable review policy", () => {
     expect(reviewRounds).toContain("Fix every confirmed wtk-deep-review defect");
     expect(reviewRounds).toContain("a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check");
     expect(reviewRounds).toContain("Trivials and advisories become follow-ups");
-    expect(reviews).toContain("Every wtk-deep-review defect is fixed inside the feature run");
-    expect(reviews).toContain("Fix in one current-run batch, scoped gate, one commit");
     expect(reviewOutput).toContain("mandatory current-feature closeout batch");
     expect(wtkShip).toContain("Confirmed Critical, Major,");
-    expect(pack).toContain("no Critical, Major, or Minor left");
     expect(implement).toContain("coherent pieces");
     expect(implement).toContain("fresh sub-agent");
   });
@@ -786,8 +676,6 @@ describe("configurable review policy", () => {
     for (const source of [
       readRepositoryFile(".agents/skills/wtk-qa-execute/references/qa-execution.md"),
       readRepositoryFile(".agents/skills/wtk/references/review-rounds.md"),
-      readRepositoryFile("docs/toolkit/loop.md"),
-      readRepositoryFile("docs/toolkit/reviews.md"),
     ]) {
       expect(source).toContain("no slice runs QA");
       expect(source).not.toMatch(/public slices?|per-slice QA/i);
@@ -814,10 +702,9 @@ describe("repository intelligence policy", () => {
     expect(readme).toContain("Graft");
     expect(readme).toContain("optional tool was unavailable");
     expect(readme).not.toContain("Graft can enrich wtk-deep-review context");
-    const repositoryIntelligence = readRepositoryFile("docs/toolkit/repository-intelligence.md");
-    expect(repositoryIntelligence).toContain("Graphify and Graft are standard development tools");
-    expect(repositoryIntelligence).toContain("Deep Review always prepares fresh Graft context");
-    expect(repositoryIntelligence).toContain("10–20 distinct terminal tasks");
+    const repositoryIntelligence = readRepositoryFile(".agents/skills/wtk-deep-review/references/orchestration.md");
+    expect(repositoryIntelligence).toContain("prepares the pinned Graft context");
+    expect(repositoryIntelligence).toContain("falls back to plain repository inspection");
     expect(normalizedUiux).toContain("repository stores only the approved handoff");
     expect(normalizedUiux).toContain("`spec.md` → `uiux.md` → approved design");
     expect(normalizedUiux).toContain("tool or plugin output, then legacy mockup");
@@ -926,22 +813,14 @@ describe("adoption and public setup", () => {
 
   it("IT-010 makes adoption reviewable and routes QA by observability", () => {
     const readme = readRepositoryFile("README.md");
-    const prompt = readRepositoryFile("docs/adoption-prompt.md");
     const route = readRepositoryFile(".agents/skills/wtk-lean/scripts/workflow_route.py");
 
     expect(readme).toContain("skill installer");
     expect(readme).toContain("Optional project instructions");
-    expect(prompt).toContain("git status --short");
-    expect(prompt).toContain("read-only");
-    expect(prompt).toContain("skill installer");
-    expect(prompt).toContain("byte-for-byte");
-    expect(prompt).toContain("never overwrite existing content");
     const qaPolicyPath = ".agents/skills/wtk-qa-execute/references/qa-execution.md";
-    expect(prompt).toContain(qaPolicyPath);
     const qaPolicy = readRepositoryFile(qaPolicyPath);
     for (const phase of ["wtk-qa-plan", "wtk-qa-execute"]) expect(qaPolicy).toContain(phase);
-    expect(prompt).toContain("optional companion");
-    expect(prompt).toContain("manual review");
+    expect(readme).toContain("Recommended companion skills and tools");
     expect(readme).toContain("native model and effort metadata");
     expect(route).toContain("native_provider");
     expect(route).not.toContain(".wtk.toml");
@@ -971,45 +850,37 @@ describe("adoption and public setup", () => {
 
   it("IT-021 keeps Ponytail active from workflow start through the full cycle", () => {
     const agents = readRepositoryFile("AGENTS.md");
-    const loop = readRepositoryFile("docs/toolkit/loop.md");
-    const prompt = readRepositoryFile("docs/adoption-prompt.md");
+    const readme = readRepositoryFile("README.md");
 
     expect(normalizePacket(agents)).toMatch(/Ponytail is an optional companion skill/);
-    expect(loop).toContain("Ponytail is an optional companion skill");
-    expect(normalizePacket(prompt)).toMatch(/Optional companion/);
+    expect(readme).toContain("Ponytail");
     expect(existsSync(join(repositoryRoot, ".agents/skills/ponytail"))).toBe(false);
   });
 
-  it("IT-020 keeps the pack guide source-only for adopted consumers", () => {
-    const tour = readRepositoryFile("docs/toolkit/README.md");
-    const pack = readRepositoryFile("docs/toolkit/pack.md");
-
-    expect(tour).toContain("[Skills and optional extensions](pack.md)");
-    expect(pack).toContain("skill directories");
+  it("IT-020 keeps the source pack free of project documentation", () => {
+    expect(existsSync(join(repositoryRoot, "docs"))).toBe(false);
+    expect(readRepositoryFile("README.md")).toContain("only that skill's files");
   });
 
   it("IT-011 keeps stack-specific QA capabilities in the operational profile", () => {
-    const profile = readRepositoryFile("docs/qa/README.md");
+    const profile = readRepositoryFile(".agents/skills/wtk-qa-plan/references/profile.md");
 
-    for (const heading of [
-      "## Public interfaces and area codes",
-      "## Runner and adapter",
-      "## Build, start, and health",
-      "## Authentication and test data",
-      "## Evidence and limitations",
-    ]) {
-      expect(profile).toContain(heading);
-    }
+    for (const capability of [
+      "Public interfaces and area codes",
+      "Runner or adapter",
+      "Build/start path and health signal",
+      "Authentication and session setup",
+      "Limitations and unavailable surfaces",
+    ]) expect(profile).toContain(capability);
     expect(profile).toContain("manifests or CI");
     expect(profile.toLowerCase()).toContain("fixtures or seed");
     expect(profile.toLowerCase()).toContain("cleanup");
     expect(profile.toLowerCase()).toContain("residue");
-    expect(profile.toLowerCase()).toContain("raw evidence");
-    expect(profile).toContain("does not install a framework or invent commands");
+    expect(profile).toContain("Framework installation is");
   });
 
   it("IT-012 leaves adapter choice with the consuming project", () => {
-    const profile = readRepositoryFile("docs/qa/README.md");
+    const profile = readRepositoryFile(".agents/skills/wtk-qa-execute/SKILL.md");
     const qaExecute = readRepositoryFile(".agents/skills/wtk-qa-execute/SKILL.md");
 
     for (const adapter of ["browser", "API", "CLI", "mobile", "manual"]) {
@@ -1029,10 +900,6 @@ describe("adoption and public setup", () => {
       scripts?: { test?: string };
     };
     const changelog = readRepositoryFile("CHANGELOG.md");
-    const releaseScenario = readRepositoryFile("docs/qa/scenarios/REL-report-current-workflow-release.md");
-    const currentScenarioVersion = releaseScenario.match(
-      /^Version-neutral owner for public release consistency\. For release `(\d+\.\d+\.\d+)`/m,
-    )?.[1];
     const latestHeading = changelog.match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1];
     const unreleasedStart = changelog.indexOf("## [Unreleased]");
     const firstRelease = changelog.indexOf("\n## [", unreleasedStart + 1);
@@ -1049,8 +916,6 @@ describe("adoption and public setup", () => {
     expect(readRepositoryFile("bun.lock")).toContain('"name": "workflow-toolkit"');
     expect(existsSync(join(repositoryRoot, "package-lock.json"))).toBe(false);
     expect(latestHeading).toBe(manifest.version);
-    expect(currentScenarioVersion).toBe(manifest.version);
-    expect(releaseScenario.match(/^expected: (.+)$/m)?.[1]?.trim().length).toBeGreaterThan(0);
     expect(latestRelease).not.toContain("npx wtk install");
     expect(unreleased).toContain("complete 12-skill set through the Skills CLI");
     expect(unreleased).toContain("npx skills add antoniofulg/workflow-toolkit");
@@ -1144,7 +1009,7 @@ describe("Bun tooling runtime contract", () => {
     const violations = forbiddenAuthorityViolations(trackedPaths);
 
     expect(scannedPaths).toContain("README.md");
-    expect(scannedPaths).toContain("docs/qa/README.md");
+    expect(scannedPaths).toContain(".agents/skills/wtk-qa-execute/SKILL.md");
     expect(scannedPaths).toContain("knowledge/AGENTS.md");
     expect(scannedPaths).toContain(".agents/skills/wtk-lean/scripts/workflow_route.py");
     expect(violations).toEqual([]);
@@ -1211,39 +1076,6 @@ describe("Bun tooling runtime contract", () => {
     expect(Object.keys(manifest.scripts ?? {})).toEqual(
       expect.arrayContaining(documentedScripts),
     );
-    expect(changedHistoricalQaArtifacts()).toEqual([]);
-  });
-
-  it("detects historical QA changes from a local baseline without a remote ref", () => {
-    const root = mkdtempSync(join(tmpdir(), "historical-qa-baseline-"));
-
-    try {
-      execFileSync("git", ["init", "--quiet", "--initial-branch=main"], { cwd: root });
-      mkdirSync(join(root, "docs/qa/reports"), { recursive: true });
-      mkdirSync(join(root, "docs/qa/scenarios"), { recursive: true });
-      writeFileSync(join(root, "docs/qa/reports/historical.md"), "original\n", "utf8");
-      writeFileSync(
-        join(root, "docs/qa/scenarios/ADP-baseline.md"),
-        "qa_status: pass\n",
-        "utf8",
-      );
-      const baseline = commitFixture(root, "baseline");
-      writeFileSync(join(root, "docs/qa/reports/historical.md"), "changed\n", "utf8");
-      writeFileSync(
-        join(root, "docs/qa/scenarios/ADP-baseline.md"),
-        "qa_status: untested\n",
-        "utf8",
-      );
-      mkdirSync(join(root, "docs/qa/charters"), { recursive: true });
-      writeFileSync(join(root, "docs/qa/charters/current-cycle.md"), "new charter\n", "utf8");
-      commitFixture(root, "historical change");
-
-      expect(changedHistoricalQaArtifacts(root, baseline)).toEqual([
-        "docs/qa/reports/historical.md",
-      ]);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
   });
 
   it("fails closed for unsupported and malformed Bun versions before a suite marker runs", () => {

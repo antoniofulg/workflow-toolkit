@@ -9,7 +9,7 @@ sources:
     title: Approved consumer workflow footprint correction
     last_modified: 2026-09-08
   - id: product-boundary
-    resource: ../../../docs/product/AGENT-CONTEXT.md
+    resource: ../../../README.md
     title: Source-pack and consumer ownership boundary
   - id: adoption-provenance
     resource: ../../../scripts/migrate.js
@@ -44,6 +44,6 @@ chosen source and comparison evidence. An approved HTML reference is therefore n
 generic installer scaffold merely because both may be called a template.
 
 [^consumer-footprint]: Approved observation and correction in the maintainer conversation.
-[^product-boundary]: The source-pack context requires product neutrality and consumer-owned context preservation.
+[^product-boundary]: The README gives consuming projects ownership of their instructions and product context.
 [^adoption-provenance]: The legacy migration helper validates recorded hashes before removing old owned files.
 [^state-ad-041]: The toolkit installs only skills and leaves project instructions and configuration with their owners.

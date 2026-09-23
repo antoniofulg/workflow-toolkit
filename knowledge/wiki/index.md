@@ -8,9 +8,9 @@ The project's durable understanding, as an Open Knowledge Format v0.2 bundle. Re
 [the operating schema](../AGENTS.md) before creating or updating anything here. Untouched originals
 live in `../raw/`, outside the bundle.
 
-Nothing here restates its sources. `docs/` and `.specs/STATE.md` stay canonical; these concepts
-carry the graph between them and the places where they disagree. When the two conflict, the source
-wins.
+Nothing here restates its sources. `README.md`, the WTK skills, and `.specs/STATE.md` stay canonical;
+these concepts carry the graph between them and the places where they disagree. When sources conflict,
+the owning source wins.
 
 Add a concept when a source earns one.
 

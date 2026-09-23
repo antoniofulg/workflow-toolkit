@@ -4,9 +4,9 @@ This file is the delivery workflow. It is not a product description.
 
 ## What this project is
 
-Read `docs/product/AGENT-CONTEXT.md` before product-specific work. It holds identity, critical
-constraints, and role/task routes; load only its cited references. Surface missing required context
-as a named gap; do not recurse through product/history directories.
+This repository distributes WTK skills. Read `README.md` for the public contract and the selected
+`.agents/skills/wtk-*/SKILL.md` for workflow behavior. Product context belongs to each consuming
+project; this source checkout has no product documentation or QA records.
 
 ## This chat's role
 
@@ -111,12 +111,11 @@ live in `.agents/skills/wtk-lean/scripts/`; the consuming project owns `make che
 
 | You need | Read |
 | --- | --- |
-| What to build and why | `docs/product/` |
-| How the system is shaped | `docs/architecture/` |
-| How it looks and behaves | `docs/design/` |
+| Public installation and companion guidance | `README.md` |
+| Workflow procedures and shared rules | `.agents/skills/wtk/SKILL.md` and selected `wtk-*` references |
 | Why a past choice was made | `.specs/AD-INDEX.md` |
 | Versioned feature requirements and proof state | `.specs/features/<feature>/plan.md`, `checks.md`, `verification.md` |
-| What the product currently promises users | `docs/qa/scenarios/` |
+| Product promises and QA records in a consuming project | That project's own documentation |
 
 ## Isolated checkouts
 

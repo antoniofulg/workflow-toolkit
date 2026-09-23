@@ -49,10 +49,9 @@ generated agent files. If a project wants automatic routing, it can add and own 
 such as:
 
 ```markdown
-Use the installed `wtk` skill as the entrypoint for workflow requests. Read
-`docs/product/AGENT-CONTEXT.md` before product-specific work, then load only the references selected
-by the active WTK phase. The project owns its instructions, configuration, tests, and delivery
-permissions.
+Use the installed `wtk` skill as the entrypoint for workflow requests. Read the project's own
+product context before product-specific work, then load only the references selected by the active
+WTK phase. The project owns its instructions, configuration, tests, and delivery permissions.
 The project owns this text; WTK never stages or commits files for it.
 ```
 
@@ -117,8 +116,8 @@ This repository is the source pack and maintainer checkout. Run the focused skil
 bun run test
 ```
 
-The source checkout may retain maintainer-only docs and local development helpers. Those files are
-not installed into a consuming project by selecting a WTK skill.
+The source checkout keeps skill tests and local development helpers. Selecting a WTK skill installs
+only that skill's files.
 
 ## Provenance and license
 

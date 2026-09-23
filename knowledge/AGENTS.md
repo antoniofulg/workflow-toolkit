@@ -13,7 +13,7 @@ evolve with use.
 **Knowledge flows into the bundle. It never flows out.**
 
 ```
-CONTEXT.md, docs/, .specs/  ──ingest──>  knowledge/
+README.md, .agents/skills/, .specs/  ──ingest──>  knowledge/
 ```
 
 The bundle never writes back to `.specs/`, and no tool outside this directory is modified to serve

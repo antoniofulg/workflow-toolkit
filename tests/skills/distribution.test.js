@@ -22,7 +22,7 @@ test('full WTK set has twelve skills and no WTK config payload', () => {
   const sourceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-isolated-source-'));
   try {
     for (const skill of wtkSkills) fs.cpSync(path.join(root, '.agents/skills', skill), path.join(sourceRoot, '.agents/skills', skill), { recursive: true });
-    assert.equal(fs.existsSync(path.join(sourceRoot, 'docs/toolkit/guidelines')), false);
+    assert.equal(fs.existsSync(path.join(sourceRoot, 'docs')), false);
     for (const skill of wtkSkills) assertSkillReferences(sourceRoot, skill);
   } finally {
     fs.rmSync(sourceRoot, { recursive: true, force: true });
@@ -57,7 +57,6 @@ test('native agent ownership and current WTK catalog are consistent', () => {
   const lean = read('.agents/skills/wtk-lean/SKILL.md');
   const reviewRounds = read('.agents/skills/wtk/references/review-rounds.md');
   const qaExecute = read('.agents/skills/wtk-qa-execute/SKILL.md');
-  const qaProfile = read('docs/qa/README.md');
 
   assert.match(readme, /full 12-skill WTK set/);
   assert.match(readme, /native model and effort metadata/);
@@ -72,30 +71,8 @@ test('native agent ownership and current WTK catalog are consistent', () => {
   assert.match(reviewRounds, /Deep Review is on demand by default/);
   assert.match(reviewRounds, /fixed default threshold of three attempts/);
   assert.match(qaExecute, /Without one, use\s+`auto`/);
-  assert.match(qaProfile, /workflow_route\.py/);
-  assert.match(qaProfile, /remediation\s+halts after three consecutive stalls/);
-
-  const activeScenarios = [
-    'docs/qa/scenarios/ADP-adopt-workflow-safely.md',
-    'docs/qa/scenarios/ADP-install-versioned-workflow-package.md',
-    'docs/qa/scenarios/CFG-keep-local-artifacts-out-of-git.md',
-    'docs/qa/scenarios/CFG-resolve-deep-review-cadence.md',
-    'docs/qa/scenarios/QAS-use-optional-jev-qa-adapter.md',
-    'docs/qa/scenarios/REL-report-current-workflow-release.md',
-  ];
-  for (const relative of activeScenarios) {
-    const source = read(relative);
-    const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1] ?? source;
-    const currentInterface = frontmatter.split(/\r?\n/).filter((line) => /^(?:expected|entry_points):/.test(line)).join("\n");
-    assert.doesNotMatch(currentInterface, /\bwtk-config\b|workflow_config\.py|\.wtk\.toml(?:\.example)?|--sync-agents/);
-  }
-  for (const relative of [
-    'docs/qa/scenarios/CFG-centralize-agent-model-routing.md',
-    'docs/qa/scenarios/CFG-route-delegated-role-providers.md',
-  ]) {
-    assert.match(read(relative), /^qa_status: skipped$/m);
-    assert.match(read(relative), /^Retired —/m);
-  }
+  assert.equal(fs.existsSync(path.join(root, 'docs')), false);
+  assert.match(read('.agents/skills/wtk-qa/references/qa-scenarios.md'), /consuming project/);
 
   assert.match(read('.specs/AD-INDEX.md'), /\| `AD-042` \| active \|/);
   assert.match(read('.specs/AD-INDEX.md'), /wtk-lean ad-index\.py/);

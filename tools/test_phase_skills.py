@@ -79,11 +79,12 @@ def test_router_references_resolve() -> None:
         assert (ROOT / token.lstrip("./")).is_file(), f"{router}: missing {token}"
 
 
-def test_repository_intelligence_order_is_bounded() -> None:
-    text = (ROOT / "docs/toolkit/repository-intelligence.md").read_text(encoding="utf-8")
-    assert text.index("query Graphify first") < text.index("query Graft before broad native search")
-    assert text.index("one degraded reason") < text.index("Generated graphs")
-    assert "Existing file, symbol, API, caller, and callee pointers" in text
+def test_repository_intelligence_fallback_is_bounded() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    review = (SKILLS / "wtk-deep-review/references/orchestration.md").read_text(encoding="utf-8")
+    assert "Graphify" in readme and "Graft" in readme
+    assert "ordinary repository inspection" in readme
+    assert "Graft context" in review and "falls back to plain repository inspection" in review
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:

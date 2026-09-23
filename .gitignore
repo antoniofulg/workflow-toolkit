@@ -12,8 +12,6 @@ __pycache__/
 .claude/agents/
 .codex/agents/
 .cursor/agents/
-docs/qa/evidence/
-docs/qa/state.csv
 .wtk-deep-review/*
 !.wtk-deep-review/learnings.md
 
