@@ -3,7 +3,7 @@
 One line per `AD-NNN`. The append-only body lives in `.specs/STATE.md`.
 
 Body: `rg -A 20 '^### AD-NNN' .specs/STATE.md`. Resume: `rg -A 20 '^## Handoff' .specs/STATE.md`.
-When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same commit.
+When recording an `AD-NNN`, run the bundled wtk-lean ad-index.py in the same commit.
 
 | ID | Status | Decision |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 | `AD-007` | superseded by AD-037 | `.specs/features/` is versioned, durable workflow state. |
 | `AD-008` | superseded by AD-019 | Adopt upstream ai-memory `1.31.0` only as an opt-in, transient handoff transport between Claude Code, Codex, and Cursor. |
 | `AD-009` | superseded by AD-010 | `.my-workflow.toml` is the single editable source for bundled Claude, Codex, and Cursor agent models and efforts. |
-| `AD-010` | partially superseded by AD-041 | Track `.my-workflow.toml.example` and provider packet templates, while keeping `.my-workflow.toml` and generated `.claude`, `.codex`, and `… |
+| `AD-010` | superseded by AD-042 | Track `.my-workflow.toml.example` and provider packet templates, while keeping `.my-workflow.toml` and generated `.claude`, `.codex`, and `… |
 | `AD-011` | superseded by AD-015 | Parallelization is an opt-in inter-slice orchestration layer above unchanged TLC; `disabled` is the default, `safe` consumes independent or… |
 | `AD-012` | superseded by AD-036 | Parallel execution uses a provider-neutral deterministic coordinator whose adapters own external effects. |
 | `AD-013` | superseded by AD-036 | The provider-neutral coordinator derives and validates a deterministic sibling Git worktree destination, creates that checkout with fixed a… |
@@ -42,9 +42,10 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 | `AD-033` | partially superseded by AD-041 | Graphify Labs `graphifyy` `0.9.14` and Nanonets Graft `0.10.1` are the workflow's standard repository-intelligence tools. |
 | `AD-034` | active | Deep Review defaults to on demand. |
 | `AD-035` | active | Adopt the upstream TLC Lean artifact names and formats (`plan.md`, `checks.md`, and `verification.md`). |
-| `AD-036` | partially superseded by AD-041 | Replace the task-granular workflow with Workflow Toolkit: package `workflow-toolkit` version `1.0.0`, CLI and on-demand entry `wtk`, and pr… |
+| `AD-036` | partially superseded by AD-041 and AD-042 | Replace the task-granular workflow with Workflow Toolkit: package `workflow-toolkit` version `1.0.0`, CLI and on-demand entry `wtk`, and pr… |
 | `AD-037` | active | Feature planning and verification artifacts are transient. |
-| `AD-038` | active | `.wtk.toml` owns the consuming project's browser QA adapter selection through `[qa].browser_adapter`. |
+| `AD-038` | superseded by AD-042 | `.wtk.toml` owns the consuming project's browser QA adapter selection through `[qa].browser_adapter`. |
 | `AD-039` | superseded by AD-040 | Jev is the default adviser for semantic decisions throughout the development lifecycle whenever available, including directly invoked phase… |
 | `AD-040` | active | The shared Jev adviser reference assigns ordinary tool selection to confirmed gateway-managed sessions and higher-level decisions to the ex… |
-| `AD-041` | active | Workflow Toolkit is distributed through supported skill installers as the full `wtk` and `wtk-*` skill set. |
+| `AD-041` | partially superseded by AD-042 | Workflow Toolkit is distributed through supported skill installers as the full `wtk` and `wtk-*` skill set. |
+| `AD-042` | active | WTK no longer owns a project TOML configuration, provider packet templates, packet generation, or model and effort metadata. |

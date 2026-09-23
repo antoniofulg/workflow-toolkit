@@ -140,9 +140,9 @@ python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
 ```
 
 The route records provider and native agent-file identity, derives the approved verification
-profile, keeps Deep Review on demand, and keeps the Lean builder sequential. It never reads or
-writes `.wtk.toml`, model or effort metadata, or generated provider packets. Projects own those
-native files and choose their model and effort settings there.
+profile, keeps Deep Review on demand by default, and keeps the Lean builder sequential. It never
+reads or writes `.wtk.toml`, model or effort metadata, or generated provider packets. Projects own
+those native files and choose their model and effort settings there.
 
 ## Sub-agents and handoff
 

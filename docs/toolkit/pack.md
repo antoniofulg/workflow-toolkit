@@ -13,8 +13,8 @@ The installed directories are:
 - `wtk` — routing and shared references;
 - `wtk-discover`, `wtk-plan`, `wtk-implement`, and `wtk-lean` — discovery, planning, execution, and
   integrated Lean work;
-- `wtk-reuse-review`, `wtk-config`, `wtk-knowledge-check`, and `wtk-ship` — bounded review,
-  explicit configuration, knowledge checks, and authorized delivery;
+- `wtk-reuse-review`, `wtk-knowledge-check`, and `wtk-ship` — bounded review, knowledge checks, and
+  authorized delivery;
 - `wtk-qa`, `wtk-qa-plan`, `wtk-qa-execute`, and `wtk-deep-review` — optional quality phases.
 
 Each skill carries its scripts and conditional references below its own directory. The old

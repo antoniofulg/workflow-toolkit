@@ -6,7 +6,7 @@ persona: Workflow adopter
 journey: J-configure-feature-workflow
 expected: Explicit sync and resolution use only .wtk.toml.example and the byte-preserved local .wtk.toml, render current native packets, default verification to standard, accept light, standard, and ui when pinned by checks, and reject obsolete config names without aliases.
 entry_points: .wtk.toml.example; .wtk.toml; .agents/skills/wtk-config/assets/agents/; .agents/skills/wtk-config/scripts/workflow_config.py; .claude/agents/; .codex/agents/; .cursor/agents/
-qa_status: pass
+qa_status: skipped
 bug_ids:
 fix_status:
 retest_status:
@@ -15,6 +15,10 @@ evidence: docs/qa/evidence/2026-09-13-workflow-toolkit-lean/lean-summary.md
 last_report: docs/qa/reports/2026-09-13-workflow-toolkit-lean.md
 overlaps: ADP-adopt-workflow-safely; CFG-preload-agent-skills-in-packets
 ---
+
+Retired — WTK no longer owns central TOML model/effort routing or generated provider packets.
+Current native model and effort ownership is covered by `ADP-adopt-workflow-safely` and the
+native route contract in `CFG-resolve-deep-review-cadence`. The prior report remains historical.
 
 Covers E2E-001 and E2E-002: local model/effort editing, template-driven native packet generation,
 idempotent reporting, invalid-source and symlink containment, frozen delegated settings, explicit

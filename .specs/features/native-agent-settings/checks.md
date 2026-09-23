@@ -92,3 +92,15 @@ selector; C7 passed with the three named QA adapter tests; and C8 passed with th
 proof plus all six migration tests. The convergence ledger now persists and reports the fixed
 `stall_attempts = 3` threshold, while migration matches the 18 historical packet hashes directly
 and refuses edited packets without any current template dependency.
+
+S3 builder checkpoint: C9 closed with
+`node --test --test-name-pattern='native agent ownership and current WTK catalog are consistent' tests/skills/distribution.test.js`
+(1 passed, 0 failed). The impacted current contract suite passed with `bun test` (80 passed, 0
+failed). Supporting exact evidence: `node --test tests/skills/*.test.js` (20 passed, 0 failed);
+`python3 tools/test_native_agent_routing.py && python3 tools/test_wtk_contract.py && python3
+tools/test_wtk_deep_review_contract.py && python3 tools/test_phase_skills.py && python3
+tools/test_ad_index.py && python3 tools/test_repository_intelligence.py` (5 + 3 + 1 + 8 + 2 + 64
+passed, 0 failed); and `python3 .agents/skills/wtk-lean/scripts/validate_checks.py native-agent-settings`
+(0 errors, 3 existing warnings). Current README, AGENTS, QA profile/scenarios, toolkit guidance,
+package inventory, and AD-INDEX now describe the 12-skill native-settings boundary; historical QA
+reports and retired scenario bodies remain historical. C9 is closed in the S3 slice commit.

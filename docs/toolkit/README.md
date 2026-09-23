@@ -39,14 +39,15 @@ artifacts, and explicit handoff prompts remain the durable semantic context.
 ```
 per slice    implement → scoped gate → atomic commit
 feature      one fresh Technical Verifier over the complete feature range
-resolved     wtk-deep-review groups from wtk-config, before QA
+resolved     optional wtk-deep-review groups, before QA
 
 feature      selected QA session (no product code)
 then         selected full/scoped gate → pull request
 ```
 
-Public hierarchy: `Feature -> Slice -> Check`. Read
-`.agents/skills/wtk-config/SKILL.md` before dispatch; it resolves cadence and delegated providers.
+Public hierarchy: `Feature -> Slice -> Check`. Project-native agent files own model and effort;
+`wtk-lean/scripts/workflow_route.py` records provider and role identity when a feature snapshot is
+needed. Deep Review is on demand, QA defaults to `auto`, and remediation stops after three stalls.
 
 Repeated review blockers use the immutable fingerprint and independent counter in the installed
 `wtk/references/review-rounds.md`; this guide does not duplicate that protocol.

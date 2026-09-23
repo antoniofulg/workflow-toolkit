@@ -2,7 +2,8 @@
 
 Workflow Toolkit is a stack-agnostic set of Agent Skills for turning an idea into a reviewed,
 verified change. The `wtk` router selects the smallest phase skill and loads its references on
-demand. Projects keep ownership of their own instructions, tools, configuration, and QA records.
+demand. Projects keep ownership of their own instructions, native agent model and effort settings,
+tools, and QA records.
 
 ## Install the skills
 
@@ -17,7 +18,6 @@ unit; phase skills are listed for discoverability and are not a supported subset
 | `wtk-plan` | Write a modular task contract from a decided source. |
 | `wtk-implement` | Implement an approved modular task. |
 | `wtk-reuse-review` | Check implementation ownership and reuse. |
-| `wtk-config` | Configure an explicit provider route and feature snapshot. |
 | `wtk-knowledge-check` | Check a project's optional `knowledge/` bundle. |
 | `wtk-qa`, `wtk-qa-plan`, `wtk-qa-execute` | Plan and execute user-visible QA. |
 | `wtk-deep-review` | Run an independent implementation review. |
@@ -29,7 +29,7 @@ the [Vercel Skills CLI](https://github.com/vercel-labs/skills#readme), whose cur
 
 ```bash
 npx skills add antoniofulg/workflow-toolkit \
-  --skill wtk wtk-config wtk-deep-review wtk-discover wtk-implement \
+  --skill wtk wtk-deep-review wtk-discover wtk-implement \
   wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute \
   wtk-qa-plan wtk-reuse-review wtk-ship \
   --agent '*' --copy --yes
@@ -39,8 +39,8 @@ Use `npx skills list` to inspect the project installation and `npx skills update
 The full WTK set carries the shared phase dependencies. WTK does not provide a package installer
 executable.
 
-The full WTK set is self-contained: its scripts, assets, and conditional references live below the
-distributed skill directories. It has no runtime dependency on this repository's
+The full 12-skill WTK set is self-contained: its scripts, assets, and conditional references live
+below the distributed skill directories. It has no runtime dependency on this repository's
 `docs/toolkit/guidelines/` directory.
 
 ## Optional project instructions
@@ -57,6 +57,10 @@ permissions.
 The project owns this text; WTK never stages or commits files for it.
 ```
 
+Projects also own native model and effort metadata in their Claude, Codex, or Cursor agent files.
+WTK leaves those files unchanged. A feature route snapshot records only the active provider and
+role identities through `wtk-lean/scripts/workflow_route.py`.
+
 Projects that already adopted the retired installer can preview and apply the one-time cleanup
 from this source checkout before installing skills:
 
@@ -71,10 +75,11 @@ project prose, and reports legacy workflow prose for manual review. It does not 
 adoption manifest.
 
 Feature workflow state follows the [artifact lifecycle](.agents/skills/wtk/references/artifacts.md)
-and remains project-owned. The `wtk-config` cadence controls the selected wtk-deep-review groups.
-CLI override > profile > native provider determines the configured route. The resolved snapshot
-lives at `.specs/features/<feature>/workflow.json` when a project enables it; `skip` resolves to
-no groups (`[]`).
+and remains project-owned. The Lean builder runs sequentially, Deep Review is on demand with no
+automatic groups unless a feature requests it, and QA uses the `auto` adapter when the project has
+no task-scoped choice. Remediation uses the fixed default `stall_attempts = 3`. When a route
+snapshot is needed, `.specs/features/<feature>/workflow.json` stores provider and role identity;
+model and effort remain in the project's native agent files.
 
 ## Recommended companion skills and tools
 

@@ -6,7 +6,9 @@ a one-line change gets no feature artifacts; a multi-component feature gets full
 Ponytail is an optional companion skill. When a project installs it, its own instructions govern
 minimal-code choices; WTK remains usable without it.
 
-Public hierarchy: `Feature -> Slice -> Check`. Resolve cadence with `wtk-config` before dispatch.
+Public hierarchy: `Feature -> Slice -> Check`. Project-native agent files own model and effort;
+the Lean route records provider and role identity when a feature snapshot is needed. Deep Review is
+on demand, the Lean builder is sequential, QA defaults to `auto`, and remediation uses three stalls.
 
 ## Stages
 

@@ -9,8 +9,9 @@ nit changes the diff; the next round finds new nits. The loop is unbounded by co
 [REVIEW-ROUNDS.md](guidelines/REVIEW-ROUNDS.md) is the protocol. The installed `wtk/references/review-rounds.md`
 is the runtime copy. This page is the choice.
 
-The public hierarchy is `Feature -> Slice -> Check`. Before dispatch, read
-`.agents/skills/wtk-config/SKILL.md`; it resolves the feature's review groups.
+The public hierarchy is `Feature -> Slice -> Check`. Before dispatch, use the project-owned
+`wtk-lean/scripts/workflow_route.py` snapshot when a feature route is needed. Deep Review is on
+demand by default and remediation uses three stalls.
 
 ## One Verifier role, several phases
 
@@ -36,7 +37,7 @@ the integrated result.
 They do not send work back to each other. A wtk-deep-review finding never restarts the Verifier. A
 Critical/Major finding is fixed under the approved loop and its scoped gate, then proven by a one-job
 remediation check (incremental wtk-deep-review); batch and check repeat until none is open or
-`stall_attempts` halts. Remediation follows the stall bound: each attempt runs the scoped gate, a smaller failing
+the three-stall bound. Remediation follows the stall bound: each attempt runs the scoped gate, a smaller failing
 test set resets the counter, and an equal-size or larger set increments it. An unavailable gate
 halts immediately; a reached nonzero threshold halts with the normalized signature, attempt count,
 and fixes tried. If a wtk-deep-review fix changes user-visible behaviour, re-walk **the affected scenario

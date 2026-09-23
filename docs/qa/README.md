@@ -10,7 +10,7 @@ endpoint exists here.
 | Area | Interface | Entry point | Authority |
 | --- | --- | --- | --- |
 | `SKL` | Skill installer and self-contained WTK skill directories | `.agents/skills/wtk*/SKILL.md` | [`package.json`](../../package.json); [README installation](../../README.md#install-the-skills) |
-| `CFG` | Workflow configuration, resolution, generated packets, and Lean feature state | `.wtk.toml.example`; checkout-local `.wtk.toml`; `workflow_config.py` | [`wtk-config`](../../.agents/skills/wtk-config/SKILL.md); [tracked example](../../.wtk.toml.example) |
+| `CFG` | Project-native agent routing, fixed workflow defaults, and Lean feature state | native agent files; `.agents/skills/wtk-lean/scripts/workflow_route.py`; `.specs/features/<feature>/workflow.json` | [`wtk-lean`](../../.agents/skills/wtk-lean/SKILL.md); [workflow route](../../.agents/skills/wtk-lean/scripts/workflow_route.py) |
 | `QAS` | Agent-facing workflow, validation, review, QA, and closeout procedures | `.agents/skills/wtk*/`; Lean validators; close helper | [skills contract](../../README.md#the-workflow); [`wtk-lean`](../../.agents/skills/wtk-lean/SKILL.md); [`wtk-ship`](../../.agents/skills/wtk-ship/SKILL.md) |
 | `DOC` | Workflow documentation and authorization boundaries | `README.md`; `docs/toolkit/` | [`README.md`](../../README.md); [workflow index](../toolkit/README.md) |
 | `REL` | Source identity and skill membership | `package.json`; `bun.lock` | [`package.json`](../../package.json) |
@@ -24,10 +24,11 @@ Command facts remain in their executable manifests or CI authorities.
   existing pattern, not a separate QA framework.
 - Migration path: from this checkout, run `node scripts/migrate.js --root <consumer>` in preview mode,
   then repeat with `--apply` only after the named actions are reviewed.
-- Configuration path: invoke
-  `python3 .agents/skills/wtk-config/scripts/workflow_config.py` against a disposable consumer and
-  reload its generated files through a separate process. The command contract lives in
-  [`wtk-config`](../../.agents/skills/wtk-config/SKILL.md).
+- Configuration path: keep model and effort metadata in the consuming project's native agent files.
+  When a Lean feature needs a route snapshot, invoke
+  `python3 .agents/skills/wtk-lean/scripts/workflow_route.py` and independently read back its
+  provider and role identity. Deep Review is on demand, QA defaults to `auto`, and remediation
+  halts after three consecutive stalls.
 - Lean validation and closeout path: invoke the installed validators under
   `.agents/skills/wtk-lean/scripts/` and
   `python3 .agents/skills/wtk-ship/scripts/close_feature.py <feature> --promoted` only against
@@ -45,9 +46,9 @@ Command facts remain in their executable manifests or CI authorities.
 
 - Build/start: none. The package ships source files and CLIs without a server build.
 - Health signals: the installer exits with its documented result and an independent readback sees
-  the expected managed tree; the resolver exits `0` and its JSON agrees with the reloaded snapshot;
-  validators accept valid fixtures and reject the planned discriminator; closeout deletes only the
-  named eligible feature.
+  the expected managed tree; the route helper exits `0` and its JSON agrees with the reloaded
+  snapshot; validators accept valid fixtures and reject the planned discriminator; closeout deletes
+  only the named eligible feature.
 - Isolation: every mutable probe uses a directory owned by this checkout. Never reuse another
   checkout's runtime or target.
 
@@ -58,9 +59,9 @@ Command facts remain in their executable manifests or CI authorities.
   following `tests/skills/*.test.js`.
 - Prompt-review fixture: one bounded read-only tree containing visible and hidden instruction files;
   record its path before the walk and verify its bytes and file set are unchanged afterward.
-- Config fixtures: a copy of `.wtk.toml.example`, a byte-distinct consumer `.wtk.toml`, and
-  disposable `checks.md` fixtures for `light`, `standard`, and `ui`. Preserve both source files and
-  every consumer-selected value during re-adoption.
+- Routing fixtures: byte-distinct native Claude, Codex, and Cursor agent files plus disposable
+  `checks.md` fixtures for `light`, `standard`, and `ui`. Preserve every consumer-selected model
+  and effort value during route creation and resume.
 - Lifecycle fixtures: one disposable passing Lean feature and one unrelated pending feature with
   recorded foreign bytes. Close only the passing named feature; never use this repository's active
   feature directory as the target.

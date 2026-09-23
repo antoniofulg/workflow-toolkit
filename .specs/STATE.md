@@ -165,7 +165,7 @@
 - **Scope**: Workflow configuration, provider templates/runtime packets, adoption, packaging, tests,
   documentation, and feature snapshots.
 - **Date**: 2026-08-24
-- **Status**: partially superseded by AD-041
+- **Status**: superseded by AD-042
 
 ### AD-011
 
@@ -606,7 +606,7 @@
   execution, verification, and documentation. Native agent role identities remain distinct from
   namespaced skill names.
 - **Date**: 2026-09-12
-- **Status**: partially superseded by AD-041
+- **Status**: partially superseded by AD-041 and AD-042
 
 ### AD-037
 
@@ -646,7 +646,7 @@
 - **Scope**: `.wtk.toml`, `wtk-config`, installer config validation, `wtk-qa-execute`, Jev adapter,
   adoption, QA contracts, and workflow documentation.
 - **Date**: 2026-09-19
-- **Status**: active
+- **Status**: superseded by AD-042
 
 ### AD-039
 
@@ -701,5 +701,23 @@
   adoption contracts. This supersedes the affected distribution and ownership terms in AD-001,
   AD-010, AD-033, and AD-036; their unrelated workflow, configuration, and fallback constraints
   remain active.
+- **Date**: 2026-09-23
+- **Status**: partially superseded by AD-042
+
+### AD-042
+
+- **Decision**: WTK no longer owns a project TOML configuration, provider packet templates, packet
+  generation, or model and effort metadata. The complete supported installation is the 12 remaining
+  `wtk` and `wtk-*` skills. Consuming projects keep model and effort in their native Claude, Codex,
+  or Cursor agent files; WTK leaves those files unchanged. A feature route snapshot stores only
+  provider and role identity. Deep Review is on demand, Lean builders are sequential, QA defaults to
+  `auto` without a task-scoped choice, and remediation uses a fixed `stall_attempts = 3` bound.
+  This supersedes AD-010 and AD-038 and the affected configuration terms of AD-036 and AD-041.
+- **Reason**: A skills-only installation cannot own a second configuration surface without creating
+  a source-of-truth conflict with the consuming project's native agent definitions.
+- **Trade-off**: Each project chooses its own model and effort settings and must use the native host
+  route for dispatch; existing adopters retain only the explicit hash-verified migration cleanup path.
+- **Scope**: WTK skills, route snapshots, remediation, QA adapter defaults, package inventory,
+  migration, README, AGENTS, QA scenarios, tests, and workflow documentation.
 - **Date**: 2026-09-23
 - **Status**: active

@@ -6,7 +6,7 @@ persona: Workflow adopter
 journey: J-configure-feature-workflow
 expected: The resolver reports override-over-profile-over-native routes to existing provider agent files and rejects every invalid route without fallback.
 entry_points: .wtk.toml; .agents/skills/workflow-config/assets/agents/; .claude/agents/; .codex/agents/; .cursor/agents/; .agents/skills/workflow-config/scripts/workflow_config.py
-qa_status: pass
+qa_status: skipped
 bug_ids:
 fix_status:
 retest_status:
@@ -15,6 +15,10 @@ evidence: docs/qa/evidence/2026-08-24-agent-model-routing-local-state/summary.js
 last_report: docs/qa/reports/2026-08-24-agent-model-routing-local-state.md
 overlaps:
 ---
+
+Retired — provider routing and generated packet ownership moved to each consuming project's native
+agent definitions. The prior provider matrix report remains historical; current route snapshots only
+record provider and role identity.
 
 Covers `CWF-ROUTE-1` through `CWF-ROUTE-5`: native routing, partial profiles, explicit overrides,
 provider-owned generated runtime files, canonical template ownership, and precise failures for

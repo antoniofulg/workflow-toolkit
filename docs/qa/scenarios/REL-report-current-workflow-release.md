@@ -5,7 +5,7 @@ title: Report the current skills-only release consistently
 persona: Repository reader
 journey: J-review-workflow-release
 expected: The changelog, package manifest, Bun lockfile, README, and source skill inventory describe the current skills-only distribution and its explicit migration helper without checkout residue.
-entry_points: CHANGELOG.md; README.md; package.json; bun.lock; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-deep-review wtk-discover wtk-implement wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship --agent '*' --copy --yes
+entry_points: CHANGELOG.md; README.md; package.json; bun.lock; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-deep-review wtk-discover wtk-implement wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship --agent '*' --copy --yes
 qa_status: untested
 bug_ids:
 fix_status:

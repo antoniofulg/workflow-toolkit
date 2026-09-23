@@ -18,8 +18,9 @@ For features, Specify + Design + Tasks here. After approval, dispatch **implemen
 For bounded maintenance under `.agents/skills/wtk/references/validation.md`, the active agent edits and validates directly; delegation
 is optional when it adds useful independent work, not a required handoff.
 Spawn the named agent without model overrides; use `explorer` for feature exploration and traces.
-Project-native agent files own provider settings; `wtk-lean/scripts/workflow_route.py` records frozen
-feature routes without generating packets.
+Project-native agent files own provider, model, and effort settings; `wtk-lean/scripts/workflow_route.py`
+records frozen feature routes without generating packets. WTK defaults to a sequential Lean builder,
+on-demand Deep Review, QA adapter `auto` without a task-scoped choice, and `stall_attempts = 3`.
 Provider definitions are real files, not symlinks.
 
 ## Critical rules

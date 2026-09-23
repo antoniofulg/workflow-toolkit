@@ -89,7 +89,6 @@ const activeAuthorityRoots = [
   "scripts",
   "tools",
   ".agents/skills",
-".agents/skills/wtk-config/assets/agents",
 ] as const;
 
 const historicalAuthorityAllowlist = [
@@ -243,12 +242,6 @@ function commitFixture(root: string, message: string): string {
   }).trim();
 }
 
-const verifierPacketPaths = [
-".agents/skills/wtk-config/assets/agents/cursor/verifier.md",
-".agents/skills/wtk-config/assets/agents/claude/verifier.md",
-".agents/skills/wtk-config/assets/agents/codex/verifier.toml",
-] as const;
-
 describe("QA workflow artifact policy", () => {
   it("IT-025 routes behavior-preserving UI corrections by intent and evidence", () => {
     const gates = readRepositoryFile(".agents/skills/wtk/references/validation.md");
@@ -304,11 +297,6 @@ describe("QA workflow artifact policy", () => {
     const lean = readRepositoryFile(".agents/skills/wtk-lean/SKILL.md");
     const implementer = readRepositoryFile(".agents/skills/wtk-implement/SKILL.md");
     const memory = readRepositoryFile(".agents/skills/wtk-lean/references/memory.md");
-    const providerPackets = [
-      readRepositoryFile(".agents/skills/wtk-config/assets/agents/cursor/implementer.md"),
-      readRepositoryFile(".agents/skills/wtk-config/assets/agents/claude/implementer.md"),
-      readRepositoryFile(".agents/skills/wtk-config/assets/agents/codex/implementer.toml"),
-    ];
 
     expect(agents).toContain("Feature -> Slice -> Check");
     expect(loop).toContain("checks.md");
@@ -316,12 +304,9 @@ describe("QA workflow artifact policy", () => {
     expect(lean).toContain("verification.md");
     expect(memory).toContain("checks.md");
     expect(implementer).toContain("Every check names its **proof**");
-    for (const packet of providerPackets) {
-      expect(packet).toContain("checks.md");
-      expect(packet).toContain("current Lean check traceability");
-      expect(packet).toContain("wtk-implement");
-      expect(packet).toMatch(/select\s+`?wtk-lean/i);
-    }
+    expect(lean).toContain("checks.md");
+    expect(lean).toContain("same turn after the feature's last commit");
+    expect(lean).toContain("one fresh Verifier");
   });
 
 });
@@ -435,11 +420,10 @@ describe("canonical QA skills", () => {
 
   it("IT-027 routes the configured QA browser adapter", () => {
     const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
-    const workflowConfig = readRepositoryFile(".agents/skills/wtk-config/scripts/workflow_config.py");
-    const installerConfig = readRepositoryFile(".agents/skills/wtk-config/scripts/packets.js");
     const jevAdapter = readRepositoryFile(".agents/skills/wtk-qa-execute/jev_adapter.py");
 
-    expect(qaExecute).toContain("[qa].browser_adapter");
+    expect(qaExecute).toContain("task-scoped QA adapter choice");
+    expect(qaExecute).toContain("Without one, use auto");
     for (const value of ["auto", "jev", "playwright-mcp", "orca", "maestri", "manual"]) {
       expect(qaExecute).toContain(value);
     }
@@ -449,8 +433,6 @@ describe("canonical QA skills", () => {
     expect(qaExecute).toContain("Orca before Maestri");
     expect(qaExecute).toContain("A direct value selects only that adapter");
     expect(qaExecute).toContain("jev-ultrafast is not a public alias");
-    expect(workflowConfig).toContain('QA_BROWSER_ADAPTERS = ("auto", "jev", "playwright-mcp", "orca", "maestri", "manual")');
-    expect(installerConfig).toContain("const QA_BROWSER_ADAPTERS = ['auto', 'jev', 'playwright-mcp', 'orca', 'maestri', 'manual']");
     expect(jevAdapter).toContain("from jev_ultrafast import Agent");
   });
 
@@ -518,7 +500,7 @@ describe("canonical QA skills", () => {
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
     expect(reviewRounds).toContain("fingerprint = requirement + root cause + failure path");
     expect(reviewRounds).toContain("independent cumulative failed-remediation counter and append-only generation history");
-    expect(reviewRounds).toContain("live `[remediation].stall_attempts` threshold");
+    expect(reviewRounds).toContain("fixed default threshold of three attempts");
     expect(reviewRounds).toContain("every failed post-fix Verifier result, whether or not the build gate is green");
     expect(reviewRounds).toContain("Rewording or reopening a finding preserves its fingerprint and counter");
     expect(reviewRounds).toContain("A distinct finding starts at count zero and does not consume another fingerprint's counter");
@@ -546,32 +528,16 @@ describe("canonical QA skills", () => {
   });
 
   it("IT-003 dispatches all QA phases through each existing Verifier", () => {
-    for (const relativePath of verifierPacketPaths) {
-      const source = readRepositoryFile(relativePath);
-      const normalized = normalizePacket(source);
-      const routing = normalized.slice(normalized.indexOf("## Routing"), normalized.indexOf("## Result"));
-
-      expect(normalized.match(/phase: exactly one of [^.]+\./)?.[0]).toBe(
-        "phase: exactly one of technical, wtk-qa-plan, or wtk-qa-execute.",
-      );
-      expect(routing).toContain("Run exactly one phase per packet");
-      expect(routing).toContain("For technical, check each AC against file:line assertions");
-      expect(routing).toContain("For wtk-qa-plan, invoke the canonical wtk-qa-plan skill");
-      expect(routing).toContain("For wtk-qa-execute, invoke the canonical wtk-qa-execute skill");
-      expect(routing).not.toContain("For wtk-qa-plan, invoke the canonical wtk-qa-execute skill");
-      expect(routing).not.toContain("For wtk-qa-execute, invoke the canonical wtk-qa-plan skill");
-      expect(normalized).toContain("Author and verifier identities must differ");
-      expect(normalized).toContain("same non-author QA session");
-      expect(normalized).toContain("pause walks during remediation");
-      expect(source).toContain("purely internal refactor");
-      expect(source).toMatch(/UI.*API.*CLI.*mobile.*adoption.*docs-as-interface/s);
-      expect(source).not.toMatch(/separate QA reviewer/i);
-    }
-
+    const lean = readRepositoryFile(".agents/skills/wtk-lean/SKILL.md");
+    const qaPlan = readRepositoryFile(".agents/skills/wtk-qa-plan/SKILL.md");
+    const qaExecute = readRepositoryFile(".agents/skills/wtk-qa-execute/SKILL.md");
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
-    const workflowConfig = readRepositoryFile(".agents/skills/wtk-config/SKILL.md");
     const wtkShip = readRepositoryFile(".agents/skills/wtk-ship/SKILL.md");
 
+    expect(lean).toContain("one fresh Verifier over `<feature base>..HEAD` with every check");
+    expect(qaPlan).toContain("wtk-qa-execute");
+    expect(qaExecute).toContain("same non-author Verifier");
+    expect(qaExecute).toContain("Do not walk a tree while it is being changed");
     expect(reviewRounds).toContain("The provider `verifier` executes exactly one phase per packet");
     expect(reviewRounds).toContain("Deep-review is a separate orchestrator stage, not a Verifier phase");
     expect(reviewRounds).not.toContain("The existing provider `verifier` performs all stages");
@@ -579,7 +545,6 @@ describe("canonical QA skills", () => {
     expect(readRepositoryFile("docs/toolkit/reviews.md")).toContain(
       "Deep-review is a separate stage, not a Verifier phase.",
     );
-    expect(workflowConfig).toContain("[remediation]` table");
     const remediation = reviewRounds.slice(
       reviewRounds.indexOf("## Escalation"),
       reviewRounds.indexOf("## Requirement and contract parity"),
@@ -594,9 +559,8 @@ describe("canonical QA skills", () => {
     );
     expect(remediation).toContain("equal-size set, including one with different members");
     expect(remediation).toContain("a larger set increments it");
-    expect(remediation).toContain("`stall_attempts = 0` is unbounded");
     expect(remediation).toContain(
-      "when a nonzero threshold is reached, halt with the repeated signature, attempt count, and fixes tried",
+      "when the third stall is reached, halt with the repeated signature, attempt count, and fixes tried",
     );
     expect(remediation).toContain(
       "If the gate is unavailable, halt immediately without another remediation check",
@@ -612,7 +576,7 @@ describe("canonical QA skills", () => {
       remediation.indexOf("strict subset of the running minimum"),
     );
     expect(remediation.indexOf("strict subset of the running minimum")).toBeLessThan(
-      remediation.indexOf("when a nonzero threshold is reached"),
+      remediation.indexOf("when the third stall is reached"),
     );
     expect(remediation.indexOf("a larger set increments it")).toBeGreaterThan(
       remediation.indexOf("strict subset of the running minimum"),
@@ -650,7 +614,7 @@ describe("canonical QA skills", () => {
       "after each correction",
       "a one-job incremental wtk-deep-review over reviewed_head..HEAD",
       "Repeat batch + check until no Critical/Major is open",
-      "[remediation].stall_attempts halts",
+      "default three-attempt stall bound halts",
       "escalate only",
       "post-fix gate fails",
       "stall threshold is reached for the same fingerprint",
@@ -678,15 +642,11 @@ describe("canonical QA skills", () => {
       "FIX_BEFORE_SHIP` is actionable, not a prompt for approval",
     );
 
-    for (const relativePath of verifierPacketPaths) {
-      const packet = readRepositoryFile(relativePath);
-
-      expect(packet).toContain("qa-scenarios.md");
-      expect(packet).not.toMatch(
-        /(?:^|\n)\s*(?:id|area|title|persona|journey|expected|entry_points|qa_status|bug_ids|fix_status|retest_status|fix_commits|evidence|last_report|overlaps):/m,
-      );
-      expect(packet).not.toMatch(/(?:Field rules|Status enums|qa_status:\s*(?:untested|pass|fail))/i);
-    }
+    expect(executionGuideline).toContain("docs/qa/README.md");
+    expect(executionGuideline).not.toMatch(
+      /(?:^|\n)\s*(?:id|area|title|persona|journey|expected|entry_points|qa_status|bug_ids|fix_status|retest_status|fix_commits|evidence|last_report|overlaps):/m,
+    );
+    expect(executionGuideline).not.toMatch(/(?:Field rules|Status enums|qa_status:\s*(?:untested|pass|fail))/i);
   });
 
   it("IT-022 reconciles reusable QA charters, spec-anchored cases, and filed-issue QA", () => {
@@ -731,22 +691,14 @@ describe("canonical QA skills", () => {
     expect(qaExecute).toMatch(/Report the exact adapter, path, evidence, and\s+limitation/);
     expect(qaExecute).toMatch(/does not write product code, install a framework, invent a\s+command/);
 
-    for (const relativePath of verifierPacketPaths) {
-      const source = readRepositoryFile(relativePath);
-
-      expect(source).toContain("docs/qa/README.md");
-      expect(source).toContain("existing adapter");
-      expect(source).toContain("exact path");
-      expect(source).toContain("evidence");
-      expect(source).toContain("limitation");
-      expect(source).toMatch(/never install.*invent/s);
-      expect(source).toContain("checkout-local");
-    }
+    expect(qaExecute).toContain("existing browser, API, CLI, mobile, or manual adapter");
+    expect(qaExecute).toMatch(/Report the exact adapter, path, evidence, and\s+limitation/);
+    expect(qaExecute).toContain("raw evidence");
   });
 });
 
 describe("configurable review policy", () => {
-  it("uses the canonical hierarchy and resolved wtk-deep-review groups", () => {
+  it("uses the canonical hierarchy and project-native workflow defaults", () => {
     const agents = readRepositoryFile("AGENTS.md");
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
     const reviews = readRepositoryFile("docs/toolkit/reviews.md");
@@ -756,49 +708,27 @@ describe("configurable review policy", () => {
     const readme = readRepositoryFile("README.md");
 
     expect(agents).toContain("Feature -> Slice -> Check");
-    expect(agents).toContain(".agents/skills/wtk-config/SKILL.md");
-
-    const reviewConfigPointer = ".agents/skills/wtk-config/SKILL.md";
-    expect(reviewRounds).toContain(reviewConfigPointer);
-    expect(reviewRounds.indexOf(reviewConfigPointer)).toBeLessThan(
-      reviewRounds.indexOf("## The feature closing step"),
-    );
-    for (const repeatedCadenceText of [
-      "`slice`, `feature`, or `grouped.N`",
-      "absent config means",
-      "four-slice feature",
-      "3+1",
-    ]) {
-      expect(reviewRounds).not.toContain(repeatedCadenceText);
-    }
-
-    expect(reviews).toContain(reviewConfigPointer);
-    expect(reviews.indexOf(reviewConfigPointer)).toBeLessThan(
-      reviews.indexOf("## One Verifier role, several phases"),
-    );
+    expect(agents).toContain("Project-native agent files own provider, model, and effort settings");
+    expect(reviewRounds).toContain("wtk-lean/scripts/workflow_route.py");
+    expect(reviewRounds).toContain("Deep Review is on demand by default");
+    expect(reviews).toContain("wtk-lean/scripts/workflow_route.py");
+    expect(reviews).toContain("remediation uses three stalls");
     expect(reviews).not.toContain("`slice`, `feature`, or balanced `grouped.N`");
     expect(reviews).not.toContain("absent config defaults to `grouped.3`");
+    expect(wtkShip).not.toContain("wtk-config");
 
-    const wtkShipPointer = ".agents/skills/wtk-config";
-    expect(wtkShip).toContain(wtkShipPointer);
-    expect(wtkShip.indexOf(wtkShipPointer)).toBeGreaterThanOrEqual(0);
-
-    const loopPointer = "Resolve cadence with `wtk-config` before dispatch.";
-    expect(loop).toContain(loopPointer);
-    expect(loop.indexOf(loopPointer)).toBeLessThan(loop.indexOf("## Stages"));
-
-    const tourPointer = ".agents/skills/wtk-config/SKILL.md";
-    expect(tour).toContain(tourPointer);
-    expect(tour.indexOf(tourPointer)).toBeLessThan(tour.indexOf("A filed issue skips the ceremony"));
-    expect(readme).toContain("The `wtk-config` cadence controls the selected wtk-deep-review groups.");
-    expect(readme).toContain("CLI override > profile > native provider");
+    expect(loop).toContain("Project-native agent files own model and effort");
+    expect(loop).toContain("Deep Review is\non demand");
+    expect(tour).toContain("Project-native agent files own model and effort");
+    expect(tour).toContain("Deep Review is on demand");
+    expect(readme).toContain("native agent model and effort settings");
+    expect(readme).toContain("fixed default `stall_attempts = 3`");
     expect(readme).toContain(".specs/features/<feature>/workflow.json");
+    expect(readme).toContain("model and effort remain in the project's native agent files");
     expect(reviewRounds).toContain("wtk-deep-review** (resolved implementation groups)");
     expect(reviewRounds).not.toContain("wtk-deep-review** (every slice)");
     const finalGroupInstruction =
       "Before final QA, complete the final pending implementation wtk-deep-review group; cadence `skip` resolves no groups, so nothing waits for wtk-deep-review.";
-    expect(readme).toContain("`skip` resolves to\nno groups (`[]`)");
-    expect(readRepositoryFile(".wtk.toml.example")).toMatch(/^cadence = "skip".*\bon demand\b/m);
     const qaHeading = "## The feature closing step";
     const remediationInstruction =
       "For QA code remediation, review only `reviewed_head..HEAD`, then re-walk affected scenario rows.";
@@ -811,7 +741,11 @@ describe("configurable review policy", () => {
     expect(deltaIndex).toBeLessThan(rerunIndex);
     expect(wtkShip).toContain("selected `wtk-deep-review`");
     expect(loop).toContain("wtk-deep-review follows resolved");
-    expect(tour).toContain("wtk-deep-review groups from wtk-config");
+    expect(tour).not.toContain("wtk-deep-review groups from wtk-config");
+    for (const source of [agents, reviewRounds, reviews, wtkShip, loop, tour, readme]) {
+      expect(source).not.toContain("wtk-config");
+      expect(source).not.toContain("workflow_config.py");
+    }
   });
 
   it("fixes every wtk-deep-review defect inside the originating feature run", () => {
@@ -841,8 +775,9 @@ describe("configurable review policy", () => {
     const gates = readRepositoryFile(".agents/skills/wtk/references/validation.md");
     const testContract = readRepositoryFile(".agents/skills/wtk/references/test-contract.md");
     const normalizedTestContract = testContract.replace(/\s+/g, " ");
-    expect(specDriven).toContain("wtk-config");
-    expect(readRepositoryFile(".agents/skills/wtk-config/SKILL.md")).toContain("workflow.json");
+    expect(specDriven).toContain("wtk-lean");
+    expect(readRepositoryFile(".agents/skills/wtk-lean/scripts/workflow_route.py")).toContain("workflow.json");
+    expect(specDriven).not.toContain("wtk-config");
 
     const closingQa =
       "The feature-closing QA session runs after the final implementation wtk-deep-review group";
@@ -903,54 +838,29 @@ describe("repository intelligence policy", () => {
 });
 
 describe("agent configuration", () => {
-  it("IT-018 keeps the three harness matrices and dedicated Deep Review agents aligned", () => {
-    const frontmatterValue = (source: string, key: string): string =>
-      source.match(new RegExp(`^${key}:\\s*(.+)$`, "m"))?.[1]?.trim() ?? "";
-    const tomlValue = (source: string, key: string): string =>
-      source.match(new RegExp(`^${key}\\s*=\\s*"([^"]+)"$`, "m"))?.[1] ?? "";
-    const value = (source: string, format: "frontmatter" | "toml", key: string): string =>
-      format === "toml" ? tomlValue(source, key) : frontmatterValue(source, key);
+  it("IT-018 keeps project-native role metadata and dedicated Deep Review dispatch aligned", () => {
+    const route = readRepositoryFile(".agents/skills/wtk-lean/scripts/workflow_route.py");
+    const lean = readRepositoryFile(".agents/skills/wtk-lean/SKILL.md");
+    const packageJson = JSON.parse(readRepositoryFile("package.json")) as { files: string[] };
 
-    const config = readRepositoryFile(".wtk.toml.example");
-    const settings = new Map<string, { model: string; effort: string }>();
-    const section = /\[models\.(claude|codex|cursor)\.(planner|implementer|verifier|explorer|deep_reviewer|designer)\]\s+model = "([^"]+)"\s+effort = "([^"]+)"/g;
-    for (const match of config.matchAll(section)) {
-      settings.set(`${match[1]}.${match[2]}`, { model: match[3], effort: match[4] });
-    }
-    expect(settings.size).toBe(18);
+    expect(route).not.toContain("model");
+    expect(route).not.toContain("effort");
+    expect(lean).toContain("native agent-file identity");
+    expect(lean).toContain("Projects own");
+    expect(packageJson.files).not.toContain(".agents/skills/wtk-config");
+    expect(existsSync(join(repositoryRoot, ".wtk.toml.example"))).toBe(false);
 
     for (const provider of ["claude", "codex", "cursor"] as const) {
-      for (const role of ["planner", "implementer", "verifier", "explorer", "deep_reviewer", "designer"] as const) {
-        const agentName = role === "deep_reviewer" ? "deep-reviewer" : role;
+      for (const role of ["planner", "implementer", "verifier", "explorer", "deep-reviewer", "designer"] as const) {
         const extension = provider === "codex" ? "toml" : "md";
-        const format = provider === "codex" ? "toml" : "frontmatter";
-        const relativePath = `.agents/skills/wtk-config/assets/agents/${provider}/${agentName}.${extension}`;
+        const relativePath = `.${provider}/agents/${role}.${extension}`;
         const source = readRepositoryFile(relativePath);
-        const expected = settings.get(`${provider}.${role}`)!;
-        expect(source).toContain("docs/product/AGENT-CONTEXT.md");
-        expect(source).toContain("role/task");
-        expect(value(source, format, "name")).toBe(agentName);
-        if (provider === "cursor") {
-          expect(value(source, format, "model")).toBe(`${expected.model}[effort=${expected.effort}]`);
-        } else {
-          expect(value(source, format, "model")).toBe(expected.model);
-          const effortKey = provider === "codex" ? "model_reasoning_effort" : "effort";
-          expect(value(source, format, effortKey)).toBe(expected.effort);
-        }
-        if (role === "deep_reviewer") {
-          expect(source).toContain("Do not edit source, tests, or configuration.");
-          expect(source).toMatch(/one materialized Deep Review job/i);
-          expect(source).toMatch(/one output artifact/i);
-          expect(source).toMatch(/findings through .*schema/i);
-        }
+        expect(source).toMatch(provider === "codex" ? /^model = ".+"$/m : /^model: .+$/m);
+        if (provider === "codex") expect(source).toMatch(/^model_reasoning_effort = ".+"$/m);
+        if (provider === "claude") expect(source).toMatch(/^effort: .+$/m);
+        if (provider === "cursor") expect(source).toMatch(/^model: .+\[effort=.+\]$/m);
       }
     }
-
-    expect(readRepositoryFile(".agents/skills/wtk-config/assets/agents/claude/deep-reviewer.md")).toMatch(
-      /^tools:\s*Read, Grep, Glob, Bash$/m,
-    );
-    const cursorDeepReviewer = readRepositoryFile(".agents/skills/wtk-config/assets/agents/cursor/deep-reviewer.md");
-    expect(cursorDeepReviewer).not.toMatch(/^readonly:\s*true$/m);
 
     const runtime = readRepositoryFile(".agents/skills/wtk-deep-review/references/subagent-runtimes.md");
     const orchestration = readRepositoryFile(".agents/skills/wtk-deep-review/references/orchestration.md");
@@ -1018,7 +928,7 @@ describe("adoption and public setup", () => {
   it("IT-010 makes adoption reviewable and routes QA by observability", () => {
     const readme = readRepositoryFile("README.md");
     const prompt = readRepositoryFile("docs/adoption-prompt.md");
-    const adopt = readRepositoryFile(".agents/skills/wtk-config/SKILL.md");
+    const route = readRepositoryFile(".agents/skills/wtk-lean/scripts/workflow_route.py");
 
     expect(readme).toContain("skill installer");
     expect(readme).toContain("Optional project instructions");
@@ -1033,8 +943,11 @@ describe("adoption and public setup", () => {
     for (const phase of ["wtk-qa-plan", "wtk-qa-execute"]) expect(qaPolicy).toContain(phase);
     expect(prompt).toContain("optional companion");
     expect(prompt).toContain("manual review");
-    expect(adopt).toContain(".wtk.toml");
-    expect(adopt).toContain("wtk-config");
+    expect(readme).toContain("native model and effort metadata");
+    expect(route).toContain("native_provider");
+    expect(route).not.toContain(".wtk.toml");
+    expect(route).not.toContain('"model"');
+    expect(route).not.toContain('"effort"');
   });
 
   it("IT-009 exposes the fixed layered adoption boundary", () => {
@@ -1175,12 +1088,12 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_token_metrics.py",
       "tools/test_gate_cache.py",
       "tools/test_jev_qa_adapter.py",
+      "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
       "tools/test_remediation.py",
       "tools/test_repository_intelligence.py",
       "tools/test_review_convergence.py",
       "tools/test_tlc_validators.py",
-      "tools/test_workflow_config.py",
       "tools/test_wtk_contract.py",
       "tools/test_wtk_deep_review_contract.py",
       "tools/test_wtk_forward.py",
@@ -1225,7 +1138,7 @@ describe("Bun tooling runtime contract", () => {
     expect(scannedPaths).toContain("README.md");
     expect(scannedPaths).toContain("docs/qa/README.md");
     expect(scannedPaths).toContain("knowledge/AGENTS.md");
-    expect(scannedPaths).toContain(".agents/skills/wtk-config/assets/agents/codex/planner.toml");
+    expect(scannedPaths).toContain(".agents/skills/wtk-lean/scripts/workflow_route.py");
     expect(violations).toEqual([]);
 
     const historicalPaths = trackedPaths.filter(isHistoricalAuthority);
@@ -1237,7 +1150,7 @@ describe("Bun tooling runtime contract", () => {
     ).toBe(true);
 
     for (const relativePath of [
-      ".agents/skills/wtk-config/assets/agents/codex/planner.toml",
+      ".agents/skills/wtk-lean/scripts/workflow_route.py",
     ]) {
       for (const command of [
         "npm run forbidden",

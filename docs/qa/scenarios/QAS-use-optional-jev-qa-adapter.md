@@ -4,8 +4,8 @@ area: QAS
 title: Use the default Jev browser QA route safely
 persona: Workflow operator
 journey: J-use-optional-jev-qa-adapter
-expected: When browser_adapter is absent, WTK selects auto and uses Jev first for eligible fixtures, allows Playwright MCP only for unavailable or proven pre-action timeout, and records pass only after matching independent readback after reload.
-entry_points: consumer .wtk.toml; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-deep-review wtk-discover wtk-implement wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship --agent '*' --copy --yes; .agents/skills/wtk-qa-execute/SKILL.md; .agents/skills/wtk-qa-execute/jev_adapter.py
+expected: When a project has no task-scoped browser adapter choice, WTK selects `auto` and uses Jev first for eligible fixtures, allows Playwright MCP only for unavailable or proven pre-action timeout, and records pass only after matching independent readback after reload.
+entry_points: native project agent files; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-deep-review wtk-discover wtk-implement wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship --agent '*' --copy --yes; .agents/skills/wtk-qa-execute/SKILL.md; .agents/skills/wtk-qa-execute/jev_adapter.py
 qa_status: untested
 bug_ids:
 fix_status:

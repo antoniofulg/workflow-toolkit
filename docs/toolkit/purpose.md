@@ -15,8 +15,8 @@ The pack is the floor plus the end condition.
 ## What “balance” means here
 
 **Delivery** is: a change small enough to implement by vertical slice, a gate cheap enough to run
-per slice, one fresh independent Verifier over the complete feature, review cadence selected by
-wtk-config, and merge authority that stays with the human.
+per slice, one fresh independent Verifier over the complete feature, on-demand Deep Review with a
+three-stall remediation bound, and merge authority that stays with the human.
 
 **Reliability** is: tests derived from acceptance criteria, security surfaces named and given
 `SEC-` cases, one Verifier that is not the author over the complete feature, a persona walk for
