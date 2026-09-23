@@ -11,8 +11,9 @@ orchestrator dispatch the frozen route.
 ## Synchronize agent metadata
 
 `.wtk.toml` is the checkout-local single editable source for every Claude, Codex, and Cursor
-model and effort across planner, implementer, verifier, explorer, and deep reviewer. The tracked
-`.wtk.toml.example` initializes it, and tracked `.agents/skills/wtk-config/assets/agents/` bodies are the source
+model and effort across planner, implementer, verifier, explorer, and deep reviewer. The project
+`.wtk.toml.example`, or the bundled `assets/wtk.toml.example` when the project has none, initializes
+it. The tracked `.agents/skills/wtk-config/assets/agents/` bodies are the source
 for ignored generated runtime packets. Native packet fields are generated output; edit templates
 for instruction changes.
 

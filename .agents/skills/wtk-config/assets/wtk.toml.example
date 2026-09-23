@@ -1,0 +1,96 @@
+version = 3
+
+[qa]
+browser_adapter = "auto" # Valid values: auto, jev, playwright-mcp, orca, maestri, manual
+
+[parallelization]
+mode = "disabled" # the Lean builder is sequential; resource serialization remains opt-in
+max_workers = "auto" # auto starts at 2 and scales to 4 when healthy
+# Optional repository-relative executable for resource-bearing lanes.
+# resource_provider = "tools/workflow_resources"
+
+[deep_review]
+cadence = "skip" # deep-review is on demand; choose slice, feature, or grouped.N to schedule it
+
+# Post-cap remediation halts after this many consecutive non-progress attempts.
+# Default 3. 0 means unbounded: never halt for a stall.
+[remediation]
+stall_attempts = 3
+
+[profiles.mixed]
+implementer = "claude"
+verifier = "codex"
+explorer = "cursor"
+deep_reviewer = "codex"
+
+[models.claude.planner]
+model = "opus"
+effort = "high"
+
+[models.claude.implementer]
+model = "opus"
+effort = "medium"
+
+[models.claude.verifier]
+model = "opus"
+effort = "medium"
+
+[models.claude.explorer]
+model = "sonnet"
+effort = "medium"
+
+[models.claude.deep_reviewer]
+model = "sonnet"
+effort = "high"
+
+[models.claude.designer]
+model = "inherit"
+effort = "high"
+
+[models.codex.planner]
+model = "gpt-5.6-sol"
+effort = "high"
+
+[models.codex.implementer]
+model = "gpt-5.6-luna"
+effort = "max"
+
+[models.codex.verifier]
+model = "gpt-5.6-sol"
+effort = "high"
+
+[models.codex.explorer]
+model = "gpt-5.6-luna"
+effort = "medium"
+
+[models.codex.deep_reviewer]
+model = "gpt-5.6-luna"
+effort = "high"
+
+[models.codex.designer]
+model = "gpt-6-astra"
+effort = "high"
+
+[models.cursor.planner]
+model = "cursor-grok-4.6"
+effort = "high"
+
+[models.cursor.implementer]
+model = "gpt-5.6-luna"
+effort = "high"
+
+[models.cursor.verifier]
+model = "cursor-grok-4.6"
+effort = "medium"
+
+[models.cursor.explorer]
+model = "gpt-5.6-luna"
+effort = "medium"
+
+[models.cursor.deep_reviewer]
+model = "gpt-5.6-luna"
+effort = "high"
+
+[models.cursor.designer]
+model = "claude-fable-5-1-thinking-high"
+effort = "high"

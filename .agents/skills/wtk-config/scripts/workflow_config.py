@@ -590,7 +590,12 @@ def _sync_config(root: Path) -> tuple[dict[str, Any], bytes | None]:
     if local.exists():
         return _read_config(root), None
     example = root / ".wtk.toml.example"
-    _preflight_path(root, example, "config example")
+    if example.exists():
+        _preflight_path(root, example, "config example")
+    else:
+        example = Path(__file__).resolve().parent.parent / "assets" / "wtk.toml.example"
+        if not example.is_file():
+            raise _error(".wtk.toml.example is missing from the project and the installed wtk-config skill")
     config = _load_config(example, ".wtk.toml.example")
     return config, example.read_bytes()
 
