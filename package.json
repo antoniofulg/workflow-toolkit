@@ -1,35 +1,17 @@
 {
   "name": "workflow-toolkit",
   "version": "1.4.1",
-  "private": false,
+  "private": true,
   "license": "MIT",
   "type": "module",
   "packageManager": "bun@1.4.0",
-  "bin": {
-    "wtk": "bin/wtk.js"
-  },
   "engines": {
     "node": ">=18.0.0",
     "bun": ">=1.4.0 <1.5.0"
   },
   "files": [
-    "bin/wtk.js",
-    "scripts/installer",
-    "skills-lock.json",
+    "scripts/migrate.js",
     "NOTICE.md",
-    "AGENTS.md",
-    ".wtk.toml.example",
-    "knowledge/AGENTS.md",
-    "knowledge/raw/README.md",
-    "templates/adoption",
-    "docs/toolkit/guidelines",
-    "docs/toolkit/README.md",
-    "docs/toolkit/repository-intelligence.md",
-    "docs/toolkit/decisions.md",
-    "docs/toolkit/guidelines.md",
-    "docs/toolkit/loop.md",
-    "docs/toolkit/purpose.md",
-    "docs/toolkit/reviews.md",
     ".agents/skills/wtk",
     ".agents/skills/wtk-lean",
     ".agents/skills/wtk-discover",
@@ -41,40 +23,23 @@
     ".agents/skills/wtk-qa",
     ".agents/skills/wtk-qa-plan",
     ".agents/skills/wtk-qa-execute",
-    ".agents/skills/ponytail",
     ".agents/skills/wtk-deep-review",
     ".agents/skills/wtk-ship",
-    ".agents/skills/ponytail-audit",
-    ".agents/skills/ponytail-debt",
-    ".agents/skills/ponytail-gain",
-    ".agents/skills/ponytail-help",
-    ".agents/skills/ponytail-review",
-    ".agents/skills/prompt-review",
-    ".agents/skills/security-audit-coordinator",
-    ".agents/skills/security-implementation",
-    ".agents/skills/security-pentest",
-    ".agents/skills/security-review",
-    ".agents/skills/security-spec",
-    ".agents/skills/security-threat-model",
     "!**/__pycache__/**",
     "!**/*.pyc"
   ],
   "scripts": {
     "knowledge": "bun .agents/skills/wtk-knowledge-check/scripts/cli.ts",
-    "review:graft:build": "graft build",
-    "review:graft:version": "graft --version",
-    "test": "bun test && node --test tests/installer/*.test.js",
+    "test": "bun test && node --test tests/skills/*.test.js",
     "test:python": "git ls-files -- 'scripts/test_*.py' 'tools/test_*.py' | sort | while read test; do python3 \"$test\" || exit $?; done",
     "test:all": "bun run test && bun run test:python"
   },
   "devDependencies": {
-    "@nanonets/graft": "0.10.1",
     "@types/bun": "1.4.0",
     "@types/node": "22.20.1",
     "skills": "1.5.23",
+    "smol-toml": "1.8.0",
     "typescript": "5.9.3"
   },
-  "dependencies": {
-    "smol-toml": "1.8.0"
-  }
+  "dependencies": {}
 }

@@ -1,7 +1,8 @@
 # Workflow Toolkit notices
 
-The executable, installer, and bundled support scripts are project-owned MIT-licensed source.
-The workflow skill content is CC BY 4.0 unless its frontmatter states otherwise.
+The Workflow Toolkit source pack is project-owned MIT-licensed source unless a skill's frontmatter
+states otherwise. The distributed `wtk` skills are self-contained directories for use with a
+project's skill installer; this repository does not install host-project files.
 
 The integrated Lean skill is an adaptation of Tech Leads Club's `tlc-spec-lean` at commit
 `0ab82f644cd9caf94c65347a50ad934800b0cbc4`. Its source URL, content hash, and `CC-BY-4.0`
@@ -11,10 +12,6 @@ license are pinned in [`skills-lock.json`](skills-lock.json) and its attribution
 Project-owned skill adaptations retain their per-file `CC-BY-4.0` frontmatter. External skill
 sources and reviewed revisions remain listed in [`skills-lock.json`](skills-lock.json).
 
-The five bundled security lifecycle skills are reviewed copies of
-[`antoniofulg/security-lifecycle`](https://github.com/antoniofulg/security-lifecycle) at commit
-`bd1ae10f1db3d38e12166b8c789f0ec9d33253e3`. Their individual notices and retained license texts
-remain inside each skill directory.
-
-The bundled `security-pentest` skill is original Apache-2.0 work from security-lifecycle
-contributors. Its license and provenance notice are retained inside its skill directory.
+Security lifecycle, Ponytail, adaptive-guidelines, and repository-intelligence tools are optional
+companion projects. Their licenses and provenance are owned by their respective repositories and
+are not bundled here.
