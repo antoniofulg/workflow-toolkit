@@ -47,3 +47,4 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 | `AD-038` | active | `.wtk.toml` owns the consuming project's browser QA adapter selection through `[qa].browser_adapter`. |
 | `AD-039` | superseded by AD-040 | Jev is the default adviser for semantic decisions throughout the development lifecycle whenever available, including directly invoked phase… |
 | `AD-040` | active | The shared Jev adviser reference assigns ordinary tool selection to confirmed gateway-managed sessions and higher-level decisions to the ex… |
+| `AD-041` | active | Publishing a stable GitHub release is the only automatic npm publication trigger. |
