@@ -18,14 +18,11 @@ _SKILLS_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_SKILLS_ROOT / "wtk-ship"))
 import remediation
 
-sys.path.insert(0, str(_SKILLS_ROOT / "wtk-config" / "scripts"))
-import workflow_config
-
 MAX_FAILURES = 3
 GENERATION_STATUSES = {"open", "halted", "closed"}
 REMEDIATION_FIELDS = (
-    "failing_tests", "failing_signature", "minimum_failing_tests", "minimum_failing_count",
-    "consecutive_stalls", "attempt_count", "fixes_tried",
+    "stall_attempts", "failing_tests", "failing_signature", "minimum_failing_tests",
+    "minimum_failing_count", "consecutive_stalls", "attempt_count", "fixes_tried",
 )
 
 
@@ -59,6 +56,7 @@ def _generation(number: int, failures: int, status: str, **extra: Any) -> dict[s
         "generation": number,
         "failed_remediations": failures,
         "status": status,
+        "stall_attempts": remediation.DEFAULT_STALL_ATTEMPTS,
         "failing_tests": [],
         "failing_signature": "",
         "minimum_failing_tests": [],
@@ -104,7 +102,9 @@ def _validate_generation(generation: Any, expected_number: int) -> dict[str, Any
         raise ValueError("invalid audit generation")
     for field in REMEDIATION_FIELDS:
         if field not in generation:
-            if field == "failing_tests":
+            if field == "stall_attempts":
+                generation[field] = remediation.DEFAULT_STALL_ATTEMPTS
+            elif field == "failing_tests":
                 generation[field] = []
             elif field == "minimum_failing_tests":
                 generation[field] = list(generation.get("failing_tests", []))
@@ -120,6 +120,8 @@ def _validate_generation(generation: Any, expected_number: int) -> dict[str, Any
         raise ValueError("invalid remediation minimum failing tests")
     if not isinstance(generation["failing_signature"], str):
         raise ValueError("invalid remediation failing signature")
+    if type(generation["stall_attempts"]) is not int or generation["stall_attempts"] < 0:
+        raise ValueError("invalid remediation stall attempts")
     for field in ("minimum_failing_count", "consecutive_stalls", "attempt_count"):
         if type(generation[field]) is not int or generation[field] < 0:
             raise ValueError("invalid remediation counters")
@@ -259,7 +261,7 @@ def record_result(
         transition = remediation.transition_remediation(
             generation,
             failing_tests,
-            stall_attempts=workflow_config.stall_attempts(root),
+            stall_attempts=remediation.DEFAULT_STALL_ATTEMPTS,
             gate_available=gate_available,
             fixes_tried=fixes_tried,
         )

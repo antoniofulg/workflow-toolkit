@@ -4,7 +4,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { applyMigration, previewMigration, sha256 as migrationSha256 } from '../../scripts/migrate.js';
+import { execFileSync } from 'node:child_process';
+import { applyMigration, LEGACY_PACKET_HASHES, previewMigration, sha256 as migrationSha256 } from '../../scripts/migrate.js';
 
 const temp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-migration-'));
 const file = (root, relative) => path.join(root, ...relative.split('/'));
@@ -70,13 +71,23 @@ test('migration preview is complete and read only', () => {
   assert.deepEqual(snapshot(root), before);
 });
 
-test('migration removes only verified ownership and reports manual review', () => {
+test('migration retires historical packets without templates', () => {
   const root = temp();
+  assert.equal(Object.keys(LEGACY_PACKET_HASHES).length, 18);
+  for (const provider of ['claude', 'codex', 'cursor']) {
+    for (const role of ['planner', 'implementer', 'verifier', 'explorer', 'deep-reviewer', 'designer']) {
+      assert.match(LEGACY_PACKET_HASHES[`${provider}/${role}`], /^[0-9a-f]{64}$/);
+    }
+  }
   const managed = Buffer.from('retired toolkit file\n');
   const managedRecord = managedFile(root, 'docs/toolkit/README.md', managed);
   const block = managedBlock(root, 'AGENTS.md', 'core', 'legacy workflow instruction');
   fs.appendFileSync(file(root, 'AGENTS.md'), 'legacy workflow prose\n');
-  const currentPlanner = fs.readFileSync(file(path.resolve(import.meta.dirname, '../..'), '.agents/skills/wtk-config/assets/agents/claude/planner.md'), 'utf8');
+  const currentPlanner = execFileSync(
+    'git',
+    ['show', '01ab71485fcd042efc10cac4fdca7c11a01c55e9:.agents/skills/wtk-config/assets/agents/claude/planner.md'],
+    { cwd: path.resolve(import.meta.dirname, '../..'), encoding: 'utf8' },
+  );
   const legacyPlanner = currentPlanner
     .replace('skills: [wtk-lean, wtk-discover, wtk-plan]', 'skills: [wtk-lean, wtk-discover, wtk-plan, ponytail]')
     .replaceAll('.agents/skills/wtk/references/ui-ux.md', 'docs/toolkit/guidelines/UI-UX.md')
@@ -103,6 +114,26 @@ test('migration removes only verified ownership and reports manual review', () =
   assert.equal(result.manualReview[0].path, 'AGENTS.md');
   assert.equal(fs.existsSync(file(root, '.my-workflow/migration-backups/success/files/AGENTS.md')), true);
   assert.equal(fs.statSync(file(root, '.my-workflow/migration-backups/success/files/AGENTS.md')).mode & 0o7777, 0o640);
+});
+
+test('migration refuses edited historical provider packets', () => {
+  const root = temp();
+  const legacyPlanner = execFileSync(
+    'git',
+    ['show', '01ab71485fcd042efc10cac4fdca7c11a01c55e9:.agents/skills/wtk-config/assets/agents/claude/planner.md'],
+    { cwd: path.resolve(import.meta.dirname, '../..'), encoding: 'utf8' },
+  )
+    .replace('skills: [wtk-lean, wtk-discover, wtk-plan]', 'skills: [wtk-lean, wtk-discover, wtk-plan, ponytail]')
+    .replaceAll('.agents/skills/wtk/references/ui-ux.md', 'docs/toolkit/guidelines/UI-UX.md')
+    .replaceAll('.agents/skills/wtk/references/security.md', 'docs/toolkit/guidelines/SECURITY.md')
+    .replaceAll('.agents/skills/wtk/references/modeling.md', 'docs/toolkit/guidelines/MODELING.md')
+    .replaceAll('.agents/skills/wtk/references/frontend.md', 'docs/toolkit/guidelines/FRONTEND.md');
+  write(root, '.claude/agents/planner.md', `${legacyPlanner}\nconsumer edit\n`);
+  adoption(root);
+
+  const preview = previewMigration({ root });
+  assert.equal(preview.actions.some((action) => action.path === '.claude/agents/planner.md'), false);
+  assert.equal(fs.readFileSync(file(root, '.claude/agents/planner.md'), 'utf8').endsWith('consumer edit\n'), true);
 });
 
 test('migration removes multiple verified blocks from one instruction file exactly', () => {

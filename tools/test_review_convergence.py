@@ -18,14 +18,8 @@ REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 CONVERGENCE_CLI = REPOSITORY_ROOT / ".agents/skills/wtk-ship/scripts/review_convergence.py"
 
 
-def configured_root(stall_attempts: int = 3) -> Path:
-    root = Path(tempfile.mkdtemp())
-    config = (REPOSITORY_ROOT / ".wtk.toml.example").read_text(encoding="utf-8")
-    (root / ".wtk.toml").write_text(
-        config.replace("stall_attempts = 3", f"stall_attempts = {stall_attempts}"),
-        encoding="utf-8",
-    )
-    return root
+def configured_root(_stall_attempts: int = 3) -> Path:
+    return Path(tempfile.mkdtemp())
 
 
 def record_cli(root: Path, *arguments: str) -> dict[str, object]:
@@ -149,18 +143,20 @@ def test_public_flow_persists_live_remediation_and_keeps_gate_unavailable_distin
         assert generation["attempt_count"] == 3
         assert generation["fixes_tried"] == ["guard input", "retry", "split test"]
 
-        config = root / ".wtk.toml"
-        config.write_text(config.read_text(encoding="utf-8").replace("stall_attempts = 2", "stall_attempts = 1"), encoding="utf-8")
-        halted = record_cli(
-            root, "--requirement", common[0], "--root-cause", common[1], "--failure-path", common[2],
-            "--previous-fingerprint", fingerprint, "--verifier-failed", "--failing-test", "case.test.ts:8:2 > alpha",
-            "--fix-tried", "re-run",
-        )
+        halted = None
+        for index in range(3):
+            halted = record_cli(
+                root, "--requirement", common[0], "--root-cause", common[1], "--failure-path", common[2],
+                "--previous-fingerprint", fingerprint, "--verifier-failed", "--failing-test", "case.test.ts:8:2 > alpha",
+                "--fix-tried", f"re-run {index + 1}",
+            )
+        assert halted is not None
         generation = halted["generations"][-1]
         assert halted["status"] == "halted"
         assert generation["halt_reason"] == "stall_threshold_reached"
-        assert generation["consecutive_stalls"] == 1
-        assert generation["attempt_count"] == 4
+        assert generation["stall_attempts"] == 3
+        assert generation["consecutive_stalls"] == 3
+        assert generation["attempt_count"] == 6
         assert generation["failing_signature"] == "case.test.ts > alpha"
 
         unavailable = record_cli(
@@ -179,7 +175,7 @@ def test_public_flow_persists_live_remediation_and_keeps_gate_unavailable_distin
         stored = payload["fingerprints"][fingerprint]
         assert stored["generations"][-1]["minimum_failing_count"] == 1
         assert stored["generations"][-1]["minimum_failing_tests"] == ["case.test.ts > alpha"]
-        assert stored["generations"][-1]["failed_remediations"] == 4
+        assert stored["generations"][-1]["failed_remediations"] == 6
         assert len(payload["fingerprints"]) == 2
     finally:
         shutil.rmtree(root)
@@ -200,6 +196,7 @@ def test_same_fingerprint_counts_failed_verifier_and_halts_after_three_stalls() 
         assert second["failed_remediations"] == 2
         assert third["failed_remediations"] == 3
         assert third["status"] == "open"
+        assert third["generations"][-1]["stall_attempts"] == 3
         assert fourth["failed_remediations"] == 4
         assert fourth["status"] == "halted"
     finally:

@@ -85,3 +85,10 @@ selectors. Supporting contracts passed with `python3 tools/test_phase_skills.py`
 writes snapshots atomically, resumes provider/agent identity without model or effort, and leaves
 all 18 ignored native agent files byte-identical. S2 remains the next action; the legacy packet
 hash table stays in `scripts/migrate.js` and is tested without current provider templates.
+
+S2 builder checkpoint: C5 passed through the named three-stall selector and the full
+`python3 tools/test_review_convergence.py` suite (15 tests); C6 passed through the on-demand route
+selector; C7 passed with the three named QA adapter tests; and C8 passed with the named migration
+proof plus all six migration tests. The convergence ledger now persists and reports the fixed
+`stall_attempts = 3` threshold, while migration matches the 18 historical packet hashes directly
+and refuses edited packets without any current template dependency.

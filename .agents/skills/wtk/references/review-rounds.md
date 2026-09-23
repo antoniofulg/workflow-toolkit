@@ -31,8 +31,8 @@ identifies its applicable route.
 A discovery review reads the whole change, so its cost explodes with the diff. The remediation check
 reads only `reviewed_head..HEAD`, so remediation cost tracks the fix, not the feature.
 
-Read `.agents/skills/wtk-config/SKILL.md` before dispatch; its resolver owns cadence modes,
-default, and balanced groups. One pull request and one actor per role remain unchanged.
+Use the project-owned `wtk-lean/scripts/workflow_route.py` snapshot when a feature route is needed.
+Deep Review is on demand by default, and one pull request and one actor per role remain unchanged.
 
 **Stages do not loop back into each other.** A wtk-deep-review finding never sends work back to
 Technical Verifier. A clean remediation check or the stall bound ends the loop; neither revokes the
@@ -59,7 +59,7 @@ same non-author session reuse; packet phases remain distinct.
 
    `wtk` points here for remediation identity and counting; this rule prevents a renamed
    finding from resetting its history while allowing a distinct finding to proceed.
-2. **Nitpicks never trigger a review.** Fix every confirmed wtk-deep-review defect in the active feature run. Critical and Major findings trigger one remediation batch, then one remediation check: a one-job incremental wtk-deep-review over `reviewed_head..HEAD` that dispositions every open prior finding and reviews the fix. Repeat batch + check until no Critical/Major is open or `[remediation].stall_attempts` halts. Minor findings join that batch, or close together in one Minor-only batch with one scoped gate and one commit; a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check. Trivials and advisories go to the pull request follow-up list. **In an active, already-approved review loop, fix blocking findings without new human approval and run the scoped gate after each correction; escalate only if the post-fix gate fails or the stall threshold is reached for the same fingerprint.** Local fixes only; remote actions retain separate approval requirements.
+2. **Nitpicks never trigger a review.** Fix every confirmed wtk-deep-review defect in the active feature run. Critical and Major findings trigger one remediation batch, then one remediation check: a one-job incremental wtk-deep-review over `reviewed_head..HEAD` that dispositions every open prior finding and reviews the fix. Repeat batch + check until no Critical/Major is open or the default three-attempt stall bound halts. Minor findings join that batch, or close together in one Minor-only batch with one scoped gate and one commit; a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check. Trivials and advisories go to the pull request follow-up list. **In an active, already-approved review loop, fix blocking findings without new human approval and run the scoped gate after each correction; escalate only if the post-fix gate fails or the stall threshold is reached for the same fingerprint.** Local fixes only; remote actions retain separate approval requirements.
 3. **Deduplicate by root cause, not by occurrence.** One missing null check repeated in six files is
    one finding that lists six files — not six findings.
 4. **Verify before flagging.** Check for an adjacent comment explaining the choice, a decision in
@@ -82,7 +82,7 @@ identity and buys the same independence.
    Filed-issue review uses the same rule. `ponytail-review` is the skill; this rule is what makes
    YAGNI blocking.
 ## Fingerprinted remediation accounting
-`fingerprint = requirement + root cause + failure path` is each finding's immutable identity. Maintain an independent cumulative failed-remediation counter and append-only generation history for each fingerprint; count every failed post-fix Verifier result, whether or not the build gate is green. The current generation's consecutive-stall state is separate and halts only at the live `[remediation].stall_attempts` threshold. The executable state lives in `review-fingerprints.json` through the stdlib convergence script, which delegates the pure transition to `remediation.py`.
+`fingerprint = requirement + root cause + failure path` is each finding's immutable identity. Maintain an independent cumulative failed-remediation counter and append-only generation history for each fingerprint; count every failed post-fix Verifier result, whether or not the build gate is green. The current generation's consecutive-stall state is separate and halts at the fixed default threshold of three attempts. The executable state lives in `review-fingerprints.json` through the stdlib convergence script, which delegates the pure transition to `remediation.py`.
 Rewording or reopening a finding preserves its fingerprint and counter. A distinct finding starts at count zero and does not consume another fingerprint's counter; the diagnostic cap is separate.
 ## The Review-Signal trailer
 
@@ -146,8 +146,8 @@ Batch aggressively. One commit per remediation batch is already the commit rule,
 
 ## Escalation
 
-While a remediation check leaves a Critical/Major open, finish approved remediation and run its scoped gate after every attempt; the fix needs no new approval. Each attempt derives a stable signature from sorted failing-test identifiers after removing timings, absolute paths, and line numbers; a current failing-test set that is a strict subset of the running minimum failing-test set resets the counter, while an equal-size set, including one with different members, or a larger set increments it, and `stall_attempts = 0` is unbounded.
-If the gate is unavailable, halt immediately without another remediation check; when a nonzero threshold is reached, halt with the repeated signature, attempt count, and fixes tried. An open Critical alone does not halt while attempts establish new minima; wtk-ship uses the same unavailable-gate or reached-threshold halt contract.
+While a remediation check leaves a Critical/Major open, finish approved remediation and run its scoped gate after every attempt; the fix needs no new approval. Each attempt derives a stable signature from sorted failing-test identifiers after removing timings, absolute paths, and line numbers; a current failing-test set that is a strict subset of the running minimum failing-test set resets the counter, while an equal-size set, including one with different members, or a larger set increments it. The default bound is three attempts.
+If the gate is unavailable, halt immediately without another remediation check; when the third stall is reached, halt with the repeated signature, attempt count, and fixes tried. An open Critical alone does not halt while attempts establish new minima; wtk-ship uses the same unavailable-gate or reached-threshold halt contract.
 
 ## Requirement and contract parity
 

@@ -33,8 +33,7 @@ export const LEGACY_SEARCHIGNORE_ENTRIES = [
 const PROVIDERS = ['claude', 'codex', 'cursor'];
 const ROLES = ['planner', 'implementer', 'verifier', 'explorer', 'deep-reviewer', 'designer'];
 const packetRelative = (provider, role) => `.${provider}/agents/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
-const packetTemplate = (provider, role) => `.agents/skills/wtk-config/assets/agents/${provider}/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
-const LEGACY_PACKET_HASHES = {
+export const LEGACY_PACKET_HASHES = {
   'claude/planner': '3729e30846768b60f213aefc5130eed924a14f161fa82efc4d8a31d1f2d102cf',
   'claude/implementer': '600640521a94b9249ce8f13190a77555955146ce41fe8b8e5373eea45d6229e8',
   'claude/verifier': '5da5ad11a3b1ee00c0abec586a5177c052a597a25b3dbc523a6ef6c6d234c445',
@@ -219,19 +218,15 @@ function normalizePacket(text, provider) {
   return text.replace(/^model:\s*[^\n]*$/gm, '').replace(/^effort:\s*[^\n]*$/gm, '');
 }
 
-function providerPacketActions(root, sourceRoot) {
-  const source = asRoot(sourceRoot || process.cwd());
+function providerPacketActions(root) {
   const actions = [];
   for (const provider of PROVIDERS) for (const role of ROLES) {
     const relative = packetRelative(provider, role);
     const target = safePath(root, relative, 'provider packet');
-    const template = path.join(source, ...packetTemplate(provider, role).split('/'));
-    if (!fs.existsSync(target) || !fs.existsSync(template)) continue;
-    if (!fs.lstatSync(target).isFile() || !fs.lstatSync(template).isFile()) continue;
+    if (!fs.existsSync(target) || !fs.lstatSync(target).isFile()) continue;
     const key = `${provider}/${role}`;
     const targetHash = sha256(Buffer.from(normalizePacket(fs.readFileSync(target, 'utf8'), provider)));
-    const currentHash = sha256(Buffer.from(normalizePacket(fs.readFileSync(template, 'utf8'), provider)));
-    if (targetHash === currentHash || targetHash === LEGACY_PACKET_HASHES[key]) {
+    if (targetHash === LEGACY_PACKET_HASHES[key]) {
       actions.push({ type: 'remove-file', path: relative, reason: 'retired generated provider packet' });
     }
   }
@@ -258,7 +253,7 @@ function legacyProse(root, blockActions) {
   return result;
 }
 
-function migrationReport(root, manifest, sourceRoot) {
+function migrationReport(root, manifest) {
   const report = {
     root,
     status: manifest ? 'ready' : 'not-installed',
@@ -312,7 +307,7 @@ function migrationReport(root, manifest, sourceRoot) {
     report.actions.push({ type: 'remove-block', path: block.relative, owner: block.owner, key });
   }
 
-  report.actions.push(...providerPacketActions(root, sourceRoot));
+  report.actions.push(...providerPacketActions(root));
   report.actions.push(...findLinks(root, manifest));
   report.actions.push(...ignoreActions(root, '.gitignore', LEGACY_IGNORE_ENTRIES));
   report.actions.push(...ignoreActions(root, '.ignore', LEGACY_SEARCHIGNORE_ENTRIES));
@@ -326,7 +321,7 @@ function migrationReport(root, manifest, sourceRoot) {
 
 export function previewMigration(options = {}) {
   const root = asRoot(options.targetRoot ?? options.root);
-  return migrationReport(root, readAdoption(root), options.sourceRoot);
+  return migrationReport(root, readAdoption(root));
 }
 
 function stateFor(root, relative) {
