@@ -9,7 +9,7 @@ Plan: `.specs/features/skills-first-toolkit/plan.md`
 
 ### S1 - Install WTK through skill installers
 
-**C1** - Each published `wtk` and `wtk-*` skill has its referenced scripts, assets, and guideline content inside the distributed skill set (WTK-01, AC 1)
+**C1** - The complete installed 13-skill WTK set resolves every runtime reference, script, asset, and conditional guideline within the installed set (WTK-01, AC 1)
 Proof: `node --test --test-name-pattern='published WTK skills resolve every local reference' tests/skills/distribution.test.js`
 
 **C2** - Installing a published WTK skill into a project leaves `AGENTS.md`, `CLAUDE.md`, local config, provider packets, knowledge files, and ignore files byte-for-byte unchanged (WTK-01, AC 2)
@@ -44,7 +44,7 @@ Proof: `node --test --test-name-pattern='skills-only documentation and phase con
 
 | Set (size) | Member -> proof | Unproven |
 | --- | --- | --- |
-| Distribution doors (2) | skill-installer-only C1, C2, C3 · one-time adopter exit C4, C5, C6, C7 | - |
+| Distribution doors (2) | complete 13-skill set through skill installer C1, C2, C3 · one-time adopter exit C4, C5, C6, C7 | - |
 | Project harness files (6) | `AGENTS.md` C2, C5 · `CLAUDE.md` C2, C5 · `.wtk.toml` C2 · provider packets C2 · knowledge files C2 · ignore files C2 | - |
 | Old ownership classes (3) | managed instruction blocks C4-C7 · recorded files C4-C7 · recorded links C4-C7 | - |
 | Migration outcomes (4) | preview C4 · success C5 · conflict C6 · rollback C7 | - |

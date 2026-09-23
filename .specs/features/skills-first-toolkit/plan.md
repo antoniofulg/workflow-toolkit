@@ -4,14 +4,14 @@
 
 Workflow Toolkit currently installs more than workflow skills: it manages blocks in a consuming project's `AGENTS.md` and `CLAUDE.md`, publishes standalone guidelines and knowledge scaffolding, generates provider packets, and bundles companion skills. Editing a managed instruction block causes a conflict on the next update. The npm installer also makes toolkit updates a separate process from the skill installers a project already uses.
 
-The requested outcome is a set of self-contained `wtk` and `wtk-*` skills distributed through users' skill installers. Each project owns its agent instructions and chooses complementary tools. No measured adoption or context-cost data was supplied; the changed distribution contract and a safe exit for existing adopters are the observable goals.
+The requested outcome is one self-contained set of `wtk` and `wtk-*` skills distributed through users' skill installers. Each project owns its agent instructions and chooses complementary tools. No measured adoption or context-cost data was supplied; the changed distribution contract and a safe exit for existing adopters are the observable goals.
 
 ## Flow
 
 Reuse the existing `wtk` router, phase skills, and their owned scripts; use the consumer's skill installer for installation and updates.
 
 1. An existing adopter first runs an explicit one-time migration helper from the source checkout. It previews old manifest-owned files and instruction blocks, backs up exact bytes, removes only verified toolkit-owned content, and flags any unowned legacy prose for project review.
-2. A user selects `wtk` and the desired `wtk-*` skills in a supported skill installer; the installer places the skill directories in its own scope. Migration runs before a project-local skill update so it cannot delete newly installed skills.
+2. A user installs the complete 13-skill WTK set through a supported skill installer; the installer places those directories in its own scope. Migration runs before a project-local skill update so it cannot delete newly installed skills.
 3. `wtk` (exists) routes an invoked task to its phase skill and skill-local references without consulting installed `docs/toolkit/guidelines/` or requiring companion skills.
 4. `README.md` (exists) explains skill installation, an optional project-owned instruction snippet, and individually chosen companion skills and code-intelligence tools.
 
@@ -19,7 +19,7 @@ Reuse the existing `wtk` router, phase skills, and their owned scripts; use the 
 
 | Front | What changes |
 | --- | --- |
-| Distribution | Users' skill installers become the only WTK installation and update path. Retire the published `workflow-toolkit` npm installer, `wtk install`, module selection, adoption manifests for new installs, and installer-created Claude aliases. |
+| Distribution | Users' skill installers become the only WTK installation and update path. The supported installation unit is the complete 13-skill WTK set. Retire the published `workflow-toolkit` npm installer, `wtk install`, module selection, adoption manifests for new installs, and installer-created Claude aliases. |
 | Instructions | WTK no longer creates or updates project `AGENTS.md` or `CLAUDE.md`. The source repository retains its own maintainer instructions; the README offers optional text a project can adopt and own. |
 | Skill references | Operational guidelines move to the narrowest owning `wtk-*` skill reference; shared rules have one canonical home and links are updated together. Human-facing explanations stay in the source README or toolkit docs. |
 | Optional capabilities | Stop bundling or mandating Ponytail, security-lifecycle, adaptive-guidelines, prompt-review, Graphify, and Graft. Document them as choices with a specific use case and verified source. CodeGraph remains a candidate until its identity and value are established. |
@@ -65,22 +65,22 @@ None - nothing consumed outside remains as a WTK CLI or application HTTP route. 
 
 | One-way door | Literal shape | Alternative rejected |
 | --- | --- | --- |
-| Distribution boundary | Publish self-contained `wtk`/`wtk-*` skill directories; skill installers own placement and updates. No WTK npm install command or normal-install manifest. | A narrow npm installer would still create a second update mechanism and an ownership record in every project. |
+| Distribution boundary | Publish the complete 13-skill `wtk`/`wtk-*` set as one supported installation unit; skill installers own placement and updates. No WTK npm install command or normal-install manifest. | Individually installable phase subsets would require a maintained dependency graph and extra distribution proofs. |
 | Existing-adopter exit | Explicit one-time cleanup uses old recorded hashes to remove only exact toolkit blocks and pristine obsolete files, with preview and backup; remaining unowned prose is reported for manual review. | Dropping the installer without cleanup guidance would leave stale mandatory instructions in adopted projects. |
 
 ## Criteria
 
 ### S1: A new project gets WTK through a skill installer (P1)
 
-The project installs the WTK skills it chooses without taking on a managed harness.
+The project installs the complete WTK set without taking on a managed harness.
 
 **Acceptance Criteria**
 
-1. WHEN a supported skill installer installs a WTK skill THEN the installed directory SHALL contain its required references, scripts, and assets with no dependency on the source checkout's `docs/toolkit/guidelines/`.
+1. WHEN a supported skill installer installs the complete 13-skill WTK set THEN every runtime reference SHALL resolve within the installed set, including required scripts and assets, with no dependency on the source checkout's `docs/toolkit/guidelines/`.
 2. WHEN a project installs or updates WTK skills THEN WTK-provided installation material SHALL neither create nor edit `AGENTS.md`, `CLAUDE.md`, local provider config, generated agent packets, product/knowledge scaffolding, or ignore files.
 3. WHEN WTK is distributed THEN its published install instructions SHALL use skill installers, and the source package SHALL define no `wtk install` executable or promise an adoption manifest.
 
-**Independent test:** Install the published skill directories into an isolated test project using each documented supported route; inventory the resulting files, resolve references, and compare existing project instructions byte-for-byte.
+**Independent test:** Install all 13 published WTK skill directories into an isolated project through the documented skill-installer route; inventory files, resolve every runtime reference, and compare existing project instructions byte-for-byte.
 
 ### S2: Existing adopters can leave the old managed install safely (P1)
 
@@ -131,6 +131,7 @@ An agent can invoke the same workflow with only WTK installed; a human can choos
 | Assumption | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
 | Distribution path | Use skill installers only; remove `npx workflow-toolkit install`. | User selected this path explicitly. | y |
+| Installation unit | Require the complete 13-skill WTK set; do not promise individually installable phase subsets. | User chose the full-set option after verification exposed cross-skill references. | y |
 | Existing-adopter cleanup | Ship an explicit, one-time helper in the source repository; run it before project-local skill installation and never as part of skill installation. | Old managed instructions need a safe exit without giving new installs ownership of host files. | n |
 | Optional recommendations | Identify the exact CodeGraph and adaptive-guidelines projects before adding install commands. | Similar names may refer to different upstreams. | n |
 
@@ -140,7 +141,7 @@ An agent can invoke the same workflow with only WTK installed; a human can choos
 
 | Surface | Decision | Landing |
 | --- | --- | --- |
-| Skill installation | Self-contained skill files and untouched host instructions | AC 1, 2 |
+| Skill installation | Self-contained full 13-skill set and untouched host instructions | AC 1, 2 |
 | Distribution docs | Skill-installer routes and removed npm command | AC 3, 11 |
 | One-time cleanup | Preview and conflict refusal | AC 4, 6 |
 | One-time cleanup | Verified deletion, backup, and rollback | AC 5, 7, 8 |
@@ -148,6 +149,6 @@ An agent can invoke the same workflow with only WTK installed; a human can choos
 
 ## Sources
 
-- User's explicit selection in this conversation: use skill installers only.
+- User's explicit selections in this conversation: use skill installers only and install all 13 WTK skills together.
 - `scripts/installer/engine.js` and `package.json`: current managed-file and npm distribution boundaries.
 - `.specs/AD-INDEX.md`: active decisions this change must reconcile.
