@@ -1,7 +1,7 @@
 # QA Execute — Skills-only Workflow Toolkit — 2026-09-23
 
 - **Charter:** [`CH-skills-only-workflow-2026-09-23`](../charters/CH-skills-only-workflow-2026-09-23.md)
-- **Snapshots:** initial `a0d09af820a61c5c7070e86b93634a96406cf608`; installation retest `a9566e32b39eb8e17d8dd306e4bcf630020ea207`; documentation closeout `d363b1cc82348348c90a5280b6723ae65d38d5e3`
+- **Snapshots:** initial `a0d09af820a61c5c7070e86b93634a96406cf608`; installation retest `a9566e32b39eb8e17d8dd306e4bcf630020ea207`; documentation closeout `d363b1cc82348348c90a5280b6723ae65d38d5e3`; full-set contract check `b3e430b6aa2262baf9e159ef13ec2b29246c00bb`; scenario recheck `da1e23986e59d7618d23be402a80aebbe172abeb`
 - **Personas:** Workflow adopter; Repository reader
 - **Adapter:** Vercel Skills CLI 1.5.23/manual, public Node CLI, and independent filesystem readback through [`docs/qa/README.md`](../README.md)
 - **Environment:** local source checkout; no network, registry, browser, server, provider, or optional companion installation
@@ -18,6 +18,8 @@
 | `ADP-resolve-legacy-adoption-conflicts` | untested — all reachable public legs passed | `migration-results.json`; rollback passed only through the shipped failure hook because the CLI exposes no safe fault injection. |
 | `ADP-separate-external-security-skills` | pass | WTK installed zero companions; all four recommendations have sources and uses; Adaptive Guidelines is a disclosed candidate. `skills-install.json`; `documentation-readback.json`. |
 | `DOC-read-explicit-workflow-provenance` | pass | Core provenance, project-owned instructions, README recommendations, and pack-guide scope match. Same documentation evidence. |
+| `REL-report-current-workflow-release` | untested — scoped contract passed | Entry point now names the exact 13-skill set; the full release journey was outside this scoped recheck. `full-set-contract-readback.json`. |
+| `QAS-use-optional-jev-qa-adapter` | untested — scoped contract passed | Entry point now installs all 13 before invoking QA; live browser behavior remains outside this source-pack walk. Same evidence. |
 
 ## Skills CLI discovery and fix loop
 
@@ -88,7 +90,18 @@ Remediation `d363b1c` aligned both current scenario commands with the README's 1
 the executable command from the retired layered scenario. Fresh readback found zero missing skills
 in current scenarios and no executable legacy command. The bug passed retest.
 
-Evidence: [`scenario-contract-readback.json`](../evidence/2026-09-23-skills-only-workflow/scenario-contract-readback.json).
+Later contract change `b3e430b` made the full 13-skill set the only supported installation. Scoped
+readback found two remaining partial promises: the release scenario selected only `wtk`, and the Jev
+scenario selected only `wtk-qa-execute`. Remediation `da1e239` aligned both with the README and
+removed the Jev subset-install prose. Fresh readback found 13 skills in every active install command
+and no partial promise.
+
+The live install evidence remains reusable: a scoped Git diff from `a9566e3` to `da1e239` found no
+change under `.agents/skills/`, `package.json`, or `skills-lock.json`. The prior evidence still
+records 13 installed skills, zero unresolved references, and unchanged host sentinels.
+
+Evidence: [`scenario-contract-readback.json`](../evidence/2026-09-23-skills-only-workflow/scenario-contract-readback.json);
+[`full-set-contract-readback.json`](../evidence/2026-09-23-skills-only-workflow/full-set-contract-readback.json).
 
 ## Findings
 
@@ -96,8 +109,9 @@ Evidence: [`scenario-contract-readback.json`](../evidence/2026-09-23-skills-only
    committed lock self-suppressed those local skills. `a9566e3` passed fresh non-author retest.
 2. Fixed minor: Adaptive Guidelines was recommended without a verified source. `d363b1c` passed
    fresh documentation readback.
-3. Fixed minor: full-set QA scenarios published partial skill selections. `d363b1c` passed fresh
-   scenario-contract readback.
+3. Fixed minor: full-set QA scenarios published partial skill selections. `d363b1c` passed the
+   first recheck; `b3e430b` exposed two further active subset promises, and `da1e239` passed the
+   expanded all-scenario recheck.
 
 ## Limitations
 
@@ -111,9 +125,8 @@ Evidence: [`scenario-contract-readback.json`](../evidence/2026-09-23-skills-only
 ## Cleanup and residue
 
 Every recorded disposable source, consumer, preview, apply, conflict, rollback, and discriminator
-root was removed. Closing source porcelain contains the pre-existing user-owned `skills-lock.json`,
-the coordinator's verification report, and planned QA artifacts only. No product file was edited by
-this QA session.
+root was removed. Final closing porcelain contains only the pre-existing user-owned
+`skills-lock.json`. No product file was edited by this QA session.
 
 ## Commands and results
 
@@ -127,9 +140,11 @@ this QA session.
 | Rollback forward evidence | expected throw and exact restore | 0.009 s |
 | Documentation / scenario contract readback | 0 / 0 | 0.026 / <0.001 s |
 | Documentation / scenario contract closeout rewalk | 0 / 0 | <0.001 / <0.001 s |
+| Full-set README/runtime/scenario rewalk | 0 | 0.039 s |
 
 ## Fix-loop accounting
 
-Two returns to implementation completed two loops. The first fixed the major Skills CLI discovery
-defect in `a9566e3`; the second fixed both documentation defects as one batch in `d363b1c`. No
-finding remained unresolved or regressed after its scoped recheck.
+Three returns to implementation completed three loops. The first fixed the major Skills CLI
+discovery defect in `a9566e3`; the second fixed both documentation defects as one batch in
+`d363b1c`; the third aligned two remaining scenarios with the later complete-set contract in
+`da1e239`. No finding remained unresolved after its scoped recheck.
