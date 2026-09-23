@@ -1,6 +1,7 @@
 # Workflow Toolkit
 
 The npm package is `workflow-toolkit`; the executable is `wtk`.
+Source: [GitHub](https://github.com/antoniofulg/workflow-toolkit).
 
 An operating system for agents. It ships the workflow-owned [`wtk`](.agents/skills/wtk/SKILL.md)
 router and its Lean skills (`wtk-lean`, `wtk-discover`, `wtk-plan`, `wtk-implement`)
@@ -309,7 +310,7 @@ repository boundary. Retired workflow files are removed only when their managed 
 are pristine; edited or unproven paths conflict with zero writes.
 
 Each release lists its upgrade steps under `### Migration` in the changelog; follow them in order
-after installation. The package identity for this release is `workflow-toolkit@1.4.1` with the `wtk` executable.
+after installation. The package identity for this release is `workflow-toolkit@1.4.2` with the `wtk` executable.
 
 ## Publish a package release
 
