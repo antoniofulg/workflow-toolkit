@@ -23,9 +23,8 @@ references instead.
 
 ## Optional companion choices
 
-Ponytail, security-lifecycle, Graphify, and Graft are separate choices. The README names their
-sources and use cases. Adaptive Guidelines remains a candidate under evaluation until its source
-is verified. WTK records when an optional tool is unavailable and
+Ponytail, security-lifecycle, Adaptive Guidelines, Graphify, and Graft are separate choices. The
+README names their sources and use cases. WTK records when an optional tool is unavailable and
 falls back to native repository inspection; it never claims a companion ran merely because the
 project uses WTK.
 
