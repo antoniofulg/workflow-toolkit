@@ -1,6 +1,6 @@
 # BUG-20260923-source-retains-removed-wtk-config-link
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** minor
 - **Scenarios:** `CFG-keep-local-artifacts-out-of-git`; `REL-report-current-workflow-release`
 - **Expected:** The source checkout and current 12-skill inventory contain no `wtk-config` skill, alias, configuration payload, or generated residue.
@@ -9,6 +9,9 @@
 - **Adapter:** Manual source inventory and independent filesystem readback
 - **Exact path:** Read the tracked `.claude/skills/` inventory, resolve `.claude/skills/wtk-config`, and compare it with the exact 12 directories under `.agents/skills/` and the installed consumer inventory.
 - **Evidence:** `docs/qa/evidence/2026-09-23-native-agent-settings/release-readback.json`
+- **Fix commit:** `f9b1c4d`
+- **Retest status:** pass
+- **Retest evidence:** `docs/qa/evidence/2026-09-23-native-agent-settings/release-retest-readback.json`
 
 ## Impact
 
@@ -21,3 +24,10 @@ Skills CLI installation correctly expose only 12 WTK skills.
 Delete the tracked `.claude/skills/wtk-config` symlink. Extend the existing distribution contract to
 compare tracked WTK Claude aliases with the 12 published skill names and require every alias target to
 resolve. Then rerun the source/package inventory walk and the two affected scenarios.
+
+## Retest
+
+Fresh QA at `f9b1c4d` reloaded a frozen source archive and found exactly 12 tracked Claude aliases,
+matching the 12 published WTK skills. Every alias resolved to its canonical skill directory;
+neither `.claude/skills/wtk-config` nor `.agents/skills/wtk-config` existed. Both affected scenarios
+passed.

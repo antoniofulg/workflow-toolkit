@@ -11,8 +11,8 @@ bug_ids: BUG-20260923-adaptive-guidelines-recommendation-has-no-source
 fix_status: fixed
 retest_status: pass
 fix_commits: d363b1c
-evidence: docs/qa/evidence/2026-09-23-skills-only-workflow/skills-install.json; docs/qa/evidence/2026-09-23-adaptive-guidelines-recommendation/readback.json
-last_report: docs/qa/reports/2026-09-23-adaptive-guidelines-recommendation.md
+evidence: docs/qa/evidence/2026-09-23-native-agent-settings/release-retest-readback.json; docs/qa/evidence/2026-09-23-skills-only-workflow/skills-install.json
+last_report: docs/qa/reports/2026-09-23-native-agent-settings.md
 overlaps:
 ---
 
@@ -33,3 +33,7 @@ Fresh QA at `68e787c` found matching README and pack-guide scope for five option
 Adaptive Guidelines now names its canonical public GitHub source and accurately describes converting
 recurring agent corrections into reviewable project guidelines. Existing install evidence still
 proves no optional companion was bundled.
+
+Fresh remediation canary at `f9b1c4d` confirmed unchanged README, pack-guide, notice, Lean, and QA
+provenance. Current changelog guidance preserves project-native ownership and the optional security
+lifecycle boundary while all 12 tracked Claude aliases resolve.

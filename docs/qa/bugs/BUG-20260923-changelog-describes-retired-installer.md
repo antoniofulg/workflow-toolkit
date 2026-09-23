@@ -1,6 +1,6 @@
 # BUG-20260923-changelog-describes-retired-installer
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** major
 - **Scenario:** `REL-report-current-workflow-release`
 - **Expected:** Current changelog guidance distinguishes the unreleased skills-only source state from historical release instructions and names the 12-skill install boundary, optional security lifecycle, and explicit migration helper.
@@ -9,6 +9,9 @@
 - **Adapter:** Manual public-document/package/installed-tree readback without registry access
 - **Exact path:** Compare `CHANGELOG.md` current `1.4.1` block with `package.json` version and files, `bun.lock`, `README.md#install-the-skills`, and the isolated 12-skill installation.
 - **Evidence:** `docs/qa/evidence/2026-09-23-native-agent-settings/release-readback.json`; `docs/qa/evidence/2026-09-23-native-agent-settings/install-readback.json`
+- **Fix commit:** `f9b1c4d`
+- **Retest status:** pass
+- **Retest evidence:** `docs/qa/evidence/2026-09-23-native-agent-settings/release-retest-readback.json`
 
 ## Impact
 
@@ -24,3 +27,10 @@ Skills CLI command, optional companion boundary, and one-time `scripts/migrate.j
 Extend the release consistency contract so the newest applicable guidance cannot name the retired
 package installer or bundled security skills. Then rerun `REL-report-current-workflow-release` and
 the adjacent provenance canary.
+
+## Retest
+
+Fresh QA at `f9b1c4d` found a current `Unreleased` section with the exact 12-skill Skills CLI
+selection, project-native model and effort ownership, optional security lifecycle boundary, and
+public migration preview/apply route. The historical `1.4.1` block remained byte-identical to
+`e6002ca1`. Release consistency and the adjacent provenance canary passed.

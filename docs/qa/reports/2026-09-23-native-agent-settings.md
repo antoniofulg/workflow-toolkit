@@ -2,11 +2,12 @@
 
 - **Charter:** [`CH-native-agent-settings-2026-09-23`](../charters/CH-native-agent-settings-2026-09-23.md)
 - **Product snapshot:** `e6002ca18d4fe07f842acff8c03efeca16748a72`
+- **Remediation snapshot:** `f9b1c4d56e5f8519a64e78eea55a4c7f6bb1641c`
 - **QA plan snapshot:** `3895257327b69a2028630fecb36fce1804ece972`
 - **Personas:** Workflow adopter; Workflow operator; Repository reader
 - **Adapter:** Vercel Skills CLI 1.5.23/manual, public Python and Node CLIs, and independent filesystem readback through [`docs/qa/README.md`](../README.md)
 - **Environment:** local frozen source copy and checkout-owned disposable consumers; no network, registry, browser, server, provider call, or optional companion installation
-- **Technical gate:** independent Technical Verification PASS at `e6002ca1`; `bun run test:all` reused there with 80 Bun tests, 20 Node tests, and all tracked Python suites passing
+- **Technical gate:** independent Technical Verification PASS at `e6002ca1`; remediation Technical Verification PASS at frozen `f9b1c4d`
 - **Evidence root:** `docs/qa/evidence/2026-09-23-native-agent-settings/` (disposable and ignored)
 - **Opening porcelain:** clean at QA plan snapshot `38952573`
 
@@ -18,11 +19,11 @@
 | `ADP-adopt-workflow-safely` | untested — all reachable public legs passed | Install, 18 native files, host sentinels, exact and edited packet migration, and managed conflict passed. Public rollback injection is unavailable. Install and migration evidence. |
 | `ADP-resolve-legacy-adoption-conflicts` | untested — all reachable public legs passed | Public preview/apply removed 18 exact packets, preserved 18 edited packets, and refused modified managed content with no writes. Public rollback injection remains unavailable. [`migration-readback.json`](../evidence/2026-09-23-native-agent-settings/migration-readback.json). |
 | `CFG-route-project-native-agent-settings` | pass | Create, resume, refresh, and reload passed for Claude, Codex, and Cursor; 18 native files stayed byte-identical and snapshots contained identity only. [`route-readback.json`](../evidence/2026-09-23-native-agent-settings/route-readback.json). |
-| `CFG-keep-local-artifacts-out-of-git` | fail | Local runtime ignores and package boundary passed, but tracked `.claude/skills/wtk-config` is a dangling link. [`BUG-20260923-source-retains-removed-wtk-config-link`](../bugs/BUG-20260923-source-retains-removed-wtk-config-link.md). |
+| `CFG-keep-local-artifacts-out-of-git` | pass after retest | Frozen `f9b1c4d` contains exactly 12 tracked Claude aliases matching the published skills; all resolve and `wtk-config` is absent. [`release-retest-readback.json`](../evidence/2026-09-23-native-agent-settings/release-retest-readback.json). |
 | `CFG-resolve-deep-review-cadence` | pass | On-demand review, direct review skill, sequential builder, QA `auto`, and `stall_attempts = 3` passed; third unchanged stall halted. [`defaults-readback.json`](../evidence/2026-09-23-native-agent-settings/defaults-readback.json). |
 | `QAS-use-optional-jev-qa-adapter` | untested — reachable helper legs passed | Missing prerequisite and pre-action timeout allowed safe fallback; post-action timeout forbade fallback; every result stayed `not-passed`. No live browser/provider/reload oracle. [`qa-adapter-readback.json`](../evidence/2026-09-23-native-agent-settings/qa-adapter-readback.json). |
-| `REL-report-current-workflow-release` | fail | Package, lockfile, README, and 12-skill install agree. Current changelog guidance is absent and the source retains the dangling config alias. [`release-readback.json`](../evidence/2026-09-23-native-agent-settings/release-readback.json). |
-| `DOC-read-explicit-workflow-provenance` | pass canary | README, pack guide, notices, Lean attribution, QA provenance, and optional-companion scope remain consistent. Existing scenario verdict remains valid. Same release evidence. |
+| `REL-report-current-workflow-release` | pass after retest | `Unreleased` carries the exact current install, ownership, migration, and optional-security guidance; historical `1.4.1` is unchanged; package and 12 resolving aliases agree. Same retest evidence. |
+| `DOC-read-explicit-workflow-provenance` | pass canary after retest | README, pack guide, notices, Lean attribution, QA provenance, optional-companion scope, and current changelog guidance remain consistent. Same retest evidence. |
 
 ## Installation and host ownership
 
@@ -77,15 +78,20 @@ rollback stays `untested`. Evidence: [`migration-readback.json`](../evidence/202
 The package manifest, Bun lockfile, README, installed tree, and skill provenance agree on the
 12-skill, project-native settings boundary. The adjacent provenance canary remains valid.
 
-Two independent defects remain. The tracked `.claude/skills/wtk-config` alias points to a removed
-directory. Also, `CHANGELOG.md` leaves `Unreleased` empty; the newest visible setup guidance is the
-historical `1.4.1` block with the retired npm installer and bundled security promise. Historical
-release text should remain intact; current unreleased guidance or a new matching release is needed.
+Remediation `f9b1c4d` removed the stale alias and added current `Unreleased` guidance. Fresh frozen
+readback found exactly 12 tracked Claude aliases matching the 12 published skills; all targets
+resolved and no `wtk-config` alias or directory remained. `Unreleased` named the exact Skills CLI
+selection, project-native model and effort ownership, optional security lifecycle boundary, and
+migration preview/apply route. The historical `1.4.1` block was byte-identical to `e6002ca1`.
+
+The earlier install, migration, and fixed-default evidence remains reusable: a scoped Git comparison
+found no change from `e6002ca1` through `f9b1c4d` under `.agents/skills`, `package.json`, `bun.lock`,
+`README.md`, `scripts/migrate.js`, `docs/toolkit/pack.md`, `NOTICE.md`, or `AGENTS.md`.
 
 ## Findings
 
-1. Major: [`BUG-20260923-changelog-describes-retired-installer`](../bugs/BUG-20260923-changelog-describes-retired-installer.md) — current changelog guidance is absent, leaving retired installation instructions as the newest visible route.
-2. Minor: [`BUG-20260923-source-retains-removed-wtk-config-link`](../bugs/BUG-20260923-source-retains-removed-wtk-config-link.md) — tracked Claude alias points to the removed config skill.
+1. Fixed major: [`BUG-20260923-changelog-describes-retired-installer`](../bugs/BUG-20260923-changelog-describes-retired-installer.md) — `f9b1c4d` passed frozen current-guidance and historical-preservation readback.
+2. Fixed minor: [`BUG-20260923-source-retains-removed-wtk-config-link`](../bugs/BUG-20260923-source-retains-removed-wtk-config-link.md) — `f9b1c4d` passed the exact 12-alias resolution inventory.
 
 ## Limitations
 
@@ -98,8 +104,11 @@ release text should remain intact; current unreleased guidance or a new matching
 
 The recorded source, consumer, route, convergence, QA-adapter, exact-packet, edited-packet,
 conflict, and stalled-retry roots under `/tmp/wtk-native-settings-qa.6fBrJg` were removed. Closing
-source porcelain contains only this cycle's verifier-owned report, eight scenario updates, and two
-bug records. Ignored evidence remains under the declared evidence root. No product file changed.
+source porcelain after the initial cycle contained only verifier-owned QA artifacts. The remediation
+retest root under `/tmp/wtk-native-settings-qa-retest.jGQew5` was also removed. Current porcelain
+contains the pre-existing Technical Verifier update to `verification.md` plus this scoped retest's
+report, bug, and three scenario updates. Ignored evidence remains under the declared evidence root.
+No product file changed in either QA pass.
 
 ## Commands and results
 
@@ -115,11 +124,15 @@ bug records. Ignored evidence remains under the declared evidence root. No produ
 | Migration clean retry: preview/apply/edited/conflict | 0 / 0 / 0 / 1 expected | 0.4 s tool wall |
 | Release/package/provenance readback | 0; two defects reported | 0.3 s tool wall |
 | `bun test tools/shared/tests/qa-skills.test.ts` | 0; 38 pass, 0 fail, 538 expectations | 0.8 s tool wall |
+| Remediation input-equivalence comparison | 0; prior install/migration/default inputs unchanged | 0.3 s combined tool wall |
+| Frozen release, alias, and provenance retest | 0; two defects closed | 0.3 s tool wall |
+| Remediation `bun test tools/shared/tests/qa-skills.test.ts` | 0; 38 pass, 0 fail, 544 expectations | 1.0 s tool wall |
 
 ## Fix-loop accounting
 
-QA opened one return-to-implementation event containing two new findings. No fix batch or recheck
-ran in this session, so the return remains pending and first-pass QA acceptance is no.
+QA opened one return-to-implementation event containing two findings. Remediation `f9b1c4d` fixed
+both in one batch, and this scoped recheck closed the return. One QA fix loop is complete, zero
+returns remain pending, final QA acceptance is yes, and first-pass QA acceptance remains no.
 
 ## Execution metrics
 
@@ -134,3 +147,11 @@ Verification gate was reused from `e6002ca1`. One return to implementation is op
 are complete, one return is pending, and first-pass QA acceptance is no. The initial migration
 invocation added 0.3s; resolving the scratch source to its canonical path before launch would avoid
 that retry. No waiting or external blocker time was measured.
+
+Remediation QA retest used the same actor/model from `2026-09-23T21:52:44Z` through
+`2026-09-23T21:59:50Z` (7m06s through precommit validation); tokens, billing tier, and token cost
+remain unavailable. It completed one scoped QA recheck and one targeted gate run at 1.0s. Combined
+measured QA actor time is 29m49s partial across the two non-overlapping receipts. The two-finding
+return, one fix batch, and passing recheck form one completed loop with zero pending returns. Reusing
+input-equivalent install, migration, and defaults evidence avoided three unrelated public walks;
+no waiting or blocker time was measured in the retest.
