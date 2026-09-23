@@ -8,7 +8,7 @@ project's skill installation.
 
 | File | Why it exists |
 | --- | --- |
-| [CONTEXT-BUDGET.md](guidelines/CONTEXT-BUDGET.md) | Instruction files load into prompts. A previous arrangement dumped more than a thousand mandatory lines before any task. Growing a file with restated prose is a defect. Dispatch by condition. |
+| [context-budget.md](../../.agents/skills/wtk/references/context-budget.md) | Instruction files load into prompts. A previous arrangement dumped more than a thousand mandatory lines before any task. Growing a file with restated prose is a defect. Dispatch by condition. |
 
 ## How work is cut and kept
 
@@ -48,4 +48,4 @@ project's skill installation.
 
 ## How to add a guideline
 
-Do not. Extend an existing file, or justify why both must exist, in [CONTEXT-BUDGET.md](guidelines/CONTEXT-BUDGET.md). A rule earns lines by preventing a defect that occurred, or by resolving an ambiguity an agent actually hit.
+Do not. Extend an existing file, or justify why both must exist, in [context-budget.md](../../.agents/skills/wtk/references/context-budget.md). A rule earns lines by preventing a defect that occurred, or by resolving an ambiguity an agent actually hit.

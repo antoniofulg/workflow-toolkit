@@ -80,7 +80,6 @@ const activeAuthorityRoots = [
   "AGENTS.md",
   "README.md",
   "docs/adoption-prompt.md",
-  "docs/toolkit/guidelines",
   "docs/qa",
   "docs/toolkit",
   "knowledge",

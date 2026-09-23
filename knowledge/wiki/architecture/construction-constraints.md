@@ -17,11 +17,11 @@ sources:
     resource: ../../../.agents/skills/wtk/references/evidence.md
     title: Verification Evidence — scope binds
   - id: frontend
-    resource: ../../../docs/toolkit/guidelines/FRONTEND.md
+    resource: ../../../.agents/skills/wtk/references/frontend.md
     title: Front-End Engineering — composition and ownership
   - id: memory
-    resource: ../../../docs/toolkit/guidelines/WORKFLOW-MEMORY.md
-    title: Workflow Memory — referenced constraints and lifecycle
+    resource: ../../../.agents/skills/wtk/references/context-handoff.md
+    title: Context recovery and handoff — referenced constraints and lifecycle
 ---
 
 # Construction constraints
@@ -97,4 +97,4 @@ appearance can be satisfied independently while the construction contract remain
 [^test-contract]: Test Contract — Rules; Choosing the layer.
 [^evidence]: Verification Evidence — Scope binds; Stop and hand it back.
 [^frontend]: Front-End Engineering — Feature folders vs shared UI; Component script.
-[^memory]: Workflow Memory — Timing; Hard rules; Lifecycle.
+[^memory]: Context recovery and handoff — checkpoint and transfer.

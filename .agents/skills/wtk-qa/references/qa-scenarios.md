@@ -124,7 +124,7 @@ reference while preserving the product promise does not create/reset a scenario 
 cycle; record its targeted integration check instead. If the correction changes a browser-only
 invariant, walk the existing owning scenario only.
 
-Instruction-only skills, their declarative registration in an existing installer, and bounded CLI
+Instruction-only skills, their declarative registration in an existing skill catalog, and bounded CLI
 copy corrections follow `../wtk/references/validation.md`; being agent-facing or installable does not itself start QA.
 Use the owning package/adoption/output check and state the validation method. Correct stale promise
 text without reopening unrelated journeys. A broader QA cycle requires an explicit QA request or

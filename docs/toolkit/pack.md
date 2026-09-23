@@ -18,8 +18,7 @@ The installed directories are:
 - `wtk-qa`, `wtk-qa-plan`, `wtk-qa-execute`, and `wtk-deep-review` — optional quality phases.
 
 Each skill carries its scripts and conditional references below its own directory. The old
-`docs/toolkit/guidelines/` copies are source-pack maintainer notes; consuming agents use the skill
-references instead.
+The installed skill references own runtime guidance; this source-pack tour points to them.
 
 ## Optional companion choices
 

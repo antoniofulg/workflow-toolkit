@@ -4,7 +4,7 @@ Human-facing maintainer notes. Agents run their installed `wtk` skill and load a
 when its condition fires. This folder explains the stages and trade-offs; installed skill
 references own runtime behavior.
 
-These pages do not restate the rules. The guidelines remain the source of truth for behaviour.
+These pages explain the rules; installed skill references remain the source of truth for behaviour.
 
 Cross-provider session continuation is owned by the host. Repository files, Git state, feature
 artifacts, and explicit handoff prompts remain the durable semantic context.

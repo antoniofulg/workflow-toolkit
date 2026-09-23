@@ -37,10 +37,10 @@ Provider definitions are real files, not symlinks.
   authorizes push, one pull request, and merge after readiness is rechecked; never ask between those
   steps; stop at the pull request only when told so up front. Readiness is not authorization for
   deploy/release, production mutations, force-push, direct push to `main`, or unrelated remote actions.
-- Before editing agent instructions or guidelines, read `docs/toolkit/guidelines/CONTEXT-BUDGET.md`.
+- Before editing agent instructions or guidelines, read `.agents/skills/wtk/references/context-budget.md`.
   Keep shared rules in one place and load conditional guidance only for the relevant task.
 - Offer to record durable observations or decisions missing from the documents: name the destination
-  and ask. Writing `knowledge/` requires a yes and follows `docs/toolkit/guidelines/KNOWLEDGE-WIKI.md`.
+  and ask. Writing `knowledge/` requires a yes and follows `.agents/skills/wtk-knowledge-check/references/knowledge-wiki.md`.
 
 ## How work happens
 
@@ -76,30 +76,29 @@ budget: 200k
 | --- | --- |
 | Planning, implementing, refactoring, or reviewing code | `.agents/skills/wtk/references/code-reuse.md` |
 | Writing or reviewing tests; planning specs or tasks | `.agents/skills/wtk/references/test-contract.md` |
-| Starting a task in a multi-task feature | `docs/toolkit/guidelines/WORKFLOW-MEMORY.md` |
-| Specify touches a security surface | `docs/toolkit/guidelines/SECURITY.md` — `## 2. At Specify — declare the surfaces` |
-| Writing tests for an abuse case | `docs/toolkit/guidelines/SECURITY.md` — `## 3. At the test contract — abuse cases get IDs` |
-| Review residual | `docs/toolkit/guidelines/SECURITY.md` — `## 5. At review — the residual only` |
-| Adds or changes a screen | `docs/toolkit/guidelines/UI-UX.md` |
-| Front-end code or a mockup | `docs/toolkit/guidelines/FRONTEND.md` — only the heading in dispute |
-| Module boundary, port, or domain type | `docs/toolkit/guidelines/MODELING.md` |
-| Public surface — route, CLI verb, config key | `docs/toolkit/guidelines/DX.md` |
-| Diff changes user-visible behaviour | `docs/toolkit/guidelines/QA-SCENARIOS.md` |
-| QA pass at the end of a feature | `docs/toolkit/guidelines/QA-EXECUTION.md` |
-| Reviewing, or acting on findings | `docs/toolkit/guidelines/REVIEW-ROUNDS.md` |
+| Specify touches a security surface | `.agents/skills/wtk/references/security.md` — `## 2. At Specify — declare the surfaces` |
+| Writing tests for an abuse case | `.agents/skills/wtk/references/security.md` — `## 3. At the test contract — abuse cases get IDs` |
+| Review residual | `.agents/skills/wtk/references/security.md` — `## 5. At review — the residual only` |
+| Adds or changes a screen | `.agents/skills/wtk/references/ui-ux.md` |
+| Front-end code or a mockup | `.agents/skills/wtk/references/frontend.md` — only the heading in dispute |
+| Module boundary, port, or domain type | `.agents/skills/wtk/references/modeling.md` |
+| Public surface — route, CLI verb, config key | `.agents/skills/wtk-plan/references/dx.md` |
+| Diff changes user-visible behaviour | `.agents/skills/wtk-qa/references/qa-scenarios.md` |
+| QA pass at the end of a feature | `.agents/skills/wtk-qa-execute/references/qa-execution.md` |
+| Reviewing, or acting on findings | `.agents/skills/wtk/references/review-rounds.md` |
 | Resolving feature workflow | `.agents/skills/wtk-lean/scripts/workflow_route.py` |
 | About to claim done, or to commit | `.agents/skills/wtk/references/evidence.md` |
 | Choosing which gate to run | `.agents/skills/wtk/references/validation.md` |
 | Branch or worktree | `.agents/skills/wtk/references/git.md` |
 | Keep or discard an artifact | `.agents/skills/wtk/references/artifacts.md` |
 | A rule stated in more than one document | `knowledge/wiki/index.md`, then the concept |
-| Recording or verifying the bundle | `docs/toolkit/guidelines/KNOWLEDGE-WIKI.md` |
-| Editing this file or a guideline | `docs/toolkit/guidelines/CONTEXT-BUDGET.md` |
+| Recording or verifying the bundle | `.agents/skills/wtk-knowledge-check/references/knowledge-wiki.md` |
+| Editing this file or a guideline | `.agents/skills/wtk/references/context-budget.md` |
 | Why a past choice (`AD-NNN`) | `.specs/AD-INDEX.md`; body `rg -A 20 '^### AD-NNN' .specs/STATE.md` |
 | Explicit reuse, construction order, or approval requirement | `.agents/skills/wtk/references/construction-constraints.md` |
 | Phase checkpoint, resume, compaction, context pressure, or session transfer | `.agents/skills/wtk/references/context-handoff.md` |
 
-Docs and formatting do not trigger `SECURITY.md`.
+Docs and formatting do not trigger `security.md`.
 
 `AD-NNN` (three digits, `.specs/STATE.md`) are project decisions. Architecture invariants live in the
 consuming project's architecture docs. Cite the file with the label. Do not invent invariant ids in

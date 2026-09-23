@@ -40,8 +40,7 @@ The full WTK set carries the shared phase dependencies. WTK does not provide a p
 executable.
 
 The full 12-skill WTK set is self-contained: its scripts, assets, and conditional references live
-below the distributed skill directories. It has no runtime dependency on this repository's
-`docs/toolkit/guidelines/` directory.
+below the distributed skill directories.
 
 ## Optional project instructions
 

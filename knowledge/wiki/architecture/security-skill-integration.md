@@ -1,18 +1,20 @@
 ---
 type: Concept
 title: Security skill integration
-description: Security guidance depends on installed skills, reproducible distribution and phase routing agreeing.
+description: WTK keeps baseline security guidance while each project chooses optional lifecycle skills for deeper work.
+generated: { by: codex/gpt-6, at: 2026-09-23T22:39:27Z }
 sources:
   - id: maintainer-observation
     resource: ../../raw/2026-09-13-security-skill-integration.md
     title: Maintainer observation and proposed security skill replacement
     last_modified: 2026-09-13
   - id: security-workflow
-    resource: ../../../docs/toolkit/guidelines/SECURITY.md
+    resource: ../../../.agents/skills/wtk/references/security.md
     title: Security phases and installed guidance
-  - id: security-installer
-    resource: ../../../scripts/install_security_skills.py
-    title: Allowlisted sources and pinned security skill installation
+  - id: skills-only-decision
+    resource: ../../../.specs/STATE.md
+    title: STATE.md — AD-041
+    last_modified: 2026-09-23
   - id: security-distribution
     resource: ../../../README.md
     title: External security skills and consumer installation contract
@@ -24,11 +26,9 @@ The maintainer observed that the security layer referenced skills absent from
 the local project. A written security phase therefore did not establish that its
 guidance was available to the executing agent.[^maintainer-observation][^security-workflow]
 
-Local availability and consumer delivery are separate boundaries: installing a
-skill here does not update the external installer or its approved sources and
-version requirements. Workflow routing, the installation catalog and lockfile
-must agree before the same guidance can reach consumers reproducibly.
-[^security-installer][^security-distribution]
+Local availability and consumer delivery are separate boundaries. WTK distributes its baseline
+security reference with the full WTK skill set; the consuming project chooses whether to install
+specialized Security Lifecycle skills separately.[^skills-only-decision][^security-distribution]
 
 The discussed direction replaces `security-best-practices` with
 `security-implementation` and separates specification, threat modeling,
@@ -36,19 +36,16 @@ implementation and review. Comparative quality remains unvalidated; the
 replacement direction is not evidence of equal security outcomes or completed
 integration.[^maintainer-observation]
 
-The security guideline now routes the four phases to `security-spec`,
-`security-threat-model`, `security-implementation` and `security-review`, while
-the installer pins their shared repository and each skill's content hash.
-That alignment addresses the integration gap; it does not measure the quality
-of the guidance or prove a consumer has run the separate installation.
-[^security-workflow][^security-installer]
+The security reference names the optional `security-spec`, `security-threat-model`,
+`security-implementation`, and `security-review` skills at their matching phases. When they are
+absent, WTK uses its baseline surface and proof rules and reports the unavailable specialized
+guidance. This does not measure comparative quality or prove a consumer installed or ran a
+companion skill.[^security-workflow][^skills-only-decision]
 
-[Workflow runtime ownership](/architecture/workflow-runtime-ownership.md)
-explains why installation inputs and the reusable skills they deliver have
-different owners. Here, that separation also determines whether security
-guidance is available at the phase that needs it.
+[Workflow runtime ownership](/architecture/workflow-runtime-ownership.md) explains why WTK's
+baseline guidance and consumer-selected companions have different owners.
 
 [^maintainer-observation]: Authorized conversation record, including the unresolved comparison question.
 [^security-workflow]: Security guidance is loaded before coding and connected to requirements, threat modeling and review.
-[^security-installer]: The installer validates a fixed skill catalog against approved sources, paths, commits, CLI version and hashes.
-[^security-distribution]: External security skills are installed separately into consumers, with reproducible version metadata.
+[^skills-only-decision]: AD-041 makes Security Lifecycle an optional companion rather than bundled WTK content.
+[^security-distribution]: README links the optional upstream source and states that WTK does not install it.

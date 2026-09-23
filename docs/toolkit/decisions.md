@@ -18,7 +18,7 @@ Promote before the pull request, per [artifacts.md](../../.agents/skills/wtk/ref
 - Must outlive the feature as a project call → `AD-NNN`
 - Must outlive it as a product promise → `docs/qa/scenarios/`
 - Must outlive it as an invariant → the architecture docs
-- Must outlive it as an agent rule → `docs/toolkit/guidelines/`
+- Must outlive it as an agent rule → the owning installed skill reference
 
 Feature workflow state (`plan.md`, `checks.md`, and `verification.md`) stays under the versioned
 `.specs/features/<slug>/` tree. Workflow memory remains disposable local state.

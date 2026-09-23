@@ -35,10 +35,11 @@ Load shared references only for the current operation:
 | Promote or remove workflow artifacts | [Artifacts](references/artifacts.md) |
 | Preserve explicit reuse, construction order or approval requirements | [Construction constraints](references/construction-constraints.md) |
 | Phase checkpoint, resume, compaction, context pressure or session transfer | [Context recovery](references/context-handoff.md) |
+| Edit agent instructions or skill references | [Context budget](references/context-budget.md) |
 
 - An authorized bounded documentation, instruction-only skill, or direct correction: the active
   agent applies the maintenance route in `.agents/skills/wtk/references/validation.md`, including declarative
-  registration in an existing installer. Complete its scoped checks and local commit without a
+  registration in an existing skill catalog. Complete its scoped checks and local commit without a
   mandatory agent handoff. Escalate for a substantive behavior or authority change, not merely a new
   skill name, registry entry, CLI label, or pending merge.
 - An unshaped idea, an open product decision, or competing solution alternatives: read and invoke

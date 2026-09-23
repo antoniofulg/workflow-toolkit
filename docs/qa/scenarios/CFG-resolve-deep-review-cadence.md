@@ -5,7 +5,7 @@ title: Resolve review cadence and remediation controls before QA
 persona: Workflow adopter
 journey: J-configure-feature-workflow
 expected: Without a task-scoped review request, WTK keeps Deep Review on demand with no automatic groups, uses a sequential Lean builder, selects the `auto` QA adapter, and reports the fixed remediation default `stall_attempts = 3`.
-entry_points: README.md#the-workflow; AGENTS.md; .agents/skills/wtk-lean/SKILL.md; .agents/skills/wtk-deep-review/SKILL.md; .agents/skills/wtk-qa-execute/SKILL.md; docs/toolkit/guidelines/REVIEW-ROUNDS.md
+entry_points: README.md#the-workflow; AGENTS.md; .agents/skills/wtk-lean/SKILL.md; .agents/skills/wtk-deep-review/SKILL.md; .agents/skills/wtk-qa-execute/SKILL.md; .agents/skills/wtk/references/review-rounds.md
 qa_status: pass
 bug_ids:
 fix_status:
