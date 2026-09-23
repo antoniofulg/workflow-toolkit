@@ -17,8 +17,8 @@ overlaps: ADP-adopt-workflow-safely; CFG-preload-agent-skills-in-packets
 ---
 
 Retired — WTK no longer owns central TOML model/effort routing or generated provider packets.
-Current native model and effort ownership is covered by `ADP-adopt-workflow-safely` and the
-native route contract in `CFG-resolve-deep-review-cadence`. The prior report remains historical.
+Current native model and effort ownership is covered by `ADP-adopt-workflow-safely` and
+`CFG-route-project-native-agent-settings`. The prior report remains historical.
 
 Covers E2E-001 and E2E-002: local model/effort editing, template-driven native packet generation,
 idempotent reporting, invalid-source and symlink containment, frozen delegated settings, explicit

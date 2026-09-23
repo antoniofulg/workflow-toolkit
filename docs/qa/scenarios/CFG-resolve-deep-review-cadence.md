@@ -6,7 +6,7 @@ persona: Workflow adopter
 journey: J-configure-feature-workflow
 expected: Without a task-scoped review request, WTK keeps Deep Review on demand with no automatic groups, uses a sequential Lean builder, selects the `auto` QA adapter, and reports the fixed remediation default `stall_attempts = 3`.
 entry_points: README.md#the-workflow; AGENTS.md; .agents/skills/wtk-lean/SKILL.md; .agents/skills/wtk-deep-review/SKILL.md; .agents/skills/wtk-qa-execute/SKILL.md; docs/toolkit/guidelines/REVIEW-ROUNDS.md
-qa_status: pass
+qa_status: untested
 bug_ids:
 fix_status:
 retest_status:
@@ -26,3 +26,6 @@ resets the current verdict until the CLI/manual path is walked again.
 Workflow Toolkit Lean keeps Technical Verification, Deep Review, and QA separate. A current walk must
 confirm the native route pointers, fixed defaults, and that on-demand Deep Review does not skip
 Technical Verification or feature-closing QA.
+
+The prior report predates removal of WTK configuration. Its pass does not establish the current
+fixed-default route, so this scenario is reset to `untested` for the native-agent-settings cycle.

@@ -18,7 +18,7 @@ overlaps:
 
 Retired — provider routing and generated packet ownership moved to each consuming project's native
 agent definitions. The prior provider matrix report remains historical; current route snapshots only
-record provider and role identity.
+record provider and role identity. `CFG-route-project-native-agent-settings` owns that current promise.
 
 Covers `CWF-ROUTE-1` through `CWF-ROUTE-5`: native routing, partial profiles, explicit overrides,
 provider-owned generated runtime files, canonical template ownership, and precise failures for

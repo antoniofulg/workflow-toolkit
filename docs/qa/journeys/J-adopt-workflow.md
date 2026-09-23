@@ -34,7 +34,7 @@ for source identity and release metadata.
 
 ## Current cycle
 
-The skills-only release replaces the npm package installer, module catalog, generated host files, and
-toolkit-owned third-party companion skills. The full-set Skills CLI route and one-time migration
-helper are current untested promises. Historical installer, module, packet, and companion reports remain historical
-evidence and do not establish the current verdict.
+The current release installs 12 WTK skills as one set, leaves project-native agent settings untouched,
+and provides no WTK TOML or generated provider packets. The full-set Skills CLI route and one-time
+migration helper are current untested promises. Historical installer, module, packet, configuration,
+and companion reports remain historical evidence and do not establish the current verdict.
