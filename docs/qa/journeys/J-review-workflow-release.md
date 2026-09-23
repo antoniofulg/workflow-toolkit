@@ -7,8 +7,8 @@
 
 ## Flow
 
-1. Reconcile `workflow-toolkit`, version `1.0.0`, executable `wtk`, and package membership across
-   README, changelog, package manifest, lockfile, and a local archive.
+1. Reconcile `workflow-toolkit`, the current manifest version, executable `wtk`, and package
+   membership across README, changelog, package manifest, lockfile, and a local archive.
 2. Confirm project-owned capabilities use `wtk-*`, while third-party Ponytail skills and
    `prompt-review` keep their current names and `security-spec`, `security-threat-model`,
    `security-implementation`, and `security-review` remain separate pinned dependencies.
@@ -19,6 +19,9 @@
    unrelated remote work remain separately authorized. Perform no remote action during QA.
 5. Reconcile public release claims with current scenario statuses and leave historical parallel
    reports explicitly historical.
+6. For a stable GitHub release, follow the public `release.published` run through the read-only gate,
+   checksum-bound archive, npm trusted-publisher identity, provenance, and public package readback.
+   Record a future release action that QA cannot safely perform as `blocked-verify`.
 
 ## Promises
 

@@ -6,13 +6,13 @@ persona: Repository reader
 journey: J-review-workflow-release
 expected: The newest changelog release matches the package manifest, while Bun 1.4's lockfile identifies the root package and dependency graph; the documented install, release workflow, knowledge, scoped-validation, frozen-lockfile, and package commands expose the current source pack without checkout residue.
 entry_points: CHANGELOG.md; README.md; package.json; bun.lock; bunfig.toml; .github/workflows/publish.yml; GitHub release
-qa_status: untested
+qa_status: blocked-verify
 bug_ids: BUG-20260824-release-overstates-lifecycle-qa; BUG-20260825-adoption-omits-parallel-pilot; BUG-20260829-bun-history-gate-rejects-new-qa-charters; BUG-20260903-history-gate-forbids-resetting-baseline-scenarios; BUG-20260904-adopt-apply-requires-designer-before-migration; BUG-20260913-changelog-uses-wrong-npx-package
 fix_status: fixed
 retest_status: pass
 fix_commits: e9e1c4ac
-evidence: docs/qa/evidence/2026-09-19-release-1-1-0/release-readback.md
-last_report: docs/qa/reports/2026-09-19-release-1-1-0.md
+evidence: docs/qa/evidence/2026-09-22-npm-trusted-publication/readback.md
+last_report: docs/qa/reports/2026-09-22-npm-trusted-publication.md
 overlaps:
 ---
 
@@ -20,6 +20,13 @@ Release `1.0.0` changes this promise. Fresh QA must verify package identity, pac
 repository-intelligence files, on-demand Deep Review defaults, clean local package contents, and
 zero checkout residue. Registry/tag consistency remains unavailable because publication and network
 access are outside this cycle.
+
+QA Execute on 2026-09-22 checked automatic npm publication at `0a290ff3`. All seven canonical
+workflow cases passed, and a fresh local archive independently confirmed package identity. Public
+GitHub/npm readback found current stable `v1.4.1` and npm `latest=1.4.1`, but GitHub Actions reported
+zero runs for `publish.yml`; that already-published version does not prove the new path. Live OIDC,
+provenance, and registry-failure behavior remain `blocked-verify` until a future unpublished version
+is published by a human release action. No remote mutation occurred.
 
 QA Execute on 2026-09-04 passed release `0.9.2` at `de53cb77`. Identity, the packaged DRC-01
 through DRC-04 deep-review defect closeout contract, its canonical structural assertion, private
