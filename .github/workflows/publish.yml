@@ -42,6 +42,12 @@ jobs:
       - name: Install frozen dependencies
         run: bun install --frozen-lockfile
 
+      - name: Install installer-test runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes expect
+          test -x /usr/bin/expect
+
       - name: Run the full test gate
         run: bun run test:all
 
