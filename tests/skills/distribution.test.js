@@ -74,8 +74,8 @@ test('native agent ownership and current WTK catalog are consistent', () => {
   assert.equal(fs.existsSync(path.join(root, 'docs')), false);
   assert.match(read('.agents/skills/wtk-qa/references/qa-scenarios.md'), /consuming project/);
 
-  assert.match(read('.specs/AD-INDEX.md'), /\| `AD-042` \| active \|/);
-  assert.match(read('.specs/AD-INDEX.md'), /wtk-lean ad-index\.py/);
+  assert.equal(fs.existsSync(path.join(root, '.specs')), false);
+  assert.match(read('.agents/skills/wtk-lean/scripts/ad-index.py'), /\.specs\/STATE\.md/);
   assert.equal(fs.existsSync(path.join(root, '.wtk.toml.example')), false);
   assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-config')), false);
   assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-lean/scripts/ad-index.py')), true);

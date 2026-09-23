@@ -22,13 +22,6 @@ function isIgnored(relativePath: string): boolean {
   }
 }
 
-function tracked(relativePath: string): string {
-  return execFileSync("git", ["ls-files", "--", relativePath], {
-    cwd: repositoryRoot,
-    encoding: "utf8",
-  }).trim();
-}
-
 function parseSkillMetadata(source: string, relativePath: string): { name: string; description: string } {
   const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
   const name = frontmatter?.match(/^name:\s*(.+)$/m)?.[1]?.trim();
@@ -193,15 +186,14 @@ describe("QA workflow artifact policy", () => {
     expect(isIgnored(".wtk-deep-review/learnings.md")).toBe(false);
   });
 
-  it("IT-014 keeps feature workflow state versioned and documents legacy migration", () => {
+  it("IT-014 leaves feature workflow state to consuming projects", () => {
     const readme = readRepositoryFile("README.md");
     const artifactLifecycle = readRepositoryFile(".agents/skills/wtk/references/artifacts.md");
 
     expect(isIgnored(".specs/features/qa-skills/spec.md")).toBe(false);
     expect(isIgnored(".specs/STATE.md")).toBe(false);
     expect(isIgnored(".specs/AD-INDEX.md")).toBe(false);
-    expect(tracked(".specs/STATE.md")).toBe(".specs/STATE.md");
-    expect(tracked(".specs/AD-INDEX.md")).toBe(".specs/AD-INDEX.md");
+    expect(existsSync(join(repositoryRoot, ".specs"))).toBe(false);
     expect(readme.replace(/\s+/g, " ")).toContain(
       "Feature workflow state follows the [artifact lifecycle]",
     );
@@ -694,7 +686,6 @@ describe("repository intelligence policy", () => {
     const readme = readRepositoryFile("README.md");
     const uiux = readRepositoryFile(".agents/skills/wtk/references/ui-ux.md");
     const security = readRepositoryFile(".agents/skills/wtk/references/security.md");
-    const state = readRepositoryFile(".specs/STATE.md");
     const normalizedUiux = uiux.replace(/\s+/g, " ");
     const normalizedSecurity = security.replace(/\s+/g, " ");
 
@@ -715,11 +706,6 @@ describe("repository intelligence policy", () => {
     expect(normalizedSecurity).toContain("SEC IDs trace to native `C<n>` checks, not tasks");
     expect(normalizedSecurity).toContain("Examples only — not a `checks.md` schema");
     expect(normalizedSecurity).not.toContain("assigned to exactly one task");
-    expect(state).toContain("### AD-033");
-    expect(state).toContain("This supersedes AD-005 and AD-006");
-    expect(state).toContain("OpenDesign remains an");
-    expect(state).toContain("Graft");
-    expect(state).toContain("OpenDesign");
   });
 });
 

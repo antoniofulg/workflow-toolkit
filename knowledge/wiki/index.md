@@ -8,7 +8,7 @@ The project's durable understanding, as an Open Knowledge Format v0.2 bundle. Re
 [the operating schema](../AGENTS.md) before creating or updating anything here. Untouched originals
 live in `../raw/`, outside the bundle.
 
-Nothing here restates its sources. `README.md`, the WTK skills, and `.specs/STATE.md` stay canonical;
+Nothing here restates its sources. `README.md`, the WTK skills, and cited Git history stay canonical;
 these concepts carry the graph between them and the places where they disagree. When sources conflict,
 the owning source wins.
 

@@ -94,18 +94,18 @@ budget: 200k
 | A rule stated in more than one document | `knowledge/wiki/index.md`, then the concept |
 | Recording or verifying the bundle | `.agents/skills/wtk-knowledge-check/references/knowledge-wiki.md` |
 | Editing this file or a guideline | `.agents/skills/wtk/references/context-budget.md` |
-| Why a past choice (`AD-NNN`) | `.specs/AD-INDEX.md`; body `rg -A 20 '^### AD-NNN' .specs/STATE.md` |
+| Why a past source-pack choice (`AD-NNN`) | `knowledge/wiki/decisions/`, then the cited Git revision |
 | Explicit reuse, construction order, or approval requirement | `.agents/skills/wtk/references/construction-constraints.md` |
 | Phase checkpoint, resume, compaction, context pressure, or session transfer | `.agents/skills/wtk/references/context-handoff.md` |
 
 Docs and formatting do not trigger `security.md`.
 
-`AD-NNN` (three digits, `.specs/STATE.md`) are project decisions. Architecture invariants live in the
-consuming project's architecture docs. Cite the file with the label. Do not invent invariant ids in
-this pack.
+Historical `AD-NNN` decisions remain in Git history and cited knowledge concepts. New project
+decisions belong to the consuming project. Architecture invariants live in its architecture docs.
+Do not invent invariant ids in this pack.
 
-Recording an `AD-NNN` also runs `python3 .agents/skills/wtk-lean/scripts/ad-index.py` in that commit. Lean validators
-live in `.agents/skills/wtk-lean/scripts/`; the consuming project owns `make check`.
+The consuming project runs `wtk-lean/scripts/ad-index.py` when recording an `AD-NNN`. Lean
+validators live in `.agents/skills/wtk-lean/scripts/`; the consuming project owns `make check`.
 
 ## Where the truth lives
 
@@ -113,8 +113,8 @@ live in `.agents/skills/wtk-lean/scripts/`; the consuming project owns `make che
 | --- | --- |
 | Public installation and companion guidance | `README.md` |
 | Workflow procedures and shared rules | `.agents/skills/wtk/SKILL.md` and selected `wtk-*` references |
-| Why a past choice was made | `.specs/AD-INDEX.md` |
-| Versioned feature requirements and proof state | `.specs/features/<feature>/plan.md`, `checks.md`, `verification.md` |
+| Why a past source-pack choice was made | `knowledge/wiki/decisions/` and its cited Git revision |
+| Versioned feature requirements and proof state in a consuming project | That project's `.specs/features/<feature>/` |
 | Product promises and QA records in a consuming project | That project's own documentation |
 
 ## Isolated checkouts

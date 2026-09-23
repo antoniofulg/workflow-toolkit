@@ -16,7 +16,7 @@ sources:
     title: One-time hash-verified legacy adoption cleanup
     last_modified: 2026-09-23
   - id: state-ad-041
-    resource: ../../../.specs/STATE.md
+    resource: git:8ef07ba74cb1eb3c80e0d1678911d86bad9bd7a7:.specs/STATE.md
     title: STATE.md — AD-041
     last_modified: 2026-09-23
 ---
