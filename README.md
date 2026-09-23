@@ -6,8 +6,8 @@ demand. Projects keep ownership of their own instructions, tools, configuration,
 
 ## Install the skills
 
-Use the skill installer supported by your agent host. Install `wtk` first, then add only the phase
-skills the project uses:
+Use the skill installer supported by your agent host. Install the complete WTK skill set as one
+unit; phase skills are listed for discoverability and are not a supported subset installation:
 
 | Skill | Use |
 | --- | --- |
@@ -36,8 +36,8 @@ npx skills add antoniofulg/workflow-toolkit \
 ```
 
 Use `npx skills list` to inspect the project installation and `npx skills update` to update it.
-The full WTK set carries the shared phase dependencies. Individual-skill dependency closure is
-still being finalized. WTK does not provide a package installer executable.
+The full WTK set carries the shared phase dependencies. WTK does not provide a package installer
+executable.
 
 The full WTK set is self-contained: its scripts, assets, and conditional references live below the
 distributed skill directories. It has no runtime dependency on this repository's

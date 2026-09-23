@@ -13,14 +13,24 @@ const wtkSkills = fs.readdirSync(path.join(root, '.agents/skills'), { withFileTy
 const optionalSkills = ['ponytail', 'prompt-review', 'security-implementation', 'security-review', 'security-spec', 'security-threat-model'];
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
-test('published WTK skills resolve every local reference', () => {
+test('published WTK skills resolve every local reference from an isolated full set', () => {
   assert.deepEqual(wtkSkills, [
     'wtk', 'wtk-config', 'wtk-deep-review', 'wtk-discover', 'wtk-implement',
     'wtk-knowledge-check', 'wtk-lean', 'wtk-plan', 'wtk-qa', 'wtk-qa-execute',
     'wtk-qa-plan', 'wtk-reuse-review', 'wtk-ship',
   ]);
-  for (const skill of wtkSkills) {
-    const skillRoot = path.join(root, '.agents/skills', skill);
+  const sourceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-isolated-source-'));
+  try {
+    for (const skill of wtkSkills) fs.cpSync(path.join(root, '.agents/skills', skill), path.join(sourceRoot, '.agents/skills', skill), { recursive: true });
+    assert.equal(fs.existsSync(path.join(sourceRoot, 'docs/toolkit/guidelines')), false);
+    for (const skill of wtkSkills) assertSkillReferences(sourceRoot, skill);
+  } finally {
+    fs.rmSync(sourceRoot, { recursive: true, force: true });
+  }
+});
+
+function assertSkillReferences(sourceRoot, skill) {
+    const skillRoot = path.join(sourceRoot, '.agents/skills', skill);
     assert.equal(fs.statSync(path.join(skillRoot, 'SKILL.md')).isFile(), true, skill);
     const files = walk(skillRoot);
     for (const relative of files) {
@@ -34,9 +44,11 @@ test('published WTK skills resolve every local reference', () => {
         if (match[1].includes('[') || match[1].includes('*') || match[1].includes('?')) continue;
         assert.equal(fs.existsSync(path.join(skillRoot, match[1])), true, `${skill}/${relative}: ${match[1]}`);
       }
+      for (const match of source.matchAll(/\.agents\/skills\/(wtk(?:-[A-Za-z0-9-]+)?\/[A-Za-z0-9_.()/-]+)/g)) {
+        assert.equal(fs.existsSync(path.join(sourceRoot, '.agents/skills', match[1])), true, `${skill}/${relative}: .agents/skills/${match[1]}`);
+      }
     }
   }
-});
 
 test('Skills CLI discovers every WTK skill when the source lock has no self entries', () => {
   const source = fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-discovery-'));
