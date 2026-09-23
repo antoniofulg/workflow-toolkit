@@ -85,9 +85,11 @@ WTK does not bundle, activate, configure, or claim that any of them ran.
 | --- | --- | --- |
 | Ponytail | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | You want a deliberately minimal-code implementation style. |
 | Security lifecycle | [antoniofulg/security-lifecycle](https://github.com/antoniofulg/security-lifecycle) | The project needs dedicated threat modeling, secure implementation, review, or authorized pentesting skills. |
-| Adaptive Guidelines | Canonical source not selected yet | You want a separate skill that adapts guidance to the current task; verify the upstream before installing it. |
 | Graft | [trailhq/Graft](https://github.com/trailhq/Graft) | You need checkout-local symbols, callers, or blast-radius pointers during exploration. |
 | Graphify | [graphifyy on PyPI](https://pypi.org/project/graphifyy/) | You need an architecture map before tracing implementation details. |
+
+Adaptive Guidelines remains a candidate under evaluation. It is not a recommendation or an
+installation command until its canonical upstream source is verified.
 
 When Graft or Graphify is absent or fails, WTK uses ordinary repository inspection and records that
 the optional tool was unavailable. Optional companion use never changes the WTK phase contracts.

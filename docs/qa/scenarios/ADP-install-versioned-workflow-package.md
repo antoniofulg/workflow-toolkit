@@ -5,7 +5,7 @@ title: Install the full WTK skill set from its source
 persona: Workflow adopter
 journey: J-adopt-workflow
 expected: The Skills CLI installs the full WTK skill set from the canonical repository into a disposable project, and an independent readback finds no npm installer or host-file mutation.
-entry_points: README.md#install-the-skills; package.json; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-lean wtk-qa wtk-deep-review wtk-ship --agent '*' --copy --yes
+entry_points: README.md#install-the-skills; package.json; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-deep-review wtk-discover wtk-implement wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship --agent '*' --copy --yes
 qa_status: fail
 bug_ids: BUG-20260923-skills-cli-omits-required-wtk-skills; BUG-20260923-full-set-scenarios-use-partial-install-command
 fix_status: pending

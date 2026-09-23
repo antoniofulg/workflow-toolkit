@@ -1,6 +1,6 @@
 # BUG-20260923-adaptive-guidelines-recommendation-has-no-source
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** minor
 - **Scenarios:** `ADP-separate-external-security-skills`; `DOC-read-explicit-workflow-provenance`
 - **Expected:** Every item presented as a recommended companion has a verified canonical source and a use case, matching the pack guide's claim.
@@ -14,12 +14,11 @@
 Readers cannot identify or install the recommended Adaptive Guidelines skill, and the pack guide
 overstates the completeness of the companion source list.
 
-## Remediation recommendation
+## Resolution
 
-Either identify and link the verified canonical Adaptive Guidelines source, or move it out of the
-recommended table into a clearly labeled candidate/evaluation note. Keep the pack guide's claim
-aligned with the resulting list.
+Adaptive Guidelines was moved out of the recommended-companion table into a clearly labeled
+candidate note until its canonical upstream source is verified. The pack guide now lists only
+companions with a source URL and use case.
 
-Regression check: parse every recommended-companion row and require a source URL plus a non-empty
-use case. A future candidate without a verified source must not appear as a recommendation.
-
+Regression check: the distribution proof parses the four recommended rows, requires a source URL
+and use case, and asserts that Adaptive Guidelines is absent from the table.

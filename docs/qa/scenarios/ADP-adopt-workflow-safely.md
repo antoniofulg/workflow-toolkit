@@ -5,7 +5,7 @@ title: Install WTK skills without replacing project state
 persona: Workflow adopter
 journey: J-adopt-workflow
 expected: The full WTK skill set installs through the Skills CLI while project instructions, configuration, generated files, ignores, product context, and knowledge remain byte-for-byte unchanged; an existing adoption can preview and apply the migration helper safely.
-entry_points: README.md#install-the-skills; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-lean --agent '*' --copy --yes; node scripts/migrate.js --root project
+entry_points: README.md#install-the-skills; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-deep-review wtk-discover wtk-implement wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship --agent '*' --copy --yes; node scripts/migrate.js --root project
 qa_status: fail
 bug_ids: BUG-20260923-skills-cli-omits-required-wtk-skills; BUG-20260923-full-set-scenarios-use-partial-install-command
 fix_status: pending

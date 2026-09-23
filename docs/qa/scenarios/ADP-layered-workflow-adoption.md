@@ -5,7 +5,7 @@ title: Adopt WTK without legacy module ownership
 persona: Workflow adopter
 journey: J-adopt-workflow
 expected: The project installs the full WTK skill set through the Skills CLI and keeps placement and updates owned by the skill installer.
-entry_points: README.md#install-the-skills; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-lean wtk-qa wtk-deep-review wtk-ship --agent '*' --copy --yes
+entry_points: README.md#install-the-skills; historical npm module catalog, not executed
 qa_status: skipped
 bug_ids:
 fix_status:
