@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const wtkSkills = fs.readdirSync(path.join(root, '.agents/skills'), { withFileTypes: true })
@@ -34,6 +35,24 @@ test('published WTK skills resolve every local reference', () => {
         assert.equal(fs.existsSync(path.join(skillRoot, match[1])), true, `${skill}/${relative}: ${match[1]}`);
       }
     }
+  }
+});
+
+test('Skills CLI discovers every WTK skill when the source lock has no self entries', () => {
+  const source = fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-discovery-'));
+  try {
+    for (const skill of wtkSkills) fs.cpSync(path.join(root, '.agents/skills', skill), path.join(source, '.agents/skills', skill), { recursive: true });
+    const cli = path.join(root, 'node_modules/skills/dist/cli.mjs');
+    const clean = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
+    assert.equal(clean.status, 0, clean.stderr);
+    assert.match(clean.stdout, /Found 13 skills/);
+
+    fs.writeFileSync(path.join(source, 'skills-lock.json'), JSON.stringify({ version: 1, skills: { wtk: {}, 'wtk-lean': {}, 'wtk-deep-review': {} } }));
+    const locked = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
+    assert.equal(locked.status, 0, locked.stderr);
+    assert.match(locked.stdout, /Found 10 skills/);
+  } finally {
+    fs.rmSync(source, { recursive: true, force: true });
   }
 });
 

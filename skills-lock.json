@@ -82,24 +82,6 @@
       "cliVersion": "1.5.23",
       "ref": "bd1ae10f1db3d38e12166b8c789f0ec9d33253e3",
       "computedHash": "fbf78b50ad2e4c6439a32989a9024ba4eabe4596ae96ffba8a3f848a41322f7c"
-    },
-    "wtk": {
-      "source": "./local",
-      "sourceType": "local",
-      "skillPath": ".agents/skills/wtk/SKILL.md"
-    },
-    "wtk-deep-review": {
-      "source": "./local",
-      "sourceType": "local",
-      "skillPath": ".agents/skills/wtk-deep-review/SKILL.md"
-    },
-    "wtk-lean": {
-      "source": "tech-leads-club/agent-skills",
-      "sourceType": "github",
-      "skillPath": "packages/skills-catalog/skills/(development)/tlc-spec-lean/SKILL.md",
-      "ref": "ff0ef495d5a1b7d6d0ae3527e9d0f81d41a83a13",
-      "computedHash": "28368cb86a9d441fce24426eb502a39a5e7f9ffe0ad5d682fead2ce76c5b085b",
-      "license": "CC-BY-4.0"
     }
   }
 }
