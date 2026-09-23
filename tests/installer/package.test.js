@@ -48,7 +48,7 @@ test('IT-010 and IT-015 packed executable performs Node-only install and public 
   const executable = path.join(clean, 'node_modules/.bin/wtk');
   const clone = () => { const target = fs.mkdtempSync(path.join(os.tmpdir(), 'installer-pty-')); fs.cpSync(clean, target, { recursive: true }); return target; };
   const assertResidueZero = (target) => { assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: target, env, encoding: 'utf8' }), ''); for (const relative of ['.my-workflow/adoption.json', '.my-workflow/transaction.json', '.my-workflow/backups']) assert.equal(fs.existsSync(path.join(target, relative)), false, relative); };
-  const runCancellationProbe = (target, signal) => spawnSync('/usr/bin/expect', ['-c', [`set timeout 60`, `log_user 1`, `spawn -noecho $env(EXEC) install`, `stty rows 24 columns 80`, `expect -re {Modules.*comma-separated} { send "${signal}\\r" }`, `expect "Installation cancelled. No files changed."`, `expect eof`].join('\n')], { cwd: target, env: { ...env, NO_COLOR: '1', EXEC: path.join(target, 'node_modules/.bin/wtk') }, encoding: 'utf8' });
+  const runCancellationProbe = (target, signal) => spawnSync('/usr/bin/expect', ['-c', [`set timeout 60`, `log_user 1`, `spawn -noecho $env(EXEC) install`, `stty rows 24 columns 80`, `expect -re {Modules.*comma-separated} { send "${signal}" }`, `expect "Installation cancelled. No files changed."`, `expect eof`].join('\n')], { cwd: target, env: { ...env, NO_COLOR: '1', EXEC: path.join(target, 'node_modules/.bin/wtk') }, encoding: 'utf8' });
   const eofTarget = clone();
   const eof = runCancellationProbe(eofTarget, '\\004');
   assert.equal(eof.status, 0, `${eof.error?.message || ''} signal=${eof.signal || ''}\n${eof.stderr}\n${eof.stdout}`);
