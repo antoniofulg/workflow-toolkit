@@ -310,7 +310,7 @@ repository boundary. Retired workflow files are removed only when their managed 
 are pristine; edited or unproven paths conflict with zero writes.
 
 Each release lists its upgrade steps under `### Migration` in the changelog; follow them in order
-after installation. The package identity for this release is `workflow-toolkit@1.4.4` with the `wtk` executable.
+after installation. The package identity for this release is `workflow-toolkit@1.4.5` with the `wtk` executable.
 
 ## Publish a package release
 
