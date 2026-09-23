@@ -4,9 +4,9 @@ area: ADP
 title: Keep external security skills behind an explicit second step
 persona: Workflow adopter
 journey: J-adopt-workflow
-expected: Adoption leaves security-spec, security-threat-model, security-implementation, and security-review absent, identifies all four as separate from bundled skills, and prints one exact authorized installer command with the gate-unavailable warning.
-entry_points: README.md#quick-start; node /Users/antoniofulg/Projects/my-workflow/bin/wtk.js install; skills-lock.json
-qa_status: skipped
+expected: Adoption leaves security-spec, security-threat-model, security-implementation, and security-review absent, identifies all four as separate from optional skills, and prints one exact authorized installer command with the gate-unavailable warning.
+entry_points: README.md#recommended-companion-skills-and-tools; npx skills add antoniofulg/security-lifecycle --agent '*' --copy --yes; skills-lock.json
+qa_status: untested
 bug_ids: BUG-20260913-guided-install-omits-security-gate-warning
 fix_status: fixed
 retest_status: pass
@@ -30,7 +30,7 @@ historical. The current approved set has four exact names, so this promise is re
 Reconfirm all four are absent after source and packed adoption, inspect the printed package-local
 command and gate-unavailable warning, and do not execute the networked security installer.
 
-Retired — Workflow Toolkit 1.2.0 bundles the five reviewed security skills in core and removes the
+Retired — Workflow Toolkit 1.2.0 bundles the optional security-lifecycle skills in core and removes the
 separate installer path. Historical reports remain evidence of the former boundary only.
 
 QA Execute on 2026-09-13 confirmed the four external skill trees and aliases remained absent and

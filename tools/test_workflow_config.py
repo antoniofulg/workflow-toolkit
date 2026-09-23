@@ -765,12 +765,11 @@ def test_sync_uses_canonical_config_paths_without_a_legacy_reader() -> None:
 
         (root / ".wtk.toml").unlink()
         (root / ".wtk.toml.example").unlink()
-        try:
-            workflow_config.sync_agents(root)
-        except workflow_config.ConfigError as exc:
-            assert ".wtk.toml.example is missing" in str(exc)
-        else:
-            raise AssertionError("expected missing canonical config failure")
+        bundled = root / ".agents/skills/wtk-config/assets/wtk.toml.example"
+        bundled.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(ROOT / ".agents/skills/wtk-config/assets/wtk.toml.example", bundled)
+        workflow_config.sync_agents(root)
+        assert (root / ".wtk.toml").read_bytes() == bundled.read_bytes()
         assert legacy.read_bytes() == b"legacy config must not be read"
     finally:
         shutil.rmtree(root)

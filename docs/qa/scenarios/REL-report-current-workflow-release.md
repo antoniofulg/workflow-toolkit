@@ -5,7 +5,7 @@ title: Report the current workflow release consistently
 persona: Repository reader
 journey: J-review-workflow-release
 expected: The newest changelog release matches the package manifest, while Bun 1.4's lockfile identifies the root package and dependency graph; the documented install, knowledge, scoped-validation, frozen-lockfile, and package commands expose the current source pack without checkout residue.
-entry_points: CHANGELOG.md; README.md; package.json; bun.lock; bunfig.toml
+entry_points: CHANGELOG.md; README.md; package.json; bun.lock; npx skills add antoniofulg/workflow-toolkit --skill wtk --agent '*' --copy --yes
 qa_status: untested
 bug_ids: BUG-20260824-release-overstates-lifecycle-qa; BUG-20260825-adoption-omits-parallel-pilot; BUG-20260829-bun-history-gate-rejects-new-qa-charters; BUG-20260903-history-gate-forbids-resetting-baseline-scenarios; BUG-20260904-adopt-apply-requires-designer-before-migration; BUG-20260913-changelog-uses-wrong-npx-package
 fix_status: fixed
@@ -39,7 +39,7 @@ metadata, and checks release claims against
 the shipped public contracts. The release walk reuses current adoption verdicts as canaries
 instead of repeating their feature-level runtime probes.
 
-Release `1.4.1` updates the Ponytail skill descriptions, adds bundled `security-pentest`, records
+Release `1.4.1` updates the Ponytail skill descriptions, adds optional the optional security-lifecycle pentest skill, records
 `wtk-deep-review` as a local skill, and removes two redundant installation tests. Verify the packaged skill files and lock metadata,
 plus the remaining installer checks for package contents and installation behavior.
 
@@ -154,6 +154,6 @@ cycle; prior evidence remains historical.
 
 Fresh QA at `e9e1c4ac` passed the current `1.0.0` release comparison after retesting
 `BUG-20260913-changelog-uses-wrong-npx-package`. The changelog now uses
-`npx workflow-toolkit install`; manifest, Bun lockfile, README, and the 141-file offline archive
+`retired npm installer`; manifest, Bun lockfile, README, and the 141-file offline archive
 agree on `workflow-toolkit@1.0.0` with sole executable `wtk`. Registry/tag consistency remains
 outside this authorized local cycle.

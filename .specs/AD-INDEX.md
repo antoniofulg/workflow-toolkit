@@ -7,7 +7,7 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 
 | ID | Status | Decision |
 | --- | --- | --- |
-| `AD-001` | active | Agent always-on is a thin `AGENTS.md` (contract + pointers). |
+| `AD-001` | partially superseded by AD-041 | Agent always-on is a thin `AGENTS.md` (contract + pointers). |
 | `AD-002` | superseded by AD-038 | QA planning and QA execution are separate provider-neutral skills dispatched in fresh sessions by the existing Verifier. |
 | `AD-003` | superseded by AD-007 | `.specs/features/` is ignored local state. |
 | `AD-004` | superseded by AD-034 | Workflow routing is consumer-configurable in `.my-workflow.toml`. |
@@ -16,7 +16,7 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 | `AD-007` | superseded by AD-037 | `.specs/features/` is versioned, durable workflow state. |
 | `AD-008` | superseded by AD-019 | Adopt upstream ai-memory `1.31.0` only as an opt-in, transient handoff transport between Claude Code, Codex, and Cursor. |
 | `AD-009` | superseded by AD-010 | `.my-workflow.toml` is the single editable source for bundled Claude, Codex, and Cursor agent models and efforts. |
-| `AD-010` | active | Track `.my-workflow.toml.example` and provider packet templates, while keeping `.my-workflow.toml` and generated `.claude`, `.codex`, and `… |
+| `AD-010` | partially superseded by AD-041 | Track `.my-workflow.toml.example` and provider packet templates, while keeping `.my-workflow.toml` and generated `.claude`, `.codex`, and `… |
 | `AD-011` | superseded by AD-015 | Parallelization is an opt-in inter-slice orchestration layer above unchanged TLC; `disabled` is the default, `safe` consumes independent or… |
 | `AD-012` | superseded by AD-036 | Parallel execution uses a provider-neutral deterministic coordinator whose adapters own external effects. |
 | `AD-013` | superseded by AD-036 | The provider-neutral coordinator derives and validates a deterministic sibling Git worktree destination, creates that checkout with fixed a… |
@@ -39,11 +39,12 @@ When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same c
 | `AD-030` | superseded by AD-036 | The canonical consumer installer is the unscoped `workflow-spec-driven` npm package and homonymous Node.js 18 executable. |
 | `AD-031` | active | Deep-review runs one discovery review per implementation group. |
 | `AD-032` | active | `one-round-deep-review` is delivered with `bun run test:all` red only on `tests/installer` `IT-011` (frozen canonical packet bytes) and `IT… |
-| `AD-033` | active | Graphify Labs `graphifyy` `0.9.14` and Nanonets Graft `0.10.1` are the workflow's standard repository-intelligence tools. |
+| `AD-033` | partially superseded by AD-041 | Graphify Labs `graphifyy` `0.9.14` and Nanonets Graft `0.10.1` are the workflow's standard repository-intelligence tools. |
 | `AD-034` | active | Deep Review defaults to on demand. |
 | `AD-035` | active | Adopt the upstream TLC Lean artifact names and formats (`plan.md`, `checks.md`, and `verification.md`). |
-| `AD-036` | active | Replace the task-granular workflow with Workflow Toolkit: package `workflow-toolkit` version `1.0.0`, CLI and on-demand entry `wtk`, and pr… |
+| `AD-036` | partially superseded by AD-041 | Replace the task-granular workflow with Workflow Toolkit: package `workflow-toolkit` version `1.0.0`, CLI and on-demand entry `wtk`, and pr… |
 | `AD-037` | active | Feature planning and verification artifacts are transient. |
 | `AD-038` | active | `.wtk.toml` owns the consuming project's browser QA adapter selection through `[qa].browser_adapter`. |
 | `AD-039` | superseded by AD-040 | Jev is the default adviser for semantic decisions throughout the development lifecycle whenever available, including directly invoked phase… |
 | `AD-040` | active | The shared Jev adviser reference assigns ordinary tool selection to confirmed gateway-managed sessions and higher-level decisions to the ex… |
+| `AD-041` | active | Workflow Toolkit is distributed through supported skill installers as the full `wtk` and `wtk-*` skill set. |

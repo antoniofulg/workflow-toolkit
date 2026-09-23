@@ -44,6 +44,11 @@ function managedBlock(root, relative, owner, body) {
   return { content, key: `${relative}:${owner}`, record: { sha256: hash(block) } };
 }
 
+function blockRecord(owner, body) {
+  const block = `<!-- my-workflow:${owner}:start -->\n${body}\n<!-- my-workflow:${owner}:end -->`;
+  return { sha256: hash(block) };
+}
+
 test('migration preview is complete and read only', () => {
   const root = temp();
   const oldSkill = Buffer.from('old skill\n');
@@ -71,10 +76,20 @@ test('migration removes only verified ownership and reports manual review', () =
   const managedRecord = managedFile(root, 'docs/toolkit/README.md', managed);
   const block = managedBlock(root, 'AGENTS.md', 'core', 'legacy workflow instruction');
   fs.appendFileSync(file(root, 'AGENTS.md'), 'legacy workflow prose\n');
-  write(root, '.claude/agents/planner.md', fs.readFileSync(file(path.resolve(import.meta.dirname, '../..'), '.agents/skills/wtk-config/assets/agents/claude/planner.md')));
+  const currentPlanner = fs.readFileSync(file(path.resolve(import.meta.dirname, '../..'), '.agents/skills/wtk-config/assets/agents/claude/planner.md'), 'utf8');
+  const legacyPlanner = currentPlanner
+    .replace('skills: [wtk-lean, wtk-discover, wtk-plan]', 'skills: [wtk-lean, wtk-discover, wtk-plan, ponytail]')
+    .replaceAll('.agents/skills/wtk/references/ui-ux.md', 'docs/toolkit/guidelines/UI-UX.md')
+    .replaceAll('.agents/skills/wtk/references/security.md', 'docs/toolkit/guidelines/SECURITY.md')
+    .replaceAll('.agents/skills/wtk/references/modeling.md', 'docs/toolkit/guidelines/MODELING.md')
+    .replaceAll('.agents/skills/wtk/references/frontend.md', 'docs/toolkit/guidelines/FRONTEND.md');
+  write(root, '.claude/agents/planner.md', legacyPlanner);
   write(root, 'consumer.txt', 'keep this file\n', 0o600);
   write(root, '.gitignore', '.wtk.toml\nconsumer-rule\n');
   adoption(root, { 'docs/toolkit/README.md': managedRecord }, { [block.key]: block.record });
+
+  const preview = previewMigration({ root });
+  assert.ok(preview.managedFiles.includes('.claude/agents/planner.md'));
 
   const result = applyMigration({ root, backupId: 'success' });
 
@@ -88,6 +103,30 @@ test('migration removes only verified ownership and reports manual review', () =
   assert.equal(result.manualReview[0].path, 'AGENTS.md');
   assert.equal(fs.existsSync(file(root, '.my-workflow/migration-backups/success/files/AGENTS.md')), true);
   assert.equal(fs.statSync(file(root, '.my-workflow/migration-backups/success/files/AGENTS.md')).mode & 0o7777, 0o640);
+});
+
+test('migration removes multiple verified blocks from one instruction file exactly', () => {
+  const root = temp();
+  const core = 'core workflow block';
+  const quality = 'quality review block';
+  write(root, 'AGENTS.md', [
+    'project before',
+    '<!-- my-workflow:core:start -->', core, '<!-- my-workflow:core:end -->',
+    'project between',
+    '<!-- my-workflow:quality:start -->', quality, '<!-- my-workflow:quality:end -->',
+    'project after',
+    '',
+  ].join('\n'), 0o640);
+  adoption(root, {}, {
+    'AGENTS.md:core': blockRecord('core', core),
+    'AGENTS.md:quality': blockRecord('quality', quality),
+  });
+
+  const result = applyMigration({ root, backupId: 'two-blocks' });
+
+  assert.equal(result.applied, true);
+  assert.equal(fs.readFileSync(file(root, 'AGENTS.md'), 'utf8'), 'project before\n\nproject between\n\nproject after\n');
+  assert.deepEqual(result.managedBlocks.sort(), ['AGENTS.md:core', 'AGENTS.md:quality']);
 });
 
 test('migration refuses modified owned content without writes', () => {

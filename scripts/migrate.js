@@ -34,6 +34,26 @@ const PROVIDERS = ['claude', 'codex', 'cursor'];
 const ROLES = ['planner', 'implementer', 'verifier', 'explorer', 'deep-reviewer', 'designer'];
 const packetRelative = (provider, role) => `.${provider}/agents/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
 const packetTemplate = (provider, role) => `.agents/skills/wtk-config/assets/agents/${provider}/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
+const LEGACY_PACKET_HASHES = {
+  'claude/planner': '3729e30846768b60f213aefc5130eed924a14f161fa82efc4d8a31d1f2d102cf',
+  'claude/implementer': '600640521a94b9249ce8f13190a77555955146ce41fe8b8e5373eea45d6229e8',
+  'claude/verifier': '5da5ad11a3b1ee00c0abec586a5177c052a597a25b3dbc523a6ef6c6d234c445',
+  'claude/explorer': '6e2d307841c2fe392a25a975d83cf0b7a68fc14cca2dcdafcfc7ea2eeab7aafc',
+  'claude/deep-reviewer': 'e179edb299036f11bf00a6d3c65a44530ff4c90756528e5b24b27e39cca3a3f9',
+  'claude/designer': '2b62e094e8eed4adcb074c2a9143fa823752d7f4bb0865427c58947d2c2b1e5c',
+  'codex/planner': '304f762c123b1359f3c420921ab1fd259c3884add1f54792d6b9ecb3497dea8e',
+  'codex/implementer': '8688b4b4830059caf6569b66636c2549b41b4f7c85c83fc323cea25ee7804937',
+  'codex/verifier': '62274f82f4e83d8e8208a774a7869c7625a0379bd4256e3e1b278ebca2747234',
+  'codex/explorer': '4cada2bd5f0c5c09b9b4fc11bb766a30a382239ccc981733ef713b313b04fccc',
+  'codex/deep-reviewer': '23984f0f16d76d0e39a98816c315137d5afad976308ee8ecb0c3e2dbe321d667',
+  'codex/designer': '9705e47f7ef1e3b0069149ef0add8299a20be6297f2ef9e664a3ab9308eab115',
+  'cursor/planner': 'dbcfe97ebfd9d1f1dfaf99227b058f3f08c49c674c1281841c94f46c18cb22cf',
+  'cursor/implementer': 'a85616eab37d3fed856d375b91246d06314d45ae4620accc43386da2d05830e1',
+  'cursor/verifier': 'decaa103e327cb3e98c4cc08462eec29a28b50f3230317b62a169bb015808208',
+  'cursor/explorer': 'f4b22bb36572fc94c10def76ce7bb24938dfeccbb93d44eb100dc5d814c6e6ec',
+  'cursor/deep-reviewer': 'ea8b9a360b4e93274ce741694aca5ec4176bcd3f2335b1e04cfdf9b6927485b2',
+  'cursor/designer': '64fad7ba463c4e4e2b6dd19b7a58ffd1410479949707a9f9f5bc5e4c8d5dde54',
+};
 
 export class MigrationError extends Error {}
 
@@ -208,7 +228,10 @@ function providerPacketActions(root, sourceRoot) {
     const template = path.join(source, ...packetTemplate(provider, role).split('/'));
     if (!fs.existsSync(target) || !fs.existsSync(template)) continue;
     if (!fs.lstatSync(target).isFile() || !fs.lstatSync(template).isFile()) continue;
-    if (normalizePacket(fs.readFileSync(target, 'utf8'), provider) === normalizePacket(fs.readFileSync(template, 'utf8'), provider)) {
+    const key = `${provider}/${role}`;
+    const targetHash = sha256(Buffer.from(normalizePacket(fs.readFileSync(target, 'utf8'), provider)));
+    const currentHash = sha256(Buffer.from(normalizePacket(fs.readFileSync(template, 'utf8'), provider)));
+    if (targetHash === currentHash || targetHash === LEGACY_PACKET_HASHES[key]) {
       actions.push({ type: 'remove-file', path: relative, reason: 'retired generated provider packet' });
     }
   }
@@ -419,13 +442,19 @@ export function applyMigration(options = {}) {
     let index = 0;
     const blockActions = report.actions.filter((item) => item.type === 'remove-block');
     const blockFiles = new Map();
-    for (const action of blockActions) {
-      const file = safePath(root, action.path, 'managed instruction');
+    for (const relative of [...new Set(blockActions.map((item) => item.path))]) {
+      const file = safePath(root, relative, 'managed instruction');
       const current = fs.readFileSync(file, 'utf8');
-      const range = blockRange(current, action.owner);
-      if (!range || range.error) fail(`managed block changed during migration: ${action.key}`);
-      const next = current.slice(0, range.start) + current.slice(range.end);
-      blockFiles.set(action.path, Buffer.from(next));
+      const ranges = blockActions
+        .filter((item) => item.path === relative)
+        .map((action) => ({ action, range: blockRange(current, action.owner) }))
+        .sort((left, right) => (right.range?.start ?? 0) - (left.range?.start ?? 0));
+      let next = current;
+      for (const { action, range } of ranges) {
+        if (!range || range.error) fail(`managed block changed during migration: ${action.key}`);
+        next = next.slice(0, range.start) + next.slice(range.end);
+      }
+      blockFiles.set(relative, Buffer.from(next));
     }
     for (const [relative, bytes] of blockFiles) {
       const state = states.find((item) => item.path === relative);

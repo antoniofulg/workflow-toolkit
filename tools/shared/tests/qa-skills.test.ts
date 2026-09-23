@@ -155,7 +155,7 @@ function forbiddenAuthorityViolations(
   const scannedPaths = activeAuthorityPaths(paths);
   const forbiddenCommands = [
     /(?:^|[`$>#;&|]\s*)npm\s+(?!(?:pack\s+--pack-destination\s+\S+(?:\s*#.*)?$|install\s+--save-dev\s+--save-exact\s+@nanonets\/graft@0\.10\.1$|exec\s+--yes\s+--package\s+\S+\s+--\s+my-workflow\s+(?:plan|apply|resolve|status)\b))\S+/i,
-    /(?:^|[`$>#;&|]\s*)npx\s+(?!(?:workflow-toolkit\s+install|wtk\s+install|scripts\s+install|--yes\s+<approved-package>@<exact-version>(?:\s+(?:plan|apply|resolve|status)\b|(?=\s*`|$))))\S+/i,
+    /(?:^|[`$>#;&|]\s*)npx\s+(?!(?:skills\s+(?:add|list|update)\b|workflow-toolkit\s+install|wtk\s+install|scripts\s+install|--yes\s+<approved-package>@<exact-version>(?:\s+(?:plan|apply|resolve|status)\b|(?=\s*`|$))))\S+/i,
     /\bvitest\s+(?:run|--|[A-Za-z])/i,
     /\btsx\s+(?:--|[A-Za-z])/i,
     /(?:from|require)\s*[(]?['"]yaml['"]/i,
@@ -790,14 +790,14 @@ describe("configurable review policy", () => {
     const tourPointer = ".agents/skills/wtk-config/SKILL.md";
     expect(tour).toContain(tourPointer);
     expect(tour.indexOf(tourPointer)).toBeLessThan(tour.indexOf("A filed issue skips the ceremony"));
-    expect(readme).toContain("The `cadence` controls the wtk-deep-review groups:");
+    expect(readme).toContain("The `wtk-config` cadence controls the selected wtk-deep-review groups.");
     expect(readme).toContain("CLI override > profile > native provider");
     expect(readme).toContain(".specs/features/<feature>/workflow.json");
     expect(reviewRounds).toContain("wtk-deep-review** (resolved implementation groups)");
     expect(reviewRounds).not.toContain("wtk-deep-review** (every slice)");
     const finalGroupInstruction =
       "Before final QA, complete the final pending implementation wtk-deep-review group; cadence `skip` resolves no groups, so nothing waits for wtk-deep-review.";
-    expect(readme).toContain("- `skip`: no groups (`[]`)");
+    expect(readme).toContain("`skip` resolves to\nno groups (`[]`)");
     expect(readRepositoryFile(".wtk.toml.example")).toMatch(/^cadence = "skip".*\bon demand\b/m);
     const qaHeading = "## The feature closing step";
     const remediationInstruction =

@@ -27,7 +27,7 @@
 - **Scope**: `AGENTS.md`, `CLAUDE.md`, `.cursor/agents/`, `.claude/agents/`, `.codex/agents/`,
   `.specs/AD-INDEX.md`, `tools/ad-index.py`, `scripts/adopt.py`.
 - **Date**: 2026-08-19
-- **Status**: active
+- **Status**: partially superseded by AD-041
 
 ### AD-002
 
@@ -165,7 +165,7 @@
 - **Scope**: Workflow configuration, provider templates/runtime packets, adoption, packaging, tests,
   documentation, and feature snapshots.
 - **Date**: 2026-08-24
-- **Status**: active
+- **Status**: partially superseded by AD-041
 
 ### AD-011
 
@@ -554,7 +554,7 @@
 - **Scope**: Repository-intelligence routing, phase skills and role packets, Deep Review, adoption,
   local graph hygiene, QA scenarios, benchmark evidence, package metadata, and workflow docs.
 - **Date**: 2026-09-10
-- **Status**: active
+- **Status**: partially superseded by AD-041
 
 ### AD-034
 
@@ -606,7 +606,7 @@
   execution, verification, and documentation. Native agent role identities remain distinct from
   namespaced skill names.
 - **Date**: 2026-09-12
-- **Status**: active
+- **Status**: partially superseded by AD-041
 
 ### AD-037
 
@@ -680,4 +680,26 @@
 - **Scope**: Shared adviser policy and its consumer-facing promise. No gateway installation,
   executable helper changes, new configuration, or browser QA adapter changes.
 - **Date**: 2026-09-20
+- **Status**: active
+
+### AD-041
+
+- **Decision**: Workflow Toolkit is distributed through supported skill installers as the full
+  `wtk` and `wtk-*` skill set. The toolkit does not publish or run a project-mutating npm installer,
+  create an adoption manifest, or own a consuming project's `AGENTS.md`, `CLAUDE.md`, configuration,
+  generated provider packets, ignore files, product context, or knowledge scaffolding. Ponytail,
+  security-lifecycle, adaptive-guidelines, Graphify, and Graft remain optional companion choices;
+  absent repository-intelligence tools use native inspection. Existing adopters leave through the
+  explicit hash-verified migration helper before installing the full skill set.
+- **Reason**: Skill installers already own placement and updates. Removing a second installer and
+  host-file ownership prevents toolkit upgrades from conflicting with project instructions while
+  preserving a safe exit for existing adopters.
+- **Trade-off**: Projects must install the full WTK set and choose companion tools deliberately;
+  the source pack retains maintainer-only documentation and migration code, while consumer setup
+  becomes explicit.
+- **Scope**: WTK distribution, skill references, provider configuration, migration, README and QA
+  adoption contracts. This supersedes the affected distribution and ownership terms in AD-001,
+  AD-010, AD-033, and AD-036; their unrelated workflow, configuration, and fallback constraints
+  remain active.
+- **Date**: 2026-09-23
 - **Status**: active

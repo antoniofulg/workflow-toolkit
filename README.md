@@ -23,13 +23,25 @@ skills the project uses:
 | `wtk-deep-review` | Run an independent implementation review. |
 | `wtk-ship` | Close and deliver proven work when the project authorizes it. |
 
-The canonical source paths are the `.agents/skills/<name>/` directories in this repository. A
-skill installer copies or links the selected directory into its own skill scope. Updating a skill
-there updates that skill only. WTK does not provide a package installer executable.
+The canonical source paths are the `.agents/skills/<name>/` directories in this repository. Use
+the [Vercel Skills CLI](https://github.com/vercel-labs/skills#readme), whose current command is
+`skills add <owner>/<repository>`, to install the full WTK set into the project:
 
-Each selected skill is self-contained: its scripts, assets, and conditional references live below
-that skill directory. No selected skill requires this repository's `docs/toolkit/guidelines/`
-directory at runtime.
+```bash
+npx skills add antoniofulg/workflow-toolkit \
+  --skill wtk wtk-config wtk-deep-review wtk-discover wtk-implement \
+  wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute \
+  wtk-qa-plan wtk-reuse-review wtk-ship \
+  --agent '*' --copy --yes
+```
+
+Use `npx skills list` to inspect the project installation and `npx skills update` to update it.
+The full WTK set carries the shared phase dependencies. Individual-skill dependency closure is
+still being finalized. WTK does not provide a package installer executable.
+
+The full WTK set is self-contained: its scripts, assets, and conditional references live below the
+distributed skill directories. It has no runtime dependency on this repository's
+`docs/toolkit/guidelines/` directory.
 
 ## Optional project instructions
 
@@ -59,12 +71,10 @@ project prose, and reports legacy workflow prose for manual review. It does not 
 adoption manifest.
 
 Feature workflow state follows the [artifact lifecycle](.agents/skills/wtk/references/artifacts.md)
-and remains project-owned. The `wtk-config` cadence controls the selected wtk-deep-review groups;
-The `cadence` controls the wtk-deep-review groups:
-the project chooses its own gate and delivery policy.
-CLI override > profile > native provider determines the configured route.
-The resolved snapshot lives at `.specs/features/<feature>/workflow.json` when a project enables it.
-- `skip`: no groups (`[]`).
+and remains project-owned. The `wtk-config` cadence controls the selected wtk-deep-review groups.
+CLI override > profile > native provider determines the configured route. The resolved snapshot
+lives at `.specs/features/<feature>/workflow.json` when a project enables it; `skip` resolves to
+no groups (`[]`).
 
 ## Recommended companion skills and tools
 
@@ -76,7 +86,7 @@ WTK does not bundle, activate, configure, or claim that any of them ran.
 | Ponytail | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | You want a deliberately minimal-code implementation style. |
 | Security lifecycle | [antoniofulg/security-lifecycle](https://github.com/antoniofulg/security-lifecycle) | The project needs dedicated threat modeling, secure implementation, review, or authorized pentesting skills. |
 | Adaptive Guidelines | Canonical source not selected yet | You want a separate skill that adapts guidance to the current task; verify the upstream before installing it. |
-| Graft | [nanonets/graft](https://github.com/nanonets/graft) | You need checkout-local symbols, callers, or blast-radius pointers during exploration. |
+| Graft | [trailhq/Graft](https://github.com/trailhq/Graft) | You need checkout-local symbols, callers, or blast-radius pointers during exploration. |
 | Graphify | [graphifyy on PyPI](https://pypi.org/project/graphifyy/) | You need an architecture map before tracing implementation details. |
 
 When Graft or Graphify is absent or fails, WTK uses ordinary repository inspection and records that

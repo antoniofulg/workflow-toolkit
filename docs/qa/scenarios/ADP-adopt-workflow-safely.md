@@ -5,7 +5,7 @@ title: Adopt the workflow without replacing consumer-owned state
 persona: Workflow adopter
 journey: J-adopt-workflow
 expected: Guided install, cancellation, non-interactive refusal, failure recovery, and idempotent re-adoption preserve all consumer-owned bytes while publishing only the reviewed Workflow Toolkit plan with exits 0, 2, or 1 as documented.
-entry_points: README.md#quick-start; node /Users/antoniofulg/Projects/my-workflow/bin/wtk.js install; bin/wtk.js; scripts/installer/transaction.js
+entry_points: README.md#install-the-skills; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-lean --agent '*' --copy --yes; node scripts/migrate.js --root <project>
 qa_status: untested
 bug_ids: BUG-20260822-deep-review-learnings-untrackable; BUG-20260822-feature-specs-ignored; BUG-20260822-feature-state-gate-conflicts; BUG-20260825-adoption-omits-parallel-pilot; BUG-20260829-final-qa-pass-conflicts-with-adoption-gate
 fix_status: fixed
@@ -36,13 +36,13 @@ omits the guide and both links without losing the other five pages, all remainin
 resolve, and re-adoption preserves a consumer-owned sentinel byte-for-byte.
 
 QA on 2026-08-22 confirmed fresh installation and identical SHA-256 before and after re-adoption of
-a consumer-modified skill-owned AD index. The bundled-skill and release-contract canaries also passed.
+a consumer-modified skill-owned AD index. The optional-skill and release-contract canaries also passed.
 
 QA for issue #39 confirmed initial adoption and re-adoption install byte-identical workflow validator
 CLIs while preserving consumer-owned `.wtk.toml` and `docs/qa/README.md` byte-for-byte. The
 deterministic package path extends that preservation to consumer knowledge and neutral fresh scaffolds.
 
-For issue #41, adoption documents Ponytail activation at workflow start and points to `AGENTS.md`
+For issue #41, adoption documents optional companion selection and points to `AGENTS.md`
 for the full-cycle persistence rule. QA on 2026-08-22 confirmed the installed `AGENTS.md`, Ponytail
 skill, and workflow loop keep that contract through every TLC and review stage, preserve the two
 explicit exits, and survive re-adoption without an implementation-only competing rule.

@@ -74,6 +74,8 @@ test('distribution has no npm install command or adoption manifest', () => {
   assert.equal(read('README.md').includes('npx workflow-toolkit install'), false);
   assert.equal(read('README.md').includes('wtk install'), false);
   assert.match(read('README.md'), /skill installer/i);
+  assert.match(read('README.md'), /npx skills add antoniofulg\/workflow-toolkit/);
+  assert.match(read('README.md'), /skills update/);
   assert.equal(packageJson.files.some((entry) => entry.includes('scripts/installer') || entry.includes('templates/adoption')), false);
 });
 
@@ -101,7 +103,7 @@ test('skills-only documentation and phase contracts remain reachable', () => {
   assert.match(readme, /Graft/);
   assert.match(readme, /dietrichgebert\/ponytail/);
   assert.match(readme, /antoniofulg\/security-lifecycle/);
-  assert.match(readme, /github.com\/nanonets\/graft/);
+  assert.match(readme, /github.com\/trailhq\/Graft/);
   assert.match(readme, /pypi.org\/project\/graphifyy/);
   assert.match(read('.agents/skills/wtk-lean/SKILL.md'), /one fresh Verifier/);
   assert.match(read('.agents/skills/wtk-lean/references/checks.md'), /Coverage/);

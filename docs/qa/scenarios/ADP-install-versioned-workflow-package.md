@@ -5,7 +5,7 @@ title: Install Workflow Toolkit from an exact local package
 persona: Workflow adopter
 journey: J-adopt-workflow
 expected: An exact local workflow-toolkit package exposes only the wtk executable, completes a guided install without registry access, and reads back the reviewed package identity and managed tree from outside the source checkout.
-entry_points: README.md#quick-start; package.json; bun pm pack --filename <pack-dir>/workflow-toolkit-1.0.0.tgz --ignore-scripts; node <runner>/package/bin/wtk.js install
+entry_points: README.md#install-the-skills; package.json; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-lean wtk-qa wtk-deep-review wtk-ship --agent '*' --copy --yes
 qa_status: untested
 bug_ids:
 fix_status:
@@ -17,7 +17,7 @@ overlaps: ADP-adopt-workflow-safely; ADP-layered-workflow-adoption; ADP-resolve-
 ---
 
 Walk the public package bin from a runner outside the source checkout. Pin the exact local tarball,
-run `workflow-spec-driven install` in a PTY from the disposable target, select all four modules, and
+run `workflow-spec-driven install` in a PTY from the disposable target, select the full WTK skill set, and
 review the complete plan before approval. Repeat the same selection after an independent reload and
 require `Selected modules are up to date. No files will change.` with zero target writes. Use a prior
 manifest fixture to exercise managed provider-template promotion and runtime regeneration.
@@ -30,7 +30,7 @@ explicit conflicts before final confirmation. Cancel or exclude to prove zero wr
 replacement only after its backup action is visible. Pristine retired workflow files are removed
 only when their ownership hashes match.
 
-The package installs five reviewed security skills and the original `security-pentest` skill through
+The package installs optional security-lifecycle skills and the optional security-lifecycle pentest skill through
 core without a child network installer.
 Existing modified destinations remain subject to the normal preview/conflict/backup contract.
 

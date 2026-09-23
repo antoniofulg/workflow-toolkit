@@ -4,9 +4,9 @@ area: ADP
 title: Adopt workflow capabilities incrementally
 persona: Workflow adopter
 journey: J-adopt-workflow
-expected: A project selects core, quality, or extras, sees non-core selections include core, installs each exact current catalog including unchanged third-party Ponytail names plus optional prompt-review and current Claude aliases, and repeats with an explicit no-change result and no parallel module or retired alias.
-entry_points: README.md#quick-start; node /Users/antoniofulg/Projects/my-workflow/bin/wtk.js install; package.json; scripts/installer/engine.js
-qa_status: skipped
+expected: A project selects selected WTK skills, sees non-core selections include core, installs each exact current catalog including unchanged third-party Ponytail names plus optional prompt-review and current Claude aliases, and repeats with an explicit no-change result and no parallel module or retired alias.
+entry_points: README.md#install-the-skills; npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-config wtk-lean wtk-qa wtk-deep-review wtk-ship --agent '*' --copy --yes
+qa_status: untested
 bug_ids:
 fix_status:
 retest_status:
@@ -25,7 +25,7 @@ manifest, omitted modules and their records remain unchanged, consumer `package.
 survive, and the installed tree has canonical skill-owned runtime with no workflow-created root
 `templates/` or `tools/`. Repeat the same selection and require the exact no-change summary.
 
-The current cycle also covers selecting all four modules, conflict exclusion with dependency
+The current cycle also covers selecting the full WTK skill set, conflict exclusion with dependency
 cascade, staged provider-packet synchronization, and importing the installed assisted probe through
 a call-counting fake `orca`. Exact hash, path-containment, manifest-schema, and publication-order
 mechanics remain technical-verification evidence; QA observes their public no-write and
