@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.4.5] - 2026-09-23
+
+### Fixed
+
+- The guided install CLI now treats readline close as cancellation even when a pending question
+  does not resolve, preserving the no-write cancellation promise on Linux and macOS.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.5 install` to update an adopted project. No new skill selection is
+  required for this release.
+
 ## [1.4.4] - 2026-09-23
 
 ### Fixed
