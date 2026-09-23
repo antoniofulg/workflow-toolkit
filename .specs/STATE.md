@@ -681,3 +681,20 @@
   executable helper changes, new configuration, or browser QA adapter changes.
 - **Date**: 2026-09-20
 - **Status**: active
+
+### AD-041
+
+- **Decision**: Publishing a stable GitHub release is the only automatic npm publication trigger.
+  The release event's immutable commit and version must match the tagged package, the complete test
+  gate must pass without npm publishing authority, and only a dependent job may use the npm trusted
+  publisher to publish the tested archive. A merge or tag push alone does not publish a package.
+- **Reason**: The maintainer chose GitHub release publication as the deliberate release action;
+  local npm authentication blocked the previous manual launch, and package/test code must not be
+  able to request publishing identity before validation passes.
+- **Trade-off**: A failed npm publish can leave a public GitHub release without a matching npm
+  version; the GitHub run reports failure for manual correction. The first future release is the
+  live OIDC and provenance proof.
+- **Scope**: `.github/workflows/publish.yml`, package repository metadata, release documentation,
+  and npm trusted-publisher configuration for `antoniofulg/workflow-toolkit`.
+- **Date**: 2026-09-22
+- **Status**: active

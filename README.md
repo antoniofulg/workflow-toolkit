@@ -311,6 +311,24 @@ are pristine; edited or unproven paths conflict with zero writes.
 Each release lists its upgrade steps under `### Migration` in the changelog; follow them in order
 after installation. The package identity for this release is `workflow-toolkit@1.4.1` with the `wtk` executable.
 
+## Publish a package release
+
+Publishing a stable GitHub release starts the package publication workflow from the exact release
+tag. The workflow at `.github/workflows/publish.yml` binds checkout to the immutable release event
+commit, verifies that the tag still points to that commit and that it is reachable from `main`,
+confirms the manifest version, runs the frozen full gate in a read-only test job, and then lets its
+dependent publisher job publish the checksum-verified archive with npm's OIDC trusted publisher
+and provenance. Prereleases are skipped.
+
+Before the first automated publication, the package owner must add a GitHub Actions trusted publisher
+for organization or user `antoniofulg`, repository `workflow-toolkit`, and workflow filename
+`publish.yml`. Leave the environment name blank and enable direct publish permission. The publisher
+must trust this exact repository and workflow; no reusable registry write token is stored in GitHub.
+
+For each future version, update `package.json` and `CHANGELOG.md`, commit and merge the change to
+`main`, create and publish a stable GitHub release whose tag is `vX.Y.Z`. The workflow records
+success or failure in GitHub Actions; it does not edit the GitHub release after publication.
+
 ## Managed paths
 
 Review the managed paths and the installer's per-file actions. Installation updates only workflow-owned files,

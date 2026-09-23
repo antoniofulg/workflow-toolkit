@@ -1,12 +1,132 @@
 name: Publish package
 
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
-  setup:
+  test:
+    if: ${{ !github.event.release.prerelease }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      package_sha256: ${{ steps.package.outputs.sha256 }}
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+      RELEASE_SHA: ${{ github.sha }}
     steps:
-      - run: echo "npm publication is not enabled yet"
+      - name: Check out published release
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.14.0
+          package-manager-cache: false
+
+      - name: Validate release identity
+        run: node scripts/validate-release.mjs
+
+      - name: Install npm CLI
+        run: npm install --global npm@11.5.1 --ignore-scripts --no-audit --no-fund
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Install frozen dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run the full test gate
+        run: bun run test:all
+
+      - name: Confirm tested checkout is unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
+            git status --short --untracked-files=all
+            exit 1
+          fi
+
+      - name: Package tested release
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_dir="$RUNNER_TEMP/release-package"
+          mkdir -p "$package_dir"
+          npm pack --ignore-scripts --pack-destination "$package_dir" >/dev/null
+          archive="$package_dir/workflow-toolkit-${RELEASE_TAG#v}.tgz"
+          test -f "$archive"
+          cp "$archive" "$package_dir/workflow-toolkit.tgz"
+          checksum="$(sha256sum "$package_dir/workflow-toolkit.tgz" | awk '{print $1}')"
+          printf '%s  %s\n' "$checksum" workflow-toolkit.tgz > "$package_dir/workflow-toolkit.tgz.sha256"
+          printf 'sha256=%s\n' "$checksum" >> "$GITHUB_OUTPUT"
+
+      - name: Upload tested package
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-toolkit-package-${{ github.sha }}
+          path: ${{ runner.temp }}/release-package/workflow-toolkit.tgz*
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    if: ${{ !github.event.release.prerelease && needs.test.result == 'success' }}
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+      RELEASE_SHA: ${{ github.sha }}
+      EXPECTED_PACKAGE_SHA256: ${{ needs.test.outputs.package_sha256 }}
+    steps:
+      - name: Check out published release
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.14.0
+          package-manager-cache: false
+
+      - name: Download tested package
+        uses: actions/download-artifact@v5
+        with:
+          name: workflow-toolkit-package-${{ github.sha }}
+          path: ${{ runner.temp }}/release-package
+
+      - name: Verify tested package
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/release-package/workflow-toolkit.tgz"
+          test -f "$archive"
+          actual="$(sha256sum "$archive" | awk '{print $1}')"
+          test "$actual" = "$EXPECTED_PACKAGE_SHA256"
+          test "$(awk '{print $1}' "$RUNNER_TEMP/release-package/workflow-toolkit.tgz.sha256")" = "$actual"
+          tar -xOf "$archive" package/package.json | node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const manifest = JSON.parse(readFileSync(0, "utf8"));
+            const expectedVersion = process.env.RELEASE_TAG.slice(1);
+            if (manifest.name !== "workflow-toolkit" || manifest.version !== expectedVersion) {
+              throw new Error(`archive manifest does not match ${process.env.RELEASE_TAG}`);
+            }
+          '
+
+      - name: Install npm CLI
+        run: npm install --global npm@11.5.1 --ignore-scripts --no-audit --no-fund
+
+      - name: Publish tested archive to npm
+        run: npm publish "$RUNNER_TEMP/release-package/workflow-toolkit.tgz" --ignore-scripts --provenance --access public --tag latest --registry=https://registry.npmjs.org
