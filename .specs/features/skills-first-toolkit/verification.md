@@ -1,38 +1,38 @@
 # Skills-only Workflow Toolkit verification
 
-**Verdict**: FAIL
+**Verdict**: PASS
 **Profile**: standard
-**Diff range**: cd195aa4..61116cd7da616bc2a041d580a787ddfa8a6b905d
-**Round**: 4 - scoped
+**Diff range**: cd195aa4..ac6afbb095192526dda34a8f18cf688367d32c97
+**Round**: 7 - scoped
 **Verifier**: independent sub-agent (author `/root/skills_only_build` != verifier `/root/skills_only_verify`)
 
 ## Binding sources
 
 | Source | Opened | Contradiction | Uncovered |
 | --- | --- | --- | --- |
-| Approved `plan.md` and `checks.md` | yes - unchanged approved artifacts | Plan and C1 describe selected self-contained skills; AD-041 and remediation README require the full 13-skill set while README lines 9-10 still tell users to add only the phase skills they use | User decision on individual closure versus full-set-only distribution remains open |
+| Approved `plan.md` and `checks.md` | yes - updated by the user's explicit full-set decision | none | - |
 | Retired installer at `cd195aa4` | yes - exact 18 packet assets plus instruction-block behavior | none after remediation | - |
-| Current QA scenario and report contract at committed `61116cd` | yes - current scenarios, charter, report, fixed bug records, and disposable readbacks | none | Public rollback fault injection is unavailable by design; QA keeps the two migration scenarios `untested`, while C7 retains exact technical proof |
+| Current QA scenario and report contract at committed `ac6afbb` | yes - all active source-install scenarios, charter, final report, fixed bug records, and disposable readbacks | none | - |
 
 ## Checks
 
 | Check | Claim | Proof run | Evidence | Result |
 | --- | --- | --- | --- | --- |
-| C1 | Published skills carry required runtime content | Fresh named suite exit 0; round-one isolated probe carried because skill files were unchanged | `tests/skills/distribution.test.js:16-35` proves references resolve only when all skill directories coexist. README now documents the full set, but `README.md:9-10` still offers partial selection and approved C1 still requires selected-skill closure. User decision pending. | FAIL |
-| C2 | Skill installation leaves host harness files unchanged | Fresh named suite exit 0 | `tests/skills/distribution.test.js:43-64` snapshots all harness sentinels; remediation did not add an installer mutation path | PASS |
-| C3 | Skill-installer-only distribution, no npm installer or new manifest | Fresh distribution suite 6/6; frozen-HEAD Skills CLI list exit 0 | `tests/skills/distribution.test.js:41-57` proves source locks containing WTK self entries suppress discovery and clean sources expose 13. Direct `add <HEAD-worktree> --list --full-depth` reported `Found 13 skills` and enumerated every approved name. `:86-99` retains the no-installer and exact route assertions. | PASS |
+| C1 | Complete installed 13-skill set carries required runtime content | Fresh named proof exit 0; isolated fault exit 1; QA install evidence causally equivalent | `tests/skills/distribution.test.js:16-52` copies only all 13 skill directories, proves source `docs/toolkit/guidelines/` absent, and resolves Markdown, local script/reference, and absolute WTK skill paths inside that isolated set. QA's public install at `a9566e3` found all 13 and zero unresolved references; `.agents/skills`, `package.json`, and `skills-lock.json` are unchanged since that snapshot. | PASS |
+| C2 | Skill installation leaves host harness files unchanged | Fresh distribution suite exit 0 | `tests/skills/distribution.test.js:71-96` snapshots all harness sentinels; QA public installation also preserved them byte-for-byte | PASS |
+| C3 | Skill-installer-only distribution, no npm installer or new manifest | Fresh distribution suite 6/6; prior frozen-HEAD Skills CLI list retained by causal equivalence | `tests/skills/distribution.test.js:53-69` proves source locks containing WTK self entries suppress discovery and clean sources expose 13. `:98-111` retains no-installer and exact route assertions. | PASS |
 | C4 | Preview is complete and read-only | Fresh named suite exit 0; exact 18-packet legacy fixture exit 0 | `tests/skills/migration.test.js:52-70` proves read-only preview for owned files/blocks/links. Independent `cd195aa4` fixture produced 18 packet actions and no target writes before apply. | PASS |
 | C5 | Apply backs up/removes verified ownership, preserves project bytes, removes adoption state, reports review prose | Fresh named suite exit 0; exact 18-packet fixture exit 0 | `tests/skills/migration.test.js:73-105` covers real legacy packet retirement and preservation; `:108-129` covers two blocks in one file. Independent fixture removed all 18 packets and the manifest with zero packets remaining. | PASS |
 | C6 | Modified owned content prevents all writes and names conflict | Fresh named suite exit 0 | `tests/skills/migration.test.js:132-140` asserts refusal plus whole-tree equality | PASS |
 | C7 | Publication failure restores files, links, modes, instructions, and adoption state | Fresh named suite exit 0 | `tests/skills/migration.test.js:143-154` asserts injected failure plus whole-tree equality | PASS |
-| C8 | WTK resolves moved references without optional companions and makes no false tool claim | Fresh named suite exit 0 | `tests/skills/distribution.test.js:84-92` proves companions absent, old guideline paths absent, and native fallback text present | PASS |
-| C9 | README distinguishes installation/instructions/companions and retained phase contracts remain reachable | Fresh distribution suite 6/6; QA contract suite 38/38; direct README/scenario/readback inspection | `README.md:84-92` has four recommended rows, each with source link and use case; Adaptive Guidelines is a non-recommended candidate. Both current full-set scenarios contain README's exact 13-skill membership, the retired layered scenario has no executable command, and QA report lines 16-20 records the resulting dispositions. | PASS |
+| C8 | WTK resolves moved references without optional companions and makes no false tool claim | Fresh distribution suite exit 0 | `tests/skills/distribution.test.js:113-124` proves companions absent, old guideline paths absent, and native fallback text present | PASS |
+| C9 | README distinguishes installation/instructions/companions and retained phase contracts remain reachable | Fresh distribution suite 6/6; fresh QA contract suite 38/38; direct sweep of every active source-install scenario | README recommendations and prior QA fixes remain correct. All four active scenarios containing the WTK Skills CLI route select exactly the approved 13-skill set; `QAS-use-optional-jev-qa-adapter.md:19-22` invokes the QA route only after full-set installation. | PASS |
 
 ## Coverage
 
 | Set (size) | Recomputed from | Member -> proof | Unproven |
 | --- | --- | --- | --- |
-| Distribution doors (2) | plan Landing, AD-041, README, package | skill-installer-only C1-C3; adopter exit C4-C7 | selected-skill versus full-set distribution decision |
+| Distribution doors (2) | updated plan Landing, AD-041, README, package | complete 13-skill set C1-C3; adopter exit C4-C7 | - |
 | Project harness files (6) | C2 sentinel inventory | `AGENTS.md`, `CLAUDE.md`, config, packets, knowledge, ignores -> C2 | - |
 | Old ownership classes (3) | exact old assets and migration actions | managed blocks C4-C7; recorded files C4-C7; links C4-C7 | - |
 | Migration outcomes (4) | migration API and expanded fixtures | preview C4; success C5; conflict C6; rollback C7 | - |
@@ -42,11 +42,11 @@
 
 ## Test policy rows
 
-No `Test policy` section exists in `checks.md`. Remediation added discriminating Skills CLI discovery and companion-table assertions, retained C5 discrimination, and QA independently compared scenario command membership. C1 remains intentionally unresolved pending the distribution-shape decision.
+No `Test policy` section exists in `checks.md`. Remediation added isolated full-set reference closure, discriminating Skills CLI discovery and companion-table assertions, retained C5 discrimination, and QA independently compared scenario command membership. The checks validator emits one acknowledged warning for the absent optional section and zero errors.
 
 ## Swept existing
 
-- Validation: full-set reference resolution is green; individual selected-skill closure remains open.
+- Validation: the complete supported 13-skill set resolves every scanned runtime reference in isolation; subset installation is explicitly unsupported.
 - Failure modes: modified ownership refusal and rollback remain green after shared migration edits.
 - Idempotency: successful cleanup removes adoption state; a later invocation is a no-op.
 - Authorization: migration remains explicit; preview remains read-only.
@@ -60,7 +60,7 @@ Scope: remediation `e0806212..03a32e3` plus affected consumers. Historical packe
 
 ## Construction verification
 
-AD-041 records full-set installation, and the README now supplies a concrete full-set Skills CLI command. This closes the missing route but changes the approved selected-skill construction shape. C1 cannot pass until the user confirms full-set-only distribution or implementation supplies dependency-closed individual selection. The approved checks were not altered.
+The user explicitly chose the complete 13-skill installation unit. The plan, C1, Coverage row, README, and isolated proof now agree on that construction shape. No individual phase subset is promised.
 
 ## Faults injected
 
@@ -80,6 +80,8 @@ Round 3 added one scoped C3 fault: restoring a `wtk` self entry to frozen HEAD's
 
 Round 4 added one scoped C9 fault: restoring Adaptive Guidelines as a fifth source-less recommendation made the named C9 proof fail `5 !== 4`. The mutant was killed and its detached worktree removed.
 
+Round 5 added one scoped C1 fault: changing `wtk-ship`'s raw cross-skill validation reference to a missing WTK path made the isolated full-set proof fail at `tests/skills/distribution.test.js:48`. The mutant was killed and its detached worktree removed.
+
 ## Gates
 
 - `node --test tests/skills/distribution.test.js tests/skills/migration.test.js` - exit 0; 10 passed, 0 failed.
@@ -90,7 +92,7 @@ Round 4 added one scoped C9 fault: restoring Adaptive Guidelines as a fifth sour
 - Exact `cd195aa4` legacy-packet hash audit - exit 0; 18/18 normalized hashes match `LEGACY_PACKET_HASHES`.
 - Exact 18-packet preview/apply fixture - exit 0; preview actions 18, apply true, remaining packets 0, old manifest absent.
 - `git diff --check e0806212..03a32e3` - exit 0; no whitespace errors.
-- `python3 .agents/skills/wtk-lean/scripts/validate_verification.py skills-first-toolkit` - exit 1 as required for this internally consistent FAIL report; validator routes the remaining gaps back for decision/remediation.
+- `python3 .agents/skills/wtk-lean/scripts/validate_verification.py skills-first-toolkit` at `ac6afbb` - exit 0; 0 errors, 0 warnings.
 - `node --test tests/skills/distribution.test.js` at `a9566e3` - exit 0; 6 passed, 0 failed, including clean/self-locked Skills CLI discovery.
 - `node node_modules/skills/dist/cli.mjs add <frozen-HEAD-worktree> --list --full-depth` - exit 0; `Found 13 skills`, all approved names enumerated.
 - `bun test tools/shared/tests/qa-skills.test.ts` at `a9566e3` - exit 0; 38 passed, 0 failed.
@@ -99,6 +101,18 @@ Round 4 added one scoped C9 fault: restoring Adaptive Guidelines as a fifth sour
 - `bun test tools/shared/tests/qa-skills.test.ts` at `61116cd` - exit 0; 38 passed, 0 failed.
 - Independent README/scenario membership check - exit 0; README 13, both current scenarios 13/13 with no missing or extra names, retired scenario has no install command, four linked recommendation rows, Adaptive Guidelines candidate only.
 - `git diff --check a9566e3..61116cd` - exit 0; no whitespace errors.
+- `node --test --test-name-pattern='published WTK skills resolve every local reference' tests/skills/distribution.test.js` at `b3e430b` - exit 0; 1 passed, 0 failed.
+- `node --test tests/skills/distribution.test.js` at `b3e430b` - exit 0; 6 passed, 0 failed.
+- `git diff --quiet a9566e3..b3e430b -- .agents/skills package.json skills-lock.json` - exit 0; QA public-install inputs are equivalent.
+- WTK runtime source-doc scan - exit 0; no `docs/toolkit/guidelines/` reference in the 13 installed skill trees.
+- README installation semantic check - exit 0; full-set unit true, subset unsupported true, old ambiguous wording absent, 13 unique skill names.
+- `validate_plan.py skills-first-toolkit` - exit 0; 0 errors, 0 warnings. `validate_checks.py skills-first-toolkit` - exit 0; 0 errors, 1 absent-Test-policy warning.
+- `git diff --check 61116cd..b3e430b` - exit 0; no whitespace errors.
+- `bun test tools/shared/tests/qa-skills.test.ts` at `da1e239` - exit 0; 38 passed, 0 failed.
+- Active source-install scenario sweep at `da1e239` - exit 0; 4 scenarios, each exact 13/13 membership, zero missing or extra skills.
+- `git diff --check b3e430b..da1e239` - exit 0; no whitespace errors.
+- Final QA closeout inspection at `ac6afbb` - exact 13-skill contract recheck recorded for all active install scenarios; local-source installation reuse is justified by unchanged `.agents/skills`, `package.json`, and `skills-lock.json`; limitations remain explicit.
+- `git diff --check da1e239..ac6afbb` - exit 0; no whitespace errors.
 - Full gate not repeated. Round-one `bun run test:all` had 89/89 Bun and 16/16 Node tests green and stopped only at the now-corrected workflow-config expectation. Remediation changed migration/distribution tests, QA scenario consumers, the workflow-config expectation, and AD files; each causal path received the fresh scoped suites above. Dependencies, lockfile, other Python modules, and other Bun suites are unchanged from that run.
 
 ## QA disposition
@@ -115,21 +129,21 @@ Other explicit limits are local-source installation without network/registry res
 
 ## Ranked gaps
 
-1. **Decision required - C1:** approved selected-skill self-containment conflicts with remediation's full-set-only shape. README itself currently says both “add only the phase skills the project uses” and “install the full WTK set.” Keep FAIL until the user chooses the public contract.
+None.
 
 ## Verification stage receipt
 
-- Stage: Technical verification, round 4 scoped
-- Revision: `61116cd7da616bc2a041d580a787ddfa8a6b905d`
+- Stage: Technical verification, round 7 scoped
+- Revision: `ac6afbb095192526dda34a8f18cf688367d32c97`
 - Start: unavailable
-- End: 2026-09-23 06:11:59 UTC
+- End: 2026-09-23 13:52:36 UTC
 - Duration: unavailable
 - Model: GPT-5 verifier role
 - Effort: unavailable
 - Input tokens: unavailable
 - Output tokens: unavailable
 - Estimated token cost: unavailable
-- Validation overhead: prior scoped gates retained; round 4 added 2 scoped gates, 1 semantic membership/readback check, and 1 isolated discrimination run
-- Reused evidence: C2-C8 and unaffected full-gate portions carried by causal input comparison; C9 rerun fresh at `61116cd`; C1 isolated-copy result carried because skill contents are unchanged
-- Waiting/blockers: C1 user decision
+- Validation overhead: prior scoped gates retained; round 5 added 4 scoped checks, 2 artifact validators and 1 isolated discrimination run; round 6 added 1 scoped gate and 1 active-scenario sweep; round 7 added QA closeout/readback inspection
+- Reused evidence: C2-C8 and unaffected full-gate portions carried by causal input comparison; QA public installation reused after exact input-equivalence check; C1 fresh at `b3e430b`; C9 fresh at `da1e239`; `ac6afbb` changes only QA report/bug closeout prose
+- Waiting/blockers: none
 - Unmeasured scope: host token telemetry and exact actor timing; public rollback injection, network GitHub resolution, and optional companion installation remain explicit QA limitations
