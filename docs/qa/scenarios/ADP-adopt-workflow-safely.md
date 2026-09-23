@@ -11,8 +11,8 @@ bug_ids: BUG-20260923-skills-cli-omits-required-wtk-skills; BUG-20260923-full-se
 fix_status: fixed
 retest_status: pass
 fix_commits: a9566e3; d363b1c
-evidence: docs/qa/evidence/2026-09-23-skills-only-workflow/skills-discovery.json; docs/qa/evidence/2026-09-23-skills-only-workflow/skills-install.json; docs/qa/evidence/2026-09-23-skills-only-workflow/migration-results.json; docs/qa/evidence/2026-09-23-skills-only-workflow/scenario-contract-readback.json
-last_report: docs/qa/reports/2026-09-23-skills-only-workflow.md
+evidence: docs/qa/evidence/2026-09-23-native-agent-settings/install-readback.json; docs/qa/evidence/2026-09-23-native-agent-settings/migration-readback.json
+last_report: docs/qa/reports/2026-09-23-native-agent-settings.md
 overlaps: ADP-resolve-legacy-adoption-conflicts
 ---
 
@@ -35,3 +35,8 @@ injection remains unavailable, so this scenario remains `untested` pending a con
 Fresh QA retest at `d363b1c` confirmed the previous 13-skill entry point matched its then-current README.
 Both linked bugs passed retest. The prior evidence does not certify the current 12-skill native-settings
 contract.
+
+Fresh QA at `e6002ca1` passed the 12-skill install, all 18 native-file and host-sentinel byte
+comparisons, exact 18-packet migration, edited-packet preservation, and managed-conflict refusal.
+The public CLI still exposes no safe rollback fault injection, so the scenario remains `untested`
+despite every reachable public leg passing.

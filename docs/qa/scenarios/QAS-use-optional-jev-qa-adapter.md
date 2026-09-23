@@ -11,8 +11,8 @@ bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence:
-last_report:
+evidence: docs/qa/evidence/2026-09-23-native-agent-settings/install-readback.json; docs/qa/evidence/2026-09-23-native-agent-settings/qa-adapter-readback.json
+last_report: docs/qa/reports/2026-09-23-native-agent-settings.md
 overlaps: ADP-install-versioned-workflow-package
 ---
 
@@ -20,3 +20,8 @@ This promise is consumer-owned. Install the full WTK skill set through the Skill
 the WTK QA route against the project's declared adapter. Retain the safe-timeout, no-replay,
 independent-readback, and reload rules. The source repository has no consumer fixture, browser, Jev
 runtime, or live Playwright MCP, so this scenario remains untested until a consumer QA walk exists.
+
+Fresh source-pack QA at `e6002ca1` passed installed helper preflight and scrubbed boundary probes:
+missing prerequisites and constructor timeout selected safe Playwright fallback, while a timeout
+after a recorded action selected no fallback. Every helper result remained `not-passed`. No live
+browser, provider, reload, or consumer oracle was available, so the scenario remains `untested`.

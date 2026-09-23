@@ -11,8 +11,8 @@ bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence: docs/qa/evidence/2026-09-23-skills-only-workflow/migration-results.json
-last_report: docs/qa/reports/2026-09-23-skills-only-workflow.md
+evidence: docs/qa/evidence/2026-09-23-native-agent-settings/migration-readback.json
+last_report: docs/qa/reports/2026-09-23-native-agent-settings.md
 overlaps: ADP-adopt-workflow-safely
 ---
 
@@ -26,3 +26,7 @@ QA on 2026-09-23 passed public preview, apply, and conflict paths with independe
 backup, manifest, journal, and residue readback. The shipped failure hook restored exact state, but
 the public CLI exposes no safe fault-injection or rollback option. That forward evidence does not
 grant a public-interface pass, so this scenario remains `untested`.
+
+Fresh QA at `e6002ca1` previewed and removed all 18 exact historical packets, preserved all 18
+edited packets, and rejected a modified managed file with exit `1` and no writes. Public rollback
+injection remains unavailable, so only that leg remains `untested`.
