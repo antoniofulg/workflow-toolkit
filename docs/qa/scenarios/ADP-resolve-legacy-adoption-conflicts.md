@@ -11,8 +11,8 @@ bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence:
-last_report:
+evidence: docs/qa/evidence/2026-09-23-skills-only-workflow/migration-results.json
+last_report: docs/qa/reports/2026-09-23-skills-only-workflow.md
 overlaps: ADP-adopt-workflow-safely
 ---
 
@@ -21,3 +21,8 @@ the explicit migration helper. Preview remains read-only. Apply backs up bytes a
 surrounding project prose and unrelated files, removes the old adoption manifest, and reports
 unowned workflow prose for manual review. A failed publication restores files, links, modes,
 instruction bytes, and adoption state exactly.
+
+QA on 2026-09-23 passed public preview, apply, and conflict paths with independent byte, mode, link,
+backup, manifest, journal, and residue readback. The shipped failure hook restored exact state, but
+the public CLI exposes no safe fault-injection or rollback option. That forward evidence does not
+grant a public-interface pass, so this scenario remains `untested`.
