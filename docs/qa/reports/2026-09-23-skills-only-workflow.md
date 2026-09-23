@@ -1,7 +1,7 @@
 # QA Execute — Skills-only Workflow Toolkit — 2026-09-23
 
 - **Charter:** [`CH-skills-only-workflow-2026-09-23`](../charters/CH-skills-only-workflow-2026-09-23.md)
-- **Snapshots:** initial `a0d09af820a61c5c7070e86b93634a96406cf608`; installation retest `a9566e32b39eb8e17d8dd306e4bcf630020ea207`
+- **Snapshots:** initial `a0d09af820a61c5c7070e86b93634a96406cf608`; installation retest `a9566e32b39eb8e17d8dd306e4bcf630020ea207`; documentation closeout `d363b1cc82348348c90a5280b6723ae65d38d5e3`
 - **Personas:** Workflow adopter; Repository reader
 - **Adapter:** Vercel Skills CLI 1.5.23/manual, public Node CLI, and independent filesystem readback through [`docs/qa/README.md`](../README.md)
 - **Environment:** local source checkout; no network, registry, browser, server, provider, or optional companion installation
@@ -13,11 +13,11 @@
 
 | Scenario | Verdict | Evidence / limitation |
 | --- | --- | --- |
-| `ADP-install-versioned-workflow-package` | fail | Full 13-skill install passed after remediation, but the scenario entry point selects only 6. `skills-discovery.json`; `skills-install.json`; `scenario-contract-readback.json`; `BUG-20260923-full-set-scenarios-use-partial-install-command`. |
-| `ADP-adopt-workflow-safely` | fail | Install, sentinel preservation, preview, apply, and conflict passed; public rollback injection is unavailable and the scenario entry point selects only 3 skills. `skills-install.json`; `migration-results.json`; scenario-contract bug. |
+| `ADP-install-versioned-workflow-package` | pass | Full 13-skill install and host preservation passed; both current scenario and README now select the same 13 skills. `skills-discovery.json`; `skills-install.json`; `scenario-contract-readback.json`. |
+| `ADP-adopt-workflow-safely` | untested — all reachable public legs passed | Install, sentinel preservation, preview, apply, conflict, and scenario-command retest passed. Public rollback injection remains unavailable. `skills-install.json`; `migration-results.json`; `scenario-contract-readback.json`. |
 | `ADP-resolve-legacy-adoption-conflicts` | untested — all reachable public legs passed | `migration-results.json`; rollback passed only through the shipped failure hook because the CLI exposes no safe fault injection. |
-| `ADP-separate-external-security-skills` | fail | WTK installed zero companions, but Adaptive Guidelines lacks a verified source. `skills-install.json`; `documentation-readback.json`; `BUG-20260923-adaptive-guidelines-recommendation-has-no-source`. |
-| `DOC-read-explicit-workflow-provenance` | fail | Core provenance and optional scope matched; Adaptive Guidelines source and pack-guide claim did not. Same documentation evidence and bug. |
+| `ADP-separate-external-security-skills` | pass | WTK installed zero companions; all four recommendations have sources and uses; Adaptive Guidelines is a disclosed candidate. `skills-install.json`; `documentation-readback.json`. |
+| `DOC-read-explicit-workflow-provenance` | pass | Core provenance, project-owned instructions, README recommendations, and pack-guide scope match. Same documentation evidence. |
 
 ## Skills CLI discovery and fix loop
 
@@ -71,6 +71,10 @@ was in the recommended table with `Canonical source not selected yet`. The pack 
 claimed the README names the sources and uses of all five. This created
 [`BUG-20260923-adaptive-guidelines-recommendation-has-no-source`](../bugs/BUG-20260923-adaptive-guidelines-recommendation-has-no-source.md).
 
+Remediation `d363b1c` moved Adaptive Guidelines below the table as a candidate that is explicitly
+not recommended until its source is verified. Fresh readback found four recommendations, all with
+source links and use cases, and matching pack-guide language. The bug passed retest.
+
 Evidence: [`documentation-readback.json`](../evidence/2026-09-23-skills-only-workflow/documentation-readback.json).
 
 ## QA-contract consistency
@@ -80,15 +84,20 @@ The two current scenarios that promise the full WTK set select only 3 and 6 skil
 This created
 [`BUG-20260923-full-set-scenarios-use-partial-install-command`](../bugs/BUG-20260923-full-set-scenarios-use-partial-install-command.md).
 
+Remediation `d363b1c` aligned both current scenario commands with the README's 13 skills and removed
+the executable command from the retired layered scenario. Fresh readback found zero missing skills
+in current scenarios and no executable legacy command. The bug passed retest.
+
 Evidence: [`scenario-contract-readback.json`](../evidence/2026-09-23-skills-only-workflow/scenario-contract-readback.json).
 
 ## Findings
 
 1. Fixed major: Skills CLI omitted the primary router, Lean workflow, and Deep Review because the
    committed lock self-suppressed those local skills. `a9566e3` passed fresh non-author retest.
-2. Open minor: Adaptive Guidelines is recommended without a verified source; the pack guide claims
-   every listed source is named.
-3. Open minor: full-set QA scenarios publish partial skill selections and could support a false pass.
+2. Fixed minor: Adaptive Guidelines was recommended without a verified source. `d363b1c` passed
+   fresh documentation readback.
+3. Fixed minor: full-set QA scenarios published partial skill selections. `d363b1c` passed fresh
+   scenario-contract readback.
 
 ## Limitations
 
@@ -117,3 +126,10 @@ this QA session.
 | Migration preview / apply / conflict | 0 / 0 / 1 expected | 0.038 / 0.045 / 0.038 s |
 | Rollback forward evidence | expected throw and exact restore | 0.009 s |
 | Documentation / scenario contract readback | 0 / 0 | 0.026 / <0.001 s |
+| Documentation / scenario contract closeout rewalk | 0 / 0 | <0.001 / <0.001 s |
+
+## Fix-loop accounting
+
+Two returns to implementation completed two loops. The first fixed the major Skills CLI discovery
+defect in `a9566e3`; the second fixed both documentation defects as one batch in `d363b1c`. No
+finding remained unresolved or regressed after its scoped recheck.

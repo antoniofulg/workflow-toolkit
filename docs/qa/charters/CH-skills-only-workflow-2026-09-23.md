@@ -1,7 +1,7 @@
 # CH-skills-only-workflow-2026-09-23
 
 - **Date:** 2026-09-23
-- **Scope:** initial snapshot `a0d09af820a61c5c7070e86b93634a96406cf608`; installation retest snapshot `a9566e32b39eb8e17d8dd306e4bcf630020ea207`
+- **Scope:** initial snapshot `a0d09af820a61c5c7070e86b93634a96406cf608`; installation retest `a9566e32b39eb8e17d8dd306e4bcf630020ea207`; documentation closeout `d363b1cc82348348c90a5280b6723ae65d38d5e3`
 - **Time-box:** 45 minutes maximum; stop dependent installation paths on a defect and finish safe independent migration and documentation paths
 - **Persona:** Workflow adopter; Repository reader for the documentation canary
 - **Journey:** [`J-adopt-workflow`](../journeys/J-adopt-workflow.md), with [`J-review-workflow-release`](../journeys/J-review-workflow-release.md) as the documentation canary

@@ -1,6 +1,6 @@
 # BUG-20260923-full-set-scenarios-use-partial-install-command
 
-- **Status:** fixed
+- **Status:** fixed — fresh QA retest passed
 - **Severity:** minor
 - **Scenarios:** `ADP-adopt-workflow-safely`; `ADP-install-versioned-workflow-package`; `ADP-layered-workflow-adoption`
 - **Expected:** A scenario whose expected result says “full WTK skill set” uses the same 13-skill command published by the README.
@@ -22,3 +22,7 @@ full-set journeys.
 
 Regression check: the scenario readback compares current full-set entry points with the README
 selection and confirms the retired scenario has no legacy installer command.
+
+Fresh QA retest at `d363b1c` found exact 13-skill selections in both current scenarios and no
+executable command in the retired layered scenario. `scenario-contract-readback.json` records zero
+missing current skills and the retired status.

@@ -1,6 +1,6 @@
 # BUG-20260923-adaptive-guidelines-recommendation-has-no-source
 
-- **Status:** fixed
+- **Status:** fixed — fresh QA retest passed
 - **Severity:** minor
 - **Scenarios:** `ADP-separate-external-security-skills`; `DOC-read-explicit-workflow-provenance`
 - **Expected:** Every item presented as a recommended companion has a verified canonical source and a use case, matching the pack guide's claim.
@@ -22,3 +22,8 @@ companions with a source URL and use case.
 
 Regression check: the distribution proof parses the four recommended rows, requires a source URL
 and use case, and asserts that Adaptive Guidelines is absent from the table.
+
+Fresh QA retest at `d363b1c` found four recommended rows, all with source links and use cases.
+Adaptive Guidelines appears only in a candidate note that explicitly says it is not a recommendation
+until its canonical source is verified. The pack guide matches; `documentation-readback.json` has
+an empty defect list.

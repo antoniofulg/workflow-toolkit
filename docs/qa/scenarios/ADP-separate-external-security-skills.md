@@ -6,11 +6,11 @@ persona: Workflow adopter
 journey: J-adopt-workflow
 expected: WTK leaves security-lifecycle, Ponytail, Graphify, and Graft outside its installation while the README gives each selected companion its source and use case; Adaptive Guidelines remains a pending candidate.
 entry_points: README.md#recommended-companion-skills-and-tools; npx skills add antoniofulg/security-lifecycle --agent '*' --copy --yes; npx skills add dietrichgebert/ponytail --agent '*' --copy --yes
-qa_status: fail
+qa_status: pass
 bug_ids: BUG-20260923-adaptive-guidelines-recommendation-has-no-source
-fix_status: pending
-retest_status:
-fix_commits:
+fix_status: fixed
+retest_status: pass
+fix_commits: d363b1c
 evidence: docs/qa/evidence/2026-09-23-skills-only-workflow/skills-install.json; docs/qa/evidence/2026-09-23-skills-only-workflow/documentation-readback.json
 last_report: docs/qa/reports/2026-09-23-skills-only-workflow.md
 overlaps: ADP-install-pinned-external-security-skills; ADP-preserve-security-install-target
@@ -24,3 +24,7 @@ unless the project explicitly installed and invoked it.
 QA on 2026-09-23 confirmed the WTK install contains no companion tree and that Ponytail, Security
 lifecycle, Graft, and Graphify each have a source and use case. Adaptive Guidelines is presented as
 a recommendation without a verified source, so the scenario fails.
+
+Fresh QA retest at `d363b1c` found four recommended companions with source links and use cases.
+Adaptive Guidelines is now a clearly labeled candidate and no longer an install recommendation.
+The prior WTK install evidence still proves that no companion tree was bundled.
