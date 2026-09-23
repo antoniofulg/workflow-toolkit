@@ -101,9 +101,6 @@ jobs:
           node-version: 22.14.0
           package-manager-cache: false
 
-      - name: Validate release identity
-        run: node scripts/validate-release.mjs
-
       - name: Download tested package
         uses: actions/download-artifact@v5
         with:

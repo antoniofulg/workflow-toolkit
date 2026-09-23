@@ -80,8 +80,8 @@ describe("release publication workflow", () => {
     expect(testJob.indexOf("Validate release identity")).toBeGreaterThan(-1);
     expect(testJob.indexOf("Validate release identity")).toBeLessThan(testJob.indexOf("Install npm CLI"));
     expect(testJob.indexOf("Validate release identity")).toBeLessThan(testJob.indexOf("bun install --frozen-lockfile"));
-    expect(publishJob).toContain("Validate release identity");
-    expect(publishJob.indexOf("Validate release identity")).toBeLessThan(publishJob.indexOf("Download tested package"));
+    expect(publishJob).not.toContain("Validate release identity");
+    expect(publishJob.indexOf("Download tested package")).toBeGreaterThan(-1);
     expect(testJob).toContain("RELEASE_TAG: ${{ github.event.release.tag_name }}");
     expect(publishJob).toContain("RELEASE_TAG: ${{ github.event.release.tag_name }}");
 
@@ -175,6 +175,20 @@ describe("release publication workflow", () => {
   });
 
   it("PUB-004 trusted publisher uses provenance and public latest without a static token", () => {
+    const verifyIndex = publishJob.indexOf("- name: Verify tested package");
+    const publishIndex = publishJob.indexOf("- name: Publish tested archive to npm");
+    const checksumComparison = 'test "$actual" = "$EXPECTED_PACKAGE_SHA256"';
+    const artifactChecksumComparison = 'test "$(awk \'{print $1}\' "$RUNNER_TEMP/release-package/workflow-toolkit.tgz.sha256")" = "$actual"';
+    const archiveManifest = 'tar -xOf "$archive" package/package.json | node --input-type=module -e';
+
+    expect(verifyIndex).toBeGreaterThan(-1);
+    expect(publishIndex).toBeGreaterThan(verifyIndex);
+    expect(publishJob.indexOf(checksumComparison)).toBeGreaterThan(verifyIndex);
+    expect(publishJob.indexOf(artifactChecksumComparison)).toBeGreaterThan(publishJob.indexOf(checksumComparison));
+    expect(publishJob.indexOf(archiveManifest)).toBeGreaterThan(publishJob.indexOf(artifactChecksumComparison));
+    expect(publishIndex).toBeGreaterThan(publishJob.indexOf(archiveManifest));
+    expect(publishJob).not.toContain("scripts/validate-release.mjs");
+    expect(publishJob.slice(0, verifyIndex)).not.toMatch(/\b(?:node|bun)[ \t]+(?:scripts\/|\.\/)/);
     expect(testJob).not.toContain("id-token: write");
     expect(publishJob).toContain("id-token: write");
     expect(publishJob).toContain("EXPECTED_PACKAGE_SHA256");
