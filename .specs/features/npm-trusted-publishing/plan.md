@@ -11,9 +11,9 @@ For future versions, publishing a stable GitHub release should publish the corre
 Reuse the existing GitHub release, `package.json`, Bun lockfile, and `test:all` gate rather than adding a release manager.
 
 1. A maintainer publishes a stable `vX.Y.Z` GitHub release; the GitHub `release.published` event enters the new release workflow (door 1).
-2. The workflow checks out the release tag, confirms that its commit belongs to `main`, and matches `X.Y.Z` against the checked-out `package.json` before executing package code.
-3. A GitHub-hosted runner installs the declared toolchain and frozen dependencies, then runs the existing `bun run test:all` gate against that checkout.
-4. After the gate passes, `npm publish` uses the package's trusted GitHub Actions OIDC identity (door 2) to publish the checked-out package to npm as public `latest`; npm records provenance.
+2. An unprivileged test job checks out the immutable event commit, confirms that its tag still resolves to that commit and that the commit belongs to `main`, and matches `X.Y.Z` against the checked-out `package.json` before executing package code.
+3. The test job installs the declared toolchain and frozen dependencies, runs the existing `bun run test:all` gate, and produces a checksum-bound package tarball from the unchanged checkout.
+4. After the test job passes, a dependent publish job rechecks release identity, verifies the tarball checksum and manifest, then uses the package's trusted GitHub Actions OIDC identity (door 2) to publish that tarball to npm as public `latest`; npm records provenance. The publish job does not install project dependencies or run package tests.
 5. The GitHub Actions run records success or failure. A failed npm publication remains visible for maintainer action; it does not alter the GitHub release.
 
 ## Impact
@@ -40,6 +40,7 @@ None - no HTTP route or consumer CLI signature changes. The release event and pu
 | Release authority | `release.published` for stable `vX.Y.Z` releases starts publication. | Publishing on a merge or tag push would turn ordinary delivery into a public package release without the deliberate GitHub release action the user selected. |
 | npm publisher identity | Trust `antoniofulg/workflow-toolkit` and `.github/workflows/publish.yml` for `workflow-toolkit` direct publishing; use GitHub OIDC with `id-token: write`, without a stored npm write token. | A long-lived `NPM_TOKEN` would remain reusable after a workflow run and needs secret rotation. |
 | Artifact source | Check out the published tag and require its commit to be reachable from `main`; package version must equal the tag. | Checking out moving `main` could publish bytes different from the release commit. |
+| Privilege boundary | Keep dependency installation, tests, and tarball creation in a `contents: read` test job; make the dependent publish job the only job with `id-token: write`, and publish only the verified tarball. | Giving the test job OIDC access would let dependency or test code request npm authority before the gate completes. |
 
 ## Criteria
 
@@ -95,7 +96,7 @@ A maintainer can publish a stable release and observe one package publish attemp
 | --- | --- | --- |
 | GitHub release event | Stable `vX.Y.Z` triggers publication; prerelease does not. | Criteria 1, 2 |
 | Release tag | Invalid format, non-main commit, or manifest mismatch fails before executable package setup. | Criterion 3 |
-| Publishing job | Frozen dependencies, gate, OIDC identity, public `latest`, and provenance. | Criteria 4, 5, 6, 8, 9, 10 |
+| Test and publishing jobs | Frozen dependencies and gate run without OIDC; the dependent publish job verifies the tarball, uses OIDC, public `latest`, and provenance. | Criteria 4, 5, 6, 8, 9, 10 |
 | Publishing job | Partial failure and duplicate version result in a failed run with no automatic GitHub release mutation. | Criterion 7 |
 | Documentation | Maintainer sees the one-time npm trusted-publisher setup and future release steps. | Impact: Operations; Criterion 6 |
 | Screen/view states | n/a - no screen is added. | n/a - no screen is added. |
@@ -105,12 +106,12 @@ A maintainer can publish a stable release and observe one package publish attemp
 
 | ID | Surface | Control | Requirements |
 | --- | --- | --- | --- |
-| S1 | CI configuration and public release behavior | Run only from a validated stable release tag and tested package. | SEC-001, SEC-003 |
+| S1 | CI configuration and public release behavior | Run only from a validated stable release tag and tested package; isolate test and publish privileges. | SEC-001, SEC-003 |
 | S2 | GitHub release event crosses into a publishing job | Require a tag reachable from `main` and matching the manifest. | SEC-001 |
 | S5 | GitHub OIDC identity can obtain npm publishing authority | Scope trust to the exact repository and workflow; store no npm write token. | SEC-002 |
 | S6 | Release tag enters shell commands | Pass tag data as a quoted value and reject non-`vX.Y.Z` input before package execution. | SEC-001 |
-| S9 | GitHub Actions publishes to npm | Bind the package name and version to the release tag and checked-out commit. | SEC-003 |
-| S11 | GitHub-hosted build process | Use frozen dependencies and a gate before the publish step. | SEC-003 |
+| S9 | GitHub Actions publishes to npm | Bind the package name and version to the release tag and checked-out commit; publish only the verified tarball from the dependent test job. | SEC-003 |
+| S11 | GitHub-hosted build process | Use frozen dependencies and a gate in a job without OIDC before the publish step; the publish job runs no project dependency or test scripts. | SEC-003 |
 
 ## Security Model
 
@@ -118,12 +119,13 @@ Assets are the public package bytes, npm `latest` pointer, provenance, and npm p
 
 ```mermaid
 flowchart LR
-  Release[GitHub release event] --> Guard[Tag and main guard]
-  Guard --> Runner[GitHub-hosted test runner]
-  Runner --> OIDC[GitHub OIDC identity]
+  Release[GitHub release event] --> Guard[Immutable event commit and tag/main guard]
+  Guard --> Test[Test job: frozen install and full gate]
+  Test --> Artifact[Checksum-bound package tarball]
+  Artifact --> Publish[Dependent publish job]
+  Publish --> OIDC[GitHub OIDC identity]
   OIDC --> NPM[npm trusted publisher]
-  Runner --> Package[Public npm package]
-  NPM --> Package
+  NPM --> Package[Public npm package]
 ```
 
 | Threat | Actor and path | Asset and impact | Proposed control | Linked requirement |
@@ -131,7 +133,7 @@ flowchart LR
 | THREAT-001 / ABUSE-001 | A release targets an unreviewed commit or mismatched version. | Wrong package bytes are published under a valid version. | Tag must resolve to a commit reachable from `main` and match `package.json`. | SEC-001 |
 | THREAT-002 / ABUSE-002 | A crafted tag reaches a shell command. | Command execution in the publishing runner. | Strict tag format and quoted data before package setup. | SEC-001 |
 | THREAT-003 / ABUSE-003 | A reusable npm token leaks from CI. | Subsequent unauthorized package publication. | OIDC trust for one repository/workflow; no stored write token. | SEC-002 |
-| THREAT-004 / ABUSE-004 | Untested or substituted dependencies run before publish. | Package or provenance integrity loss. | Frozen dependency install and complete local gate on the tagged commit. | SEC-003 |
+| THREAT-004 / ABUSE-004 | Untested or substituted dependencies run before publish, or dependency/test code requests publication authority. | Package or provenance integrity loss, or premature npm publication. | Frozen dependency install and complete gate run without OIDC; a dependent publish job accepts only the checksum-bound tarball and runs no project dependency or test scripts. | SEC-003 |
 
 Security requirements: SEC-001 is Criteria 1-3; SEC-002 is Criteria 6 and 8; SEC-003 is Criteria 4-6, 9, and 10. Negative seeds: prerelease, malformed tag, non-main commit, wrong version, gate failure, and missing npm trust must not publish; a valid stable release is the authorized control. This is a provisional design threat model, not a vulnerability finding: the npm trust setting still needs readback. The first live npm publication is the end-to-end OIDC proof; dry runs do not exercise npm trust.
 

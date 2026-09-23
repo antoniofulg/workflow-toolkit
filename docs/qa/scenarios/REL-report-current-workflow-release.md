@@ -43,8 +43,9 @@ Release `1.4.1` updates the Ponytail skill descriptions, adds bundled `security-
 `wtk-deep-review` as a local skill, and removes two redundant installation tests. Verify the packaged skill files and lock metadata,
 plus the remaining installer checks for package contents and installation behavior. It also adds a
 release-triggered publication workflow; inspect its stable-tag guard, immutable event-commit checkout,
-tag binding, frozen gate, OIDC permissions, and maintainer trusted-publisher instructions. Local QA cannot prove the
-live registry exchange or provenance until a future unpublished release runs after npm trust setup.
+tag binding, read-only test job, checksum-bound archive handoff, OIDC permissions, and maintainer
+trusted-publisher instructions. Local QA cannot prove the live registry exchange or provenance until
+a future unpublished release runs after npm trust setup.
 
 Release `1.4.0` adds core reuse policy and review instructions. Verify their exact archive membership,
 clean-consumer installation and Claude alias, both verifier references, and public release identity.

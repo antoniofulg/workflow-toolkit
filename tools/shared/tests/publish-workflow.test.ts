@@ -11,6 +11,13 @@ function read(relativePath: string): string {
   return readFileSync(join(repositoryRoot, relativePath), "utf8");
 }
 
+function jobBlock(source: string, name: string): string {
+  const start = source.indexOf(`  ${name}:\n`);
+  if (start === -1) return "";
+  const nextJob = source.slice(start + 1).search(/\n  [a-z][\w-]*:\n/);
+  return source.slice(start, nextJob === -1 ? undefined : start + 1 + nextJob);
+}
+
 function git(root: string, ...args: string[]): string {
   return execFileSync("git", args, {
     cwd: root,
@@ -51,6 +58,8 @@ function releaseCanPublish(event: { action: string; release: { prerelease: boole
 
 describe("release publication workflow", () => {
   const workflow = read(".github/workflows/publish.yml");
+  const testJob = jobBlock(workflow, "test");
+  const publishJob = jobBlock(workflow, "publish");
 
   it("PUB-001 release trigger publishes stable tags and skips prereleases", () => {
     expect(workflow).toContain("release:");
@@ -58,6 +67,9 @@ describe("release publication workflow", () => {
     expect(workflow).toContain("if: ${{ !github.event.release.prerelease }}");
     expect(workflow).toContain("RELEASE_SHA: ${{ github.sha }}");
     expect(workflow).toContain("ref: ${{ github.sha }}");
+    expect(testJob).toContain("ref: ${{ github.sha }}");
+    expect(publishJob).toContain("ref: ${{ github.sha }}");
+    expect(publishJob).toContain("needs: test");
 
     expect(releaseCanPublish({ action: "published", release: { prerelease: false, tag_name: "v1.2.3" } })).toBe(true);
     expect(releaseCanPublish({ action: "published", release: { prerelease: true, tag_name: "v1.2.3-rc.1" } })).toBe(false);
@@ -65,10 +77,13 @@ describe("release publication workflow", () => {
   });
 
   it("PUB-002 release identity rejects malformed tags, non-main commits, and manifest mismatches", () => {
-    expect(workflow.indexOf("Validate release identity")).toBeGreaterThan(-1);
-    expect(workflow.indexOf("Validate release identity")).toBeLessThan(workflow.indexOf("Install npm CLI"));
-    expect(workflow.indexOf("Validate release identity")).toBeLessThan(workflow.indexOf("bun install --frozen-lockfile"));
-    expect(workflow).toContain("RELEASE_TAG: ${{ github.event.release.tag_name }}");
+    expect(testJob.indexOf("Validate release identity")).toBeGreaterThan(-1);
+    expect(testJob.indexOf("Validate release identity")).toBeLessThan(testJob.indexOf("Install npm CLI"));
+    expect(testJob.indexOf("Validate release identity")).toBeLessThan(testJob.indexOf("bun install --frozen-lockfile"));
+    expect(publishJob).toContain("Validate release identity");
+    expect(publishJob.indexOf("Validate release identity")).toBeLessThan(publishJob.indexOf("Download tested package"));
+    expect(testJob).toContain("RELEASE_TAG: ${{ github.event.release.tag_name }}");
+    expect(publishJob).toContain("RELEASE_TAG: ${{ github.event.release.tag_name }}");
 
     const cases: Array<{ tag: string; name?: string; version?: string; expected: boolean }> = [
       { tag: "v1.2.3", expected: true },
@@ -142,38 +157,49 @@ describe("release publication workflow", () => {
   });
 
   it("PUB-003 gate ordering runs frozen install and test:all before publication", () => {
-    const install = workflow.indexOf("bun install --frozen-lockfile");
-    const gate = workflow.indexOf("bun run test:all");
-    const publish = workflow.indexOf("npm publish");
+    const install = testJob.indexOf("bun install --frozen-lockfile");
+    const gate = testJob.indexOf("bun run test:all");
+    const packageArchive = testJob.indexOf("npm pack --ignore-scripts");
 
     expect(install).toBeGreaterThan(-1);
     expect(gate).toBeGreaterThan(install);
-    expect(publish).toBeGreaterThan(gate);
-    const gateStep = stepBlock(workflow, "Run the full test gate");
+    expect(packageArchive).toBeGreaterThan(gate);
+    expect(publishJob).toContain("needs: test");
+    expect(publishJob).toContain("Verify tested package");
+    expect(publishJob).not.toMatch(/\bbun[ \t]+(?:install|run)\b/);
+    expect(publishJob).not.toMatch(/\bnpm[ \t]+(?:ci|run|test|pack)\b/);
+    expect(publishJob).not.toMatch(/\bnpm[ \t]+install(?![ \t]+--global[ \t]+npm@11\.5\.1\b)/);
+    const gateStep = stepBlock(testJob, "Run the full test gate");
     expect(gateStep).toMatch(/^\s+run: bun run test:all$/m);
     expect(gateStep).not.toMatch(/continue-on-error|always\(\)|\|\|/);
   });
 
   it("PUB-004 trusted publisher uses provenance and public latest without a static token", () => {
-    expect(workflow).toContain("id-token: write");
-    expect(workflow).toContain("npm publish --provenance --access public --tag latest --registry=https://registry.npmjs.org");
+    expect(testJob).not.toContain("id-token: write");
+    expect(publishJob).toContain("id-token: write");
+    expect(publishJob).toContain("EXPECTED_PACKAGE_SHA256");
+    expect(publishJob).toContain("workflow-toolkit.tgz");
+    expect(publishJob).toContain("--ignore-scripts --provenance --access public --tag latest --registry=https://registry.npmjs.org");
     expect(workflow).not.toMatch(/\b(?:NPM_TOKEN|NODE_AUTH_TOKEN)\b/);
-    expect(workflow).toContain("RELEASE_TAG: ${{ github.event.release.tag_name }}");
   });
 
   it("PUB-005 publish failure is terminal and does not mutate the GitHub release", () => {
-    const publishStep = stepBlock(workflow, "Publish to npm");
-    expect(publishStep).toMatch(/^\s+run: npm publish --provenance --access public --tag latest --registry=https:\/\/registry\.npmjs\.org$/m);
+    const publishStep = stepBlock(publishJob, "Publish tested archive to npm");
+    expect(publishStep).toMatch(/^\s+run: npm publish "\$RUNNER_TEMP\/release-package\/workflow-toolkit\.tgz" --ignore-scripts --provenance --access public --tag latest --registry=https:\/\/registry\.npmjs\.org$/m);
     expect(publishStep).not.toMatch(/continue-on-error|retry|for\s+attempt|while\s|until\s|gh\s+(?:release|api)|github-script/i);
   });
 
   it("PUB-006 publish identity has least privilege and the required runtime metadata", () => {
-    const job = workflow.match(/jobs:\n  publish:\n([\s\S]*)/)?.[1] ?? "";
-    expect(job).toContain("runs-on: ubuntu-latest");
-    const permissions = workflow.match(/    permissions:\n((?:      [^\n]+\n)+)/)?.[1] ?? "";
-    expect(permissions).toBe("      contents: read\n      id-token: write\n");
-    expect(job).toContain("node-version: 22.14.0");
-    expect(job).toContain("npm@11.5.1");
+    expect(testJob).toContain("runs-on: ubuntu-latest");
+    expect(publishJob).toContain("runs-on: ubuntu-latest");
+    const testPermissions = testJob.match(/    permissions:\n((?:      [^\n]+\n)+)/)?.[1] ?? "";
+    const publishPermissions = publishJob.match(/    permissions:\n((?:      [^\n]+\n)+)/)?.[1] ?? "";
+    expect(testPermissions).toBe("      contents: read\n");
+    expect(publishPermissions).toBe("      contents: read\n      id-token: write\n");
+    expect(testJob).toContain("node-version: 22.14.0");
+    expect(publishJob).toContain("node-version: 22.14.0");
+    expect(testJob).toContain("npm@11.5.1");
+    expect(publishJob).toContain("npm@11.5.1");
 
     const manifest = JSON.parse(read("package.json")) as { repository?: { type?: string; url?: string } };
     expect(manifest.repository).toEqual({
