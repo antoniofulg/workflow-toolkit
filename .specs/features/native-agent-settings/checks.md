@@ -93,6 +93,12 @@ proof plus all six migration tests. The convergence ledger now persists and repo
 `stall_attempts = 3` threshold, while migration matches the 18 historical packet hashes directly
 and refuses edited packets without any current template dependency.
 
+Round-1 remediation checkpoint: the C3 proof now uses a tracked 18-entry native metadata baseline
+and a scratch fixture when ignored host files are absent, including all six Cursor routes. The C8
+proof now previews and applies every provider/role fixture and checks edited packets across the full
+matrix. Route boundary tests cover profile derivation and refresh, missing-agent fail-closed,
+invalid and stale snapshots, and slice-count assertions.
+
 S3 builder checkpoint: C9 closed with
 `node --test --test-name-pattern='native agent ownership and current WTK catalog are consistent' tests/skills/distribution.test.js`
 (1 passed, 0 failed). The impacted current contract suite passed with `bun test` (80 passed, 0

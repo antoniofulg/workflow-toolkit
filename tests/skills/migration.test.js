@@ -4,12 +4,25 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { applyMigration, LEGACY_PACKET_HASHES, previewMigration, sha256 as migrationSha256 } from '../../scripts/migrate.js';
 
 const temp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-migration-'));
 const file = (root, relative) => path.join(root, ...relative.split('/'));
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
+const fixtureRoot = path.resolve(import.meta.dirname, '../fixtures/legacy-packets');
+const providers = ['claude', 'codex', 'cursor'];
+const roles = ['planner', 'implementer', 'verifier', 'explorer', 'deep-reviewer', 'designer'];
+
+function packetRelative(provider, role) {
+  return `.${provider}/agents/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
+}
+
+function copyLegacyPacket(root, provider, role, suffix = '') {
+  const relative = packetRelative(provider, role);
+  const source = path.join(fixtureRoot, provider, `${role}.${provider === 'codex' ? 'toml' : 'md'}`);
+  write(root, relative, `${fs.readFileSync(source, 'utf8')}${suffix}`);
+  return relative;
+}
 
 function write(root, relative, content, mode = 0o644) {
   const target = file(root, relative);
@@ -83,30 +96,22 @@ test('migration retires historical packets without templates', () => {
   const managedRecord = managedFile(root, 'docs/toolkit/README.md', managed);
   const block = managedBlock(root, 'AGENTS.md', 'core', 'legacy workflow instruction');
   fs.appendFileSync(file(root, 'AGENTS.md'), 'legacy workflow prose\n');
-  const currentPlanner = execFileSync(
-    'git',
-    ['show', '01ab71485fcd042efc10cac4fdca7c11a01c55e9:.agents/skills/wtk-config/assets/agents/claude/planner.md'],
-    { cwd: path.resolve(import.meta.dirname, '../..'), encoding: 'utf8' },
-  );
-  const legacyPlanner = currentPlanner
-    .replace('skills: [wtk-lean, wtk-discover, wtk-plan]', 'skills: [wtk-lean, wtk-discover, wtk-plan, ponytail]')
-    .replaceAll('.agents/skills/wtk/references/ui-ux.md', 'docs/toolkit/guidelines/UI-UX.md')
-    .replaceAll('.agents/skills/wtk/references/security.md', 'docs/toolkit/guidelines/SECURITY.md')
-    .replaceAll('.agents/skills/wtk/references/modeling.md', 'docs/toolkit/guidelines/MODELING.md')
-    .replaceAll('.agents/skills/wtk/references/frontend.md', 'docs/toolkit/guidelines/FRONTEND.md');
-  write(root, '.claude/agents/planner.md', legacyPlanner);
+  const packetPaths = providers.flatMap((provider) => roles.map((role) => copyLegacyPacket(root, provider, role)));
   write(root, 'consumer.txt', 'keep this file\n', 0o600);
   write(root, '.gitignore', '.wtk.toml\nconsumer-rule\n');
   adoption(root, { 'docs/toolkit/README.md': managedRecord }, { [block.key]: block.record });
 
   const preview = previewMigration({ root });
-  assert.ok(preview.managedFiles.includes('.claude/agents/planner.md'));
+  assert.deepEqual(
+    new Set(preview.managedFiles),
+    new Set(['docs/toolkit/README.md', ...packetPaths]),
+  );
 
   const result = applyMigration({ root, backupId: 'success' });
 
   assert.equal(result.applied, true);
   assert.equal(fs.existsSync(file(root, 'docs/toolkit/README.md')), false);
-  assert.equal(fs.existsSync(file(root, '.claude/agents/planner.md')), false);
+  for (const relative of packetPaths) assert.equal(fs.existsSync(file(root, relative)), false, relative);
   assert.equal(fs.readFileSync(file(root, 'AGENTS.md'), 'utf8'), 'before project prose\n\nafter project prose\nlegacy workflow prose\n');
   assert.equal(fs.readFileSync(file(root, 'consumer.txt'), 'utf8'), 'keep this file\n');
   assert.equal(fs.readFileSync(file(root, '.gitignore'), 'utf8'), 'consumer-rule\n');
@@ -117,23 +122,17 @@ test('migration retires historical packets without templates', () => {
 });
 
 test('migration refuses edited historical provider packets', () => {
-  const root = temp();
-  const legacyPlanner = execFileSync(
-    'git',
-    ['show', '01ab71485fcd042efc10cac4fdca7c11a01c55e9:.agents/skills/wtk-config/assets/agents/claude/planner.md'],
-    { cwd: path.resolve(import.meta.dirname, '../..'), encoding: 'utf8' },
-  )
-    .replace('skills: [wtk-lean, wtk-discover, wtk-plan]', 'skills: [wtk-lean, wtk-discover, wtk-plan, ponytail]')
-    .replaceAll('.agents/skills/wtk/references/ui-ux.md', 'docs/toolkit/guidelines/UI-UX.md')
-    .replaceAll('.agents/skills/wtk/references/security.md', 'docs/toolkit/guidelines/SECURITY.md')
-    .replaceAll('.agents/skills/wtk/references/modeling.md', 'docs/toolkit/guidelines/MODELING.md')
-    .replaceAll('.agents/skills/wtk/references/frontend.md', 'docs/toolkit/guidelines/FRONTEND.md');
-  write(root, '.claude/agents/planner.md', `${legacyPlanner}\nconsumer edit\n`);
-  adoption(root);
+  for (const provider of providers) {
+    for (const role of roles) {
+      const root = temp();
+      const relative = copyLegacyPacket(root, provider, role, '\nconsumer edit\n');
+      adoption(root);
 
-  const preview = previewMigration({ root });
-  assert.equal(preview.actions.some((action) => action.path === '.claude/agents/planner.md'), false);
-  assert.equal(fs.readFileSync(file(root, '.claude/agents/planner.md'), 'utf8').endsWith('consumer edit\n'), true);
+      const preview = previewMigration({ root });
+      assert.equal(preview.actions.some((action) => action.path === relative), false, relative);
+      assert.equal(fs.readFileSync(file(root, relative), 'utf8').endsWith('consumer edit\n'), true, relative);
+    }
+  }
 });
 
 test('migration removes multiple verified blocks from one instruction file exactly', () => {

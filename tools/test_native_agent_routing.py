@@ -14,20 +14,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ROUTE_PATH = ROOT / ".agents/skills/wtk-lean/scripts/workflow_route.py"
-NATIVE_HASHES = {
-    ".claude/agents/deep-reviewer.md": "982a0b1420967d3814043bfe53e332c386bdf4460375288973e789ef60d61683",
-    ".claude/agents/designer.md": "814cce3730dd0da24a8f1880c1e7f14d644a478958f86418586bbc3162a093dc",
-    ".claude/agents/explorer.md": "ddfa0534658a94e9577a4ae24100a656bd756cdf4b094f00a9b3eb47c255b1b1",
-    ".claude/agents/implementer.md": "d376456d93913a682526f43d000a533487a0025d408f8e018c723e11422ad473",
-    ".claude/agents/planner.md": "355e2d29320c05bd76ed433803027ff9d09c33e578022e99c37ade18bce518c8",
-    ".claude/agents/verifier.md": "c70f3025b40faec2decfeb41da31f712cf38bcec1dd1516e76a50a75a6bc8813",
-    ".codex/agents/deep-reviewer.toml": "5dd24a0ab2c533982911d445dcd31ea334a51961d11f7382e7adeb3b9ca5ef47",
-    ".codex/agents/designer.toml": "65eab5a92ea72c70b8ffe66e0839d8e67450027e593343dd536154c71c5d5611",
-    ".codex/agents/explorer.toml": "2df294eec16919bab1b4e54f7638e812b363a7e47ddcc8e81efca56689050a11",
-    ".codex/agents/implementer.toml": "b9d2daa1727ff6a9354384056e98ecf14deada654bdbba6294538262029ecdfd",
-    ".codex/agents/planner.toml": "49b41840fea8704b4c5783c72489e9138055b63c8ad8d6b93c67fa7c5f6f9b78",
-    ".codex/agents/verifier.toml": "b09f249a723276ba270d4110baf8122ab485041893222af56f0fbc9c715a474c",
-}
+BASELINE_PATH = ROOT / "tools/fixtures/native-agent-baseline.json"
+BASELINE = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
 
 
 def load_route():
@@ -45,21 +33,25 @@ def _git(root: Path, *args: str) -> None:
     subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True)
 
 
+def _native_bytes(relative: str, metadata: dict[str, str]) -> bytes:
+    model = metadata["model"]
+    effort = metadata["effort"]
+    if relative.startswith(".cursor/"):
+        return f"---\nmodel: {model}[effort={effort}]\n---\n".encode()
+    if relative.startswith(".codex/"):
+        return f'model = "{model}"\nmodel_reasoning_effort = "{effort}"\n'.encode()
+    return f"---\nmodel: {model}\neffort: {effort}\n---\n".encode()
+
+
 def _fixture_root() -> Path:
     root = Path(tempfile.mkdtemp(prefix="wtk-native-route-"))
     _git(root, "init", "-q")
     _git(root, "config", "user.email", "test@example.com")
     _git(root, "config", "user.name", "WTK Test")
-    for provider in workflow_route.PROVIDERS:
-        extension = "toml" if provider == "codex" else "md"
-        for role in workflow_route.ROLES:
-            agent_name = workflow_route.AGENT_NAMES.get(role, role)
-            path = root / f".{provider}" / "agents" / f"{agent_name}.{extension}"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(
-                f"project-owned {provider} {role}\nmodel = \"{provider}-{role}\"\neffort = \"medium\"\n",
-                encoding="utf-8",
-            )
+    for relative, metadata in BASELINE.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(_native_bytes(relative, metadata))
     checks = root / ".specs/features/fixture/checks.md"
     checks.parent.mkdir(parents=True, exist_ok=True)
     checks.write_text("Profile: standard\n\n### S1 - fixture\n", encoding="utf-8")
@@ -113,10 +105,21 @@ def test_toml_free_route_preserves_native_agents() -> None:
 def test_source_checkout_has_no_wtk_toml() -> None:
     assert not (ROOT / ".wtk.toml").exists()
     assert not (ROOT / ".wtk.toml.example").exists()
-    for relative, expected in NATIVE_HASHES.items():
+    assert len(BASELINE) == 18
+    assert sum(relative.startswith(".cursor/") for relative in BASELINE) == 6
+    for relative, metadata in BASELINE.items():
         path = ROOT / relative
-        assert path.is_file(), relative
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected, relative
+        if path.is_file():
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == metadata["sha256"], relative
+            assert _native_bytes(relative, metadata).splitlines()[1] in path.read_bytes(), relative
+
+    scratch = _fixture_root()
+    try:
+        for relative, metadata in BASELINE.items():
+            path = scratch / relative
+            assert path.read_bytes() == _native_bytes(relative, metadata), relative
+    finally:
+        shutil.rmtree(scratch)
 
 
 def test_snapshot_freezes_identity_not_model() -> None:
@@ -164,6 +167,86 @@ def test_route_rejects_unsafe_feature_slug() -> None:
             except workflow_route.RouteError:
                 continue
             raise AssertionError(f"unsafe feature slug accepted: {feature}")
+    finally:
+        shutil.rmtree(root)
+
+
+def test_route_derives_verification_profile_and_refreshes() -> None:
+    root = _fixture_root()
+    try:
+        checks = root / ".specs/features/profiled/checks.md"
+        checks.parent.mkdir(parents=True, exist_ok=True)
+        checks.write_text("Profile: ui\n\n### S1 - fixture\n", encoding="utf-8")
+        first = workflow_route.resolve(root=root, feature="profiled", native_provider="codex")
+        assert first["verification_profile"] == "ui"
+        checks.write_text("Profile: light\n\n### S1 - fixture\n", encoding="utf-8")
+        resumed = workflow_route.resolve(root=root, feature="profiled", native_provider="claude")
+        assert resumed["verification_profile"] == "ui"
+        refreshed = workflow_route.resolve(
+            root=root, feature="profiled", native_provider="claude", refresh=True
+        )
+        assert refreshed["verification_profile"] == "light"
+    finally:
+        shutil.rmtree(root)
+
+
+def test_route_fails_closed_for_missing_agent_and_invalid_snapshot() -> None:
+    root = _fixture_root()
+    try:
+        missing = root / ".codex/agents/verifier.toml"
+        missing.unlink()
+        try:
+            workflow_route.resolve(root=root, feature="missing-agent", native_provider="codex")
+        except workflow_route.RouteError as error:
+            assert "missing native agent file" in str(error)
+        else:
+            raise AssertionError("missing native agent unexpectedly used a fallback")
+        snapshot_path = root / ".specs/features/invalid/workflow.json"
+        snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+        snapshot_path.write_text("{}\n", encoding="utf-8")
+        try:
+            workflow_route.resolve(root=root, feature="invalid", native_provider="claude")
+        except workflow_route.RouteError as error:
+            assert "incomplete schema" in str(error)
+        else:
+            raise AssertionError("invalid snapshot was accepted")
+        workflow_route.resolve(root=root, feature="stale", native_provider="claude")
+        stale_path = root / ".specs/features/stale/workflow.json"
+        stale = json.loads(stale_path.read_text(encoding="utf-8"))
+        stale["version"] = 99
+        stale_path.write_text(json.dumps(stale), encoding="utf-8")
+        try:
+            workflow_route.resolve(root=root, feature="stale", native_provider="claude")
+        except workflow_route.RouteError as error:
+            assert "snapshot version is stale" in str(error)
+        else:
+            raise AssertionError("stale snapshot was accepted")
+    finally:
+        shutil.rmtree(root)
+
+
+def test_route_enforces_slice_assertion_before_snapshot_write() -> None:
+    root = _fixture_root()
+    try:
+        checks = root / ".specs/features/sliced/checks.md"
+        checks.parent.mkdir(parents=True, exist_ok=True)
+        checks.write_text(
+            "Profile: standard\n\n### S1 - first\n\n### S2 - second\n",
+            encoding="utf-8",
+        )
+        try:
+            workflow_route.resolve(
+                root=root, feature="sliced", native_provider="cursor", slice_count=1
+            )
+        except workflow_route.RouteError as error:
+            assert "does not match derived slice count 2" in str(error)
+        else:
+            raise AssertionError("incorrect slice assertion was accepted")
+        assert not (root / ".specs/features/sliced/workflow.json").exists()
+        resolved = workflow_route.resolve(
+            root=root, feature="sliced", native_provider="cursor", slice_count=2
+        )
+        assert resolved["feature"] == "sliced"
     finally:
         shutil.rmtree(root)
 
