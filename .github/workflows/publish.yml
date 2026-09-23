@@ -1,0 +1,12 @@
+name: Publish package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - run: echo "npm publication is not enabled yet"
