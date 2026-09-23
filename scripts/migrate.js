@@ -30,6 +30,10 @@ export const LEGACY_SEARCHIGNORE_ENTRIES = [
   'graphify-out/',
   '.repository-intelligence/',
 ];
+const PROVIDERS = ['claude', 'codex', 'cursor'];
+const ROLES = ['planner', 'implementer', 'verifier', 'explorer', 'deep-reviewer', 'designer'];
+const packetRelative = (provider, role) => `.${provider}/agents/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
+const packetTemplate = (provider, role) => `.agents/skills/wtk-config/assets/agents/${provider}/${role}.${provider === 'codex' ? 'toml' : 'md'}`;
 
 export class MigrationError extends Error {}
 
@@ -189,6 +193,28 @@ function ignoreActions(root, relative, entries) {
   return [{ type: 'update-ignore', path: relative, remove: [...new Set(removals)] }];
 }
 
+function normalizePacket(text, provider) {
+  if (provider === 'codex') return text.replace(/^model\s*=\s*"[^\n]*"\s*$/gm, '').replace(/^model_reasoning_effort\s*=\s*"[^\n]*"\s*$/gm, '');
+  if (provider === 'cursor') return text.replace(/^model:\s*[^\n]*$/gm, '');
+  return text.replace(/^model:\s*[^\n]*$/gm, '').replace(/^effort:\s*[^\n]*$/gm, '');
+}
+
+function providerPacketActions(root, sourceRoot) {
+  const source = asRoot(sourceRoot || process.cwd());
+  const actions = [];
+  for (const provider of PROVIDERS) for (const role of ROLES) {
+    const relative = packetRelative(provider, role);
+    const target = safePath(root, relative, 'provider packet');
+    const template = path.join(source, ...packetTemplate(provider, role).split('/'));
+    if (!fs.existsSync(target) || !fs.existsSync(template)) continue;
+    if (!fs.lstatSync(target).isFile() || !fs.lstatSync(template).isFile()) continue;
+    if (normalizePacket(fs.readFileSync(target, 'utf8'), provider) === normalizePacket(fs.readFileSync(template, 'utf8'), provider)) {
+      actions.push({ type: 'remove-file', path: relative, reason: 'retired generated provider packet' });
+    }
+  }
+  return actions;
+}
+
 function legacyProse(root, blockActions) {
   const result = [];
   for (const relative of ['AGENTS.md', 'CLAUDE.md']) {
@@ -209,7 +235,7 @@ function legacyProse(root, blockActions) {
   return result;
 }
 
-function migrationReport(root, manifest) {
+function migrationReport(root, manifest, sourceRoot) {
   const report = {
     root,
     status: manifest ? 'ready' : 'not-installed',
@@ -263,6 +289,7 @@ function migrationReport(root, manifest) {
     report.actions.push({ type: 'remove-block', path: block.relative, owner: block.owner, key });
   }
 
+  report.actions.push(...providerPacketActions(root, sourceRoot));
   report.actions.push(...findLinks(root, manifest));
   report.actions.push(...ignoreActions(root, '.gitignore', LEGACY_IGNORE_ENTRIES));
   report.actions.push(...ignoreActions(root, '.ignore', LEGACY_SEARCHIGNORE_ENTRIES));
@@ -276,7 +303,7 @@ function migrationReport(root, manifest) {
 
 export function previewMigration(options = {}) {
   const root = asRoot(options.targetRoot ?? options.root);
-  return migrationReport(root, readAdoption(root));
+  return migrationReport(root, readAdoption(root), options.sourceRoot);
 }
 
 function stateFor(root, relative) {
@@ -371,7 +398,7 @@ function timestamp(options) {
 
 export function applyMigration(options = {}) {
   const root = asRoot(options.targetRoot ?? options.root);
-  const report = migrationReport(root, readAdoption(root));
+  const report = migrationReport(root, readAdoption(root), options.sourceRoot);
   if (report.status === 'not-installed') return { ...report, applied: false, backup: null };
   if (report.conflicts.length) {
     fail(`migration refused modified owned content: ${report.conflicts.map((item) => item.path).join(', ')}`);

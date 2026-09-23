@@ -71,6 +71,7 @@ test('migration removes only verified ownership and reports manual review', () =
   const managedRecord = managedFile(root, 'docs/toolkit/README.md', managed);
   const block = managedBlock(root, 'AGENTS.md', 'core', 'legacy workflow instruction');
   fs.appendFileSync(file(root, 'AGENTS.md'), 'legacy workflow prose\n');
+  write(root, '.claude/agents/planner.md', fs.readFileSync(file(path.resolve(import.meta.dirname, '../..'), '.agents/skills/wtk-config/assets/agents/claude/planner.md')));
   write(root, 'consumer.txt', 'keep this file\n', 0o600);
   write(root, '.gitignore', '.wtk.toml\nconsumer-rule\n');
   adoption(root, { 'docs/toolkit/README.md': managedRecord }, { [block.key]: block.record });
@@ -79,6 +80,7 @@ test('migration removes only verified ownership and reports manual review', () =
 
   assert.equal(result.applied, true);
   assert.equal(fs.existsSync(file(root, 'docs/toolkit/README.md')), false);
+  assert.equal(fs.existsSync(file(root, '.claude/agents/planner.md')), false);
   assert.equal(fs.readFileSync(file(root, 'AGENTS.md'), 'utf8'), 'before project prose\n\nafter project prose\nlegacy workflow prose\n');
   assert.equal(fs.readFileSync(file(root, 'consumer.txt'), 'utf8'), 'keep this file\n');
   assert.equal(fs.readFileSync(file(root, '.gitignore'), 'utf8'), 'consumer-rule\n');
