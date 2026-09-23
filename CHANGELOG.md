@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-09-22
+
+### Changed
+
+- Stable GitHub releases publish the tested package through npm trusted publishing, with test
+  execution separated from npm publishing authority.
+- The npm package now has a clear description and links to its GitHub source page.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.2 install` to update an adopted project. No new skill selection is
+  required for this release.
+
 ## [1.4.1] - 2026-09-22
 
 ### Changed
