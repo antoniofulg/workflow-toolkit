@@ -69,4 +69,9 @@ Proof: `node --test --test-name-pattern='native agent ownership and current WTK 
 
 ## Handoff
 
-The affected code/test/documentation scope is below the declared 150k-token budget. `wc -c` over `wtk-config` sources, direct consumers, affected test suites, README/AGENTS/QA instructions, and migration helper is the build-entry estimate; one builder handles S1-S3 sequentially, with one fresh independent Verifier over the complete feature after its last commit. The builder records actual scoped byte arithmetic before first code edit.
+The project's declared budget is 200k tokens. Pre-edit `wc -c / 4` arithmetic measured S1 at
+507,883 bytes / 4 ≈ 126,971 tokens; S2 at 45,897 / 4 ≈ 11,474; and S3 at 376,854 / 4 ≈ 94,214.
+The cumulative estimate is 930,634 bytes / 4 ≈ 232,659 tokens, above 200k. The proposed
+whole-slice cut is after S2: S1+S2 = 553,780 bytes / 4 = 138,445 tokens; S3 ≈ 94,214.
+Mechanism: pending user choice between sequential handoff
+and one builder with accepted compaction risk. No product code starts until that choice is recorded.
