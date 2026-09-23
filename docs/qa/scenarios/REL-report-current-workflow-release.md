@@ -40,11 +40,15 @@ Release `0.10.1` preparation intentionally skips a QA Plan/Execute cycle under e
 direction. Scoped package and contract evidence is recorded separately by the release owner; this
 scenario makes no `0.10.1` QA PASS claim. The historical `0.9.2` report and evidence remain intact.
 
-Version-neutral owner for public release consistency. For release `1.4.2`, the reader compares the
+Version-neutral owner for public release consistency. For release `1.4.3`, the reader compares the
 newest changelog heading with the package manifest, checks Bun's root package and dependency graph
 metadata, and checks release claims against
 the shipped public contracts. The release walk reuses current adoption verdicts as canaries
 instead of repeating their feature-level runtime probes.
+
+Release `1.4.3` retries the first trusted-publishing release after the GitHub runner gained the
+`expect` prerequisite for the existing installer test. Verify the test and publish jobs, npm
+version, description, homepage, repository link, package integrity, and provenance.
 
 Release `1.4.2` adds the npm page description and GitHub homepage and is the first stable release
 eligible to exercise trusted publishing. Verify the GitHub Actions run, published npm version,

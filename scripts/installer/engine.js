@@ -4,7 +4,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { TextDecoder } from 'node:util';
 
-export const WORKFLOW_VERSION = '1.4.2';
+export const WORKFLOW_VERSION = '1.4.3';
 export const LAYERS = ['core', 'quality', 'extras'];
 export const DEPENDENCIES = { core: [], quality: ['core'], extras: ['core'] };
 export const BLOCK_LAYERS = ['core', 'quality'];

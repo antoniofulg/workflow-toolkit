@@ -1,6 +1,6 @@
 {
   "name": "workflow-toolkit",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A spec-driven workflow toolkit for coding agents, with guided installation and independent verification.",
   "homepage": "https://github.com/antoniofulg/workflow-toolkit",
   "private": false,

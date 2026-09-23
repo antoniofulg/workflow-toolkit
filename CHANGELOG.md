@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-09-22
+
+### Fixed
+
+- The GitHub Actions publishing runner installs `expect` before the existing installer test gate,
+  allowing trusted publishing to proceed when all tests pass.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.3 install` to update an adopted project. No new skill selection is
+  required for this release.
+
 ## [1.4.2] - 2026-09-22
 
 ### Changed
