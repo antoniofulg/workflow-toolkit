@@ -33,17 +33,13 @@ class WtkContractTests(unittest.TestCase):
         self.assertIn("A build agent never spawns another agent at all", implement)
         self.assertIn("coherent pieces", implement)
 
-    def test_generated_packets_preserve_integrated_lean_roles(self) -> None:
-        for provider, extension in (("claude", "md"), ("codex", "toml"), ("cursor", "md")):
-            implementer = read(f".agents/skills/wtk-config/assets/agents/{provider}/implementer.{extension}")
-            verifier = read(f".agents/skills/wtk-config/assets/agents/{provider}/verifier.{extension}")
-            self.assertIn("wtk-lean", implementer)
-            self.assertIn("checks.md", implementer)
-            self.assertTrue("Select `wtk-lean`" in implementer or "Select wtk-lean" in implementer)
-            self.assertIn("wtk-implement", implementer)
-            self.assertIn("plan.md", verifier)
-            self.assertIn("checks.md", verifier)
-            self.assertIn("verification.md", verifier)
+    def test_native_route_has_no_model_or_effort_ownership(self) -> None:
+        route = read(".agents/skills/wtk-lean/scripts/workflow_route.py")
+        self.assertIn("native_provider", route)
+        self.assertIn("workflow.json", route)
+        self.assertNotIn(".wtk.toml", route)
+        self.assertNotIn('"model"', route)
+        self.assertNotIn('"effort"', route)
 
 
 if __name__ == "__main__":

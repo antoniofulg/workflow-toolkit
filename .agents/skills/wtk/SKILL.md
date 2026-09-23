@@ -53,7 +53,7 @@ Load shared references only for the current operation:
   `wtk-implement`.
 - A diagnosis with no unresolved product or architecture choice: continue diagnosis directly; do not
   route to discovery merely because the cause is unknown.
-- A user explicitly names a capability (`wtk-deep-review`, `wtk-qa`, `wtk-config`, `wtk-ship`, or
+- A user explicitly names a capability (`wtk-deep-review`, `wtk-qa`, `wtk-ship`, or
   another `wtk-*` skill): invoke that capability directly and do not reopen planning.
 
 When `wtk-discover` resolves an idea that entered through this router, continue into the integrated

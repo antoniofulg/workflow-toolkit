@@ -3,8 +3,8 @@
 
 One line per AD-NNN. Agents load the index, not the log.
 
-  python3 .agents/skills/wtk-config/scripts/ad-index.py          write the index
-  python3 .agents/skills/wtk-config/scripts/ad-index.py --check  exit 1 if the index is stale
+  python3 .agents/skills/wtk-lean/scripts/ad-index.py          write the index
+  python3 .agents/skills/wtk-lean/scripts/ad-index.py --check  exit 1 if the index is stale
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ def render(rows: list[tuple[int, str, str, str]]) -> str:
         "One line per `AD-NNN`. The append-only body lives in `.specs/STATE.md`.",
         "",
         "Body: `rg -A 20 '^### AD-NNN' .specs/STATE.md`. Resume: `rg -A 20 '^## Handoff' .specs/STATE.md`.",
-        "When recording an `AD-NNN`, run the bundled wtk-config ad-index.py in the same commit.",
+        "When recording an `AD-NNN`, run the bundled wtk-lean ad-index.py in the same commit.",
         "",
         "| ID | Status | Decision |",
         "| --- | --- | --- |",
@@ -110,7 +110,7 @@ def main() -> int:
     if check:
         current = INDEX.read_text() if INDEX.is_file() else ""
         if current != text:
-            print("stale .specs/AD-INDEX.md; run the bundled wtk-config ad-index.py", file=sys.stderr)
+            print("stale .specs/AD-INDEX.md; run the bundled wtk-lean ad-index.py", file=sys.stderr)
             return 1
         print("AD-INDEX.md up to date")
         return 0

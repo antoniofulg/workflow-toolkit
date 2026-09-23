@@ -18,7 +18,6 @@
     ".agents/skills/wtk-plan",
     ".agents/skills/wtk-implement",
     ".agents/skills/wtk-reuse-review",
-    ".agents/skills/wtk-config",
     ".agents/skills/wtk-knowledge-check",
     ".agents/skills/wtk-qa",
     ".agents/skills/wtk-qa-plan",

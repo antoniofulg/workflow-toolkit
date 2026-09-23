@@ -7,7 +7,6 @@ __pycache__/
 .env
 .env.*
 !.env.example
-.wtk.toml
 /skills-lock.json
 /.agents/.skill-lock.json
 .claude/agents/

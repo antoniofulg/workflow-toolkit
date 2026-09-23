@@ -22,7 +22,7 @@ The installer reports remediation but does not execute package managers:
 ```bash
 npm install --save-dev --save-exact @nanonets/graft@0.10.1
 uv tool install graphifyy==0.9.14
-python3 .agents/skills/wtk-config/scripts/repository_intelligence.py \
+python3 .agents/skills/wtk-deep-review/scripts/repository_intelligence.py \
   graphify-setup --root . --backend <backend> --mode deep
 ```
 

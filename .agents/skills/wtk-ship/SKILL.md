@@ -27,7 +27,8 @@ feature work or a substantive change whose named risk requires that scope.
 An active Lean feature has `.specs/features/<feature>/plan.md`, `checks.md`, and independent
 `verification.md`. The following steps apply to that feature scope.
 
-Resolve or resume the provider route through `.agents/skills/wtk-config/SKILL.md` before dispatch.
+Resolve or resume the provider route through `.agents/skills/wtk-lean/scripts/workflow_route.py`
+when a feature snapshot is required. Native agent files remain project-owned.
 
 1. Confirm the feature's verification report passes the profile recorded in `checks.md` by running
    `.agents/skills/wtk-lean/scripts/validate_verification.py <feature>`.

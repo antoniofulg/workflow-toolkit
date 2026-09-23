@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-MODULE_PATH = Path(__file__).resolve().parent.parent / ".agents/skills/wtk-config/scripts/ad-index.py"
+MODULE_PATH = Path(__file__).resolve().parent.parent / ".agents/skills/wtk-lean/scripts/ad-index.py"
 
 
 def load():
@@ -59,7 +59,7 @@ class AdIndexTests(unittest.TestCase):
             specs = root / ".specs"
             specs.mkdir()
             (specs / "STATE.md").write_text(SAMPLE, encoding="utf-8")
-            dest = root / ".agents/skills/wtk-config/scripts/ad-index.py"
+            dest = root / ".agents/skills/wtk-lean/scripts/ad-index.py"
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_text(MODULE_PATH.read_text(encoding="utf-8"), encoding="utf-8")
             cmd = ["python3", str(dest), "--check"]

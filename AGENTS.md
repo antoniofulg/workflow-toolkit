@@ -18,7 +18,8 @@ For features, Specify + Design + Tasks here. After approval, dispatch **implemen
 For bounded maintenance under `.agents/skills/wtk/references/validation.md`, the active agent edits and validates directly; delegation
 is optional when it adds useful independent work, not a required handoff.
 Spawn the named agent without model overrides; use `explorer` for feature exploration and traces.
-Local `.wtk.toml` owns provider settings; `wtk-config` owns packet generation and frozen feature routes.
+Project-native agent files own provider settings; `wtk-lean/scripts/workflow_route.py` records frozen
+feature routes without generating packets.
 Provider definitions are real files, not symlinks.
 
 ## Critical rules
@@ -58,7 +59,8 @@ When selecting or repeating gates, apply incremental validation by impact from t
 a check is a proof-backed obligation. `plan.md` freezes decisions and `checks.md` freezes obligations.
 One builder handles whole slices sequentially; the coordinator owns handoff, verification, integration
 and cleanup. After Build, one fresh Verifier covers the complete feature range. `wtk-lean` owns the
-phase procedures; `wtk-config` owns review cadence. Every counted claim cites its producing command.
+phase procedures; the project-owned route keeps Deep Review on demand and the Lean builder sequential.
+Every counted claim cites its producing command.
 
 Delivery is human-scheduled. Git and the artifacts named below own durable state.
 
@@ -84,7 +86,7 @@ budget: 200k
 | Diff changes user-visible behaviour | `docs/toolkit/guidelines/QA-SCENARIOS.md` |
 | QA pass at the end of a feature | `docs/toolkit/guidelines/QA-EXECUTION.md` |
 | Reviewing, or acting on findings | `docs/toolkit/guidelines/REVIEW-ROUNDS.md` |
-| Resolving feature workflow | `.agents/skills/wtk-config/SKILL.md` |
+| Resolving feature workflow | `.agents/skills/wtk-lean/scripts/workflow_route.py` |
 | About to claim done, or to commit | `.agents/skills/wtk/references/evidence.md` |
 | Choosing which gate to run | `.agents/skills/wtk/references/validation.md` |
 | Branch or worktree | `.agents/skills/wtk/references/git.md` |
@@ -102,7 +104,7 @@ Docs and formatting do not trigger `SECURITY.md`.
 consuming project's architecture docs. Cite the file with the label. Do not invent invariant ids in
 this pack.
 
-Recording an `AD-NNN` also runs `python3 .agents/skills/wtk-config/scripts/ad-index.py` in that commit. Lean validators
+Recording an `AD-NNN` also runs `python3 .agents/skills/wtk-lean/scripts/ad-index.py` in that commit. Lean validators
 live in `.agents/skills/wtk-lean/scripts/`; the consuming project owns `make check`.
 
 ## Where the truth lives

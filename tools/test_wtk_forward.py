@@ -24,7 +24,7 @@ class WtkForwardTests(unittest.TestCase):
         self.assertIn("load them only when the selected route or changed surface", ROUTER)
         self.assertIn("wtk-deep-review", ROUTER)
         self.assertIn("wtk-qa", ROUTER)
-        self.assertIn("wtk-config", ROUTER)
+        self.assertIn("wtk-lean", ROUTER)
         self.assertIn("wtk-ship", ROUTER)
         self.assertIn("authentication, or authorization", ROUTER)
         self.assertIn("references/security.md", ROUTER)

@@ -76,3 +76,12 @@ whole-slice cut is after S2: S1+S2 = 553,780 bytes / 4 = 138,445 tokens; S3 ≈ 
 Mechanism: sequential whole-slice handoff after S2, chosen by the user. The first builder owns
 S1+S2 (≈138,445 tokens); a fresh builder takes S3 (≈94,214 tokens) only after S1+S2 proofs are
 green and committed. The coordinator owns the handoff and final independent verification.
+
+S1 builder checkpoint: C1 passed with `node --test --test-name-pattern='full WTK set has twelve skills and no WTK config payload' tests/skills/distribution.test.js`;
+C2, C3, and C4 passed with their corresponding `tools/test_native_agent_routing.py -k`
+selectors. Supporting contracts passed with `python3 tools/test_phase_skills.py`,
+`python3 tools/test_wtk_contract.py`, `python3 tools/test_ad_index.py`, and
+`python3 tools/test_repository_intelligence.py`. The native route rejects unsafe feature slugs,
+writes snapshots atomically, resumes provider/agent identity without model or effort, and leaves
+all 18 ignored native agent files byte-identical. S2 remains the next action; the legacy packet
+hash table stays in `scripts/migrate.js` and is tested without current provider templates.

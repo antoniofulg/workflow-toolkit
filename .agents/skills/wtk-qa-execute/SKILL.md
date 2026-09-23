@@ -42,8 +42,8 @@ command, or replace the automated gate.
 
 ## Browser adapter selection
 
-Read `[qa].browser_adapter` from the consuming project's `.wtk.toml`. An absent `[qa]` table or
-missing `browser_adapter` means `auto`. The valid values are `auto`, `jev`, `playwright-mcp`,
+Use the consuming project's task-scoped QA adapter choice when one is supplied. Without one, use
+`auto`. The valid values are `auto`, `jev`, `playwright-mcp`,
 `orca`, `maestri`, and `manual`; `jev-ultrafast` is not a public alias. `auto` tries Jev first for
 a declared non-consequential fixture journey, then LLM + Playwright MCP, exactly one IDE-native Orca or
 Maestri adapter exposed by the host, then manual. If both IDE-native adapters are exposed, choose

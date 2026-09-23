@@ -17,7 +17,7 @@ from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCRIPT = ROOT / ".agents/skills/wtk-config/scripts/repository_intelligence.py"
+SCRIPT = ROOT / ".agents/skills/wtk-deep-review/scripts/repository_intelligence.py"
 import sys
 sys.path.insert(0, str(SCRIPT.parent))
 import repository_intelligence as ri

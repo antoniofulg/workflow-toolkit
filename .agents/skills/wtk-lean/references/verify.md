@@ -33,8 +33,8 @@ this file. It runs read-only over the real tree and fixes nothing. The plan is a
 half the enumerations it sweeps for - a route's statuses, an entity's constraints - are named
 there and only *owe* a row in the checks.
 
-**How to dispatch.** Launch the configured `verifier` through the frozen
-[wtk-config route](../../wtk-config/SKILL.md#resume), with no inherited conversation. Hand it this file,
+**How to dispatch.** Launch the configured `verifier` through the frozen project-owned route from
+`../scripts/workflow_route.py`, with no inherited conversation. Hand it this file,
 `plan.md`, `checks.md`, every source the plan marks binding, and the diff range
 `<feature base>..HEAD`. It writes `verification.md` and fixes nothing. You run
 `validate_verification.py`. You do not write the report yourself.

@@ -129,6 +129,21 @@ The validators own structural detail: `validate_plan.py` closes the human-review
 non-author Verifier. Run `selftest.py` only after changing a validator or template. If execution is
 unavailable, perform the same checks by inspection and report the degraded path.
 
+## Project-owned route
+
+When a feature needs a persisted handoff route, resolve it from the consuming project's native
+agent files:
+
+```bash
+python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
+  --root . --feature <feature-slug> --native-provider <claude|codex|cursor>
+```
+
+The route records provider and native agent-file identity, derives the approved verification
+profile, keeps Deep Review on demand, and keeps the Lean builder sequential. It never reads or
+writes `.wtk.toml`, model or effort metadata, or generated provider packets. Projects own those
+native files and choose their model and effort settings there.
+
 ## Sub-agents and handoff
 
 Estimate the files each slice touches from `wc -c / 4`, and record the arithmetic under

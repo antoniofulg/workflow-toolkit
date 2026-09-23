@@ -13,9 +13,9 @@ const wtkSkills = fs.readdirSync(path.join(root, '.agents/skills'), { withFileTy
 const optionalSkills = ['ponytail', 'prompt-review', 'security-implementation', 'security-review', 'security-spec', 'security-threat-model'];
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
-test('published WTK skills resolve every local reference from an isolated full set', () => {
+test('full WTK set has twelve skills and no WTK config payload', () => {
   assert.deepEqual(wtkSkills, [
-    'wtk', 'wtk-config', 'wtk-deep-review', 'wtk-discover', 'wtk-implement',
+    'wtk', 'wtk-deep-review', 'wtk-discover', 'wtk-implement',
     'wtk-knowledge-check', 'wtk-lean', 'wtk-plan', 'wtk-qa', 'wtk-qa-execute',
     'wtk-qa-plan', 'wtk-reuse-review', 'wtk-ship',
   ]);
@@ -57,12 +57,12 @@ test('Skills CLI discovers every WTK skill when the source lock has no self entr
     const cli = path.join(root, 'node_modules/skills/dist/cli.mjs');
     const clean = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
     assert.equal(clean.status, 0, clean.stderr);
-    assert.match(clean.stdout, /Found 13 skills/);
+    assert.match(clean.stdout, /Found 12 skills/);
 
     fs.writeFileSync(path.join(source, 'skills-lock.json'), JSON.stringify({ version: 1, skills: { wtk: {}, 'wtk-lean': {}, 'wtk-deep-review': {} } }));
     const locked = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
     assert.equal(locked.status, 0, locked.stderr);
-    assert.match(locked.stdout, /Found 10 skills/);
+    assert.match(locked.stdout, /Found 9 skills/);
   } finally {
     fs.rmSync(source, { recursive: true, force: true });
   }
@@ -102,6 +102,8 @@ test('distribution has no npm install command or adoption manifest', () => {
   assert.equal(fs.existsSync(path.join(root, 'bin/wtk.js')), false);
   assert.equal(fs.existsSync(path.join(root, 'scripts/installer')), false);
   assert.equal(fs.existsSync(path.join(root, 'templates/adoption')), false);
+  assert.equal(fs.existsSync(path.join(root, '.wtk.toml.example')), false);
+  assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-config')), false);
   assert.equal(read('README.md').includes('npx workflow-toolkit install'), false);
   assert.equal(read('README.md').includes('wtk install'), false);
   assert.match(read('README.md'), /skill installer/i);
