@@ -6,7 +6,8 @@ An unbounded loop was measured at 30 rounds on one feature. The rule that caused
 responsible: remediate every confirmed finding **and every nitpick** in the same iteration. Each
 nit changes the diff; the next round finds new nits. The loop is unbounded by construction.
 
-[REVIEW-ROUNDS.md](guidelines/REVIEW-ROUNDS.md) is the protocol. This page is the choice.
+[REVIEW-ROUNDS.md](guidelines/REVIEW-ROUNDS.md) is the protocol. The installed `wtk/references/review-rounds.md`
+is the runtime copy. This page is the choice.
 
 The public hierarchy is `Feature -> Slice -> Check`. Before dispatch, read
 `.agents/skills/wtk-config/SKILL.md`; it resolves the feature's review groups.

@@ -15,8 +15,8 @@ receipt with the normal result, using unavailable for missing telemetry.
 - The approved feature plan.md and checks.md; for an explicitly modular entry, its
   .design/, .tasks/, and .checks/ source artifacts and cited criteria
 - The TEST-CONTRACT layer you will write
-- docs/toolkit/guidelines/UI-UX.md and the pointed feature uiux.md row or bounded inline record when the task names a visual reference
-- docs/toolkit/guidelines/SECURITY.md if the task touches runtime, schema, auth, or public behaviour
+- .agents/skills/wtk/references/ui-ux.md and the pointed feature uiux.md row or bounded inline record when the task names a visual reference
+- .agents/skills/wtk/references/security.md if the task touches runtime, schema, auth, or public behaviour
 - Workflow memory if this is a multi-task feature
 
 ## Do not load

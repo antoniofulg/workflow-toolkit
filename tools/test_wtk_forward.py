@@ -27,14 +27,15 @@ class WtkForwardTests(unittest.TestCase):
         self.assertIn("wtk-config", ROUTER)
         self.assertIn("wtk-ship", ROUTER)
         self.assertIn("authentication, or authorization", ROUTER)
-        self.assertIn("docs/toolkit/guidelines/SECURITY.md", ROUTER)
+        self.assertIn("references/security.md", ROUTER)
         self.assertIn("## 2. At\nSpecify — declare the surfaces", ROUTER)
         self.assertIn("## 3. At the test contract — abuse cases get IDs", ROUTER)
         self.assertIn("Before Design or Build", ROUTER)
-        self.assertIn("docs/toolkit/guidelines/UI-UX.md", ROUTER)
-        adopted = (ROOT / "templates/adoption/agents/core.md").read_text(encoding="utf-8")
-        self.assertIn("docs/toolkit/guidelines/SECURITY.md", adopted)
-        self.assertIn("docs/toolkit/guidelines/UI-UX.md", adopted)
+        self.assertIn("references/ui-ux.md", ROUTER)
+        adopted = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("installed `wtk` skill", adopted)
+        self.assertIn("references/security.md", ROUTER)
+        self.assertIn("references/ui-ux.md", ROUTER)
 
 
 if __name__ == "__main__":

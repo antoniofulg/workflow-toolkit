@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it } from "bun:test";
 import { parse } from "smol-toml";
-import { readWorkflowConfig, stageAgentPackets, validateWorkflowConfig } from "../../../scripts/installer/packets.js";
+import { readWorkflowConfig, stageAgentPackets, validateWorkflowConfig } from "../../../.agents/skills/wtk-config/scripts/packets.js";
 
 const repositoryRoot = process.cwd();
 const skillPath = ".agents/skills/wtk-config/SKILL.md";
@@ -188,7 +188,7 @@ const path = `.agents/skills/wtk-config/assets/agents/${provider}/${role}.${exte
       expect(isIgnored(relativePath), relativePath).toBe(true);
     }
     const packaged = packagedFiles();
-    expect(packaged).toContain(".wtk.toml.example");
+    expect(packaged).not.toContain(".wtk.toml.example");
     expect(packaged).toContain(".agents/skills/wtk-config/assets/agents/claude/planner.md");
     expect(packaged).toContain(".agents/skills/wtk-config/assets/agents/codex/planner.toml");
     expect(packaged).toContain(".agents/skills/wtk-config/assets/agents/cursor/planner.md");

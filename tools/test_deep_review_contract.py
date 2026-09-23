@@ -879,7 +879,7 @@ class DeepReviewContractTests(unittest.TestCase):
 
     def test_review_rounds_guideline_states_remediation_check_rule(self) -> None:
         # IT-020 (P2 AC7–8)
-        guideline = (Path(__file__).resolve().parents[1] / "docs/toolkit/guidelines/REVIEW-ROUNDS.md").read_text(encoding="utf-8")
+        guideline = (Path(__file__).resolve().parents[1] / ".agents/skills/wtk/references/review-rounds.md").read_text(encoding="utf-8")
         self.assertIn("remediation check", guideline)
         self.assertIn("stall_attempts", guideline)
         for banned in ("round 3", "Blocker", "Cosmetic", "≤2 rounds"):

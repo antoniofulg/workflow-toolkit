@@ -99,7 +99,7 @@ def test_repository_intelligence_order_is_bounded() -> None:
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:
-    uiux = (ROOT / "docs/toolkit/guidelines/UI-UX.md").read_text(encoding="utf-8")
+    uiux = (ROOT / ".agents/skills/wtk/references/ui-ux.md").read_text(encoding="utf-8")
     ship = (SKILLS / "wtk-ship/SKILL.md").read_text(encoding="utf-8")
     assert "uiux.md" in uiux and "written in Specify" in uiux
     assert "close_feature.py" in ship

@@ -1,8 +1,8 @@
 # Workflow tour
 
-Human-facing. Agents run [`AGENTS.md`](../../AGENTS.md) and load a guideline only when its
-condition fires. This folder is the **why**: what each stage is for, what each guideline
-protects, and which trade-off it encodes.
+Human-facing maintainer notes. Agents run their installed `wtk` skill and load a reference only
+when its condition fires. This folder explains the stages and trade-offs; installed skill
+references own runtime behavior.
 
 These pages do not restate the rules. The guidelines remain the source of truth for behaviour.
 
@@ -16,7 +16,7 @@ artifacts, and explicit handoff prompts remain the durable semantic context.
 3. [Reviews — three questions, hard caps](reviews.md)
 4. [Decisions — two namespaces, halt vs decide](decisions.md)
 5. [Guidelines — why each file exists](guidelines.md)
-6. [Skills, knowledge, adopt](pack.md)
+6. [Skills and optional extensions](pack.md)
 7. [Repository intelligence](repository-intelligence.md)
 
 ## Map
@@ -31,7 +31,7 @@ artifacts, and explicit handoff prompts remain the durable semantic context.
 | What is vendored and what is not | [pack.md](pack.md) |
 | Graphify/Graft routing, setup, freshness, and benchmark | [repository-intelligence.md](repository-intelligence.md) |
 | Shared execution contracts | [`wtk/references/`](../../.agents/skills/wtk/references/) |
-| Surface-specific rules | [`docs/toolkit/guidelines/`](guidelines/) |
+| Surface-specific rules | Installed skill `references/` directories |
 | What agents load every turn | [`AGENTS.md`](../../AGENTS.md) |
 
 ## The loop at a glance
@@ -48,8 +48,8 @@ then         selected full/scoped gate → pull request
 Public hierarchy: `Feature -> Slice -> Check`. Read
 `.agents/skills/wtk-config/SKILL.md` before dispatch; it resolves cadence and delegated providers.
 
-Repeated review blockers use the immutable fingerprint and independent counter in
-[`REVIEW-ROUNDS.md`](guidelines/REVIEW-ROUNDS.md); this guide does not duplicate that protocol.
+Repeated review blockers use the immutable fingerprint and independent counter in the installed
+`wtk/references/review-rounds.md`; this guide does not duplicate that protocol.
 
 A filed issue skips the ceremony: `implement → scoped gate → one commit`.
 Credential-free declarative agent-tool configuration uses the local light path in

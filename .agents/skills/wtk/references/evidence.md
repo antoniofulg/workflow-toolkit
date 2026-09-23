@@ -14,7 +14,7 @@ passing evidence can be reused; this document defines what the result supports.
 | Feature complete / ready for a pull request | Fresh independent full-feature Verifier, selected gates and applicable QA |
 | Bounded documentation or instruction update | Proportional checks from `.agents/skills/wtk/references/validation.md` |
 | Previously verified feature with bounded follow-ups | Recorded feature receipt plus scoped evidence for the subsequent changes; no new feature certification |
-| Visual reference matched | Paired evidence at the states/viewports required by `docs/toolkit/guidelines/UI-UX.md` |
+| Visual reference matched | Paired evidence at the states/viewports required by `references/ui-ux.md` |
 | Bug fixed | Original symptom observed failing, then passing |
 | Regression test discriminates | Red before the fix and green after |
 
@@ -57,7 +57,7 @@ the approved contract. Reselect tests from the fix's causal delta under `validat
 unaffected green evidence. Record a failed full run separately from passing targeted retests.
 An isolated pass is diagnostic evidence, not proof of a harness flake or a green full gate.
 
-Follow `docs/toolkit/guidelines/REVIEW-ROUNDS.md` for review remediation and its stall bound. Report pre-existing or unrelated
+Follow `references/review-rounds.md` for review remediation and its stall bound. Report pre-existing or unrelated
 failures separately; do not silently expand the task to repair them or claim the full gate passed.
 
 ## Stop and hand it back

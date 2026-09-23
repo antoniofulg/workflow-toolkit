@@ -23,7 +23,7 @@ This is an original project-owned adaptation for this workflow, inspired by Pedr
 ## Inputs and boundaries
 
 Read `docs/qa/README.md`, the QA Plan handoff, the in-scope scenarios and charters, open bugs, and
-`docs/toolkit/guidelines/QA-SCENARIOS.md` in full. The guideline owns scenario fields, ids, statuses, and
+[`../wtk-qa/references/qa-scenarios.md`](../wtk-qa/references/qa-scenarios.md) in full. The guideline owns scenario fields, ids, statuses, and
 flag/reset rules. Read [`references/session-protocol.md`](references/session-protocol.md) in full
 before the first charter.
 
@@ -127,7 +127,7 @@ end state. Confirm the expected observable through an independent read path and 
 evidence at each checkpoint and divergence, then update the report and scenario status immediately.
 
 **Done when:** every charter has a recorded verdict, independent confirmation, evidence path, and
-debrief, or an explicit limitation with the status prescribed by `QA-SCENARIOS.md`.
+debrief, or an explicit limitation with the status prescribed by `../wtk-qa/references/qa-scenarios.md`.
 
 ### 5. Probe the changed surface
 

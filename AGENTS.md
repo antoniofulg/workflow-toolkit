@@ -43,9 +43,7 @@ Provider definitions are real files, not symlinks.
 ## How work happens
 
 Use `wtk` as the entrypoint; it selects feature work or bounded maintenance from the request and
-existing artifacts. At the start of workflow work, activate `ponytail`
-at `full` and keep it active for the entire session: Specify, Design, Tasks, Execute, every
-subagent prompt, fix, and review, until the human explicitly says `stop ponytail` or `normal mode`.
+existing artifacts. Ponytail is an optional companion skill; WTK remains usable without it.
 
 Continue authorized work through implementation, applicable validation and local commit. Resolve
 routine choices and fix failures caused by the change without asking again; ask only for missing

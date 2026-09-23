@@ -22,7 +22,7 @@ This is an original project-owned adaptation for this workflow, inspired by Pedr
 ## Inputs and boundaries
 
 Read the feature contract or Verifier packet, the current diff, `docs/qa/README.md`, and the
-affected QA records. Read `docs/toolkit/guidelines/QA-SCENARIOS.md` in full before creating or changing a
+affected QA records. Read [`../wtk-qa/references/qa-scenarios.md`](../wtk-qa/references/qa-scenarios.md) in full before creating or changing a
 scenario. It owns the scenario tree, fields, ids, statuses, and flag/reset rules.
 
 Plan journeys, scenarios, and charters. Leave live walks, evidence capture, and defect reporting
@@ -47,7 +47,7 @@ does not change a user-visible promise. If no criterion is user-visible, record 
 change` in the task handoff and stop.
 
 For a visual criterion, point the disposition at the owning feature `uiux.md` reference row and follow
-`UI-UX.md#verifying-the-built-screen`. The visual comparison remains evidence for that criterion; it
+`../wtk/references/ui-ux.md#verifying-the-built-screen`. The visual comparison remains evidence for that criterion; it
 does not replace behavioral coverage.
 
 **Done when:** every changed acceptance criterion has one explicit disposition, and the no-surface
@@ -72,7 +72,7 @@ Fold duplicate coverage into the canonical scenario and record overlaps there. I
 canary journeys only when a named dependency or shared state makes them relevant. Keep each
 internal criterion's explicit reason in the disposition handoff.
 
-Use the schema and status vocabulary from `QA-SCENARIOS.md`; keep field definitions in that file.
+Use the schema and status vocabulary from `../wtk-qa/references/qa-scenarios.md`; keep field definitions in that file.
 Describe the expected observable in user language and preserve scenario ids once published.
 
 **Done when:** every changed acceptance criterion has a disposition: one canonical

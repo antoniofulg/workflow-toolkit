@@ -1,35 +1,29 @@
 # QA operational profile
 
-This repository distributes Workflow Toolkit, not a running application. Its public surfaces are
-the guided adoption CLI, installed agent-facing files, local workflow configuration, documentation,
-and package metadata. No browser, HTTP API, mobile app, authentication flow, server, or production
-health endpoint exists here.
+This repository distributes Workflow Toolkit skills, not a running application. Its public surfaces
+are the installed agent-facing skill directories, optional migration helper, documentation, and
+source metadata. No browser, HTTP API, mobile app, authentication flow, server, or production health
+endpoint exists here.
 
 ## Public interfaces and area codes
 
 | Area | Interface | Entry point | Authority |
 | --- | --- | --- | --- |
-| `ADP` | Guided installer and generated consumer filesystem | `workflow-toolkit` package; `wtk install` executable | [`package.json`](../../package.json); [README quick start](../../README.md#quick-start); [`bin/wtk.js`](../../bin/wtk.js) |
+| `SKL` | Skill installer and self-contained WTK skill directories | `.agents/skills/wtk*/SKILL.md` | [`package.json`](../../package.json); [README installation](../../README.md#install-the-skills) |
 | `CFG` | Workflow configuration, resolution, generated packets, and Lean feature state | `.wtk.toml.example`; checkout-local `.wtk.toml`; `workflow_config.py` | [`wtk-config`](../../.agents/skills/wtk-config/SKILL.md); [tracked example](../../.wtk.toml.example) |
-| `QAS` | Agent-facing workflow, instruction audit, validation, review, QA, and closeout procedures | `.agents/skills/wtk*/`; `.agents/skills/prompt-review/SKILL.md`; provider packets; Lean validators; close helper | [skills contract](../../README.md#current-workflow); [`prompt-review`](../../.agents/skills/prompt-review/SKILL.md); [`wtk-lean`](../../.agents/skills/wtk-lean/SKILL.md); [`wtk-ship`](../../.agents/skills/wtk-ship/SKILL.md) |
+| `QAS` | Agent-facing workflow, validation, review, QA, and closeout procedures | `.agents/skills/wtk*/`; Lean validators; close helper | [skills contract](../../README.md#the-workflow); [`wtk-lean`](../../.agents/skills/wtk-lean/SKILL.md); [`wtk-ship`](../../.agents/skills/wtk-ship/SKILL.md) |
 | `DOC` | Workflow documentation and authorization boundaries | `README.md`; `docs/toolkit/` | [`README.md`](../../README.md); [workflow index](../toolkit/README.md) |
-| `REL` | Package identity and membership | `package.json`; `bun.lock`; local package archive | [`package.json`](../../package.json) |
+| `REL` | Source identity and skill membership | `package.json`; `bun.lock` | [`package.json`](../../package.json) |
 
 Command facts remain in their executable manifests or CI authorities.
 
 ## Runner and adapter
 
-- Adapter: CLI/manual through public commands plus an independent filesystem readback. The Node
-  installer tests use isolated temporary consumers and `/usr/bin/expect` for PTY input; they are the
+- Adapter: skill-installer/manual through isolated temporary consumers plus an independent filesystem
+  readback. The distribution tests copy only selected `.agents/skills/wtk*` directories; they are the
   existing pattern, not a separate QA framework.
-- Source CLI path for this checkout: from a checkout-owned disposable Git consumer, run
-  `node /Users/antoniofulg/Projects/my-workflow/bin/wtk.js install`. This invokes the public
-  executable directly without a registry lookup.
-- Offline package path: create a local archive with
-  `bun pm pack --filename <checkout-owned-pack-dir>/workflow-toolkit-1.1.0.tgz --ignore-scripts`,
-  extract it into a separate checkout-owned runner, then run
-  `node <runner>/package/bin/wtk.js install` from the disposable consumer. Record archive identity
-  and package membership before execution.
+- Migration path: from this checkout, run `node scripts/migrate.js --root <consumer>` in preview mode,
+  then repeat with `--apply` only after the named actions are reviewed.
 - Configuration path: invoke
   `python3 .agents/skills/wtk-config/scripts/workflow_config.py` against a disposable consumer and
   reload its generated files through a separate process. The command contract lives in
@@ -40,11 +34,9 @@ Command facts remain in their executable manifests or CI authorities.
   disposable feature fixtures. Inspect agent routing and on-demand guidance as shipped; assigned
   technical-forward evidence may support discrimination that cannot be made deterministic through
   this repository's CLI.
-- Prompt-review path: use the installed `.agents/skills/prompt-review/SKILL.md` through a bounded,
-  read-only instruction-bundle audit. Inventory hidden instruction files, reload cited source lines
-  independently, and record the observed findings or exact no-issue result plus coverage and
-  exclusions. The skill has no standalone executable; keep this manual agent-facing observation
-  separate from deterministic contract-test evidence.
+- Optional companion paths: install Ponytail, security-lifecycle, adaptive-guidelines, Graphify, or
+  Graft through their own installers when the consuming project chooses them. WTK tests the native
+  fallback when those companions are absent.
 - Gate authority: [`package.json`](../../package.json) declares Bun, Node, and Python suites.
   Automated suites prove technical contracts; they are not substitutes for the public-interface
   QA walk.
@@ -62,9 +54,8 @@ Command facts remain in their executable manifests or CI authorities.
 ## Authentication and test data
 
 - Authentication/session setup: none.
-- Fixtures or seed: disposable empty, adopted, re-adopted, conflicting, cancelled, and
-  non-interactive Git consumers following `tests/installer/*.test.js`; use the existing PTY pattern
-  in [`tests/installer/package.test.js`](../../tests/installer/package.test.js).
+- Fixtures or seed: disposable empty, adopted, conflicting, interrupted, and untouched skill consumers
+  following `tests/skills/*.test.js`.
 - Prompt-review fixture: one bounded read-only tree containing visible and hidden instruction files;
   record its path before the walk and verify its bytes and file set are unchanged afterward.
 - Config fixtures: a copy of `.wtk.toml.example`, a byte-distinct consumer `.wtk.toml`, and
@@ -82,10 +73,10 @@ Command facts remain in their executable manifests or CI authorities.
 
 - Raw evidence: `docs/qa/evidence/` (disposable and ignored).
 - Durable reports and statuses: `docs/qa/reports/`, `docs/qa/scenarios/`, and immutable charters.
-- The `workflow-toolkit` package is not published. Do not fetch a registry package, publish, push,
+- The `workflow-toolkit` source package is private. Do not fetch a registry package, publish, push,
   open or merge a pull request, deploy, or mutate production during QA.
-- Network access is not authorized during QA. Confirm the five packaged security skill trees install
-  through core without a child registry, Git, npm, npx, bunx, or standalone security installer.
+- Network access is not authorized during QA. Confirm selected WTK skills copy without editing project
+  instructions or configuration; optional companion installation is outside this repository's QA.
 - This workflow does not install a framework or invent commands. Use the source CLI or local packed
   package, existing PTY pattern, public Python CLIs, and filesystem readback.
 - Agent-selection discrimination is partly instruction-visible and partly nondeterministic. Report

@@ -3,10 +3,8 @@
 `wtk` routes discovery, integrated Lean, and distinct modular entries. Auto-size still holds:
 a one-line change gets no feature artifacts; a multi-component feature gets full planning.
 
-Workflow work starts with `ponytail` at `full`; `AGENTS.md` carries the activation and session
-persistence rule, while the [Ponytail skill](../../.agents/skills/ponytail/SKILL.md) owns its
-explicit stop commands. The same instinct as “delete rather than bridge” and “no test without an
-invariant”.
+Ponytail is an optional companion skill. When a project installs it, its own instructions govern
+minimal-code choices; WTK remains usable without it.
 
 Public hierarchy: `Feature -> Slice -> Check`. Resolve cadence with `wtk-config` before dispatch.
 
@@ -19,12 +17,12 @@ last column.
 | --- | --- | --- | --- | --- |
 | 1 | **Plan / Checks** | Freeze `plan.md`, `checks.md`, and proof selectors | Auto-sized skip (tiny, obvious change) | `wtk-lean` |
 | 2 | **Slice** | One observable behaviour plus the checks that prove it | — | `AGENTS.md` |
-| 3 | **Build** | The cheapest code that makes the slice true | — | `ponytail` |
+| 3 | **Build** | The smallest code that makes the slice true | — | `wtk-lean` and the project's own coding rules |
 | 4 | **Scoped gate** | Prove *this* diff, not the whole product | Escalate if the selector cannot scope it | [validation.md](../../.agents/skills/wtk/references/validation.md) |
 | 5 | **Atomic commit** | One Conventional Commit after the applicable Lean check state is current | — | `AGENTS.md` |
-| 6 | **Technical Verifier** | One fresh independent pass proves every check over the complete feature range; mutants must die at the approved profile | Filed-issue path; no product code in final QA session | [REVIEW-ROUNDS.md](guidelines/REVIEW-ROUNDS.md) |
-| 7 | **Deep-review** | Correct, safe, maintainable — resolved groups, blocking findings only | Cadence `skip` (no groups; human runs `wtk-deep-review` later), or proportional classifier selects scoped validation | [REVIEW-ROUNDS.md](guidelines/REVIEW-ROUNDS.md) |
-| 8 | **QA session** | The finished feature, as a person meets it: Plan as needed, then impact-scoped Execute | Feature has no public, UI, API, CLI, or adoption change | [QA-EXECUTION.md](guidelines/QA-EXECUTION.md) |
+| 6 | **Technical Verifier** | One fresh independent pass proves every check over the complete feature range; mutants must die at the approved profile | Filed-issue path; no product code in final QA session | installed `wtk/references/review-rounds.md` |
+| 7 | **Deep-review** | Correct, safe, maintainable — resolved groups, blocking findings only | Cadence `skip` (no groups; human runs `wtk-deep-review` later), or proportional classifier selects scoped validation | installed `wtk/references/review-rounds.md` |
+| 8 | **QA session** | The finished feature, as a person meets it: Plan as needed, then impact-scoped Execute | Feature has no public, UI, API, CLI, or adoption change | installed `wtk-qa-execute/references/qa-execution.md` |
 | 9 | **Full gate** | The product gate, once, when the proportional classifier selects it | Scoped gate is sufficient | [validation.md](../../.agents/skills/wtk/references/validation.md) |
 | 10 | **Remote delivery** | `wtk-ship` authorizes the feature-branch push, one pull request, and merge after readiness is rechecked | Readiness is evidence, not authorization for deploy/release, production mutations, force-push, direct `main` push, and unrelated remote actions; those need explicit instruction | [evidence.md](../../.agents/skills/wtk/references/evidence.md) |
 

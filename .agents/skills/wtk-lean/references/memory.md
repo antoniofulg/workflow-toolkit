@@ -59,6 +59,15 @@ contract, handoff, Git and evidence before the next action. It owns checkpoint c
 session-transfer rules; keep this file's section-scoped write and decision-log rules. For Lean
 features, `checks.md` remains the proof-state authority after recovery.
 
+## Feature task memory
+
+When a feature uses multiple implementation tasks, keep durable cross-task constraints in
+`.specs/features/<feature>/memory/MEMORY.md` and task-local facts in `task_NN.md`. Read both before
+the first edit and update the applicable file before a completion claim or commit. Promote only a
+constraint, decision, or risk that another task needs and that is not already stated in the plan,
+checks, or repository. Never copy spec text or command transcripts into memory; cite the owning
+artifact instead. The repository wins when memory is stale.
+
 ## Lessons
 
 Verification failures become reusable guidance, or they happen again. The split that keeps this

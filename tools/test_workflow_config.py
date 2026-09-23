@@ -1838,8 +1838,8 @@ def test_sync_passes_preload_keys_through_untouched() -> None:
         assert generated == template.replace(
             "model: opus\neffort: medium\n", f"model: {setting['model']}\neffort: {setting['effort']}\n"
         ), "generated implementer differs from its template beyond model and effort"
-        for key in ("skills: [ponytail]", "disallowedTools: Skill"):
-            assert key in template and key in generated, f"{key!r} did not survive rendering"
+        assert "disallowedTools: Skill" in template and "disallowedTools: Skill" in generated
+        assert "ponytail" not in template and "ponytail" not in generated
     finally:
         shutil.rmtree(root)
 
@@ -1849,7 +1849,7 @@ def assert_sync_rejects_preload_skill(root: Path, name: str) -> None:
     template = root / ".agents/skills/wtk-config/assets/agents/claude/implementer.md"
     template.write_text(
         template.read_text(encoding="utf-8").replace(
-            "skills: [ponytail]", f"skills: [ponytail, {name}]"
+            "effort: medium\n", f"effort: medium\nskills: [{name}]\n"
         ),
         encoding="utf-8",
     )
@@ -1919,7 +1919,7 @@ def test_it001_sync_renders_designer_packets() -> None:
         claude_runtime = claude_runtime_path.read_text(encoding="utf-8")
         codex_runtime = codex_runtime_path.read_text(encoding="utf-8")
         cursor_runtime = cursor_runtime_path.read_text(encoding="utf-8")
-        assert "skills: [wtk-plan, ponytail]" in claude_runtime
+        assert "skills: [wtk-plan]" in claude_runtime
         claude_designer_skills = [line for line in claude_designer.read_text(encoding="utf-8").splitlines() if line.startswith("skills:")][0]
         claude_runtime_skills = [line for line in claude_runtime.splitlines() if line.startswith("skills:")][0]
         assert claude_designer_skills == claude_runtime_skills

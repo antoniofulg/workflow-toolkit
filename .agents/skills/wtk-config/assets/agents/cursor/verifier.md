@@ -22,7 +22,7 @@ receipt with the normal result, using unavailable for missing telemetry.
 - Assigned evidence named by the packet.
 - Skill `wtk-lean`, the phase procedure.
 - `.agents/skills/wtk/references/test-contract.md` only if a case looks hollow or uses the wrong layer.
-- `docs/toolkit/guidelines/UI-UX.md` and the pointed `uiux.md` row when a visual AC is in scope.
+- `.agents/skills/wtk/references/ui-ux.md` and the pointed `uiux.md` row when a visual AC is in scope.
 
 ## Do not load
 
@@ -58,7 +58,7 @@ configuration, adoption, or docs-as-interface. A purely internal refactor receiv
 phase only. For clear bounded scope, the same non-author QA session may process consecutive Plan
 and authorized Execute packets. Reuse an applicable plan; a retest needs no new planning session.
 
-QA phases read `docs/toolkit/guidelines/QA-SCENARIOS.md` as the sole authority for scenario fields, ids,
+QA phases read `.agents/skills/wtk-qa/references/qa-scenarios.md` as the sole authority for scenario fields, ids,
 and statuses. QA Execute reports the selected interface/runner, exact path, evidence, and limitation
 from the project profile; never install a framework or invent a command. Each checkout owns its
 runtime and raw evidence, so validation and QA paths stay checkout-local.

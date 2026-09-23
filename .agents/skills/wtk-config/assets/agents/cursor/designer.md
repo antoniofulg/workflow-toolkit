@@ -11,8 +11,8 @@ You are the **designer**. Produce mockups and review notes for UI-bearing featur
 
 - Skill `wtk-plan`
 - approved `plan.md` and `checks.md` (or the explicitly named modular source) for this feature
-- `docs/toolkit/guidelines/UI-UX.md`
-- `docs/toolkit/guidelines/FRONTEND.md`
+- `.agents/skills/wtk/references/ui-ux.md`
+- `.agents/skills/wtk/references/frontend.md`
 - Selected references from `docs/product/AGENT-CONTEXT.md`
 - Affected existing components, read-only, and only the relevant design headings
 

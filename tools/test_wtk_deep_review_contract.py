@@ -11,7 +11,7 @@ class WtkDeepReviewContractTests(unittest.TestCase):
     def test_namespaced_review_boundary(self) -> None:
         skill = (ROOT / ".agents/skills/wtk-deep-review/SKILL.md").read_text(encoding="utf-8")
         config = (ROOT / ".agents/skills/wtk-config/SKILL.md").read_text(encoding="utf-8")
-        reviews = (ROOT / "docs/toolkit/guidelines/REVIEW-ROUNDS.md").read_text(encoding="utf-8")
+        reviews = (ROOT / ".agents/skills/wtk/references/review-rounds.md").read_text(encoding="utf-8")
         self.assertIn("name: wtk-deep-review", skill)
         self.assertIn("deep-reviewer", skill)
         self.assertIn("cadence defaults to `skip`", config)

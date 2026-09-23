@@ -1,60 +1,29 @@
-# Adoption prompt
+# Skills-only setup prompt
 
-Paste this once to an agent, replacing the exact package and target paths. It runs the read-only
-review that must precede the guided install, then the diff review.
+Paste this once into an agent when adding WTK to an existing project. Replace the target path and
+select only the skills the project wants.
 
-```
-Adopt selected layers of the agent OS from /path/to/workflow-toolkit-1.0.0.tgz into /path/to/target-project.
+```text
+Set up the selected Workflow Toolkit skills in /path/to/target-project using the project's skill
+installer. Use the project's skill installer and first check `git status --short`; do not stash, reset,
+clean, or hide unrelated changes.
+Read the source README and the selected SKILL.md files before writing.
 
-First check `git status --short`; do not stash, reset, clean, or hide unrelated changes. Read the
-pack's README.md, AGENTS.md, and public package contract. Inspect the target read-only: package and build
-manifests, declared gates, CI jobs, production-parity start and health paths, public interfaces,
-authentication, fixtures or seed data, cleanup and residue checks, and installed QA tooling. Never
-invent a command or install a QA framework during adoption.
+Install only the selected `.agents/skills/wtk*` directories. The preview is read-only. Verify every selected skill's local
+references and scripts resolve. Compare `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.ignore`, local
+configuration, generated provider files, product context, and knowledge files byte-for-byte before
+and after the install. Skill installation must not create or edit any of them; never overwrite existing content.
+The QA procedure is `.agents/skills/wtk-qa-execute/references/qa-execution.md` when a project selects a
+QA walk.
 
-Before writing, set the requested modules (`core`, `quality`, or `extras`) in the guided
-wizard. Run `npx workflow-toolkit install` from `/path/to/target-project` and review every
-previewed action. Report the managed paths and every target path that could be replaced. Preserve
-product-owned product, architecture, design, and stack documentation. For a new project, adoption
-initializes a neutral, consumer-owned `docs/product/AGENT-CONTEXT.md` index; fill it with product
-identity and routes to existing docs only as the product earns them. For an existing project,
-preserve its filled product paragraph. Before deliberately replacing a legacy `AGENTS.md`, extract
-its product rules into that index and review the complete diff; adoption does not infer or perform
-that migration. Preserve an existing local `.wtk.toml` byte-for-byte. Install missing
-`.wtk.toml.example` and `.agents/skills/wtk-config/assets/agents/`. The guided installer
-synchronizes ignored provider packets from tracked templates and local config.
+If the project has `.my-workflow/adoption.json`, run `node scripts/migrate.js --root
+/path/to/target-project` from the Workflow Toolkit source checkout. Review the complete preview,
+then use `--apply` only after each action is understood. Modified ownership must remain unresolved;
+the helper backs up exact bytes and modes and reports unowned workflow prose for manual review.
 
-If the preview reports conflicts, review every conflict in the wizard. Choose `Back up and replace`,
-`Exclude module`, or `Cancel installation`; the final confirmation is unavailable until every
-conflict is resolved. Altered managed instruction blocks remain consumer-owned and are preserved in
-the verified backup checklist.
-
-Read the release notes from the target's adopted version to the current exact package version before
- an update. Run `npx workflow-toolkit install` only after the review. The wizard promotes pristine
- provider templates, refreshes managed blocks and runtime packets, and reconciles only hash-proven
- retired workflow files.
-
-If `docs/qa/README.md` exists, preserve it byte-for-byte during adoption and merge newly discovered
-facts only through the consumer's normal QA workflow; never overwrite existing content. If it is absent, let the adopted quality skills discover the consuming project's profile rather than copying
-this source pack's profile. Record the discovered interfaces, existing
-runner or manual adapter, start and health authority, authentication, fixtures, cleanup, and
-limitations. Keep command facts in the target's executable manifests or CI and link to them from
-the profile.
-
-Apply is additive for installed layers. A newer exact package may remove only a pristine retired
-workflow file whose managed hash proves source ownership; edited or unproven retired paths conflict
-with zero writes. A
-managed-file drift, unowned differing destination, malformed manifest, or unsafe symlink aborts
-before any target write and lists every conflict. Use `status` afterwards; exit 0 means clean, 1
-means drift, and 2 means invalid invocation or state.
-
-Review the complete diff, managed-path overwrites, and the target's declared full gate as a candidate
-check. Apply the proportional classifier in the adopted `.agents/skills/wtk/references/validation.md`: pure maintenance
-uses accuracy/link/heading/whitespace checks, instruction changes use consistency plus existing
-relevant contract checks, and mixed changes use canonical checks for changed executable behavior.
-Record selected commands, results, and any named risk. Follow `docs/toolkit/guidelines/QA-EXECUTION.md` for conditional Plan
-and non-author Execute dispatch only when the classifier selects a public walk. For a purely internal refactor, record `no user-visible change` and do not run QA; otherwise record the narrow limitation. Preserve risk-based checks for
-adoption, auth, data, and public interfaces. Activate `wtk`. At the start of
-workflow work, activate `ponytail` at `full`; `AGENTS.md` carries the full-cycle session rule and the
-explicit stop commands.
+Keep project-specific rules in the project's own `AGENTS.md` or equivalent. Optional companion
+skills are installed separately; treat each optional companion as its own choice. Optionally add the
+README's short WTK routing snippet. Treat Ponytail, security-lifecycle, adaptive-guidelines,
+Graphify, and Graft as separate choices installed through their own sources; WTK does not claim
+they ran when they are absent.
 ```

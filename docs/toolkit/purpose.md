@@ -43,6 +43,7 @@ reproducible blocker is not.
 The review ledger counts failed remediation cumulatively per immutable finding fingerprint while
 the live remediation bound counts consecutive stalls; see
 [`REVIEW-ROUNDS.md`](guidelines/REVIEW-ROUNDS.md) for the accounting rule.
+The installed `wtk/references/review-rounds.md` owns the runtime copy.
 
 ## What this pack is not
 
