@@ -1,26 +1,23 @@
 # J-adopt-workflow
 
 **Persona:** Workflow adopter
-**Goal:** Install or update Workflow Toolkit without losing consumer-owned repository state.
-**Entry point:** `README.md` → **Quick start** → source `wtk install` or an exact local package
+**Goal:** Install or update the full Workflow Toolkit skill set without losing consumer-owned repository state.
+**Entry point:** README.md → **Install the skills** → Skills CLI full-set command
 **Tags:** wtk-adoption
 
 ## Flow
 
-1. Record the source checkout and disposable consumer state; inspect package identity and membership.
-2. Launch the public CLI in a PTY from the consumer, select `core`, `quality`, or `extras`, and review
-   the complete preview before confirmation. Any non-core selection includes `core`.
-3. Read back the installed `wtk-*` skills, provider packets, docs, `.wtk.toml.example`, ignored
-   `.wtk.toml`, and adoption manifest from a separate process. Confirm third-party Ponytail names
-   remain unchanged, `prompt-review` is an optional extra with its current Claude alias, retired
-   aliases remain absent, and the five reviewed security skills and aliases install through core.
-4. Re-adopt the same target and require a no-change result while preserving consumer config, product
-   context, QA records, knowledge, ignore rules, and unrelated files byte-for-byte.
-5. In isolated copies, exercise cancellation, non-interactive refusal, consumer-modified conflicts,
-   pristine managed retirement, and publication recovery. Confirm documented exits and no unintended
-   writes.
-6. Remove only recorded disposable roots and confirm source-checkout residue matches the opening
-   snapshot apart from planned QA artifacts.
+1. Record the source checkout and disposable consumer state; inspect the README and selected skill source.
+2. Run the documented full-set Skills CLI command and review the installed skill directories.
+3. Independently compare AGENTS.md, CLAUDE.md, project configuration, generated provider files,
+   ignore files, product context, knowledge, and unrelated files before and after installation.
+4. For a legacy adopter, preview node scripts/migrate.js, review each file, block, link, packet, and
+   ignore action, then apply only after the preview is understood.
+5. Exercise pristine, edited, multi-block, generated-packet, and interrupted-publication migration
+   fixtures. Confirm conflicts refuse writes, backups preserve bytes and modes, and rollback restores
+   the exact prior state.
+6. Remove only disposable roots and confirm source-checkout residue matches the opening snapshot,
+   apart from the planned QA artifacts.
 
 ## Promises
 
@@ -31,14 +28,13 @@
 
 ## Adjacent canary
 
-Inspect [`ADP-install-pinned-external-security-skills`](../scenarios/ADP-install-pinned-external-security-skills.md)
-for packaged provenance, then walk [`J-review-workflow-release`](J-review-workflow-release.md) for
-package identity and release metadata.
+Inspect [`ADP-separate-external-security-skills`](../scenarios/ADP-separate-external-security-skills.md)
+for optional companion provenance, then walk [`J-review-workflow-release`](J-review-workflow-release.md)
+for source identity and release metadata.
 
 ## Current cycle
 
-Workflow Toolkit Lean replaced the prior package, executable, module catalog, phase skills, and
-configuration names. Its completed 2026-09-13 report remains historical evidence. The follow-up
-catalog cycle resets `ADP-layered-workflow-adoption` for optional `prompt-review` and current aliases,
-and resets the security-skill installation promise for the bundled five-skill boundary. Safe
-adoption is an adjacent canary; obsolete phase-skill and parallel-module promises remain `skipped`.
+The skills-only release replaces the npm package installer, module catalog, generated host files, and
+toolkit-owned third-party companion skills. The full-set Skills CLI route and one-time migration
+helper are current untested promises. Historical installer, module, packet, and companion reports remain historical
+evidence and do not establish the current verdict.

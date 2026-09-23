@@ -1,20 +1,20 @@
 ---
 id: ADP-preserve-security-install-target
 area: ADP
-title: Preserve the target when security installation succeeds or fails
+title: Preserve project state when adding optional security skills
 persona: Workflow adopter
 journey: J-enable-external-security-skills
-expected: Guided installation preserves consumer-owned files byte-for-byte, treats modified security skill destinations as conflicts, and restores all security paths and adoption state after publication failure.
-entry_points: README.md#recommended-companion-skills-and-tools; npx skills add antoniofulg/security-lifecycle --agent '*' --copy --yes; skills-lock.json
-qa_status: untested
+expected: Installing a selected security-lifecycle skill through the Skills CLI changes only the selected skill scope and leaves existing project files unchanged.
+entry_points: README.md#recommended-companion-skills-and-tools; npx skills add antoniofulg/security-lifecycle --agent '*' --copy --yes
+qa_status: skipped
 bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence: docs/qa/evidence/2026-08-22-external-security-skills/session.md
-last_report: docs/qa/reports/2026-08-22-external-security-skills.md
-overlaps:
+evidence:
+last_report:
+overlaps: ADP-separate-external-security-skills
 ---
 
-Owns the user-observable preservation, conflict, and rollback outcomes for optional security paths.
-Prior standalone-installer evidence remains historical.
+Retired: the previous scenario exercised rollback inside the removed WTK npm installer. Companion
+skill installation now belongs to the Skills CLI and its own upstream contract.

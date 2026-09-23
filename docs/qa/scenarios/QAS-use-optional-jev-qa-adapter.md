@@ -11,22 +11,12 @@ bug_ids:
 fix_status:
 retest_status:
 fix_commits:
-evidence: docs/qa/evidence/2026-09-19-default-jev-auto-qa/package-summary.json; docs/qa/evidence/2026-09-19-default-jev-auto-qa/config-reader-matrix.json; docs/qa/evidence/2026-09-19-default-jev-auto-qa/installed-readback.json; docs/qa/evidence/2026-09-19-default-jev-auto-qa/preflight-results.json
-last_report: docs/qa/reports/2026-09-19-default-jev-auto-qa.md
-overlaps: ADP-install-versioned-workflow-package; ADP-layered-workflow-adoption
+evidence:
+last_report:
+overlaps: ADP-install-versioned-workflow-package
 ---
 
-This promise covers the default browser route and the packaged safety boundary. An absent setting
-resolves to `auto`, which starts with Jev for eligible non-consequential fixtures. Automatic
-continuation requires Jev unavailability or a typed pre-action timeout plus independently known
-fixture state; any possible action requires inspection or reset. A matching independent readback
-after reload remains the only source of a QA pass.
-
-The 2026-09-19 report remains evidence for the earlier package-only promise. This checkout has no
-consumer fixture app, browser, Jev runtime, Browser Harness, or live Playwright MCP, so this updated
-promise stays `untested` until a consumer-level walk verifies the automatic route and verdict.
-
-The default-`auto` offline cycle recorded in `2026-09-19-default-jev-auto-qa.md` passes the exact
-package, two-reader config matrix, adoption preservation, installed-policy readback, and fail-closed
-preflight legs. It does not supersede the earlier package-only evidence and does not convert the
-unwalked live Jev, safe-timeout, no-replay, or independent browser-oracle legs into a pass.
+This promise is consumer-owned. Install the selected WTK QA skill through the Skills CLI, run it
+against the project's declared adapter, and retain the safe-timeout, no-replay, independent-readback,
+and reload rules. The source repository has no consumer fixture, browser, Jev runtime, or live
+Playwright MCP, so this scenario remains untested until a consumer QA walk exists.
