@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Workflow Toolkit now ships as a complete 12-skill set through the Skills CLI. Install it with
+  `npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-deep-review wtk-discover wtk-implement
+  wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship
+  --agent '*' --copy --yes`.
+- Consuming projects own native Claude, Codex, or Cursor agent model and effort metadata. WTK no
+  longer owns a project TOML configuration, provider packet templates, or generated agent packets.
+- Security lifecycle skills remain optional companion choices and are not bundled in the WTK set.
+
+### Migration
+
+- Existing adopters can run `node scripts/migrate.js --root <project>` to preview the one-time
+  cleanup, then repeat with `--apply` after reviewing the verified actions, before installing the
+  12-skill set.
+
 ## [1.4.1] - 2026-09-22
 
 ### Changed

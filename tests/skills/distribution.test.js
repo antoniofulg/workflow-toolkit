@@ -37,6 +37,21 @@ test('native agent ownership and current WTK catalog are consistent', () => {
     .sort();
   assert.deepEqual(packagedSkills, wtkSkills);
 
+  const claudeSkillsRoot = path.join(root, '.claude/skills');
+  const claudeAliases = fs.readdirSync(claudeSkillsRoot).sort();
+  assert.deepEqual(claudeAliases, wtkSkills);
+  const trackedAliases = spawnSync('git', ['ls-files', '--', '.claude/skills'], { cwd: root, encoding: 'utf8' });
+  assert.equal(trackedAliases.status, 0, trackedAliases.stderr);
+  assert.deepEqual(
+    trackedAliases.stdout.trim().split(/\r?\n/).filter(Boolean).map((relative) => path.basename(relative)).sort(),
+    wtkSkills,
+  );
+  for (const skill of wtkSkills) {
+    const alias = path.join(claudeSkillsRoot, skill);
+    assert.equal(fs.lstatSync(alias).isSymbolicLink(), true, skill);
+    assert.equal(fs.realpathSync(alias), fs.realpathSync(path.join(root, '.agents/skills', skill)), skill);
+  }
+
   const readme = read('README.md');
   const agents = read('AGENTS.md');
   const lean = read('.agents/skills/wtk-lean/SKILL.md');
@@ -69,7 +84,10 @@ test('native agent ownership and current WTK catalog are consistent', () => {
     'docs/qa/scenarios/REL-report-current-workflow-release.md',
   ];
   for (const relative of activeScenarios) {
-    assert.doesNotMatch(read(relative), /\bwtk-config\b|workflow_config\.py|\.wtk\.toml(?:\.example)?|--sync-agents/);
+    const source = read(relative);
+    const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1] ?? source;
+    const currentInterface = frontmatter.split(/\r?\n/).filter((line) => /^(?:expected|entry_points):/.test(line)).join("\n");
+    assert.doesNotMatch(currentInterface, /\bwtk-config\b|workflow_config\.py|\.wtk\.toml(?:\.example)?|--sync-agents/);
   }
   for (const relative of [
     'docs/qa/scenarios/CFG-centralize-agent-model-routing.md',

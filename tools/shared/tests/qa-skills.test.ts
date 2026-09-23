@@ -1035,6 +1035,9 @@ describe("adoption and public setup", () => {
       /^Version-neutral owner for public release consistency\. For release `(\d+\.\d+\.\d+)`/m,
     )?.[1];
     const latestHeading = changelog.match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1];
+    const unreleasedStart = changelog.indexOf("## [Unreleased]");
+    const firstRelease = changelog.indexOf("\n## [", unreleasedStart + 1);
+    const unreleased = changelog.slice(unreleasedStart, firstRelease === -1 ? undefined : firstRelease).replace(/\s+/g, " ");
     const releaseStart = changelog.indexOf(`## [${manifest.version}]`);
     const nextRelease = changelog.indexOf("\n## [", releaseStart + 1);
     const latestRelease = changelog.slice(releaseStart, nextRelease === -1 ? undefined : nextRelease);
@@ -1050,6 +1053,12 @@ describe("adoption and public setup", () => {
     expect(currentScenarioVersion).toBe(manifest.version);
     expect(releaseScenario.match(/^expected: (.+)$/m)?.[1]?.trim().length).toBeGreaterThan(0);
     expect(latestRelease).not.toContain("npx wtk install");
+    expect(unreleased).toContain("complete 12-skill set through the Skills CLI");
+    expect(unreleased).toContain("npx skills add antoniofulg/workflow-toolkit");
+    expect(unreleased).toContain("Security lifecycle skills remain optional companion choices");
+    expect(unreleased).toContain("node scripts/migrate.js --root <project>");
+    expect(unreleased).not.toMatch(/npx workflow-toolkit(?:@[^ ]+)? install/);
+    expect(unreleased).not.toContain("install_security_skills");
 
     const pack = spawnSync(process.execPath, ["pm", "pack", "--dry-run", "--ignore-scripts"], {
       cwd: repositoryRoot,
