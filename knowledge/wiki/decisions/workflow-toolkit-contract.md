@@ -37,7 +37,7 @@ sources:
   - id: artifact-lifecycle
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact Lifecycle
-    last_modified: 2026-09-12
+    last_modified: 2026-09-13
   - id: upstream-pin
     resource: ../../../.agents/skills/wtk-lean/.skill-meta.json
     title: Lean skill upstream source metadata
