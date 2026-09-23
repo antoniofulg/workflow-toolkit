@@ -73,5 +73,6 @@ The project's declared budget is 200k tokens. Pre-edit `wc -c / 4` arithmetic me
 507,883 bytes / 4 ≈ 126,971 tokens; S2 at 45,897 / 4 ≈ 11,474; and S3 at 376,854 / 4 ≈ 94,214.
 The cumulative estimate is 930,634 bytes / 4 ≈ 232,659 tokens, above 200k. The proposed
 whole-slice cut is after S2: S1+S2 = 553,780 bytes / 4 = 138,445 tokens; S3 ≈ 94,214.
-Mechanism: pending user choice between sequential handoff
-and one builder with accepted compaction risk. No product code starts until that choice is recorded.
+Mechanism: sequential whole-slice handoff after S2, chosen by the user. The first builder owns
+S1+S2 (≈138,445 tokens); a fresh builder takes S3 (≈94,214 tokens) only after S1+S2 proofs are
+green and committed. The coordinator owns the handoff and final independent verification.
