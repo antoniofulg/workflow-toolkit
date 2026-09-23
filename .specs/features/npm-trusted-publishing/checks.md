@@ -69,7 +69,7 @@ Evidence: there is no existing `.github/workflows/` publication owner, while `to
 ## Handoff
 
 - One builder owns S1. Initial owned context is the plan (~8 KB), package manifest (~3 KB), existing release tests (~50 KB), and new workflow/test/docs estimated under 20 KB: under 81 KB total, about 21k tokens at `bytes / 4`, below the 150k budget.
-- Go-live dependency: npm package owner must configure trusted publishing for `antoniofulg/workflow-toolkit`, workflow filename `publish.yml`, and direct `npm publish` permission after that workflow lands on `main`. Do not submit the current npm form until the workflow exists there.
+- Go-live dependency: the package owner reports that trusted publishing for `antoniofulg/workflow-toolkit`, workflow filename `publish.yml`, and direct `npm publish` permission was configured after the placeholder workflow landed on `main`; independent npm readback and the first live OIDC publication remain pending.
 - Verification limit: local tests can prove event guards, package identity, and publish configuration; only the first future unpublished release can prove npm's live OIDC exchange and provenance.
 - **Boundary:** C1-C7 closed by the implementation commit; independent verification remains pending.
 - **Settled mid-build:** Release identity validation runs before npm CLI and dependency installation.

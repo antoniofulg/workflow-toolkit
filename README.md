@@ -314,9 +314,10 @@ after installation. The package identity for this release is `workflow-toolkit@1
 ## Publish a package release
 
 Publishing a stable GitHub release starts the package publication workflow from the exact release
-tag. The workflow at `.github/workflows/publish.yml` validates the tag, checks that its commit is
-reachable from `main`, confirms the manifest version, runs the frozen full gate, and then publishes
-with npm's OIDC trusted publisher and provenance. Prereleases are skipped.
+tag. The workflow at `.github/workflows/publish.yml` binds checkout to the immutable release event
+commit, verifies that the tag still points to that commit and that it is reachable from `main`,
+confirms the manifest version, runs the frozen full gate, and then publishes with npm's OIDC trusted
+publisher and provenance. Prereleases are skipped.
 
 Before the first automated publication, the package owner must add a GitHub Actions trusted publisher
 for organization or user `antoniofulg`, repository `workflow-toolkit`, and workflow filename
