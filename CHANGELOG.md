@@ -4,18 +4,78 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-23
+
 ### Changed
 
-- Workflow Toolkit now ships as a complete 12-skill set through the Skills CLI. Install it with
-  `npx skills add antoniofulg/workflow-toolkit --skill wtk wtk-deep-review wtk-discover wtk-implement
-  wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute wtk-qa-plan wtk-reuse-review wtk-ship
-  --agent '*' --copy --yes`.
-- Consuming projects own native Claude, Codex, or Cursor agent model and effort metadata. WTK no
-  longer owns a project TOML configuration, provider packet templates, or generated agent packets.
-- Security lifecycle skills remain optional companion choices and are not bundled in the WTK set.
-- Removed Jev advisory calls and the Jev QA browser adapter. QA `auto` now starts with Playwright
-  MCP, then uses one available IDE-native adapter, then manual verification.
-- Removed the one-time legacy installer migration helper and the source-only gate cache.
+- Workflow Toolkit now ships as one complete set of 12 `wtk*` skills through a skill installer.
+  Use the [README installation command](README.md#install-the-skills); WTK no longer publishes an
+  npm installer.
+- Projects own their instructions, native agent model and effort settings, tests, and QA records.
+  WTK no longer manages provider packets or a `.wtk.toml` configuration.
+- Ponytail, security lifecycle, and other companion skills are recommended independently rather
+  than bundled with WTK.
+- Deep Review runs on demand, QA `auto` starts with Playwright MCP, and remediation stops after
+  three consecutive stalls by default.
+
+### Removed
+
+- Retired the package installer, `wtk-config`, Jev integrations, legacy migration helper, source
+  documentation and feature archives, and the source-only gate cache.
+
+### Upgrade
+
+- Projects installed through the old package can follow [CLEANUP.md](CLEANUP.md) to remove only
+  verified installer-owned files while preserving project documentation, QA records, and `.specs/`.
+
+## [1.4.5] - 2026-09-23
+
+### Fixed
+
+- The guided install CLI now treats readline close as cancellation even when a pending question
+  does not resolve, preserving the no-write cancellation promise on Linux and macOS.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.5 install` to update an adopted project. No new skill selection is
+  required for this release.
+
+## [1.4.4] - 2026-09-23
+
+### Fixed
+
+- The packed installer cancellation probe sends PTY control signals without an extra carriage
+  return, so its unchanged cancellation and residue assertions work on macOS and Linux.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.4 install` to update an adopted project. No new skill selection is
+  required for this release.
+
+## [1.4.3] - 2026-09-22
+
+### Fixed
+
+- The GitHub Actions publishing runner installs `expect` before the existing installer test gate,
+  allowing trusted publishing to proceed when all tests pass.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.3 install` to update an adopted project. No new skill selection is
+  required for this release.
+
+## [1.4.2] - 2026-09-22
+
+### Changed
+
+- Stable GitHub releases publish the tested package through npm trusted publishing, with test
+  execution separated from npm publishing authority.
+- The npm package now has a clear description and links to its GitHub source page.
+
+### Migration
+
+- Run `npx workflow-toolkit@1.4.2 install` to update an adopted project. No new skill selection is
+  required for this release.
 
 ## [1.4.1] - 2026-09-22
 

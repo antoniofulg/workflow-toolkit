@@ -34,7 +34,7 @@ afterEach(() => {
 // Each dedicated knowledge case shells out to `bun run knowledge`, so it pays Bun startup on top
 // of the check itself. The timeout is generous on purpose: a regression here should
 // read as a failed assertion, never as a flaky clock.
-describe("bun run knowledge", { timeout: 30_000 }, () => {
+describe("bun run knowledge", () => {
   it("keeps repository-bundle validation out of the full structural gate", () => {
     const manifest = JSON.parse(
       readFileSync(join(repositoryRoot, "package.json"), "utf8"),
@@ -55,7 +55,7 @@ describe("bun run knowledge", { timeout: 30_000 }, () => {
 
     expect(result.status).not.toBe(0);
     expect(result.stderr).toContain("knowledge/wiki/domain/sample-term.md");
-  });
+  }, 30_000);
 
   it("exits 0 when only gaps remain, since a gap is work to do rather than a defect", () => {
     const root = makeBundle({
@@ -67,5 +67,5 @@ describe("bun run knowledge", { timeout: 30_000 }, () => {
 
     expect(result.status).toBe(0);
     expect(`${result.stdout}${result.stderr}`).toContain("AD-001");
-  });
+  }, 30_000);
 });

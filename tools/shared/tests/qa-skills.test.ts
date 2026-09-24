@@ -149,7 +149,7 @@ function documentedBunScripts(
   const scripts = new Set<string>();
   for (const relativePath of activeAuthorityPaths(paths)) {
     for (const match of read(relativePath).matchAll(/\bbun run ([A-Za-z0-9][A-Za-z0-9:_-]*)\b/g)) {
-      scripts.add(match[1]);
+      scripts.add(match[1]!);
     }
   }
   return [...scripts].sort();
@@ -344,7 +344,7 @@ describe("canonical QA skills", () => {
       ".agents/skills/wtk/references/evidence.md",
     ]) {
       const links = [...readRepositoryFile(owner).matchAll(/\[[^\]]+\]\(([^)]+)\)/g)]
-        .map((match) => resolve(repositoryRoot, dirname(owner), match[1]));
+        .map((match) => resolve(repositoryRoot, dirname(owner), match[1]!));
       expect(links).toContain(resolve(repositoryRoot, reference));
     }
   });
@@ -859,10 +859,11 @@ describe("adoption and public setup", () => {
     expect(existsSync(join(repositoryRoot, "package-lock.json"))).toBe(false);
     expect(latestHeading).toBe(manifest.version);
     expect(latestRelease).not.toContain("npx wtk install");
-    expect(unreleased).toContain("complete 12-skill set through the Skills CLI");
-    expect(unreleased).toContain("npx skills add antoniofulg/workflow-toolkit");
-    expect(unreleased).toContain("Security lifecycle skills remain optional companion choices");
-    expect(unreleased).toContain("Removed the one-time legacy installer migration helper");
+    expect(latestRelease).toContain("complete set of 12 `wtk*` skills");
+    expect(readRepositoryFile("README.md")).toContain("npx skills add antoniofulg/workflow-toolkit");
+    expect(latestRelease).toContain("Ponytail, security lifecycle, and other companion skills");
+    expect(latestRelease).toContain("Retired the package installer");
+    expect(latestRelease).toContain("CLEANUP.md");
     expect(unreleased).not.toMatch(/npx workflow-toolkit(?:@[^ ]+)? install/);
     expect(unreleased).not.toContain("install_security_skills");
 
