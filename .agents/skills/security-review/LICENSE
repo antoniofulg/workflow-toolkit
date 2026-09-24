@@ -1,9 +1,0 @@
-Security Review documentation is licensed under Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
-https://creativecommons.org/licenses/by-sa/4.0/legalcode
-
-Copyright 2026 security-lifecycle contributors.
-Modified synthesis of Sentry/OWASP and GitHub Awesome Copilot.
-Preserve THIRD_PARTY_NOTICES.md and the upstream texts bundled in licenses/.
-Upstream MIT and Apache notices remain applicable to incorporated material.
-The agents/openai.yaml metadata is licensed under Apache-2.0 (licenses/Apache-2.0.txt).

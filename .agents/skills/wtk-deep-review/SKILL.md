@@ -11,8 +11,6 @@ Review at CodeRabbit grade with bounded, assertive posture: funnel the diff, dis
 
 Steps 1–4 drive an idempotent artifact pipeline under `<out>`: every stage gate is a bundled-script exit 0, valid agent outputs are never re-run, and an interrupted round resumes by re-running the same commands.
 
-For semantic review and triage decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 `<skill-dir>` below means the directory containing this SKILL.md; run every bundled command from the repo root.
 
 ## Inputs (all optional)
@@ -59,7 +57,7 @@ The manifest builder resolves `path_filters` into manifest.json; the knowledge s
 - Cite rubric rules verbatim with their source path; severity comes from the taxonomy, never inflated.
 - Publishing needs `--publish` or the user's explicit go-ahead in this session; otherwise the review stays local.
 - Every review ends with a **SHIP / FIX_BEFORE_SHIP / REWORK** verdict derived by render_review.py and stated only after that script exits 0.
-- `FIX_BEFORE_SHIP` is actionable, not a prompt for approval: in an approved loop, follow `docs/toolkit/guidelines/REVIEW-ROUNDS.md`: fix every defect from its Repair plan, run the scoped gate, then the remediation check below, until no Critical/Major is open or `stall_attempts` halts.
+- `FIX_BEFORE_SHIP` is actionable, not a prompt for approval: in an approved loop, follow `../wtk/references/review-rounds.md`: fix every defect from its Repair plan, run the scoped gate, then the remediation check below, until no Critical/Major is open or `stall_attempts` halts.
 - Optional metrics snapshot provider totals and cumulative checkpoints without changing dispatch,
   retries, outputs, or exits. The main thread records serialized cumulative checkpoints without
   per-job token attribution; totals finalize only after the full scope completes. Hosts without a

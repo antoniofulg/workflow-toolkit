@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Spec"
-  short_description: "Security requirements and negative tests"
-  default_prompt: "Use $security-spec to define this feature's security contract."

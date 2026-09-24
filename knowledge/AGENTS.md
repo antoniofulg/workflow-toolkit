@@ -13,13 +13,13 @@ evolve with use.
 **Knowledge flows into the bundle. It never flows out.**
 
 ```
-CONTEXT.md, docs/, .specs/  ──ingest──>  knowledge/
+README.md, .agents/skills/, Git history  ──ingest──>  knowledge/
 ```
 
-The bundle never writes back to `.specs/`, and no tool outside this directory is modified to serve
+The bundle never writes back to its sources, and no tool outside this directory is modified to serve
 it. Workflow Toolkit's `wtk` router and `wtk-*` skills do not know this bundle exists and must not
-be taught to. `.specs/STATE.md`, `.specs/features/<f>/`,
-`.specs/lessons.json` and `.specs/LESSONS.md` stay exactly where the skill expects them.
+be taught to. This source repository has no `.specs/` tree; historical decisions remain available
+at the immutable Git revisions cited by concepts. Consuming projects own their own `.specs/` state.
 
 When the bundle and a source disagree, **the source wins** and the concept is corrected. A previous
 attempt at this — `docs/obsidian/` — died precisely because no rule said which side was right, and
@@ -78,8 +78,8 @@ verified: { by: human:name, at: 2026-08-08T14:00:00Z }
 stale_after: 2027-08-08
 sources:
   - id: state-ad-001
-    resource: ../../../.specs/STATE.md
-    title: STATE.md — AD-001
+    resource: git:<commit>:.specs/STATE.md
+    title: Historical STATE.md — AD-001
     last_modified: 2026-08-08
 ---
 ```
@@ -136,7 +136,7 @@ concept.
 A tension belonging to one concept is recorded **inside** that concept, not extracted into an
 `Open Question`. The type exists for the ones that belong to nothing in particular. An
 `Open Question` never answers itself: the answer is a decision, and decisions belong in
-`.specs/STATE.md`.
+the consuming project's decision store.
 
 ### Sources and citations
 
@@ -196,8 +196,8 @@ or a batch at once — whichever the user prefers, recorded here once it settles
 ### HARVEST
 
 The project's own artefacts are sources like any other. Run the knowledge checker (`bun run knowledge`
-in this pack); its gap report names what has accumulated in `.specs/` without a concept, and its
-drift report names what changed underneath a concept that already exists.
+in this pack); its gap report names what has accumulated in a project's `.specs/` without a concept,
+and its drift report names what changed underneath a concept that already exists.
 
 Drift is measured against git, so it only speaks about committed sources. A source added to `raw/`
 and cited in the same commit reports nothing, which is right — it has not drifted from anything
@@ -206,14 +206,14 @@ yet. The signal starts the moment that source changes again.
 Harvest at the granularity of a finished feature, not a finished task. Most tasks produce no durable
 knowledge.
 
-A harvested concept must not restate its source. `.specs/STATE.md` is a flat, append-only ledger:
-one entry per decision, no links. The bundle holds what the ledger structurally cannot — which
-requirements a decision constrains, which invariant it follows from, which alternative it killed.
+A harvested concept must not restate its source. The historical `.specs/STATE.md` was a flat,
+append-only ledger: one entry per decision, no links. The bundle holds what the ledger structurally
+cannot — which requirements a decision constrains, which invariant it follows from, which alternative it killed.
 If a concept only repeats the ledger, it is duplication and should not exist.
 
-Never harvest `.specs/features/<f>/tasks.md` — it is runner state. Never harvest `.specs/LESSONS.md`
-or `.specs/lessons.json` — they declare themselves machine-owned and are rewritten by their own
-script.
+In a consuming project, never harvest `.specs/features/<f>/tasks.md` — it is runner state. Never
+harvest `.specs/LESSONS.md` or `.specs/lessons.json` — they are machine-owned and rewritten by their
+own script.
 
 ### QUERY
 

@@ -859,9 +859,9 @@ class TokenMetricsTests(unittest.TestCase):
         markdown_free = re.sub(r"[^a-z0-9]+", " ", skill.lower() + orchestration.lower())
         self.assertNotRegex(markdown_free, r"\bgraft\s+(?:true|false)\b")
         manifest = json.loads((REPO / "package.json").read_text(encoding="utf-8"))
-        self.assertEqual(manifest["devDependencies"]["@nanonets/graft"], "0.10.1")
-        self.assertEqual(manifest["scripts"]["review:graft:build"], "graft build")
-        self.assertEqual(manifest["scripts"]["review:graft:version"], "graft --version")
+        self.assertNotIn("@nanonets/graft", manifest.get("devDependencies", {}))
+        self.assertNotIn("review:graft:build", manifest.get("scripts", {}))
+        self.assertNotIn("review:graft:version", manifest.get("scripts", {}))
 
     def test_drm06_build_jobs_wires_graft_context_and_dot_fallback(self) -> None:
         (REPO / ".wtk-deep-review").mkdir(exist_ok=True)

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Audit Coordinator"
-  short_description: "Coverage-led whole-codebase security audits"
-  default_prompt: "Use $security-audit-coordinator to run a coverage-led audit of this codebase."

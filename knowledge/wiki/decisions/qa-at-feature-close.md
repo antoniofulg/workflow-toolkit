@@ -11,20 +11,20 @@ sources:
     title: Maintainer decision on delivery speed and PR #98
     last_modified: 2026-09-10
   - id: review-rounds
-    resource: ../../../docs/toolkit/guidelines/REVIEW-ROUNDS.md
+    resource: ../../../.agents/skills/wtk/references/review-rounds.md
     title: Review Rounds — stage table
-    last_modified: 2026-09-12
+    last_modified: 2026-09-23
   - id: qa-execution
-    resource: ../../../docs/toolkit/guidelines/QA-EXECUTION.md
+    resource: ../../../.agents/skills/wtk-qa-execute/references/qa-execution.md
     title: QA Execution — when QA runs
-    last_modified: 2026-09-12
+    last_modified: 2026-09-23
   - id: state-ad-002
-    resource: ../../../.specs/STATE.md
+    resource: git:8ef07ba74cb1eb3c80e0d1678911d86bad9bd7a7:.specs/STATE.md
     title: STATE.md — AD-002
   - id: state-ad-036
-    resource: ../../../.specs/STATE.md
+    resource: git:8ef07ba74cb1eb3c80e0d1678911d86bad9bd7a7:.specs/STATE.md
     title: STATE.md — AD-036
-    last_modified: 2026-09-12
+    last_modified: 2026-09-23
 ---
 
 # QA at feature close

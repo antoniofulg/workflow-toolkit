@@ -26,7 +26,7 @@ differences between domains, runtime constraints, and independently deployed ser
 syntax alone is not a reason to extract a common abstraction. Keep validation and authorization
 at every trust boundary that requires them; centralizing a rule does not remove enforcement.
 
-For frontend work, follow [component organization](../../../../docs/toolkit/guidelines/FRONTEND.md#component-script)
+For frontend work, follow [component organization](frontend.md#component-script)
 and the consuming project's design system. Trace repeated UI patterns to their components,
 tokens, styles, and supported variants. Page-local overrides must express a required difference;
 an override that recreates the shared treatment defeats reuse. Check corresponding states and
@@ -34,7 +34,7 @@ viewports across affected pages; a shared import does not establish visual consi
 
 For backend work, trace callers through domain rules, policies, transformations, services, and
 data access. Keep each shared decision with its owning module; use adapters for transport or
-persistence differences. Apply [modeling guidance](../../../../docs/toolkit/guidelines/MODELING.md)
+persistence differences. Apply [modeling guidance](modeling.md)
 when its boundary or domain-type trigger applies.
 
 ## Change and verify

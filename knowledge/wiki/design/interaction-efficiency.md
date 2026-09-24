@@ -8,13 +8,13 @@ sources:
     title: Interaction efficiency — maintainer report and decision
     last_modified: 2026-09-09
   - id: ui-contract
-    resource: ../../../docs/toolkit/guidelines/UI-UX.md
+    resource: ../../../.agents/skills/wtk/references/ui-ux.md
     title: UI/UX Surface Map
   - id: test-contract
     resource: ../../../.agents/skills/wtk/references/test-contract.md
     title: Test Contract
   - id: qa-scenarios
-    resource: ../../../docs/toolkit/guidelines/QA-SCENARIOS.md
+    resource: ../../../.agents/skills/wtk-qa/references/qa-scenarios.md
     title: QA Scenarios
 ---
 

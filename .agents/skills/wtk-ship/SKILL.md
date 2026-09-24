@@ -9,8 +9,6 @@ argument-hint: "[the work, in your own words]"
 
 Deliver the requested branch using the scope rules in `.agents/skills/wtk/references/validation.md`.
 
-For semantic shipping decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 At delivery start, read [execution metrics](../wtk/references/execution-metrics.md). Reuse collected
 stage receipts and append the footer at the authorized stopping point; missing usage is not a gate.
 
@@ -27,7 +25,8 @@ feature work or a substantive change whose named risk requires that scope.
 An active Lean feature has `.specs/features/<feature>/plan.md`, `checks.md`, and independent
 `verification.md`. The following steps apply to that feature scope.
 
-Resolve or resume the provider route through `.agents/skills/wtk-config/SKILL.md` before dispatch.
+Resolve or resume the provider route through `.agents/skills/wtk-lean/scripts/workflow_route.py`
+when a feature snapshot is required. Native agent files remain project-owned.
 
 1. Confirm the feature's verification report passes the profile recorded in `checks.md` by running
    `.agents/skills/wtk-lean/scripts/validate_verification.py <feature>`.

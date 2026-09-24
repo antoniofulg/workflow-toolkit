@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Implementation"
-  short_description: "Secure implementation by security surface"
-  default_prompt: "Use $security-implementation to implement this change with secure defaults."

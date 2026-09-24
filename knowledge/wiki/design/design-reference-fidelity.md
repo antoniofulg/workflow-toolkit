@@ -8,11 +8,11 @@ sources:
     title: Design tool HTML exports — maintainer observation
     last_modified: 2026-09-07
   - id: ui-contract
-    resource: ../../../docs/toolkit/guidelines/UI-UX.md
+    resource: ../../../.agents/skills/wtk/references/ui-ux.md
     title: UI/UX Surface Map
-    last_modified: 2026-09-09
+    last_modified: 2026-09-23
   - id: frontend-ownership
-    resource: ../../../docs/toolkit/guidelines/FRONTEND.md
+    resource: ../../../.agents/skills/wtk/references/frontend.md
     title: Front-End Engineering
   - id: scoped-validation
     resource: ../../../.agents/skills/wtk/references/validation.md

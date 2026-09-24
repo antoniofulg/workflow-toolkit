@@ -4,6 +4,30 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-23
+
+### Changed
+
+- Workflow Toolkit now ships as one complete set of 12 `wtk*` skills through a skill installer.
+  Use the [README installation command](README.md#install-the-skills); WTK no longer publishes an
+  npm installer.
+- Projects own their instructions, native agent model and effort settings, tests, and QA records.
+  WTK no longer manages provider packets or a `.wtk.toml` configuration.
+- Ponytail, security lifecycle, and other companion skills are recommended independently rather
+  than bundled with WTK.
+- Deep Review runs on demand, QA `auto` starts with Playwright MCP, and remediation stops after
+  three consecutive stalls by default.
+
+### Removed
+
+- Retired the package installer, `wtk-config`, Jev integrations, legacy migration helper, source
+  documentation and feature archives, and the source-only gate cache.
+
+### Upgrade
+
+- Projects installed through the old package can follow [CLEANUP.md](CLEANUP.md) to remove only
+  verified installer-owned files while preserving project documentation, QA records, and `.specs/`.
+
 ## [1.4.5] - 2026-09-23
 
 ### Fixed

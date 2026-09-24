@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Threat Model"
-  short_description: "Evidence-based architectural threat modeling"
-  default_prompt: "Use $security-threat-model to model threats to this system."

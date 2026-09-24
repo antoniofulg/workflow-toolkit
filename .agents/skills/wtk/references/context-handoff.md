@@ -32,8 +32,9 @@ After compaction or on resume, the current agent:
 1. Reloads applicable instructions and the active contract/checks, cited decisions and handoff.
 2. Reconciles branch, HEAD, working diff and check status with recorded evidence. Git establishes
    code state, not human approval. Mark stale or unsupported claims instead of inventing history.
-3. Preserves the active feature's frozen route using [configuration resume](../../wtk-config/SKILL.md#resume);
-   a changed `.wtk.toml` does not silently replace it.
+3. Preserves the active feature's frozen route using the project-owned
+   `../../wtk-lean/scripts/workflow_route.py` resume path; native model and effort settings stay
+   in the project's agent files.
 4. States the recovered objective, binding constraints, unresolved approvals, blocked work and next
    authorized action, with artifact references. Continue when that action's prerequisites are proven;
    this statement is not a request to repeat existing approval.

@@ -13,8 +13,6 @@ Run a decided feature through four moves: `PLAN → CHECKS → BUILD → VERIFY`
 feature shape before checks freeze its obligations; builders choose reversible implementation detail;
 one fresh Verifier proves the complete feature. There is no task breakdown or component catalogue.
 
-For semantic Lean decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 At execution or verification start, read [execution metrics](../wtk/references/execution-metrics.md);
 include the assigned stage receipt in handoffs so the coordinator can report the delivery breakdown.
 
@@ -128,6 +126,21 @@ The validators own structural detail: `validate_plan.py` closes the human-review
 `validate_verification.py` requires evidence, no surviving mutant, no `Unproven` member, and a
 non-author Verifier. Run `selftest.py` only after changing a validator or template. If execution is
 unavailable, perform the same checks by inspection and report the degraded path.
+
+## Project-owned route
+
+When a feature needs a persisted handoff route, resolve it from the consuming project's native
+agent files:
+
+```bash
+python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
+  --root . --feature <feature-slug> --native-provider <claude|codex|cursor>
+```
+
+The route records provider and native agent-file identity, derives the approved verification
+profile, keeps Deep Review on demand by default, and keeps the Lean builder sequential. It never
+reads or writes `.wtk.toml`, model or effort metadata, or generated provider packets. Projects own
+those native files and choose their model and effort settings there.
 
 ## Sub-agents and handoff
 

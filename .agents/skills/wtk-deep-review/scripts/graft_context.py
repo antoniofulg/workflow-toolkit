@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-RI_SCRIPTS = Path(__file__).resolve().parents[2] / "wtk-config" / "scripts"
+RI_SCRIPTS = Path(__file__).resolve().parent
 if str(RI_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(RI_SCRIPTS))
 

@@ -40,8 +40,8 @@ Feature verification still accounts for every approved check, using fresh or dem
 evidence. Feature close, review remediation and delivery do not automatically require a full gate.
 Full gates follow the impact conditions below, including at initial feature close.
 
-For reference-driven UI, include the comparison required by `docs/toolkit/guidelines/UI-UX.md`. QA flags and journeys follow
-`docs/toolkit/guidelines/QA-SCENARIOS.md`; scenario tags scope walks, not automated tests.
+For reference-driven UI, include the comparison required by `references/ui-ux.md`. QA flags and journeys follow
+`../wtk-qa/references/qa-scenarios.md`; scenario tags scope walks, not automated tests.
 
 ## Run and reuse evidence
 
@@ -60,10 +60,8 @@ Reuse prior results only when tested code, relevant transitive dependencies, fix
 resolved dependency versions, command/selector and runtime inputs remain equivalent. Independently
 inspect recorded evidence and its inputs; an author's unsupported PASS is insufficient. Documentation,
 reports, evidence files, commits and branch names do not invalidate unrelated tests, but documents
-consumed as test inputs do. Keep existing cache invalidation rules: the current `gate_cache.py` keys
-the whole tree and does not implement impact-aware reuse. A cache miss is not a demand for a full gate.
-A cache hit still needs the runtime/input-equivalence checks above; otherwise run the selected
-command directly instead of treating that hit as valid evidence.
+consumed as test inputs do. A reused result still needs the runtime/input-equivalence checks above;
+otherwise run the selected command directly.
 
 After merging or rebasing main, examine the incoming delta as well as resolved conflicts, overlapping
 files and newly connected paths; disjoint files can still interact. Reuse unaffected evidence.
@@ -96,8 +94,6 @@ one sentence. No new report file or approval step is required.
 At completion, record command, `file -> dependency/boundary -> test`, result, reused evidence/baseline
 and real limitations in the existing handoff/report. Every affected invariant needs a green proof
 or an explicit unresolved limitation; every selected command needs an impact or coverage justification.
-
-Canonical cache invocation: `python3 tools/gate_cache.py run --gate <scoped|full> -- <gate command>`.
 
 Explicit user skips remain a narrow claim with the limitation recorded. Never weaken, skip or delete
 a test to obtain a pass, or describe a failed/unrun gate as passing. Knowledge checks run with bundle

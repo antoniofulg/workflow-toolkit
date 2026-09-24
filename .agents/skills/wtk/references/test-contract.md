@@ -21,7 +21,7 @@ infer a local mutation threshold from this guideline.
 1. **Derive, do not invent.** Every case maps to a spec acceptance criterion. Use components, error
    paths, boundaries, and journeys to find coverage gaps; if one reveals behavior absent from the
    spec, clarify the acceptance criterion before adding a case. Never create a case solely because a
-   component or boundary exists. Security cases also follow `docs/toolkit/guidelines/SECURITY.md` when its
+   component or boundary exists. Security cases also follow `security.md` when its
    condition fires.
 2. **Every claim names an exact input, condition, concrete value, and expected result.** "Test the
    happy path" is not a claim. "`POST` the create route with an unknown region returns 422 and no
@@ -95,6 +95,6 @@ string alone does not prove agent behavior.
 
 When a visual acceptance criterion names an approved reference, attach paired-capture evidence to the
 owning check or slice and point to its feature `uiux.md` row when present. Follow the method in
-`docs/toolkit/guidelines/UI-UX.md#verifying-the-built-screen` and record its output fields. A manual paired
+`ui-ux.md#verifying-the-built-screen` and record its output fields. A manual paired
 comparison is evidence, not an automated test, and never replaces behavioral cases. Add automated
 screenshot regression only when an actual visual invariant has an owning canonical suite.
