@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +38,7 @@ def test_router_is_thin_and_on_demand() -> None:
     assert len(router.splitlines()) <= 150
     assert "wtk-lean" in router and "wtk-discover" in router
     assert "wtk-deep-review" in router and "wtk-qa" in router and "wtk-ship" in router
+    assert "references/security.md" in router and "references/ui-ux.md" in router
     assert "Do not preload quality, UI, security" in router
     assert "A diagnosis with no unresolved product or architecture choice" in router
     assert "route to discovery merely because the cause is unknown" in router
@@ -51,12 +51,14 @@ def test_artifact_contracts_remain_distinct() -> None:
     implement = (SKILLS / "wtk-implement/SKILL.md").read_text(encoding="utf-8")
     lean = (SKILLS / "wtk-lean/SKILL.md").read_text(encoding="utf-8")
     assert ".design/<name>.md" in discover
+    assert "organised by **vertical slice**" in discover
     assert ".tasks/<name>.md" in plan
     assert ".checks/<feature>.md" in implement
     assert ".specs/features/<feature>/plan.md" in lean or ".specs/features/<feature>/plan.md" in (SKILLS / "wtk/SKILL.md").read_text(encoding="utf-8")
     assert ".specs/features/<feature>/plan.md" not in plan
     assert ".specs/features/<feature>/plan.md" not in implement
     assert "whole slices" in lean and "fresh Verifier" in lean
+    assert "A build agent never spawns another agent at all" in implement
 
 
 def test_native_route_owns_snapshots_without_config() -> None:
@@ -95,11 +97,6 @@ def test_ui_and_delivery_boundaries_stay_local() -> None:
     assert "feature branch push, one pull request, and merge" in ship
     assert re.search(r"deploy", ship, re.IGNORECASE)
     assert "force-push" in ship and "direct push to `main`" in ship
-
-
-def test_direct_script_execution_reports_success() -> None:
-    result = subprocess.run(["python3", str(ROOT / "tools/test_wtk_forward.py")], cwd=ROOT, text=True, capture_output=True)
-    assert result.returncode == 0, result.stderr
 
 
 if __name__ == "__main__":

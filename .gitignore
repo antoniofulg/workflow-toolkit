@@ -19,6 +19,3 @@ __pycache__/
 graft/
 graphify-out/
 .repository-intelligence/
-
-# Gate result cache records — regenerable (`tools/gate_cache.py`).
-.gate-cache/

@@ -10,7 +10,6 @@
     "bun": ">=1.4.0 <1.5.0"
   },
   "files": [
-    "scripts/migrate.js",
     "NOTICE.md",
     ".agents/skills/wtk",
     ".agents/skills/wtk-lean",

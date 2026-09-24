@@ -15,12 +15,7 @@ All notable changes to this project are documented here.
 - Security lifecycle skills remain optional companion choices and are not bundled in the WTK set.
 - Removed Jev advisory calls and the Jev QA browser adapter. QA `auto` now starts with Playwright
   MCP, then uses one available IDE-native adapter, then manual verification.
-
-### Migration
-
-- Existing adopters can run `node scripts/migrate.js --root <project>` to preview the one-time
-  cleanup, then repeat with `--apply` after reviewing the verified actions, before installing the
-  12-skill set.
+- Removed the one-time legacy installer migration helper and the source-only gate cache.
 
 ## [1.4.1] - 2026-09-22
 

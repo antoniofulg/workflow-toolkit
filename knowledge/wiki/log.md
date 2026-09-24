@@ -2,6 +2,8 @@
 
 ## 2026-09-23
 
+* **Maintenance**: Removed the retired installer migration and source-only gate cache; updated the [Workflow runtime ownership](/architecture/workflow-runtime-ownership.md) source boundary.
+
 * **Maintenance**: Removed the source checkout's `.specs/` tree and pinned historical decision citations to the last committed ledger revision. Consuming projects still own Lean feature state.
 
 * **Maintenance**: Removed the source checkout's `docs/` tree and repointed [Workflow runtime ownership](/architecture/workflow-runtime-ownership.md) to the public README; consumer projects still own their own QA records.

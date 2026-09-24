@@ -59,19 +59,6 @@ Projects also own native model and effort metadata in their Claude, Codex, or Cu
 WTK leaves those files unchanged. A feature route snapshot records only the active provider and
 role identities through `wtk-lean/scripts/workflow_route.py`.
 
-Projects that already adopted the retired installer can preview and apply the one-time cleanup
-from this source checkout before installing skills:
-
-```bash
-node scripts/migrate.js --root /path/to/project
-node scripts/migrate.js --root /path/to/project --apply
-```
-
-Preview lists every verified file, managed instruction block, link, and ignore entry it would
-remove. Apply backs up exact bytes and modes, refuses modified ownership, preserves surrounding
-project prose, and reports legacy workflow prose for manual review. It does not create a successor
-adoption manifest.
-
 Feature workflow state follows the [artifact lifecycle](.agents/skills/wtk/references/artifacts.md)
 and remains project-owned. The Lean builder runs sequentially, Deep Review is on demand with no
 automatic groups unless a feature requests it, and QA uses the `auto` adapter when the project has

@@ -862,7 +862,7 @@ describe("adoption and public setup", () => {
     expect(unreleased).toContain("complete 12-skill set through the Skills CLI");
     expect(unreleased).toContain("npx skills add antoniofulg/workflow-toolkit");
     expect(unreleased).toContain("Security lifecycle skills remain optional companion choices");
-    expect(unreleased).toContain("node scripts/migrate.js --root <project>");
+    expect(unreleased).toContain("Removed the one-time legacy installer migration helper");
     expect(unreleased).not.toMatch(/npx workflow-toolkit(?:@[^ ]+)? install/);
     expect(unreleased).not.toContain("install_security_skills");
 
@@ -878,7 +878,6 @@ describe("adoption and public setup", () => {
       ".agents/skills/wtk-deep-review/SKILL.md",
       ".agents/skills/wtk-ship/remediation.py",
       ".agents/skills/wtk/references/execution-metrics.md",
-      "scripts/migrate.js",
     ]) {
       expect(packOutput).toContain(requiredPath);
     }
@@ -901,16 +900,12 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_contract.py",
       "tools/test_deep_review_symlink_manifest.py",
       "tools/test_deep_review_token_metrics.py",
-      "tools/test_gate_cache.py",
       "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
       "tools/test_remediation.py",
       "tools/test_repository_intelligence.py",
       "tools/test_review_convergence.py",
       "tools/test_tlc_validators.py",
-      "tools/test_wtk_contract.py",
-      "tools/test_wtk_deep_review_contract.py",
-      "tools/test_wtk_forward.py",
       "tools/test_wtk_lifecycle.py",
     ];
     const pythonLoop = "git ls-files -- 'scripts/test_*.py' 'tools/test_*.py' | sort | while read test; do python3 \"$test\" || exit $?; done";

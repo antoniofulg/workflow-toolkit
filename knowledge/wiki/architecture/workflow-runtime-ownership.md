@@ -11,10 +11,6 @@ sources:
   - id: product-boundary
     resource: ../../../README.md
     title: Source-pack and consumer ownership boundary
-  - id: adoption-provenance
-    resource: ../../../scripts/migrate.js
-    title: One-time hash-verified legacy adoption cleanup
-    last_modified: 2026-09-23
   - id: state-ad-041
     resource: git:8ef07ba74cb1eb3c80e0d1678911d86bad9bd7a7:.specs/STATE.md
     title: STATE.md — AD-041
@@ -31,9 +27,8 @@ This policy applies to reusable workflow internals. Product context, local confi
 knowledge and approved design references have separate owners. The source pack must preserve that
 boundary.[^product-boundary]
 
-A directory name alone never grants deletion authority. The one-time legacy cleanup uses recorded
-hashes and leaves modified or unrelated product files safe. New skill installs have no WTK adoption
-manifest.[^consumer-footprint][^adoption-provenance][^state-ad-041]
+Installing WTK skills leaves project instructions, configuration, and unrelated files with the
+consuming project. New skill installs have no WTK adoption manifest.[^consumer-footprint][^state-ad-041]
 
 The [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md) changes the public
 namespace, planning artifacts, and execution topology without changing this ownership boundary.
@@ -45,5 +40,4 @@ generic installer scaffold merely because both may be called a template.
 
 [^consumer-footprint]: Approved observation and correction in the maintainer conversation.
 [^product-boundary]: The README gives consuming projects ownership of their instructions and product context.
-[^adoption-provenance]: The legacy migration helper validates recorded hashes before removing old owned files.
 [^state-ad-041]: The toolkit installs only skills and leaves project instructions and configuration with their owners.
