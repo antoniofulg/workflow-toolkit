@@ -42,6 +42,9 @@ executable.
 The full 12-skill WTK set is self-contained: its scripts, assets, and conditional references live
 below the distributed skill directories.
 
+Projects that used the retired package installer can follow the [legacy cleanup guide](CLEANUP.md)
+before installing the skills.
+
 ## Optional project instructions
 
 Installing a skill does not edit `AGENTS.md`, `CLAUDE.md`, `.gitignore`, project configuration, or
