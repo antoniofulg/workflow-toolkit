@@ -12,8 +12,6 @@ metadata:
 Use this entrypoint to select the smallest applicable Workflow Toolkit procedure. Keep the
 router loaded and load only the selected skill and its directly relevant references.
 
-For semantic decisions, follow [Jev-first guidance](references/jev-adviser.md) before choosing; phase entrypoints also link to it for direct invocation.
-
 For implementation through delivery, start [execution metrics](references/execution-metrics.md)
 before work or delegation; append its receipt to the final response, not a new repository artifact.
 

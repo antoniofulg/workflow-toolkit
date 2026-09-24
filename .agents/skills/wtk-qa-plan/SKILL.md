@@ -10,8 +10,6 @@ metadata:
 Plan a reviewable QA cycle for a user-visible change. Keep the plan stack-agnostic: the consuming
 project's operational profile chooses the public interface and adapter later.
 
-For semantic QA-planning decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 ## Provenance
 
 Author: Antonio Fulgêncio.

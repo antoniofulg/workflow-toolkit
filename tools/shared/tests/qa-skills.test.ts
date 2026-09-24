@@ -316,65 +316,21 @@ describe("canonical QA skills", () => {
     expect(qaExecute).toMatch(/identifying the new snapshot and resetting the environment/);
   });
 
-  it("IT-023 keeps Jev as a driver and the oracle independent", () => {
+  it("routes the configured QA browser adapter", () => {
     const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
     const session = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/references/session-protocol.md"));
 
-    expect(qaExecute).toContain("jev_adapter.py");
-    expect(qaExecute).toContain("completed/DONE result is driver evidence only");
-    expect(qaExecute).toContain("never a QA pass");
-    expect(qaExecute).toContain("independent read path and reload");
-    expect(qaExecute).toContain("does not provide a Playwright MCP, Orca Browser, or Maestri Portal bridge");
-    expect(session).toContain("independent read path and after a reload");
-  });
-
-  it("IT-027 routes the configured QA browser adapter", () => {
-    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
-    const jevAdapter = readRepositoryFile(".agents/skills/wtk-qa-execute/jev_adapter.py");
-
     expect(qaExecute).toContain("task-scoped QA adapter choice");
     expect(qaExecute).toContain("Without one, use auto");
-    for (const value of ["auto", "jev", "playwright-mcp", "orca", "maestri", "manual"]) {
+    for (const value of ["auto", "playwright-mcp", "orca", "maestri", "manual"]) {
       expect(qaExecute).toContain(value);
     }
-    expect(qaExecute).toMatch(/auto tries Jev first/);
-    expect(qaExecute).toContain("then LLM + Playwright MCP");
+    expect(qaExecute).toContain("auto tries LLM + Playwright MCP first");
     expect(qaExecute).toContain("exactly one IDE-native Orca or Maestri adapter");
     expect(qaExecute).toContain("Orca before Maestri");
     expect(qaExecute).toContain("A direct value selects only that adapter");
-    expect(qaExecute).toContain("jev-ultrafast is not a public alias");
-    expect(jevAdapter).toContain("from jev_ultrafast import Agent");
-  });
-
-  it("IT-028 forbids unsafe Jev replay", () => {
-    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
-    const jevAdapter = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/jev_adapter.py"));
-
-    expect(qaExecute).toContain("pre-action-timeout");
-    expect(qaExecute).toContain("fallback_safe: true");
-    expect(qaExecute).toContain("fallback_safe: false");
-    expect(qaExecute).toContain("fallback_adapter");
-    expect(qaExecute).toContain("Once Agent.run() starts, a timeout is unsafe to replay");
-    expect(qaExecute).toContain("stop and inspect or reset the fixture before another driver acts");
-    expect(jevAdapter).toContain("pre-action-timeout");
-    expect(jevAdapter).toContain("post-action-timeout");
-    expect(jevAdapter).toContain("ambiguous-timeout");
-    expect(qaExecute).toContain("omits raw exception text");
-  });
-
-  it("IT-024 packages the optional Jev QA adapter without owning installation", () => {
-    const packageJson = JSON.parse(readRepositoryFile("package.json")) as { files: string[]; dependencies?: Record<string, string> };
-    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
-    const helper = ".agents/skills/wtk-qa-execute/jev_adapter.py";
-
-    expect(existsSync(join(repositoryRoot, helper))).toBe(true);
-    expect(packageJson.files).toContain(".agents/skills/wtk-qa-execute");
-    expect(qaExecute).toContain("installs neither Jev Ultrafast nor Browser Harness");
-    expect(qaExecute).toContain("non-consequential fixture journey");
-    expect(qaExecute).toContain("exactly one IDE-native Orca or Maestri adapter");
-    expect(qaExecute).toContain("dedicated CDP endpoint");
-    expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("jev-ultrafast");
-    expect(Object.keys(packageJson.dependencies ?? {})).not.toContain("browser-harness");
+    expect(qaExecute).toContain("inspect or reset the fixture and confirm known isolated state");
+    expect(session).toContain("independent read path and after a reload");
   });
 
   it("routes execution receipts and delivery reporting to one bundled metrics reference", () => {
@@ -946,7 +902,6 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_symlink_manifest.py",
       "tools/test_deep_review_token_metrics.py",
       "tools/test_gate_cache.py",
-      "tools/test_jev_qa_adapter.py",
       "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
       "tools/test_remediation.py",

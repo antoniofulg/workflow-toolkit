@@ -9,8 +9,6 @@ argument-hint: "[the work, in your own words]"
 
 Deliver the requested branch using the scope rules in `.agents/skills/wtk/references/validation.md`.
 
-For semantic shipping decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 At delivery start, read [execution metrics](../wtk/references/execution-metrics.md). Reuse collected
 stage receipts and append the footer at the authorized stopping point; missing usage is not a gate.
 

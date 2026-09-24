@@ -13,6 +13,8 @@ All notable changes to this project are documented here.
 - Consuming projects own native Claude, Codex, or Cursor agent model and effort metadata. WTK no
   longer owns a project TOML configuration, provider packet templates, or generated agent packets.
 - Security lifecycle skills remain optional companion choices and are not bundled in the WTK set.
+- Removed Jev advisory calls and the Jev QA browser adapter. QA `auto` now starts with Playwright
+  MCP, then uses one available IDE-native adapter, then manual verification.
 
 ### Migration
 

@@ -13,8 +13,6 @@ Run a decided feature through four moves: `PLAN → CHECKS → BUILD → VERIFY`
 feature shape before checks freeze its obligations; builders choose reversible implementation detail;
 one fresh Verifier proves the complete feature. There is no task breakdown or component catalogue.
 
-For semantic Lean decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 At execution or verification start, read [execution metrics](../wtk/references/execution-metrics.md);
 include the assigned stage receipt in handoffs so the coordinator can report the delivery breakdown.
 

@@ -11,8 +11,6 @@ metadata:
 
 Find out where this project actually is. Understand the problem. Decide whether to solve it. Then, and only then, decide how.
 
-For semantic discovery decisions, follow the [Jev-first guidance](../wtk/references/jev-adviser.md) before choosing a path.
-
 ```
 SITUATION ────→ PROBLEM ───────→ VERDICT ───────→ DECIDE
 (where this     (no solution     (a stop, or a    (two shapes, costed
