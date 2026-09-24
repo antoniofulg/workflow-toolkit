@@ -72,7 +72,9 @@ model and effort remain in the project's native agent files.
 ## Recommended companion skills and tools
 
 These are independent choices. Install them through their own canonical skill or tool installer;
-WTK does not bundle, activate, configure, or claim that any of them ran.
+WTK does not bundle or configure them. When the four security phase skills below are installed,
+WTK invokes them at the matching phase and uses its baseline security guidance when they are absent.
+Report companion use from actual execution evidence.
 
 | Companion | Source | Use it when |
 | --- | --- | --- |
@@ -81,6 +83,19 @@ WTK does not bundle, activate, configure, or claim that any of them ran.
 | Adaptive Guidelines | [antoniofulg/adaptive-guidelines](https://github.com/antoniofulg/adaptive-guidelines) | You want to turn recurring agent corrections into reviewable project guidelines. |
 | Graft | [trailhq/Graft](https://github.com/trailhq/Graft) | You need checkout-local symbols, callers, or blast-radius pointers during exploration. |
 | Graphify | [graphifyy on PyPI](https://pypi.org/project/graphifyy/) | You need an architecture map before tracing implementation details. |
+
+To add the four security skills used by WTK's feature workflow, install them from the public
+security-lifecycle repository:
+
+```sh
+npx skills add antoniofulg/security-lifecycle \
+  --skill security-spec security-threat-model security-implementation security-review \
+  --agent '*' --copy --yes
+```
+
+`security-audit-coordinator` and `security-pentest` are separate opt-in skills for whole-codebase
+audits and authorized runtime testing; see the [security-lifecycle README](https://github.com/antoniofulg/security-lifecycle#usage)
+for their install options.
 
 When Graft or Graphify is absent or fails, WTK uses ordinary repository inspection and records that
 the optional tool was unavailable. Optional companion use never changes the WTK phase contracts.
