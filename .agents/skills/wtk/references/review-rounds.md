@@ -62,8 +62,8 @@ same non-author session reuse; packet phases remain distinct.
 2. **Nitpicks never trigger a review.** Fix every confirmed wtk-deep-review defect in the active feature run. Critical and Major findings trigger one remediation batch, then one remediation check: a one-job incremental wtk-deep-review over `reviewed_head..HEAD` that dispositions every open prior finding and reviews the fix. Repeat batch + check until no Critical/Major is open or the default three-attempt stall bound halts. Minor findings join that batch, or close together in one Minor-only batch with one scoped gate and one commit; a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check. Trivials and advisories go to the pull request follow-up list. **In an active, already-approved review loop, fix blocking findings without new human approval and run the scoped gate after each correction; escalate only if the post-fix gate fails or the stall threshold is reached for the same fingerprint.** Local fixes only; remote actions retain separate approval requirements.
 3. **Deduplicate by root cause, not by occurrence.** One missing null check repeated in six files is
    one finding that lists six files — not six findings.
-4. **Verify before flagging.** Check for an adjacent comment explaining the choice, a decision in
-   `.specs/STATE.md`, or a test that validates the behaviour. Unconventional is not the same as wrong.
+4. **Verify before flagging.** Check adjacent comments, accepted [project decisions](artifacts.md#decision-store),
+   or a test validating the behaviour. Unconventional is not the same as wrong.
 5. **Never report what a linter already catches.** Run the consuming project's linter first and drop
    every overlapping candidate.
 6. **Signal over volume.** Above 20 findings, keep all blocking ones and prune the rest to the most

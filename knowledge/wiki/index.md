@@ -34,3 +34,4 @@ Add a concept when a source earns one.
 * [Design reference fidelity](design/design-reference-fidelity.md) - How HTML exports connect visual authority, component reuse, and proportional verification.
 * [Interaction efficiency](design/interaction-efficiency.md) - Connect common completion paths, native form semantics, acceptance criteria, and QA evidence.
 * [Construction constraints](architecture/construction-constraints.md) - Preserve explicit reuse, construction order, and approval requirements across planning, delegation, verification, and resume.
+* [Artifact ownership](design/artifact-ownership.md) - Separate durable decisions from transient feature proof, and route PRD, RFC, and ADR work without duplicating discovery.

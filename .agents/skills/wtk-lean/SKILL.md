@@ -75,7 +75,7 @@ thin, ask the user to raise it rather than silently changing the profile.
 
 ```
 .specs/
-├── STATE.md                    # Decisions log (AD-NNN) + Handoff snapshot
+├── STATE.md                    # Handoff + default decision log when no project store exists
 ├── LESSONS.md                  # rendered by scripts/lessons.py - never hand-edit
 ├── lessons.json                # machine-owned
 └── features/<feature>/

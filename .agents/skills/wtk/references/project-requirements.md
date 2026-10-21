@@ -17,6 +17,11 @@ available metadata and installed source, not a presumed name or an invocation cl
 pointers far enough to recover the applicable rule. Naming a skill is not reading or applying it.
 Use project-owned locations; no particular guideline directory or native role file is required.
 
+Resolve the project's [decision store](artifacts.md#decision-store) and read applicable accepted
+decisions alongside the source PRD, RFC or design. Use
+[artifact handoffs](artifacts.md#product-and-decision-artifacts) to carry settled intent without
+repeating discovery. Preserve decision links and status in the native Sources and criteria fields.
+
 Keep adopted project rules distinct from observed patterns and proposed additions. A specialist's
 recommendation cannot silently replace an adopted decision. Resolve precedence using the project's
 authority and explicit supersession; otherwise cite conflicting claims and the owning unresolved
@@ -77,6 +82,8 @@ The fresh full-feature Verifier repeats **Discover applicability** from the orig
 actual change and authoritative routing, rather than treating planner-selected sources as complete.
 Challenge exclusions, then reconcile adopted rules with criteria, checks, proofs and implementation
 under every profile. An omitted source or requirement is a finding despite green listed proofs.
+Resolve the decision store independently, follow applicable accepted records and supersession links,
+and check that implementation honors them. A draft proposal cannot substitute for an accepted decision.
 Record findings and limits in the existing verification report; no second report is required.
 
 Match evidence to the claimed boundary: trace shared ownership through actual consumers, inspect

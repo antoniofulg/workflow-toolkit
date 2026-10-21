@@ -32,12 +32,15 @@ Load shared references only for the current operation:
 | Derive tests or choose their layer | [Test contract](references/test-contract.md) |
 | Review code or act on findings | [Review rounds](references/review-rounds.md) |
 | Create a branch or isolate a checkout | [Git](references/git.md) |
-| Promote or remove workflow artifacts | [Artifacts](references/artifacts.md) |
+| PRD/RFC/ADR work, decision-store ownership, or artifact retention | [Artifacts](references/artifacts.md) |
 | Preserve explicit reuse, construction order or approval requirements | [Construction constraints](references/construction-constraints.md) |
 | Phase checkpoint, resume, compaction, context pressure or session transfer | [Context recovery](references/context-handoff.md) |
 | Edit agent instructions or skill references | [Context budget](references/context-budget.md) |
 | Derive criteria/checks, build, verify, or apply adopted project guidance | [Project requirements](references/project-requirements.md) |
 
+- An explicit PRD, RFC or ADR authoring request: follow
+  [product and decision artifacts](references/artifacts.md#product-and-decision-artifacts).
+  Honor the requested document boundary; an artifact-only request does not start a feature build.
 - A request to set up, assess or update a project's guidance and driver-skill responsibilities:
   read and invoke `wtk-setup`. Assessment remains read-only; installation itself never runs setup.
 - An authorized bounded documentation, instruction-only skill, or direct correction: the active
@@ -45,8 +48,9 @@ Load shared references only for the current operation:
   registration in an existing skill catalog. Complete its scoped checks and local commit without a
   mandatory agent handoff. Escalate for a substantive behavior or authority change, not merely a new
   skill name, registry entry, CLI label, or pending merge.
-- An unshaped idea, an open product decision, or competing solution alternatives: read and invoke
-  `wtk-discover`. It may conclude build, build smaller/differently, not now, or do not build.
+- An unshaped idea, an analytics/error signal requiring a product or architecture decision, or
+  competing solution alternatives: read and invoke `wtk-discover`. It may conclude build,
+  build smaller/differently, not now, or do not build.
 - An existing integrated Lean feature directory with `plan.md`, `checks.md`, or
   `verification.md`: resume the matching `wtk-lean` phase; do not route it to the modular entries.
 - A decided feature without Lean artifacts: read and invoke `wtk-lean`, which runs Plan → Checks →

@@ -11,7 +11,8 @@ file is how the model is written, not what the product means.
 
 This document owns how the domain is expressed in code. It does not own product language, domain
 rules or architecture decisions. `docs/product/` owns the domain; the consuming project's architecture
-docs own architecture invariants; `.specs/STATE.md` owns project decisions. Those sources win
+docs own architecture invariants; the resolved [decision store](artifacts.md#decision-store) owns
+project decisions. Those sources win
 whenever skill guidance conflicts.
 
 ## Design sequence
@@ -27,8 +28,8 @@ whenever skill guidance conflicts.
    restating the product model.
 5. When architectural and tactical modeling both apply, establish the bounded context and its
    contracts first, then model its internals.
-6. Record a new lasting choice in the correct namespace: project decisions are `AD-NNN` entries in
-   `.specs/STATE.md`; architecture invariants live in the consuming project's architecture docs.
+6. Record a new lasting choice in the project decision store; architecture invariants live in
+   the consuming project's architecture docs.
 
 For an auto-sized change without `design.md`, keep the same result in the inline design note.
 
