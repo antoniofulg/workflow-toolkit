@@ -81,6 +81,11 @@ Existing test contract covers instruction products through routing, metadata, re
 
 ## Handoff
 
+- Final verification: fresh non-author `/root/setup_verifier` returned PASS for C1-C6 over `013864d..ac0be1f`; all 10 bounded scenarios exercised, 9 coverage sets reconciled, 4 intended package mutations killed. Native gate: 0 errors, 0 warnings. The independent report is `verification.md`.
+- Final executable evidence: canonical distribution target passed all 7 tests independently. No implementation remediation was required; no application/browser/production-security compliance is claimed.
+- Durable outcomes are already owned by the delivered setup/interview/shared requirements references, phase routing and public README. No additional knowledge, product QA record, architecture decision or task-specific model preset requires promotion.
+- Closeout: preserve this passing evidence in Git, then remove the transient feature directory with the existing close-feature helper. Keep the delivered skill and public guidance; retire the now-completed design artifact after its evidence is recorded.
+
 - Phase: Build implemented; ready for the coordinator's fresh full-feature Verifier. The builder has not written a verification report.
 - Contract: binding `.design/project-harness-setup.md`; folder policy follows existing project convention, with `docs/guidelines/` proposed only when absent.
 - Approval: Antonio approved the design and asked to proceed; one fresh criteria reviewer is the default. Antonio confirmed: "Use inherited settings for all three stages" for criteria review, implementation and verification.
