@@ -1,5 +1,9 @@
 # Update log
 
+## 2026-10-21
+
+* **Ingestion**: Added [Artifact ownership](/design/artifact-ownership.md) from the approved assessment, connecting TLC's artifact creators to WTK's decision-store inconsistency, transient-feature lifecycle, and conditional PRD/RFC/ADR routing. Integration remains proposed.
+
 ## 2026-09-23
 
 * **Maintenance**: Removed the retired installer migration and source-only gate cache; updated the [Workflow runtime ownership](/architecture/workflow-runtime-ownership.md) source boundary.
