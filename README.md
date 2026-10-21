@@ -154,14 +154,25 @@ Specialist workflow companions can supply deeper procedures when a project selec
 
 | Companion | Source | Use it when |
 | --- | --- | --- |
+| Frontend Craft | [antoniofulg/frontend-craft](https://github.com/antoniofulg/frontend-craft) | Discovery needs product, sales or growth strategy, or interface work needs grounded component reuse, interaction, accessibility, performance and technical SEO guidance. |
+| `investigate-first` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/investigate-first) | An unclear failure or performance regression needs evidence-ranked hypotheses and a credible cause before editing. |
 | `safe-refactor` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/safe-refactor) | Build or verification needs behavior-preserving extraction, consolidation or ownership changes, with the same proof before and after edits. |
 | `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams. Broad suite audits remain separately scoped. |
 | `migration` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/migration) | A project requires staged schema, data, API, configuration or dependency transitions with preservation, rollback and partial-failure evidence. |
+| `verify-and-stop` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/verify-and-stop) | A validation-only request needs the smallest sufficient proof set and a clear stopping point. Required independent feature verification still applies. |
+| `writing-for-agents` | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) | Skills or agent instructions need clear triggers, progressive disclosure and one owner per rule. |
+| `convert-documents-to-markdown` | [firecrawl/anydoc](https://github.com/firecrawl/anydoc/tree/main/skills/convert-documents-to-markdown) | Discovery or planning inputs arrive as Office documents, spreadsheets, presentations or PDFs. Check conversion fidelity against the original; hosted OCR requires permission to send the document. |
+| `humanizer` | [blader/humanizer](https://github.com/blader/humanizer) | Product documentation, proposals or release prose needs natural wording while preserving facts, technical terms and source attribution. |
 
 Use `wtk-setup` to bind selected companions to planning, build and verification responsibilities.
 WTK's shared reuse, test and validation rules remain the baseline when no companion is selected.
 Discover identifies a refactor, test-quality or migration need and carries its constraints into the
 plan; the specialist supplies the relevant execution procedure.
+
+Frontend Craft can supply commercial hypotheses during discovery, implementation precedents during
+interface design/build, and reuse or rendered-review guidance during verification. Existing design
+contracts remain authoritative, and a working interface does not prove a sales or conversion gain.
+Its technical and commercial material have [different source terms](https://github.com/antoniofulg/frontend-craft#license-and-sources).
 
 Before adopting `test-audit`, replace its OpenClaw-specific runner, review and PR instructions with
 the consuming project's commands. Project rules govern compatibility, test removal and delivery:
