@@ -122,8 +122,8 @@ ran before the code was written. When it is absent, the verifier applies the sur
 records, and native inspection below and reports that the optional review skill was unavailable.
 
 Findings carry the same weight as any other: **unresolved Critical or High blocks completion**,
-regardless of any project priority label. Accepting a risk requires your explicit approval and an
-append-only `AD-NNN` in `.specs/STATE.md`.
+regardless of any project priority label. Accepting a risk requires your explicit approval and a
+durable record in the resolved [project decision store](artifacts.md#decision-store).
 
 ## Evidence
 

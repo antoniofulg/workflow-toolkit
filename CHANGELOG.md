@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Conditional PRD, RFC and ADR authoring routes with optional TLC companions, project-template
+  handling when absent, and a README guide to artifact purpose, ownership, location and retention.
+- Discover makes its existing analytics/error-evidence capability explicit for PostHog, Sentry
+  and other connected sources: scoped read-only analysis, source and release context, hypotheses
+  checked against the repository, and focused diagnosis for bounded bugs.
+
+### Fixed
+
+- Planning, modeling, security, review and feature promotion now follow the project's existing
+  decision store instead of directing records into a second `.specs/STATE.md` log. The Lean ledger
+  remains the default for projects without another decision convention.
+- Existing confirmed PRD intent carries into discovery or planning without a repeated product
+  interview. Both verification paths resolve applicable accepted decisions independently.
+
 ## [3.1.0] - 2026-10-20
 
 ### Added

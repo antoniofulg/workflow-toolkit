@@ -2,6 +2,8 @@
 
 ## 2026-10-21
 
+* **Maintenance**: Updated [Artifact ownership](/design/artifact-ownership.md) after implementing conditional artifact routing and a shared project decision-store rule; the original assessment remains in the immutable conversation source.
+
 * **Ingestion**: Added [Artifact ownership](/design/artifact-ownership.md) from the approved assessment, connecting TLC's artifact creators to WTK's decision-store inconsistency, transient-feature lifecycle, and conditional PRD/RFC/ADR routing. Integration remains proposed.
 
 ## 2026-09-23

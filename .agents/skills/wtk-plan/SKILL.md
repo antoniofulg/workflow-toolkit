@@ -38,8 +38,9 @@ local failure is different from a retry after nothing happened. An absent mechan
 gap, not a guaranteed outcome.
 
 Keep new capabilities outside the task unless the user authorizes them. Preserve already-settled
-intent and use the task as the decision record; linked sources retain the reasoning. If they later
-diverge on a binding decision, resolve that conflict before building.
+intent and use the task as the feature contract; the
+[project decision store](../wtk/references/artifacts.md#decision-store) retains lasting rationale.
+If linked sources later diverge on a binding decision, resolve that conflict before building.
 
 When the source requires reuse, construction order or approval, apply
 [construction constraints](../wtk/references/construction-constraints.md) while writing criteria.

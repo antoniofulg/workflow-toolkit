@@ -150,11 +150,19 @@ for their install options.
 When Graft or Graphify is absent or fails, WTK uses ordinary repository inspection and records that
 the optional tool was unavailable. Optional companion use never changes the WTK phase contracts.
 
+For product and decision documents, TLC's
+[`tlc-prd`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28development%29/tlc-prd),
+[`create-rfc`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28creation%29/create-rfc), and
+[`create-adr`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28creation%29/create-adr)
+are optional authoring companions. WTK uses an available companion for the requested artifact;
+otherwise it uses project templates and conventions. Project language, location and approval rules
+take precedence. No additional WTK skill or companion installation is required.
+
 ## The workflow
 
 The public hierarchy is `Feature -> Slice -> Check`:
 
-1. `wtk-discover` shapes an idea when the problem or boundary is unclear.
+1. `wtk-discover` shapes an idea or investigates a product signal when the problem or boundary is unclear.
 2. `wtk-lean` records the reviewed plan and proof-backed checks.
 3. One builder implements whole slices sequentially and commits each coherent slice.
 4. One fresh Verifier checks the complete feature range independently.
@@ -162,6 +170,34 @@ The public hierarchy is `Feature -> Slice -> Check`:
 
 The feature artifacts are `.specs/features/<feature>/plan.md`, `checks.md`, and `verification.md`.
 The project decides its validation command, provider route, QA adapter, and delivery authority.
+
+Discover can use available PostHog analytics, Sentry issues, logs and support reports to establish
+impact and compare remedies. It resolves connected tools and relevant analysis skills, reads only
+the evidence needed for the question, and checks hypotheses against the repository. Missing tools
+or tracking remain explicit gaps. A bounded bug uses focused diagnosis; an unresolved product or
+architecture choice uses discovery. No provider connection or separate PRD is required. See
+[discovery evidence](.agents/skills/wtk-discover/SKILL.md#evidence).
+
+## Choose the artifact
+
+Use documents for the questions the work still needs answered. A feature does not need a PRD, RFC,
+ADR and separate technical design in sequence. An existing approved PRD feeds discovery only for
+unresolved shape, or planning directly when the shape is settled; confirmed product questions and
+build decisions are carried forward. An artifact-only request stops at that document.
+
+| Artifact | Use it when | Owner and location | Retention |
+| --- | --- | --- | --- |
+| PRD | Product problem, success measures, boundary or journey needs agreement | Project product owner; existing product-document location, or `.prd/<slug>.md` with TLC's default | Keep useful product intent in maintained product docs; preserve business measures for outcome review |
+| RFC | A consequential proposal needs alternatives compared and stakeholder agreement | Project decision owner and approvers; existing proposal location, or proposed `docs/rfcs/` for a new convention | Preserve the outcome and links under the project's documentation policy |
+| ADR | A significant architectural choice needs lasting rationale | Project decision owners; existing ADR directory or log, or proposed `docs/adr/` for a new convention | Preserve history; supersede with linked records |
+| Technical design | A separate system design review is needed | Project engineering owners; existing design-document location | Maintain current design facts when they outlive the feature |
+| Lean plan, checks and verification | A decided feature needs reviewed shape and proof | Planner, builder and independent Verifier; `.specs/features/<feature>/` | Keep through verification and required promotion, then remove the exact feature directory |
+
+WTK resolves the decision store from project instructions and existing records. Lean uses
+`.specs/STATE.md` only when no other decision convention exists; with another decision store,
+`STATE.md` keeps handoff only. Planning, checks, implementation and verification follow applicable
+accepted decisions from that store. Feature cleanup preserves lasting decisions and useful source
+documents. See [artifact ownership and lifecycle](.agents/skills/wtk/references/artifacts.md).
 
 ## Development
 

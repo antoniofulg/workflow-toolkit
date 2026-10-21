@@ -79,7 +79,10 @@ Proof: `bun test -- -t "retry is idempotent"`
 
 That deferral is what keeps this skill from emitting a design document, and it presupposes something to defer to. Where there is no convention to read, both halves are empty at once - nothing written down and nothing to inherit - and the work belongs in a flow that does design before this one starts.
 
-Where the repo already keeps a decision log or ADRs, append the rows that outlive this feature there once the checklist is approved - the checklist stops being read after the merge, and a choice with its rejected alternative keeps its value long after the code has moved. Do not start a log for this skill.
+Record accepted choices that outlive this feature in the resolved
+[project decision store](../../wtk/references/artifacts.md#decision-store); keep their links in
+Sources and their literal shape in Landing. Checklist approval does not replace a required
+project decision approval.
 
 **Checks group under the slices they came from.** The upstream task already cuts the work into slices of one observable outcome each; flattening them into `C1..Cn` loses a structure the source had and that `## Handoff` later refers to by name. Keep the slice, keep its name, number the checks straight through.
 

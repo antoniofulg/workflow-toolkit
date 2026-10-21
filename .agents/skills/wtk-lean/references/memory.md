@@ -2,11 +2,13 @@
 
 Three things outlive a session: decisions that constrain future features, a handoff snapshot for
 picking work back up, and lessons distilled from real verification failures. All three live under
-`.specs/`.
+`.specs/` by default; decisions follow the project's existing store.
 
 ## `.specs/STATE.md`
 
-Two sections, written by different phases, never overwritten together.
+Resolve [decision ownership](../../wtk/references/artifacts.md#decision-store) first. The default
+below has two sections, written by different phases, never overwritten together. When another
+decision store owns the records, keep only Handoff here.
 
 ```markdown
 # Project state
@@ -16,7 +18,7 @@ Two sections, written by different phases, never overwritten together.
 | ID | Decision | Rationale | Status | Date |
 | --- | --- | --- | --- | --- |
 | AD-001 | Webhook ingest is idempotent on provider delivery id | replays are routine and cheap to dedup at the edge | active | 2026-02-14 |
-| AD-002 | Money is stored in integer cents | superseded by AD-007 | superseded by AD-007 | 2026-03-02 |
+| AD-002 | Money is stored in integer cents | exact arithmetic for supported currencies | superseded by AD-007 | 2026-03-02 |
 
 ## Handoff
 
@@ -33,24 +35,11 @@ Two sections, written by different phases, never overwritten together.
 one. Overwriting the whole file silently destroys the decisions log, and nothing downstream
 notices until a future feature contradicts a decision nobody can find.
 
-**Where the repo already keeps ADRs or a decision log, use that instead.** Do not start a second
-log; append there and keep `STATE.md` to the handoff section. Two logs means neither is
-authoritative.
-
 ## Recording a decision
 
-A decision belongs in `## Decisions` when a future feature has to conform to it: a convention, a
-pattern, a constraint. It is written when the choice is made, not at the end.
-
-This is a different bar from `Landing` in `plan.md`. `Landing` carries doors this feature closes,
-with the literal shape someone will copy. `Decisions` carries the ones that reach past this
-feature. A door that is both gets a row in each - the shape in `Landing`, the constraint here.
-
-**Read the active decisions before writing checks.** Every `active` `AD-NNN` is a constraint the
-work must conform to. Where one conflicts with what is best for this feature, you have two
-options and both are explicit: conform, or append a new entry that supersedes the old one (setting
-the old row's status to `superseded by AD-NNN`) and say why. Silently ignoring an active decision
-creates inconsistency nobody can see.
+Use the [decision-store rules](../../wtk/references/artifacts.md#decision-store) for recording,
+reading and supersession. A choice belongs there when future features must conform to it.
+`Landing` in `plan.md` carries this feature's literal shape and links to that lasting constraint.
 
 ## Resuming work
 
