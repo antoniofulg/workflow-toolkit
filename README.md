@@ -150,6 +150,24 @@ for their install options.
 When Graft or Graphify is absent or fails, WTK uses ordinary repository inspection and records that
 the optional tool was unavailable. Optional companion use never changes the WTK phase contracts.
 
+Specialist workflow companions can supply deeper procedures when a project selects them:
+
+| Companion | Source | Use it when |
+| --- | --- | --- |
+| `safe-refactor` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/safe-refactor) | Build or verification needs behavior-preserving extraction, consolidation or ownership changes, with the same proof before and after edits. |
+| `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams. Broad suite audits remain separately scoped. |
+| `migration` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/migration) | A project requires staged schema, data, API, configuration or dependency transitions with preservation, rollback and partial-failure evidence. |
+
+Use `wtk-setup` to bind selected companions to planning, build and verification responsibilities.
+WTK's shared reuse, test and validation rules remain the baseline when no companion is selected.
+Discover identifies a refactor, test-quality or migration need and carries its constraints into the
+plan; the specialist supplies the relevant execution procedure.
+
+Before adopting `test-audit`, replace its OpenClaw-specific runner, review and PR instructions with
+the consuming project's commands. Project rules govern compatibility, test removal and delivery:
+a companion cannot authorize deleting tests to pass a gate, preserving obsolete interfaces against
+project policy, or performing an unapproved destructive migration stage.
+
 For product and decision documents, TLC's
 [`tlc-prd`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28development%29/tlc-prd),
 [`create-rfc`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28creation%29/create-rfc), and

@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-10-21
+
 ### Added
 
 - Conditional PRD, RFC and ADR authoring routes with optional TLC companions, project-template
@@ -11,6 +13,8 @@ All notable changes to this project are documented here.
 - Discover makes its existing analytics/error-evidence capability explicit for PostHog, Sentry
   and other connected sources: scoped read-only analysis, source and release context, hypotheses
   checked against the repository, and focused diagnosis for bounded bugs.
+- Optional `safe-refactor`, project-adapted `test-audit` and `migration` companion recommendations,
+  with phase responsibilities, source links where available, and project-policy boundaries.
 
 ### Fixed
 
@@ -19,6 +23,12 @@ All notable changes to this project are documented here.
   remains the default for projects without another decision convention.
 - Existing confirmed PRD intent carries into discovery or planning without a repeated product
   interview. Both verification paths resolve applicable accepted decisions independently.
+
+### Upgrade
+
+- Refresh the complete 13-skill WTK set through the README installation/update instructions.
+  Pinned installations retain their recorded revision until explicitly refreshed. Companion
+  selection remains project-owned; this release installs no companion, connector or runtime dependency.
 
 ## [3.1.0] - 2026-10-20
 
