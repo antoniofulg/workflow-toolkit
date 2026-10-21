@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Documentation
+
+- Add Frontend Craft to the main companion group and expand specialist guidance for investigation,
+  focused verification, agent-instruction writing, document conversion and prose editing, including
+  source links and the boundaries between companion guidance and WTK's phase responsibilities.
+
 ## [3.2.0] - 2026-10-21
 
 ### Added

@@ -203,9 +203,10 @@ test('skills-only documentation and phase contracts remain reachable', () => {
   assert.match(readme, /pypi.org\/project\/graphifyy/);
   const recommendationTable = readme.split('## Recommended companion skills and tools', 2)[1].split('When Graft or Graphify', 1)[0];
   const rows = recommendationTable.split(/\r?\n/).filter((line) => line.startsWith('| ') && !line.includes('---') && !line.includes('Companion |'));
-  assert.equal(rows.length, 5);
+  assert.equal(rows.length, 6);
   for (const row of rows) assert.match(row, /https?:\/\/[^|]+\|[^|]+\|/);
   assert.equal(rows.some((row) => row.includes('Adaptive Guidelines')), true);
+  assert.equal(rows.some((row) => row.includes('| Frontend Craft |')), true);
   assert.match(read('.agents/skills/wtk-lean/SKILL.md'), /one fresh Verifier/);
   assert.match(read('.agents/skills/wtk-lean/references/checks.md'), /Coverage/);
   assert.match(read('.agents/skills/wtk/references/validation.md'), /full gate/);
