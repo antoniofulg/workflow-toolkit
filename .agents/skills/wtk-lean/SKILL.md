@@ -29,6 +29,10 @@ When implementing a selected image or design, freeze [the UI contract](../wtk/re
 before coding and carry its source and evidence requirements through build and independent verification.
 Use the `ui` profile for binding interface sources.
 
+At Plan, Checks, Build and Verify, apply
+[project requirements](../wtk/references/project-requirements.md), including for checks-only
+features. The phase references carry its entry points; profiles never waive inherited requirements.
+
 ## Core contract
 
 1. Every check is one observable claim with a concrete value and a proof whose exit code settles it.

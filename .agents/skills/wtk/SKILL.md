@@ -36,7 +36,10 @@ Load shared references only for the current operation:
 | Preserve explicit reuse, construction order or approval requirements | [Construction constraints](references/construction-constraints.md) |
 | Phase checkpoint, resume, compaction, context pressure or session transfer | [Context recovery](references/context-handoff.md) |
 | Edit agent instructions or skill references | [Context budget](references/context-budget.md) |
+| Derive criteria/checks, build, verify, or apply adopted project guidance | [Project requirements](references/project-requirements.md) |
 
+- A request to set up, assess or update a project's guidance and driver-skill responsibilities:
+  read and invoke `wtk-setup`. Assessment remains read-only; installation itself never runs setup.
 - An authorized bounded documentation, instruction-only skill, or direct correction: the active
   agent applies the maintenance route in `.agents/skills/wtk/references/validation.md`, including declarative
   registration in an existing skill catalog. Complete its scoped checks and local commit without a

@@ -8,6 +8,10 @@ for the model to obey, you are rebuilding the thing this skill removed.
 
 ## Before the first line of code
 
+Apply [project requirements](../../wtk/references/project-requirements.md#build-and-recover): read
+inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
+before dependent edits. This applies under every profile, including checks-only features.
+
 For a selected image or design, load [UI/UX](../../wtk/references/ui-ux.md) before coding;
 freeze its contract and complete the builder capture/compare/fix loop before handoff.
 

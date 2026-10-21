@@ -1,7 +1,7 @@
 # Project Harness Setup
 
 > Plan from this document. Each slice carries the decisions and observable outcomes it owns.
-> Status: draft — direction committed by Antonio on 2026-10-20; detailed criteria await review.
+> Status: confirmed by Antonio, 2026-10-20 — proceed with one fresh criteria reviewer; guideline location follows the consuming project's convention.
 
 ## Situation
 
@@ -51,6 +51,7 @@ Unchanged: the public `Feature -> Slice -> Check` hierarchy, the project's owner
 5. **Every applicable adopted requirement needs an explicit landing in the feature contract.** Resolve it to a concrete criterion/check, unchanged behavior with source and valid evidence, a justified non-applicability decision, or a named unresolved gap. Classify gaps using existing `open`, `blocks` and `blocks go-live` dispositions, with the dependent work and release condition; a recorded gap does not authorize blocked work. Both Lean and modular planning must support this; smaller task paths retain the obligation without requiring a full plan.
 6. **Feature criteria receive one fresh non-author review before dependent build.** Antonio approved this default; add specialists only for a concrete coverage gap and use an existing Plan/Checks review when it fulfills this responsibility. The reviewer independently derives applicable concerns and sources from the request, proposed change and authoritative project routing, then challenges the planner's selection and exclusions. After build, a fresh Verifier repeats this reasoning against the actual change and checks criteria, proofs and implementation; fixes return to the builder. Bounded maintenance retains WTK's existing direct, proportional route.
 7. **Skill presence, policy quality and proof capability are separate.** An absent optional skill does not itself invalidate work. Missing policy, missing expertise and unavailable execution tools receive distinct dispositions; use existing guidance when sufficient, ask about material gaps, and never claim a browser or security outcome from metadata alone.
+8. **Guideline location follows the consuming project.** Reuse its existing owning documents and directory convention. When none exists, propose `docs/guidelines/` as a default and create only applicable documents during authorized setup; users may choose another location. Keep routing in root instructions rather than copying guidelines there.
 
 ## Work
 

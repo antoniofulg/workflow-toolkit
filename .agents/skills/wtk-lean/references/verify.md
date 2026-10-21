@@ -26,8 +26,9 @@ a pass over four checks reads exactly like a pass over forty. The range is
 The verdict goes back to the orchestrator and the user, never to a builder. A FAIL returned to
 the author is the author deciding what to do about the author's own work.
 
-**It receives:** `plan.md`, `checks.md`, every source the plan marks binding, the diff range, and
-this file. It runs read-only over the real tree and fixes nothing. The plan is an input because
+**It receives:** the original request, authoritative project routing, `plan.md`, `checks.md`, every
+source the plan marks binding, the diff range, and this file. It runs read-only over the real tree
+and fixes nothing. The plan is an input because
 half the enumerations it sweeps for - a route's statuses, an entity's constraints - are named
 there and only *owe* a row in the checks.
 
@@ -35,7 +36,8 @@ there and only *owe* a row in the checks.
 `../scripts/workflow_route.py`, following [agent selection](../../wtk/references/agent-selection.md).
 Launch a fresh skill-directed checking session in the current checkout, with no inherited
 conversation. Hand it this file,
-`plan.md`, `checks.md`, every source the plan marks binding, and the diff range
+the original request, authoritative project routing, `plan.md`, `checks.md`, every source the plan
+marks binding, and the diff range
 `<feature base>..HEAD`. It writes `verification.md` and fixes nothing. You run
 `validate_verification.py`. You do not write the report yourself.
 
@@ -44,6 +46,11 @@ Obtain targeted acceptance of a supported checking choice or independent session
 selection; the author never supplies the feature verdict.
 
 ## Read the profile first
+
+Under every profile, apply [independent project-requirement verification](../../wtk/references/project-requirements.md#verify-independently).
+Derive concerns and sources from the original request, actual change and authoritative routing;
+the planner's list is not the discovery boundary. Record omitted requirements and unproven outcomes
+in this verification report even when listed proofs pass. This precedes the `ui`-specific comparison.
 
 For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
 within this verification pass and include its findings and coverage limits in the existing report.

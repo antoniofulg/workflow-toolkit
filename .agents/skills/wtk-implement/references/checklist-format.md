@@ -109,7 +109,7 @@ The last two lines close the level gap the same way. List every check whose clai
 
 Find the real commands first: read the package manifest, the task runner and the CI workflows. Prefer a command that already runs in CI. When nothing exists for what a check needs, ask - never invent a command, because a proof that cannot run is worse than none.
 
-Then write the checklist and keep going into Build. Waiting for approval by default buys nothing when someone already decided the source and the checklist mostly restates it.
+Write the checklist, satisfy the [project-requirements criteria review](../../wtk/references/project-requirements.md#review-criteria-before-dependent-feature-build), then continue into Build. No additional human approval is needed when the source is already decided and the checklist derives from it.
 
 **What keeps it reviewable is the ordering, not a commit.** The artifact is complete before you touch code, so it reads as what you were building toward rather than a rationalisation of what you built. Where the project tracks `.checks/`, that ordering is worth a commit of its own before any code; where the project ignores it - which is common, and correct for a working artifact the skill says stops being read after the merge - the ordering still holds and nothing about it depends on git.
 

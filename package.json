@@ -18,6 +18,7 @@
   "files": [
     "NOTICE.md",
     ".agents/skills/wtk",
+    ".agents/skills/wtk-setup",
     ".agents/skills/wtk-lean",
     ".agents/skills/wtk-discover",
     ".agents/skills/wtk-plan",
