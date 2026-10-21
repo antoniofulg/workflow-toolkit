@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.1.0'
+  version: '1.2.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
