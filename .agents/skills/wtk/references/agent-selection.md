@@ -28,7 +28,7 @@ do not create an agent or load every skill merely to fill the table.
 
 | Stage key | Responsibility supplied by the selected skill |
 | --- | --- |
-| `planning` | `wtk-discover`, `wtk-plan` or the Plan/Checks phase of `wtk-lean` |
+| `planning` | `wtk-discover`, `wtk-plan` or the Plan/Checks phase of `wtk-lean`, including fresh non-author feature criteria review under [project requirements](project-requirements.md#review-criteria-before-dependent-feature-build) |
 | `exploration` | A bounded read-only trace supporting the selected phase |
 | `design` | The relevant design/UI guidance when a design is needed |
 | `implementation` | `wtk-lean` Build or `wtk-implement`; one sequential builder |

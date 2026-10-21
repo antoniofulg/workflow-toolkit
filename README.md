@@ -13,6 +13,7 @@ unit; phase skills are listed for discoverability and are not a supported subset
 | Skill | Use |
 | --- | --- |
 | `wtk` | Route a request to the smallest WTK procedure. |
+| `wtk-setup` | Set up, assess or update project guidance and driver-skill responsibilities. |
 | `wtk-discover` | Shape an undecided idea or stop it. |
 | `wtk-lean` | Run a decided feature through Plan, Checks, Build, and Verify. |
 | `wtk-plan` | Write a modular task contract from a decided source. |
@@ -31,14 +32,14 @@ the [Vercel Skills CLI](https://github.com/vercel-labs/skills#readme), whose cur
 npx skills@latest add antoniofulg/workflow-toolkit \
   --skill wtk wtk-deep-review wtk-discover wtk-implement \
   wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute \
-  wtk-qa-plan wtk-reuse-review wtk-ship \
+  wtk-qa-plan wtk-reuse-review wtk-setup wtk-ship \
   --agent '*' --copy --yes
 ```
 
 Use `npx skills@latest list` to inspect the project installation. The full WTK set carries the
 shared phase dependencies. WTK does not provide a package installer executable.
 
-The full 12-skill WTK set is self-contained: its scripts, assets, and conditional references live
+The full 13-skill WTK set is self-contained: its scripts, assets, and conditional references live
 below the distributed skill directories.
 
 Projects that used the retired package installer can follow the [legacy cleanup guide](CLEANUP.md)
@@ -63,7 +64,7 @@ reinstall from the unpinned source to advance beyond that revision.
 If WTK remains on 2.0.x, inspect the `wtk*` entries in the project's `skills-lock.json`. To leave
 a pinned revision, rerun the [complete install command above](#install-the-skills) with the bare
 `antoniofulg/workflow-toolkit` source, without a tag, commit or `/tree/<ref>` suffix. This replaces
-the recorded WTK source/ref and refreshes all 12 skills. Review the installed files and lockfile
+the recorded WTK source/ref and refreshes all 13 skills. Review the installed files and lockfile
 diff, then commit them in the consuming project. Future updates follow the default branch.
 
 For a global installation, use `npx skills@latest update --global`; its tracking file is
@@ -88,8 +89,21 @@ such as:
 Use the installed `wtk` skill as the entrypoint for workflow requests. Read the project's own
 product context before product-specific work, then load only the references selected by the active
 WTK phase. The project owns its instructions, configuration, tests, and delivery permissions.
-The project owns this text; WTK never stages or commits files for it.
+The project owns this text; installing or updating WTK skills does not change it.
 ```
+
+Invoke `wtk-setup` to assess an existing harness or set up project guidance through a focused
+policy and driver-skill interview. Assessment proposes a delta without editing project files;
+authorized setup can apply settled guidance and local commits. Reuse existing guideline owners
+and locations; `docs/guidelines/` is a proposal only when no convention exists, and you may choose
+another location. Setup keeps root routing small and loads guidance by role, phase and concern.
+It does not install tools or run as an installation side effect.
+
+Both feature paths read applicable project guidance and required driver instructions before
+deriving criteria. [Project requirements](.agents/skills/wtk/references/project-requirements.md)
+owns inheritance, one fresh non-author criteria review before dependent feature build, and
+independent source/applicability discovery during final verification under every profile.
+Additional specialists require a concrete coverage gap; bounded maintenance keeps its direct route.
 
 Before delegated work, WTK proposes task-specific provider/model/effort settings using the host's
 current capabilities. You accept the needed stages or replace individual choices before dispatch.

@@ -19,6 +19,10 @@ Use the `ui` profile for binding interface sources.
 
 ## Source and scope
 
+Apply [project requirements](../wtk/references/project-requirements.md) before deriving criteria:
+read applicable project rules and selected required driver instructions, then land their obligations
+in the task's native fields. Its fresh criteria review must complete before dependent feature build.
+
 Read the source and the code relevant to its claims. Resolve factual questions from existing code,
 conventions and documentation. Correct factual source errors within the authorized scope; a conflict
 with an approved product decision needs clarification, not a silent rewrite.

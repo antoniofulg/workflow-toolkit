@@ -10,9 +10,9 @@ prompted, never optional, and never skipped because the author feels confident.
 
 The agent that wrote the code is the author. The Verifier is a **fresh sub-agent** with no
 inherited context, mental model or assumptions - an author re-checking their own work
-reapplies the thinking that produced the gap. It receives the checklist, every source the
-checklist marks binding, the feature's diff range and this file. It runs read-only and fixes
-nothing.
+reapplies the thinking that produced the gap. It receives the original request, authoritative
+project routing, the checklist, every source the checklist marks binding, the feature's diff range
+and this file. It runs read-only and fixes nothing.
 
 **Dispatched by whoever holds the whole feature, never by a builder.** A fresh context is not
 independence on its own: the parent writes the brief, so a Verifier spawned by the agent that
@@ -23,7 +23,8 @@ whoever wrote them.
 
 Dispatch the accepted `verification` stage through
 [agent selection](../../wtk/references/agent-selection.md), with this skill's verification procedure
-and the complete approved artifacts/range in the current checkout. Unsupported host settings block
+and the original request, project routing and complete approved artifacts/range in the current
+checkout. Unsupported host settings block
 that dispatch until the affected choice is accepted; native role files are not required.
 
 The verdict goes back to the orchestrator and the user, never to a builder. A FAIL returned to
@@ -35,6 +36,11 @@ within this verification pass and include its findings and coverage limits in th
 
 For explicit reuse, construction-order or approval requirements, apply
 [construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
+
+Under every profile, apply [independent project-requirement verification](../../wtk/references/project-requirements.md#verify-independently).
+Derive concerns and sources from the original request, actual change and authoritative routing;
+the planner's list is not the discovery boundary. Record omitted requirements and unproven outcomes
+in this verification report even when listed proofs pass. This precedes the `ui`-specific comparison.
 
 **Read the profile first** - the project declares it in `AGENTS.md`, and `light` is the default.
 Step 1 runs under `ui`; the `Coverage` join, the `Test policy` verdicts and fault injection run

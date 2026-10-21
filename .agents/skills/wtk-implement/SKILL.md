@@ -56,6 +56,11 @@ passes. Read `references/test-policy.md` only for `standard` or `ui` checklist r
 
 ## Extract
 
+Apply [project requirements](../wtk/references/project-requirements.md) before deriving checks:
+read applicable rules and required driver guidance, carry source-backed landings from the task,
+and reconcile missing or changed obligations. The coordinator obtains the shared criteria review
+before dependent feature build, reusing an upstream review when it covers the complete contract.
+
 Read the approved `.tasks/<name>.md` source completely, then ground its checks in the touched code
 and existing conventions. Refuse a claim without a nameable proof, concrete value, or explicit
 boundary; ask when the source leaves a real decision open rather than guessing.
@@ -74,6 +79,9 @@ After Extract and its sweep, read [checklist-format.md](references/checklist-for
 `.checks/<feature>.md` artifact. Do not load the format during the first source pass.
 
 ## Build
+
+Apply [project requirements](../wtk/references/project-requirements.md#build-and-recover), including
+the inherited guidance, criteria-review disposition and blocking prerequisites under every profile.
 
 For a selected image or design, load [UI/UX](../wtk/references/ui-ux.md) before coding;
 freeze its contract and complete the builder capture/compare/fix loop before handoff.

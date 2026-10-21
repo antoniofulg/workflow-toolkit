@@ -26,6 +26,10 @@ The closure gate still requires every criterion to land in `Flow`, `Relations` o
 
 ## Before asking anything
 
+Read [project requirements](../../wtk/references/project-requirements.md) before deriving criteria,
+including applicable project rules and selected required driver instructions. This also applies
+when the short path skips this plan file: land requirements in `checks.md` instead.
+
 **Load confirmed lessons.** `--root` is a parent flag and has to come before the
 subcommand: `python3 <skill-dir>/scripts/lessons.py --root <project> list --status confirmed`
 (add `--scope` or `--query` for the area this feature touches). Confirmed only - never

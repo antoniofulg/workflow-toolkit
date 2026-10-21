@@ -8,6 +8,10 @@ for the model to obey, you are rebuilding the thing this skill removed.
 
 ## Before the first line of code
 
+Apply [project requirements](../../wtk/references/project-requirements.md#build-and-recover): read
+inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
+before dependent edits. This applies under every profile, including checks-only features.
+
 For a selected image or design, load [UI/UX](../../wtk/references/ui-ux.md) before coding;
 freeze its contract and complete the builder capture/compare/fix loop before handoff.
 
@@ -105,9 +109,11 @@ Optional git-level guard, independent of any agent:
 ln -sf <skill-dir>/scripts/check_commit.py .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
 ```
 
-Skip the hook if the project manages hooks its own way. Mark the check complete in `checks.md`
-before the commit that satisfies it, and include that update in the same commit - a crash between
-those two steps is how a resume redoes finished work.
+Skip the hook if the project manages hooks its own way. When a slice's proofs are all green, mark
+its checks complete in `checks.md` and commit that with the slice. The slice is the
+checkpoint: marking check by check adds bookkeeping the build does not need, and a resume reads
+the marks plus the diff to see which slices landed. A check whose proof spans several slices stays
+unmarked until the last one lands.
 
 Never add Co-Authored-By, Made-with, or any agent attribution trailer.
 

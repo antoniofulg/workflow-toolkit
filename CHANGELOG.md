@@ -4,6 +4,36 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-10-20
+
+### Added
+
+- `wtk-setup` discovers project guidance and available specialist skills, proposes a small baseline,
+  and interviews users about unresolved policy and planning-driver responsibilities across relevant
+  areas, including security, architecture, frontend, backend, database and quality.
+- Setup reuses project-owned guideline locations, proposes `docs/guidelines/` only when no convention
+  exists, and keeps root instructions small through role, phase and concern-based routing.
+  Assessment-only requests remain read-only; installation does not run setup.
+
+### Changed
+
+- Both planning paths inherit applicable adopted project requirements and selected driver guidance.
+  One fresh non-author criteria reviewer checks the feature contract before dependent build;
+  bounded maintenance retains its direct proportional route.
+- Both Verifiers independently determine which project requirements apply, exposing omitted sources
+  or criteria even when listed proofs pass. Missing evidence remains unproven.
+- Lean incorporates upstream `tlc-spec-lean` 1.2.0 completion bookkeeping: mark a slice's checks
+  complete together after its proofs pass and commit those marks with the slice. A check spanning
+  several slices remains pending until the last relevant slice lands. Artifact names stay unchanged.
+
+### Upgrade
+
+- Refresh the complete WTK set using the [README installation command](README.md#install-the-skills),
+  which now includes 13 skills. Pinned installations retain their recorded revision until explicitly
+  refreshed; project instructions and specialist skills remain project-owned.
+- Invoke `wtk-setup` explicitly to assess or update a consuming project's harness. No new CLI,
+  policy registry, runtime dependency or mandatory native role file is introduced.
+
 ## [3.0.1] - 2026-10-08
 
 ### Fixed

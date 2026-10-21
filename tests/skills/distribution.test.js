@@ -13,11 +13,11 @@ const wtkSkills = fs.readdirSync(path.join(root, '.agents/skills'), { withFileTy
 const optionalSkills = ['ponytail', 'prompt-review', 'security-implementation', 'security-review', 'security-spec', 'security-threat-model'];
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
-test('full WTK set has twelve skills and no WTK config payload', () => {
+test('full WTK set has thirteen skills and no WTK config payload', () => {
   assert.deepEqual(wtkSkills, [
     'wtk', 'wtk-deep-review', 'wtk-discover', 'wtk-implement',
     'wtk-knowledge-check', 'wtk-lean', 'wtk-plan', 'wtk-qa', 'wtk-qa-execute',
-    'wtk-qa-plan', 'wtk-reuse-review', 'wtk-ship',
+    'wtk-qa-plan', 'wtk-reuse-review', 'wtk-setup', 'wtk-ship',
   ]);
   const sourceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-isolated-source-'));
   try {
@@ -59,7 +59,7 @@ test('approved execution selection and current WTK catalog are consistent', () =
   const reviewRounds = read('.agents/skills/wtk/references/review-rounds.md');
   const qaExecute = read('.agents/skills/wtk-qa-execute/SKILL.md');
 
-  assert.match(readme, /full 12-skill WTK set/);
+  assert.match(readme, /full 13-skill WTK set/);
   assert.match(readme, /Agent selection.*agent-selection\.md/);
   assert.match(readme, /Deep Review is on demand/);
   assert.match(readme, /QA uses the `auto` adapter/);
@@ -119,12 +119,12 @@ test('Skills CLI discovers every WTK skill when the source lock has no self entr
     const cli = path.join(root, 'node_modules/skills/dist/cli.mjs');
     const clean = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
     assert.equal(clean.status, 0, clean.stderr);
-    assert.match(clean.stdout, /Found 12 skills/);
+    assert.match(clean.stdout, /Found 13 skills/);
 
     fs.writeFileSync(path.join(source, 'skills-lock.json'), JSON.stringify({ version: 1, skills: { wtk: {}, 'wtk-lean': {}, 'wtk-deep-review': {} } }));
     const locked = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
     assert.equal(locked.status, 0, locked.stderr);
-    assert.match(locked.stdout, /Found 9 skills/);
+    assert.match(locked.stdout, /Found 10 skills/);
   } finally {
     fs.rmSync(source, { recursive: true, force: true });
   }

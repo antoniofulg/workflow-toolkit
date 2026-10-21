@@ -18,6 +18,10 @@ either dead or unproven, and both are findings.
 
 ## Find the real commands first
 
+Apply [project requirements](../../wtk/references/project-requirements.md) before deriving checks,
+including for checks-only features. Carry source-backed landings and gap dispositions from the
+plan, reconcile omissions, and obtain its fresh criteria review before dependent feature build.
+
 Read the package manifest, the task runner and the CI workflows. Prefer a command that already
 runs in CI. Where nothing exists for what a check needs, ask - never invent a command, because
 a proof that cannot run is worse than none.
@@ -251,8 +255,9 @@ proof the right one, does the level match the claim - stays yours.
 
 ## Then keep going
 
-Write the artifact and continue into [build.md](build.md). Waiting for approval by default buys
-nothing when the plan was already confirmed and the checks derive from it. Stop only for: scope
+After the shared criteria-review obligation is satisfied, continue into [build.md](build.md).
+No additional human approval is needed when the plan was already confirmed and the checks derive
+from it. Stop for: scope
 the sweep raised that would grow the work, a derivation that contradicts the approved plan -
 which sends you back to that file, not around it - anything the writability gate caught that
 asking did not resolve, and writing test-policy rows into the repo's guidelines.

@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.1.0'
+  version: '1.2.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
@@ -28,6 +28,10 @@ and Verify. At phase boundaries or context recovery, use
 When implementing a selected image or design, freeze [the UI contract](../wtk/references/ui-ux.md)
 before coding and carry its source and evidence requirements through build and independent verification.
 Use the `ui` profile for binding interface sources.
+
+At Plan, Checks, Build and Verify, apply
+[project requirements](../wtk/references/project-requirements.md), including for checks-only
+features. The phase references carry its entry points; profiles never waive inherited requirements.
 
 ## Core contract
 
