@@ -129,10 +129,16 @@ Report companion use from actual execution evidence.
 | Companion | Source | Use it when |
 | --- | --- | --- |
 | Ponytail | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | You want a deliberately minimal-code implementation style. |
+| Frontend Craft | [antoniofulg/frontend-craft](https://github.com/antoniofulg/frontend-craft) | Discovery needs product, sales or growth strategy, or interface work needs grounded component reuse, interaction, accessibility, performance and technical SEO guidance. |
 | Security lifecycle | [antoniofulg/security-lifecycle](https://github.com/antoniofulg/security-lifecycle) | The project needs dedicated threat modeling, secure implementation, review, or authorized pentesting skills. |
 | Adaptive Guidelines | [antoniofulg/adaptive-guidelines](https://github.com/antoniofulg/adaptive-guidelines) | You want to turn recurring agent corrections into reviewable project guidelines. |
 | Graft | [trailhq/Graft](https://github.com/trailhq/Graft) | You need checkout-local symbols, callers, or blast-radius pointers during exploration. |
 | Graphify | [graphifyy on PyPI](https://pypi.org/project/graphifyy/) | You need an architecture map before tracing implementation details. |
+
+Frontend Craft can supply commercial hypotheses during discovery, implementation precedents during
+interface design/build, and reuse or rendered-review guidance during verification. Existing design
+contracts remain authoritative, and a working interface does not prove a sales or conversion gain.
+Its technical and commercial material have [different source terms](https://github.com/antoniofulg/frontend-craft#license-and-sources).
 
 To add the four security skills used by WTK's feature workflow, install them from the public
 security-lifecycle repository:
@@ -154,7 +160,6 @@ Specialist workflow companions can supply deeper procedures when a project selec
 
 | Companion | Source | Use it when |
 | --- | --- | --- |
-| Frontend Craft | [antoniofulg/frontend-craft](https://github.com/antoniofulg/frontend-craft) | Discovery needs product, sales or growth strategy, or interface work needs grounded component reuse, interaction, accessibility, performance and technical SEO guidance. |
 | `investigate-first` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/investigate-first) | An unclear failure or performance regression needs evidence-ranked hypotheses and a credible cause before editing. |
 | `safe-refactor` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/safe-refactor) | Build or verification needs behavior-preserving extraction, consolidation or ownership changes, with the same proof before and after edits. |
 | `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams. Broad suite audits remain separately scoped. |
@@ -168,11 +173,6 @@ Use `wtk-setup` to bind selected companions to planning, build and verification 
 WTK's shared reuse, test and validation rules remain the baseline when no companion is selected.
 Discover identifies a refactor, test-quality or migration need and carries its constraints into the
 plan; the specialist supplies the relevant execution procedure.
-
-Frontend Craft can supply commercial hypotheses during discovery, implementation precedents during
-interface design/build, and reuse or rendered-review guidance during verification. Existing design
-contracts remain authoritative, and a working interface does not prove a sales or conversion gain.
-Its technical and commercial material have [different source terms](https://github.com/antoniofulg/frontend-craft#license-and-sources).
 
 Before adopting `test-audit`, replace its OpenClaw-specific runner, review and PR instructions with
 the consuming project's commands. Project rules govern compatibility, test removal and delivery:
