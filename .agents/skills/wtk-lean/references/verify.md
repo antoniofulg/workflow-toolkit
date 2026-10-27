@@ -40,6 +40,9 @@ the original request, authoritative project routing, `plan.md`, `checks.md`, eve
 marks binding, and the diff range
 `<feature base>..HEAD`. It writes `verification.md` and fixes nothing. You run
 `validate_verification.py`. You do not write the report yourself.
+Record pending dispatch before send and the real host identity/status after send through
+[live recovery](../../wtk/references/context-handoff.md#record-dispatch-and-reconcile-ownership);
+reconcile host reports before waiting or replacing a Verifier on resume.
 
 **No supported independent dispatch?** Stop that dispatch and name the missing host capability.
 Obtain targeted acceptance of a supported checking choice or independent session through agent
@@ -57,6 +60,9 @@ within this verification pass and include its findings and coverage limits in th
 
 For explicit reuse, construction-order or approval requirements, apply
 [construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
+Independently inspect the native feature approval's actual source, reviewed revision and scope;
+structurally valid Markdown does not authenticate user authority. The completion gate also checks
+the receipt, including checks-only intent, and never substitutes execution-selection approval.
 
 `checks.md` carries a `Profile:` line, and `light` is the default. Step 1 runs under `ui`. The
 `Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and
@@ -261,9 +267,9 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 ## Visual fidelity
 
-| Source | Route/state | Viewport | Captures | Comparison | Result |
-| --- | --- | --- | --- | --- | --- |
-| source revision / UI contract row | route and selected state | width×height; scroll | reference, full-page, actual viewport paths | independently inspected requirements and individual differences; implementation revision and environment | PASS |
+| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| frozen source revision / UI contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
 
 ## Checks
 

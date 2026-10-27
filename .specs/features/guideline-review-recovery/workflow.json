@@ -1,0 +1,89 @@
+{
+  "approval": {
+    "reference": "Current conversation functions.ask: feature_plan=Approve plan; execution_settings=Accept inherited settings.",
+    "stages": {
+      "implementation": {
+        "effort": "inherited",
+        "limitations": [
+          "model: child default is not exposed in advance; user accepted host inheritance.",
+          "effort: dispatch API exposes no effort override; user accepted host inheritance."
+        ],
+        "model": "inherited",
+        "provider": "codex",
+        "rationale": "One sequential builder owns all four approved slices and their tests/docs.",
+        "scope": "All four slices in guideline-review-recovery and the complete approved checks."
+      },
+      "planning": {
+        "effort": "inherited",
+        "limitations": [
+          "model: child default is not exposed in advance; user accepted host inheritance.",
+          "effort: dispatch API exposes no effort override; user accepted host inheritance."
+        ],
+        "model": "inherited",
+        "provider": "codex",
+        "rationale": "Fresh non-author criteria review of the complete approved contract before dependent Build.",
+        "scope": "All four slices in guideline-review-recovery and the complete approved checks."
+      },
+      "verification": {
+        "effort": "inherited",
+        "limitations": [
+          "model: child default is not exposed in advance; user accepted host inheritance.",
+          "effort: dispatch API exposes no effort override; user accepted host inheritance."
+        ],
+        "model": "inherited",
+        "provider": "codex",
+        "rationale": "Fresh non-author verification of the complete feature range under standard profile.",
+        "scope": "All four slices in guideline-review-recovery and the complete approved checks."
+      }
+    },
+    "status": "confirmed"
+  },
+  "checkout": "/Users/antoniofulg/Projects/my-workflow",
+  "deep_review": {
+    "cadence": "skip",
+    "groups": []
+  },
+  "feature": "guideline-review-recovery",
+  "git_head": "86ae3f9f8f6402c31146362840bbbe1843389d5e",
+  "parallelization": {
+    "mode": "disabled"
+  },
+  "profile": null,
+  "stages": {
+    "implementation": {
+      "effort": "inherited",
+      "limitations": [
+        "model: child default is not exposed in advance; user accepted host inheritance.",
+        "effort: dispatch API exposes no effort override; user accepted host inheritance."
+      ],
+      "model": "inherited",
+      "provider": "codex",
+      "rationale": "One sequential builder owns all four approved slices and their tests/docs.",
+      "scope": "All four slices in guideline-review-recovery and the complete approved checks."
+    },
+    "planning": {
+      "effort": "inherited",
+      "limitations": [
+        "model: child default is not exposed in advance; user accepted host inheritance.",
+        "effort: dispatch API exposes no effort override; user accepted host inheritance."
+      ],
+      "model": "inherited",
+      "provider": "codex",
+      "rationale": "Fresh non-author criteria review of the complete approved contract before dependent Build.",
+      "scope": "All four slices in guideline-review-recovery and the complete approved checks."
+    },
+    "verification": {
+      "effort": "inherited",
+      "limitations": [
+        "model: child default is not exposed in advance; user accepted host inheritance.",
+        "effort: dispatch API exposes no effort override; user accepted host inheritance."
+      ],
+      "model": "inherited",
+      "provider": "codex",
+      "rationale": "Fresh non-author verification of the complete feature range under standard profile.",
+      "scope": "All four slices in guideline-review-recovery and the complete approved checks."
+    }
+  },
+  "verification_profile": "standard",
+  "version": 2
+}

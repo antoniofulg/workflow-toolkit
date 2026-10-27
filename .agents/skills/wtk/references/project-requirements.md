@@ -28,6 +28,12 @@ authority and explicit supersession; otherwise cite conflicting claims and the o
 decision. Inspect representative implementation and enforcement as evidence, not as policy adoption.
 Setup or policy revision is not required merely because a task reads existing guidance.
 
+User-owned scope, product behavior and departures from binding sources require an answer or
+explicit delegation before dependent implementation. Resolve routine facts and reversible detail
+from repository evidence. Record unanswered product choices as unresolved with dependent work
+blocked; an assumption/default or silence cannot authorize them. Record answers and delegation
+in the receiving turn under the native decision fields, using the approval and recovery procedures.
+
 Separate missing policy, missing expertise/required driver, and unavailable proof capability.
 An absent optional specialist alone does not block work when existing guidance suffices. An
 unavailable required driver needs a named affected responsibility and an authorized alternative or

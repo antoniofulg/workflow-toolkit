@@ -47,6 +47,8 @@ import os
 import re
 import sys
 
+from native_evidence import approval_errors, unfenced_lines, usable_value
+
 EVIDENCE_RE = re.compile(r"[\w./-]+\.[A-Za-z0-9]+:\d+")
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE | re.MULTILINE)
 EMPTY_CELL = {"", "-", "—", "–", "none", "n/a", "na", "nothing"}
@@ -70,15 +72,7 @@ def is_separator(line):
 
 
 def strip_fences(text):
-    """Drop fenced blocks: a report that pasted the template must not be read as data."""
-    out, in_fence = [], False
-    for ln in text.splitlines():
-        if ln.strip().startswith("```"):
-            in_fence = not in_fence
-            continue
-        if not in_fence:
-            out.append(ln)
-    return out
+    return unfenced_lines(text)
 
 
 def find_tables(lines):
@@ -149,7 +143,7 @@ def _verdict(lines):
 
 
 def _check_feature(fdir, name):
-    errors, warnings = [], []
+    errors, warnings = approval_errors(os.path.join(fdir, "checks.md")), []
     vpath = os.path.join(fdir, "verification.md")
     if not os.path.exists(vpath):
         errors.append(
@@ -224,18 +218,44 @@ def _check_feature(fdir, name):
             elif in_visual:
                 visual_lines.append(line)
         visual_tables = find_tables(visual_lines)
-        required = ("source", "route/state", "viewport", "captures", "comparison", "result")
+        required = (
+            "source/revision", "source scale", "implementation revision", "route/state",
+            "viewport/scroll", "environment", "reference capture", "full-page capture",
+            "viewport capture", "comparison", "result",
+        )
         evidence_rows = 0
         for header, rows in visual_tables:
-            if not all(field in header for field in required):
+            if not all(header.count(field) == 1 for field in required):
                 continue
-            indices = [header.index(field) for field in required]
             for row in rows:
                 evidence_rows += 1
-                if any(i >= len(row) or row[i].lower() in EMPTY_CELL for i in indices):
-                    errors.append(f"{name}: visual fidelity row lacks source, viewport or comparison evidence")
-                elif row[header.index("result")].upper() != "PASS":
+                cells = {field: row[header.index(field)] if header.index(field) < len(row) else ""
+                         for field in required}
+                missing = [field for field, value in cells.items() if not usable_value(value)]
+                if missing:
+                    errors.append(f"{name}: visual fidelity row lacks usable provenance: {', '.join(missing)}")
+                if cells["result"].upper() != "PASS":
                     errors.append(f"{name}: visual fidelity is not PASS ({row[0][:50]})")
+                scale = cells["source scale"].strip("` ")
+                if not re.fullmatch(r"(?:[1-9]\d*(?:\.\d+)?|0\.\d*[1-9]\d*)x?", scale):
+                    errors.append(f"{name}: visual fidelity source scale must be positive (for example 1x)")
+                viewport = cells["viewport/scroll"].strip("` ")
+                if not re.fullmatch(r"[1-9]\d*\s*[x×]\s*[1-9]\d*;\s*scroll:\s*\d+(?:\.\d+)?,\s*\d+(?:\.\d+)?", viewport, re.I):
+                    errors.append(f"{name}: visual fidelity viewport/scroll must name CSS widthxheight; scroll: x,y")
+                environment = dict(
+                    (key.strip().lower(), value.strip())
+                    for part in cells["environment"].split(";") if ":" in part
+                    for key, value in [part.split(":", 1)]
+                )
+                if not all(usable_value(environment.get(key, "")) for key in ("browser", "os")) or not re.fullmatch(
+                    r"(?:[1-9]\d*(?:\.\d+)?|0\.\d*[1-9]\d*)", environment.get("dpr", "")
+                ):
+                    errors.append(f"{name}: visual fidelity environment requires browser, OS and positive DPR")
+                for field in ("reference capture", "full-page capture", "viewport capture"):
+                    capture = cells[field].strip().strip("`")
+                    local = capture if os.path.isabs(capture) else os.path.join(fdir, capture)
+                    if not usable_value(capture) or re.match(r"[A-Za-z][A-Za-z0-9+.-]*://", capture) or not os.path.isfile(local):
+                        errors.append(f"{name}: visual fidelity {field} is not an existing local file: {capture!r} (relative to verification.md)")
         if not evidence_rows:
             errors.append(f"{name}: ui requires a visual fidelity evidence table with {', '.join(required)}")
 

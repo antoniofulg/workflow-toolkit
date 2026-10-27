@@ -1,5 +1,13 @@
 # Dunning on failed charge
 
+## Approval
+
+- Decision: User approved the dunning plan in TLC-412 comment 7.
+- Date: 2026-03-02
+- Source: TLC-412 comment 7, recorded fixture decision.
+- Reviewed revision: dunning-plan-3 on base a1b2c3d
+- Scope: Both dunning slices and local implementation/commits; no remote delivery.
+
 ## Problem
 
 A member whose card fails keeps full access until someone notices in the provider dashboard,

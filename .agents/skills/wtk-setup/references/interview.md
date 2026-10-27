@@ -1,19 +1,19 @@
 # Setup interview
 
-**Read when:** choosing relevant setup areas, proposing a baseline or interviewing unresolved policy
+**Read when:** reviewing existing guideline rules, proposing a baseline or interviewing policy
 and driver responsibilities in a new or existing project.
 
 ## Area menu
 
 Use the menu to discover what applies, not to require a skill or document per row. Security can
-affect every area. Inspect existing answers first, then ask focused questions about remaining choices.
+affect every area. Group the relevant material rules by area and cite each owning path/section.
 
 | Area | Policy and evidence to discover | Driver responsibility to settle |
 | --- | --- | --- |
 | Product and domain | Goals, vocabulary, sensitive workflows, authoritative product sources | Read product/domain sources before deriving feature outcomes |
 | Branching and collaboration | Branch/worktree conventions, review and merge authority | Preserve the project's collaboration and checkout rules |
 | CI and delivery | Iteration/readiness gates, promotion and deploy authority | Derive executable gate and release obligations without extending authority |
-| Frontend | Necessary content, shared owners, async states, motion, accessibility, responsive behavior | Read UI policies and chosen design/frontend guidance before screen criteria |
+| UI/UX and frontend | User journeys, interactions, necessary content, shared owners, states, motion, accessibility, responsive behavior and binding visual sources | Read adopted UI policies and actually available selected design/frontend guidance before screen criteria |
 | Backend and integrations | Public contracts, input validation, authority, transactions, retries, provider failures | Derive boundary outcomes and recovery requirements |
 | Architecture | Ownership, module boundaries, dependency direction, representative flows | Carry architectural constraints into criteria and source-tracing proofs |
 | Database and lifecycle | Integrity, tenancy, migration authority, retention, recovery | Derive data/isolation obligations and distinguish execution authority |
@@ -39,20 +39,32 @@ suite. Extend the existing [security procedure](../../wtk/references/security.md
 
 ## Focused questions
 
-Use available evidence to make the question concrete. Ask the relevant unresolved subset, in small
-batches; reuse prior explicit answers rather than running a fixed questionnaire.
+For each relevant existing area, show its source-linked material rule summary and ask: **keep this
+named set, change selected rules, retire selected rules, or defer?** A grouped keep answer covers
+only the displayed set; drill into selected changes/retirements. Ask in small area-grouped batches,
+including apparently settled rules rather than only conflicts or gaps. Existing file presence,
+implementation patterns and assigned drivers do not answer this question.
+
+Record the user's disposition, exact covered rules/source and selected delta in the normal
+assessment proposal or authorized owning documents in the receiving turn. Retire only explicitly
+selected rules and their obsolete routes; preserve neighboring rules and unaffected owners.
+Unanswered/deferred rules stay unchanged and visibly unresolved, with dependent work classified
+through the shared gap dispositions. Reuse that record so a settled set is not asked again in the
+same active interview; changed inputs reopen only the affected choice. Assessment remains read-only.
 
 - For a blank project: which relevant baseline outcomes should be adopted, and which product or
   engineering constraints change them? Where should owning guidance live if no convention exists?
-- For an existing harness: which conflicting or stale source is authoritative? Does the observed
-  recovery, data or UI behavior reflect intended policy, or an implementation gap? Existing driver
-  choices do not settle these questions.
+- For an existing harness: after the disposition question, which conflicting source is authoritative?
+  Does observed recovery, data or UI behavior reflect intended policy or an implementation gap?
 - For each unsettled area: which available driver should planning read, for what responsibility,
   and which build/verification procedures should it supply? Present a grounded recommendation and
   any expertise limits; allow one driver to own several areas.
 - For missing capability: can existing guidance and tools satisfy the requirement, is an alternative
   authorized, or what dependent work must remain blocked? Optional skill absence and unavailable
   browser execution are different gaps.
+- For UI/UX and frontend: which journeys/interactions and visual sources bind the work, and which
+  actually available specialist should supply the needed expertise? A recommendation such as
+  Frontend Craft is optional, not an adopted driver or permission to install it.
 - For a changed-input rerun: does the renamed source, removed skill or changed runtime alter the
   adopted responsibility? Ask only about that change and preserve unaffected decisions.
 

@@ -27,6 +27,13 @@ the flow, and link the design - it is a source, not an illustration.>
 
 <N criteria in M slices · K one-way doors · Q open, of which B block>
 
+## Approval
+
+<After actual authorization, record the native receipt from
+wtk/references/construction-constraints.md#native-feature-approval: Decision, Source or Date,
+Reviewed revision and Scope. Omit while awaiting the existing review boundary; never fabricate it.
+Record a current request that already authorizes this decided work without another approval pause.>
+
 ## Criteria
 
 One observable outcome per line, with the concrete value. State the precondition when the
@@ -143,7 +150,7 @@ section is not an answer.
 |---|---|---|---|
 | 1 | blocks | <question> | <which criterion cannot be satisfied until it is answered> |
 | 2 | blocks go-live | <question> | <what cannot be switched on for real users until it is answered> |
-| 3 | open | <question> | <what stays imprecise, and what was written in the meantime> |
+| 3 | open | <routine reversible ambiguity> | <proposed default; unanswered product intent instead blocks dependent work> |
 ````
 
 **The handoff line** comes first because whoever opens this file was handed a path and nothing else - increasingly a model, with no memory of the conversation that produced the task. It names the skill that turns criteria into checks, so the reader does not improvise a plan out of a document that deliberately contains none, and it repeats the one rule that gets broken under pressure: an open question is not an invitation to decide. Name the skill, never a path - where it is installed differs per repository, and a link that does not resolve teaches the reader to skip the line. Add a repo-relative path beside the name only where the project vendors the skill in-tree, and only as a fallback: a skill configured as explicitly-invoked-only never appears in an agent's list, and in a headless or cloud run the name on its own is a reference nobody can act on. A path into somebody's home directory is the one that goes stale - never write that.

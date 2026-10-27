@@ -5,10 +5,11 @@ context pressure, or transferring ownership to a fresh session.
 
 ## Checkpoint before context is lost
 
-Update the existing handoff at phase boundaries and before the next action would depend mainly on
-conversational memory. If reliable host telemetry exists, 80% context use may trigger an early
-checkpoint; never estimate a percentage or make it a universal stop threshold. A checkpoint does
-not require a fresh session or new approval.
+Record user answers, approval/delegation, scope changes and settled clarifications in the existing
+owning contract/decision fields or Handoff **in the receiving turn**, before dependent action.
+Phase/batch-end checkpoints supplement these live writes; they do not postpone them. Update the
+handoff before an action would depend mainly on conversational memory. Reliable host telemetry
+may trigger an early checkpoint; never estimate a context percentage or require a fresh session.
 
 Use the active route's artifacts:
 
@@ -21,9 +22,34 @@ Use the active route's artifacts:
 Preserve the artifact's native fields. In its existing handoff, record phase, criterion/check status
 and evidence references, binding architecture/construction constraints, pending approvals and their
 scope, blocked work and release conditions, checkout/branch/HEAD and uncommitted work, authorization
-limits, and one next action. Include runtime and delegated-agent identifiers/status only when active.
+limits, and one next action. Include runtime identifiers only when active; delegated state follows below.
 Reference canonical criteria and approval records instead of copying the spec. A project-level
 handoff points to feature state; update only its section, preserving decisions and unrelated work.
+
+## Record dispatch and reconcile ownership
+
+The coordinator records each assignment in the existing Handoff **before send**: phase/stage,
+scope/check set, checked revision, accepted execution selection and status `pending dispatch`.
+This is intent, not proof of a live worker. Immediately after successful send, record the actual
+returned host identifier and observed status. Record a failed send as `send failed`, with the
+error and whether the host proves no assignment was created; never invent a host identifier.
+
+Before waiting, sending, consuming or replacing work on recovery, query available host
+status/reports and reconcile them with this record:
+
+| Evidence | Next authorized action |
+| --- | --- |
+| Pending intent; host confirms no assignment/send occurred | Send the recorded assignment once, then record its real identifier |
+| Successful send with actual host identity, confirmed live | Retain ownership and wait using that identity |
+| Send failed; host confirms no worker exists | Record failure, then retry within accepted settings |
+| Returned report | Record returned status/report and checked revision before consuming it |
+| Definitively terminated/cannot return | Record terminal evidence and release ownership before replacement |
+| Missing/unavailable host status or uncertain send/ownership | Record `ownership unverifiable`; block duplicate dispatch and resolve via host reports/operator evidence |
+
+An unproven pending intent cannot justify waiting as though a worker exists; equally it cannot
+justify redispatch while a send may have succeeded. Preserve accepted choices on retries/resume.
+The coordinator dispatches the final independent Verifier; builders report and stop. This is
+artifact bookkeeping, not a new scheduler or dispatch service.
 
 ## Recover before continuing
 
@@ -35,6 +61,8 @@ After compaction or on resume, the current agent:
 3. Preserves the active feature's frozen route using the project-owned
    `../../wtk-lean/scripts/workflow_route.py` resume path and revalidates the accepted choices through
    [agent selection](agent-selection.md); unchanged rows need no repeated confirmation.
+   Reconcile pending/live/returned dispatches against host status/reports as above before choosing
+   any wait, send, consume or replace action.
 4. States the recovered objective, binding constraints, unresolved approvals, blocked work and next
    authorized action, with artifact references. Continue when that action's prerequisites are proven;
    this statement is not a request to repeat existing approval.

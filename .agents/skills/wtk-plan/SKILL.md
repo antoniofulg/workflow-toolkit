@@ -91,11 +91,11 @@ only when a material choice belongs to the user and remains unsettled; continue 
 while waiting. Give concrete options and a recommendation when useful, without manufacturing a
 quota of questions or requiring a particular answer format.
 
-Use safe defaults for non-blocking ambiguity, marking `Kind: open` and the default in `Until answered`.
-Mark missing decisions that prevent a satisfiable criterion as `blocks`; prerequisites
-that only prevent real-world activation use `blocks go-live`. Preserve the output contract's literal
-fields and values. A proposed default is not approval; explicit delegation such as “you decide” is,
-and is recorded as `user delegated` on the Sources line.
+Use safe defaults only for routine reversible detail, marking `Kind: open` and the default in
+`Until answered`. Unanswered user-owned scope, product behavior or binding-source departures
+block dependent implementation until the user answers or explicitly delegates. `blocks go-live`
+is only for prerequisites preventing activation, not a way to bypass unsettled product intent.
+Record answers/delegation in the receiving turn; preserve the literal fields and values.
 
 ## Deliverable
 
@@ -106,6 +106,10 @@ Use existing source material to complete the artifact without asking the user to
 Present the task or justified split, followed by unresolved decisions with blockers first. Complete
 the requested planning artifact and its applicable checks; do not begin implementation unless it
 was also authorized. A source with unresolved product intent remains provisional.
+Record observed authorization in the task's native
+[`## Approval` receipt](../wtk/references/construction-constraints.md#native-feature-approval),
+including actual decision/source, reviewed revision and scope. An already authorizing request or
+accepted source may supply this evidence without another human stop. Execution settings are separate.
 
 Tasks are verification units; pull requests are review units. Preparation may belong in a commit
 or PR without being its own task. If review needs smaller PRs, propose that separately using the

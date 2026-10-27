@@ -21,6 +21,7 @@ Usage:
 Exit codes: 0 all mutants killed and the baseline is clean, 1 otherwise.
 """
 
+import base64
 import os
 import re
 import shutil
@@ -34,6 +35,18 @@ FEATURE = "billing"
 
 # (validator, artifact, description, mutation, expected exit, expected message fragment)
 CASES = [
+    ("validate_checks", "plan.md", "feature approval absent before build",
+     lambda s: s.replace("## Approval", "## Execution selection approval"),
+     1, "approval missing usable decision"),
+    ("validate_verification", "plan.md", "feature approval absent at completion",
+     lambda s: s.replace("## Approval", "## Execution selection approval"),
+     1, "approval missing usable decision"),
+    ("validate_checks", "plan.md", "approval is a fenced example",
+     lambda s: s.replace("## Approval", "```markdown\n## Approval").replace("## Problem", "```\n\n## Problem"),
+     1, "approval missing usable decision"),
+    ("validate_checks", "plan.md", "approval scope is a placeholder",
+     lambda s: s.replace("Both dunning slices and local implementation/commits; no remote delivery.", "<authorized scope>"),
+     1, "approval missing usable scope"),
     ("validate_checks", "checks.md", "drop one member from a size-5 set",
      lambda s: s.replace(" · `trial_will_end` C10 | - |", " | - |", 1),
      1, "declares 5 members but only 4"),
@@ -198,6 +211,27 @@ CASES = [
      1, "Test policy row is unmet"),
 ]
 
+VISUAL_CASES = [
+    ("validate_verification", "verification.md", "visual provenance missing implementation revision",
+     lambda s: s.replace("| e4f5a6b |", "| - |"),
+     1, "lacks usable provenance: implementation revision"),
+    ("validate_verification", "verification.md", "visual provenance missing DPR",
+     lambda s: s.replace("DPR: 1;", ""),
+     1, "environment requires browser, OS and positive DPR"),
+    ("validate_verification", "verification.md", "visual capture points to nonexistent local file",
+     lambda s: s.replace("| viewport.png |", "| missing.png |"),
+     1, "viewport capture is not an existing local file"),
+    ("validate_verification", "verification.md", "visual viewport omits scroll",
+     lambda s: s.replace("390x844; scroll: 0,0", "390x844"),
+     1, "viewport/scroll must name CSS"),
+    ("validate_verification", "verification.md", "visual source scale is zero",
+     lambda s: s.replace("| 1x |", "| 0x |"),
+     1, "source scale must be positive"),
+    ("validate_verification", "verification.md", "visual verdict unverified despite behavior PASS",
+     lambda s: s.replace("no material drift | PASS |", "no material drift | unverified |"),
+     1, "visual fidelity is not PASS"),
+]
+
 # Negative controls: under `light` the profile-scoped steps must NOT be demanded. A gate that
 # fires at every profile is the same bug as one that never fires - it just fails loudly instead
 # of silently, and it would make `light` unusable.
@@ -210,12 +244,27 @@ NEGATIVE_CONTROLS = [
 ]
 
 
-def scaffold():
+def scaffold(ui=False):
     root = tempfile.mkdtemp(prefix="tlc-spec-lean-selftest-")
     fdir = os.path.join(root, ".specs", "features", FEATURE)
     os.makedirs(fdir)
     for name in ("plan.md", "checks.md", "verification.md"):
-        shutil.copyfile(os.path.join(FIXTURES, name), os.path.join(fdir, name))
+        target = os.path.join(fdir, name)
+        shutil.copyfile(os.path.join(FIXTURES, name), target)
+        if ui and name in ("checks.md", "verification.md"):
+            with open(target, encoding="utf-8") as source:
+                body = source.read().replace("Profile: standard", "Profile: ui").replace("**Profile**: standard", "**Profile**: ui")
+            if name == "verification.md":
+                with open(os.path.join(FIXTURES, "visual.md"), encoding="utf-8") as visual:
+                    body += "\n" + visual.read()
+            with open(target, "w", encoding="utf-8") as output:
+                output.write(body)
+    if ui:
+        # Tiny local images prove only file availability, never fidelity or viewport correctness.
+        png = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aGv0AAAAASUVORK5CYII=")
+        for name in ("reference.png", "full.png", "viewport.png"):
+            with open(os.path.join(fdir, name), "wb") as output:
+                output.write(png)
     return root
 
 
@@ -337,11 +386,20 @@ def main(argv=None):
         else:
             print(f"  ok      {validator}")
     shutil.rmtree(base)
+    ui_base = scaffold(ui=True)
+    code, out = run("validate_verification", ui_base)
+    if code != 0:
+        baseline_ok = False
+        print(f"  BROKEN  validate_verification UI exit={code}\n{out}")
+    else:
+        print("  ok      validate_verification UI provenance and local files")
+    shutil.rmtree(ui_base)
 
     print("\nfault injection - every mutant must be killed")
     killed = survived = 0
-    for validator, artifact, desc, mutate, want_code, want_msg in CASES:
-        root = scaffold()
+    cases = [(False, case) for case in CASES] + [(True, case) for case in VISUAL_CASES]
+    for ui, (validator, artifact, desc, mutate, want_code, want_msg) in cases:
+        root = scaffold(ui=ui)
         path = os.path.join(root, ".specs", "features", FEATURE, artifact)
         with open(path, encoding="utf-8") as f:
             original = f.read()

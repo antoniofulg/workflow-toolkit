@@ -64,6 +64,10 @@ before dependent feature build, reusing an upstream review when it covers the co
 Read the approved `.tasks/<name>.md` source completely, then ground its checks in the touched code
 and existing conventions. Refuse a claim without a nameable proof, concrete value, or explicit
 boundary; ask when the source leaves a real decision open rather than guessing.
+Inspect the source's [native feature approval](../wtk/references/construction-constraints.md#native-feature-approval)
+before dependent Build: actual decision/source, reviewed revision and scope, separate from execution
+settings. Record already-granted authority without asking again; missing evidence remains blocked
+until recovered from the real source. Link the owning receipt in the checklist, not a second copy.
 
 Reuse the approved source's Swept dispositions and map them to checklist checks or existing proof.
 Revisit only missing, contradictory, or changed inputs. When no upstream sweep exists, perform it
@@ -82,6 +86,8 @@ After Extract and its sweep, read [checklist-format.md](references/checklist-for
 
 Apply [project requirements](../wtk/references/project-requirements.md#build-and-recover), including
 the inherited guidance, criteria-review disposition and blocking prerequisites under every profile.
+Record received user decisions in that turn using the shared live recovery procedure; maintain
+pending dispatch/actual host state through coordinator-owned Handoff, not batch-end memory alone.
 
 For a selected image or design, load [UI/UX](../wtk/references/ui-ux.md) before coding;
 freeze its contract and complete the builder capture/compare/fix loop before handoff.

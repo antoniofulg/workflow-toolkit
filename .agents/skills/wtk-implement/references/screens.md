@@ -28,6 +28,11 @@ the wrong screen with every check green.
 Apply [the UI contract](../../wtk/references/ui-ux.md): preserve the selected source's visible
 composition and values using matching tokens and component variants. Record necessary differences
 individually before coding. Reuse does not authorize replacing the selected palette or layout.
+Render at the contracted CSS viewport with source scale/DPR and environment recorded; use the shared
+report's explicit provenance and local reference/full-page/viewport paths. A resized/cropped render
+from another viewport is not evidence of that viewport. The independent Verifier opens actual
+images and reproduces interactions; missing files/provenance block completion. Refresh affected
+pairs on source/render-input changes; retain unrelated evidence only with independent input equivalence.
 
 ## Open it, and say how
 

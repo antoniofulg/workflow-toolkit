@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Setup now reviews source-linked material rules in each relevant existing guideline area with
+  explicit keep/change/retire/defer choices, preserves neighboring rules, and records unresolved
+  decisions without implicit consent. UI/UX and frontend includes journeys, interactions and binding
+  sources; no specialist is automatically adopted or installed.
+- Lean pre-build/completion gates require native feature approval evidence (actual decision/source,
+  reviewed revision and scope), separate from execution approval. Checks-only intent and modular
+  task procedures retain the same authority semantics without an additional mandatory approval pause.
+- Live handoff records receiving-turn decisions, pending dispatch and actual host state separately;
+  recovery reconciles host reports before wait/retry/replacement and blocks duplicate uncertain work.
+- UI completion now requires explicit visual provenance and existing local reference, full-page and
+  viewport captures from the contracted CSS render. Old free-text capture rows must be corrected
+  from real evidence. Structural gates do not authenticate approval or prove fidelity; independent
+  inspection and impact-based input-equivalence reuse remain required. Non-UI profiles stay exempt.
+
 ### Documentation
 
 - Add Frontend Craft to the main companion group and expand specialist guidance for investigation,

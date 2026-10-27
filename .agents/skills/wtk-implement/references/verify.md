@@ -26,6 +26,9 @@ Dispatch the accepted `verification` stage through
 and the original request, project routing and complete approved artifacts/range in the current
 checkout. Unsupported host settings block
 that dispatch until the affected choice is accepted; native role files are not required.
+Use [live recovery](../../wtk/references/context-handoff.md#record-dispatch-and-reconcile-ownership)
+to record pending intent before send and actual host identity/status after send; reconcile host
+status/reports before waiting or replacing work.
 
 The verdict goes back to the orchestrator and the user, never to a builder. A FAIL returned to
 the author is the author deciding what to do about the author's work, and the round that follows
@@ -36,6 +39,10 @@ within this verification pass and include its findings and coverage limits in th
 
 For explicit reuse, construction-order or approval requirements, apply
 [construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
+Check the owning task's native approval against the real user source, reviewed revision and scope
+before completion; reject missing, empty or template-only receipts. Execution settings and local
+Markdown cannot authenticate feature authority. Reuse genuine in-scope authorization without a
+new approval stop; resolve new user-owned product decisions through targeted acceptance.
 
 Under every profile, apply [independent project-requirement verification](../../wtk/references/project-requirements.md#verify-independently).
 Derive concerns and sources from the original request, actual change and authoritative routing;
@@ -250,9 +257,9 @@ Write `.checks/<feature>.verified.md`. Lead with the verdict.
 
 ## Visual fidelity
 
-| Source | Route/state | Viewport | Captures | Comparison | Result |
-| --- | --- | --- | --- | --- | --- |
-| source revision / UI contract row | route and selected state | width×height; scroll | reference, full-page, actual viewport paths | independently inspected requirements and individual differences; implementation revision and environment | PASS |
+| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| frozen source revision / UI contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
 
 ## Checks
 

@@ -11,6 +11,10 @@ for the model to obey, you are rebuilding the thing this skill removed.
 Apply [project requirements](../../wtk/references/project-requirements.md#build-and-recover): read
 inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
 before dependent edits. This applies under every profile, including checks-only features.
+Run `validate_checks.py <feature>` before dependent edits and inspect the native
+[approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval) for
+actual authority over the reviewed revision/scope. Record new user decisions in their receiving
+turn via [live recovery](../../wtk/references/context-handoff.md); a batch checkpoint is too late.
 
 For a selected image or design, load [UI/UX](../../wtk/references/ui-ux.md) before coding;
 freeze its contract and complete the builder capture/compare/fix loop before handoff.
@@ -160,9 +164,9 @@ state, and it carries the hundred reversible choices that sit below the `Landing
 error shape, where the helper went. Those are exactly what drifts between builders and exactly
 what no document records.
 
-Then append the three `## Handoff` lines - boundary, what the user settled mid-build, what was
-abandoned. They go in the artifact rather than in the next builder's prompt: a briefing written
-into a prompt survives exactly one boundary, and the third builder needs the first one's.
+Then append the three `## Handoff` lines - boundary, links to decisions already recorded in their
+receiving turns, and abandoned approaches. Live dispatch state and recovery follow the shared
+context handoff procedure; the next builder reads the artifact rather than a prompt-only briefing.
 
 If the user chose one builder over a budget miss, compaction is the accepted path. **After
 compaction or on resume,** use [context recovery](../../wtk/references/context-handoff.md) before

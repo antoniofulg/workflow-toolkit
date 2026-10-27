@@ -21,6 +21,9 @@ either dead or unproven, and both are findings.
 Apply [project requirements](../../wtk/references/project-requirements.md) before deriving checks,
 including for checks-only features. Carry source-backed landings and gap dispositions from the
 plan, reconcile omissions, and obtain its fresh criteria review before dependent feature build.
+Carry the plan's [native approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+within its reviewed scope. With no plan, retain `## Intent` and `## Approval` in this file; an
+already authorizing current request supplies the receipt without a new approval pause.
 
 Read the package manifest, the task runner and the CI workflows. Prefer a command that already
 runs in CI. Where nothing exists for what a check needs, ask - never invent a command, because
@@ -231,7 +234,7 @@ Over the budget - stop, ask (handoff vs one builder), then record the choice:
 <Appended by each builder as it finishes, three lines each:>
 
 - **Boundary:** C1-C7 closed at `<sha>`
-- **Settled mid-build:** <every clarification the user gave that did not become a Landing row or an edited check>
+- **Settled mid-build:** <links to decisions recorded in their receiving turns; do not wait for this checkpoint>
 - **Abandoned:** <tried, discarded, and why>
 ````
 
@@ -244,11 +247,11 @@ everything about the requirements and the solution's shape: [plan.md](plan.md).
 python3 <skill-dir>/scripts/validate_checks.py <feature>
 ```
 
-It fails a check with no `Proof:`, a duplicate check id, a coverage row whose declared size
-exceeds the members actually assigned, a coverage row with an empty member cell, a missing swept
-dimension, a swept landing left blank, and a missing `Profile:` line. It warns on a proof that
-names no test selector, on a claim carrying a vague word, and - the derivation check - on a route
-the plan's `Surface` names that nothing here mentions.
+It fails absent/unusable native approval in the sibling plan (or checks-only intent contract), a
+check with no `Proof:`, duplicate ids, incomplete coverage, missing swept dimensions or profile.
+Execution-setting acceptance does not replace feature approval. It warns on a proof without a test
+selector, vague claims and a plan Surface route absent from checks. The structural gate cannot judge
+approval authenticity/scope or proof adequacy; the independent review retains those obligations.
 
 A non-zero exit means fix before writing code. The script checks structure; the judgment - is the
 proof the right one, does the level match the claim - stays yours.
