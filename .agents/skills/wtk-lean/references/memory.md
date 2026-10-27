@@ -38,8 +38,10 @@ notices until a future feature contradicts a decision nobody can find.
 ## Recording a decision
 
 Use the [decision-store rules](../../wtk/references/artifacts.md#decision-store) for recording,
-reading and supersession. A choice belongs there when future features must conform to it.
-`Landing` in `plan.md` carries this feature's literal shape and links to that lasting constraint.
+reading and supersession. Write received decisions in that turn, before dependent action.
+A lasting choice belongs in that store; `Landing` carries this feature's literal shape and link.
+Native feature receipts follow [construction constraints](../../wtk/references/construction-constraints.md#native-feature-approval);
+live dispatch/host reconciliation follows [context recovery](../../wtk/references/context-handoff.md).
 
 ## Resuming work
 

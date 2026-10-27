@@ -98,8 +98,9 @@ badly shaped question spends a turn and buys less than a stated default would ha
   should this look?" hands the work back.
 - **Lead with your recommendation and one line of why.** You have read the code; accepting or
   overriding should cost one word.
-- **Assume first when it is safe.** State the default and invite correction instead of blocking.
-  A question you would have answered the same way regardless of the reply is not worth asking.
+- **Default only routine reversible detail.** An unresolved user-owned scope, product behavior or
+  binding-source departure needs an answer or explicit delegation before dependent implementation;
+  an assumption row with `Confirmed? n` preserves the gap, not permission to build it.
 - **At most two independent questions per turn, exactly one when they are dependent** - a
   dependent answer prunes the questions after it, so asking them together wastes most of them.
   Three or more in a turn is an interrogation, and it reads as one.
@@ -110,11 +111,10 @@ badly shaped question spends a turn and buys less than a stated default would ha
   is product capabilities only - process and harness rules live in AGENTS.md or as
   Observable `n/a`.
 
-Anything asked and not answered, or that you chose not to raise, lands in `## Assumptions` with
-your chosen default and rationale and `Confirmed? n`. That column is the whole record of who
-decided what: `y` means a human said so. Never mark `y` for a default nobody saw. Once a default
-is a numbered criterion, drop the assumption row - the table is leftovers, not a second copy of
-the criteria.
+Record unanswered choices in `## Assumptions` with a proposed default, rationale and `Confirmed? n`;
+mark dependent product work blocked. `y` means the user answered or explicitly delegated, never
+that silence or a reasonable default settled product intent. Defaults for routine reversible detail
+remain agent-owned. Once a settled default becomes a numbered criterion, drop its duplicate row.
 
 ## Walk the surfaces
 
@@ -335,10 +335,9 @@ Before presenting the plan, five checks. Nothing proceeds unresolved **and** unm
 1. **Unambiguity and precision.** Every criterion has a single interpretation and a precise
    expected outcome. One that fails either gets resolved with the user, split, or logged as an
    assumption with the chosen interpretation and its rationale.
-2. **Assumptions closure.** Every unresolved decision that surfaced is either resolved or
-   recorded in `## Assumptions` with a chosen default and a rationale - including every gray area
-   you chose not to raise and every one the user declined. Silently dropped is the failure this
-   check exists for; a default nobody saw is fine, a default nobody can find is not.
+2. **Assumptions closure.** Every unresolved decision is resolved or recorded with its proposed
+   default and rationale. User-owned product choices remain blocking before dependent implementation;
+   recording an unanswered choice never authorizes it. Routine reversible detail may use a default.
 3. **Blocking questions are marked as such.** A question that stops a criterion from ever being
    satisfiable is different in kind from one that leaves an error payload undecided. So is one
    that blocks nothing technical and still stops the feature reaching real users - a catalog
@@ -367,6 +366,12 @@ no reason, a `Landing` row with no literal shape or no rejected alternative, a `
 that names columns or types, a `Surface` row missing its statuses, and check numbers written
 into `Surface` before checks exist. It warns on a `Flow` hop naming a module marked neither as
 existing nor as a door. Judgment calls stay yours.
+
+Present the plan at the existing human review boundary. On receiving approval, write its native
+[`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+in that turn, with the actual decision/source, reviewed revision and scope. Do not prefill approval
+while drafting or require it in `validate_plan.py` before presentation. Checks and Build reuse
+this receipt within scope; execution-setting acceptance is separate.
 
 ## Template: `.specs/features/<feature>/plan.md`
 

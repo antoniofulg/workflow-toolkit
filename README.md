@@ -92,12 +92,15 @@ WTK phase. The project owns its instructions, configuration, tests, and delivery
 The project owns this text; installing or updating WTK skills does not change it.
 ```
 
-Invoke `wtk-setup` to assess an existing harness or set up project guidance through a focused
-policy and driver-skill interview. Assessment proposes a delta without editing project files;
-authorized setup can apply settled guidance and local commits. Reuse existing guideline owners
-and locations; `docs/guidelines/` is a proposal only when no convention exists, and you may choose
-another location. Setup keeps root routing small and loads guidance by role, phase and concern.
-It does not install tools or run as an installation side effect.
+Invoke `wtk-setup` to assess an existing harness or set up project guidance. It groups source-linked
+material rules by relevant area and asks **keep, change selected rules, retire selected rules, or
+defer**, including existing guidelines rather than only gaps. Answers cover the named rule set;
+unanswered rules stay unchanged and unresolved, neighboring rules/owners are preserved, and settled
+questions are not repeated in the active interview. UI/UX and frontend includes journeys,
+interactions and binding sources; specialists such as Frontend Craft remain optional selections.
+Assessment is read-only; authorized setup applies settled guidance/local commits. Reuse existing
+owners and locations (`docs/guidelines/` is only a proposal when none exists). Setup keeps root
+routing small and does not install tools or run as an installation side effect.
 
 Both feature paths read applicable project guidance and required driver instructions before
 deriving criteria. [Project requirements](.agents/skills/wtk/references/project-requirements.md)
@@ -199,6 +202,27 @@ The public hierarchy is `Feature -> Slice -> Check`:
 
 The feature artifacts are `.specs/features/<feature>/plan.md`, `checks.md`, and `verification.md`.
 The project decides its validation command, provider route, QA adapter, and delivery authority.
+
+Feature approval is separate from execution settings: record the actual user decision/source,
+reviewed revision and scope in the native plan/task `## Approval`, in the receiving turn. Lean's
+pre-build and completion gates reject missing, empty or template-only receipts; checks-only work
+keeps its receipt with `## Intent` without a synthetic plan or redundant approval pause. Unchanged
+in-scope approval is reusable; new user-owned product choices need targeted acceptance. Markdown
+cannot authenticate authority, and local edits/commits do not authorize remote delivery.
+
+Live recovery records decisions immediately, dispatch intent before send, and actual host identity
+after send. Coordinators reconcile host status/reports before waiting, retrying or replacing work;
+uncertain ownership blocks duplicate dispatch. Builders report and stop; the coordinator dispatches
+the independent Verifier.
+
+For `ui` verification, visual-fidelity rows explicitly name source/revision and scale, implementation
+revision, route/state, CSS viewport/scroll, environment including DPR, separate local reference,
+full-page and viewport paths, comparison and result. Relative capture paths resolve beside the report.
+The completion gate rejects missing provenance/files; non-UI profiles need no captures. Render at
+the contracted viewport: resizing/cropping another viewport's image is not proof. Structural
+acceptance still requires independent image inspection, fidelity judgment and interaction reproduction.
+Refresh affected evidence when source/render inputs change; reuse unaffected evidence only with an
+explicit input-equivalence reason, not blanket invalidation for every HEAD change.
 
 Discover can use available PostHog analytics, Sentry issues, logs and support reports to establish
 impact and compare remedies. It resolves connected tools and relevant analysis skills, reads only

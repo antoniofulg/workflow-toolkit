@@ -4,7 +4,7 @@ description: Set up, assess, or update a project's WTK guidance through source d
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '1.0.0'
+  version: '1.1.0'
 ---
 
 # Project harness setup
@@ -40,13 +40,14 @@ what existing authority settles; an observed convention or specialist recommenda
 Discovery is complete when relevant owners, current decisions and material gaps are known well
 enough to ask focused questions, not after an exhaustive repository audit.
 
-## Interview unresolved responsibilities
+## Review existing rules and unresolved responsibilities
 
-Read [the area menu and baseline](references/interview.md). Select relevant areas from the project
-and requested scope, including cross-cutting security. Propose a small baseline for adoption, then
-ask only material unsettled policy and driver questions. Reuse explicit decisions from the current
-session and existing adopted guidance; an existing driver choice does not answer an unsettled
-policy question.
+Read [the area menu and interview](references/interview.md). Group questions by relevant area:
+present source-linked summaries of its material existing rules and explicitly ask **keep, change
+selected rules, retire selected rules, or defer**. File presence and driver bindings are evidence,
+not answers. Cover existing rule sets as well as gaps; propose a small baseline only for missing policy.
+Reuse dispositions already settled for that exact set in the active interview, not assumed consent
+from an older guideline. Follow the reference's recording and neighboring-rule preservation rules.
 
 For each unsettled driver responsibility, present relevant actually available skills, what planning
 must read from each, a recommendation and its limit. Ask the user to choose or confirm; keep frontend,
@@ -77,9 +78,9 @@ Connect the project routing to the shared
 [requirement inheritance procedure](../wtk/references/project-requirements.md), which both WTK paths
 use. Keep the project's adopted policies in its own documents, not inside distributed skills.
 
-On rerun, compare policies, sources, skills and runtime assumptions with existing bindings. Preserve
-equivalent decisions and owners without repeated settled questions. Repair or retire stale pointers
-within authority, preserve unaffected policy, and ask about materially changed responsibilities.
+On rerun, compare policies, sources, skills and runtime assumptions with existing bindings, then
+review relevant existing rule sets through the interview above. Preserve owners and unaffected rules;
+reuse settled answers within the same active interview and reopen only materially changed inputs.
 A missing source/required driver exposes its dependent requirement before any successful-load claim;
 an unresolved authority conflict never broadens delivery permission.
 

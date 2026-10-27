@@ -4,11 +4,58 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-10-26
+
+### Changed
+
+- Setup now reviews source-linked material rules in each relevant existing guideline area with
+  explicit keep/change/retire/defer choices, preserves neighboring rules, and records unresolved
+  decisions without implicit consent. UI/UX and frontend includes journeys, interactions and binding
+  sources; no specialist is automatically adopted or installed.
+- Lean pre-build/completion gates require native feature approval evidence (actual decision/source,
+  reviewed revision and scope), separate from execution approval. Checks-only intent and modular
+  task procedures retain the same authority semantics without an additional mandatory approval pause.
+- Live handoff records receiving-turn decisions, pending dispatch and actual host state separately;
+  recovery reconciles host reports before wait/retry/replacement and blocks duplicate uncertain work.
+- UI completion now requires explicit visual provenance and existing local reference, full-page and
+  viewport captures from the contracted CSS render. Old free-text capture rows must be corrected
+  from real evidence. Structural gates do not authenticate approval or prove fidelity; independent
+  inspection and impact-based input-equivalence reuse remain required. Non-UI profiles stay exempt.
+- Lean and modular verification challenge approved claims with bounded independent examples absent
+  from the plan and checks, recording actual boundary outcomes in the existing report without a
+  fixed quota, extra reviewer or changes to mutation profiles and evidence reuse.
+
+### Fixed
+
+- Approval gates exclude illustrative example/template/sample subsections, including their nested
+  contents, without discarding genuine receipts elsewhere in the approval section.
+- UI completion rejects every supplied visual table with incomplete or unsupported provenance
+  columns; a valid neighboring table no longer masks legacy evidence or missing capture provenance.
+- Native approval and visual provenance reject ellipses and other placeholder-only punctuation
+  instead of accepting them as usable evidence; meaningful revision and capture-path punctuation remains valid.
+
 ### Documentation
 
 - Add Frontend Craft to the main companion group and expand specialist guidance for investigation,
   focused verification, agent-instruction writing, document conversion and prose editing, including
   source links and the boundaries between companion guidance and WTK's phase responsibilities.
+
+### Upgrade
+
+- Refresh the complete 13-skill WTK set through the README installation/update instructions.
+  Pinned installations keep their recorded revision until explicitly refreshed.
+- Recover missing native approval and visual provenance from real evidence before resuming affected
+  feature gates. Examples, placeholder-only fields and execution-setting approval do not supply
+  feature authority; do not backdate consent or fabricate capture provenance.
+- Skill metadata versions advance independently of the toolkit release:
+
+| Skill | Version |
+| --- | --- |
+| `wtk` | 1.1.0 |
+| `wtk-setup` | 1.1.0 |
+| `wtk-lean` | 1.3.0 |
+| `wtk-plan` | 0.3.0 |
+| `wtk-implement` | 0.2.0 |
 
 ## [3.2.0] - 2026-10-21
 

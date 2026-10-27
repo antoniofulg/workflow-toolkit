@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.2.0'
+  version: '1.3.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
@@ -85,8 +85,9 @@ thin, ask the user to raise it rather than silently changing the profile.
 ```
 
 Create each file when its phase produces content. For a change under roughly three files with no
-one-way door, write only `checks.md` with an `## Intent` paragraph and skip `plan.md` - one
-bounded escape, not a sizing matrix.
+one-way door, write only `checks.md` with `## Intent` and the native
+[approval receipt](../wtk/references/construction-constraints.md#native-feature-approval). The
+current request can authorize that bounded intent; create no synthetic plan or redundant approval stop.
 
 The plan is the human review boundary. Write the problem, walk the surfaces, write criteria, then
 record the shape that implements them. File order serves the reviewer: `Problem`, `Flow`, `Impact`,
@@ -133,11 +134,12 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | At distillation | `lessons.py add ...` |
 | After editing a validator or template | `selftest.py` |
 
-The validators own structural detail: `validate_plan.py` closes the human-reviewed shape,
-`validate_checks.py` catches missing proofs, coverage, swept rows, and profile, and
-`validate_verification.py` requires evidence, no surviving mutant, no `Unproven` member, and a
-non-author Verifier. Run `selftest.py` only after changing a validator or template. If execution is
-unavailable, perform the same checks by inspection and report the degraded path.
+The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
+`validate_checks.py` catches missing native approval, proofs, coverage, swept rows and profile.
+`validate_verification.py` also requires native approval and, under `ui`, visual provenance and
+existing local captures. Structural acceptance cannot authenticate approval or judge image fidelity;
+the independent Verifier owns those judgments. Run `selftest.py` after validator/template changes.
+If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection
 

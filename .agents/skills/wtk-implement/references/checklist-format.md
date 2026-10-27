@@ -15,6 +15,7 @@ Sources:
 
 - <ticket URL, document path, or "conversation"> - <what it settles>
 - <design / screens> - **binding for the interface**: screens <ids>
+- <owning task path>#approval - observed feature decision/source, reviewed revision and scope
 
 ## Out of scope
 
@@ -113,6 +114,10 @@ The last two lines close the level gap the same way. List every check whose clai
 Find the real commands first: read the package manifest, the task runner and the CI workflows. Prefer a command that already runs in CI. When nothing exists for what a check needs, ask - never invent a command, because a proof that cannot run is worse than none.
 
 Write the checklist, satisfy the [project-requirements criteria review](../../wtk/references/project-requirements.md#review-criteria-before-dependent-feature-build), then continue into Build. No additional human approval is needed when the source is already decided and the checklist derives from it.
+The source must retain a usable [native approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval);
+inspect its real authority before dependent edits. Record decisions in their receiving turn and
+reconcile actual host status through the shared [Handoff](../../wtk/references/context-handoff.md)
+before dispatch/recovery. These requirements add no approval pause for already authorized work.
 
 **What keeps it reviewable is the ordering, not a commit.** The artifact is complete before you touch code, so it reads as what you were building toward rather than a rationalisation of what you built. Where the project tracks `.checks/`, that ordering is worth a commit of its own before any code; where the project ignores it - which is common, and correct for a working artifact the skill says stops being read after the merge - the ordering still holds and nothing about it depends on git.
 

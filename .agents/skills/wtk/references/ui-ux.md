@@ -28,9 +28,9 @@ selected source; record and resolve each conflict before coding.
 - **Approved source/frame:** tool and frame, or checked-in export path
 - **Revision/frozen export:** revision, or frozen export path plus commit/hash
 - **Intent:** binding implementation (default), or inspiration with the user instruction cited
-- **Route and mapping:** route; selected state ↔ exact mobile and desktop viewport width×height pairs
-- **Captures:** original/reference and implementation capture paths
-- **Environment:** browser, OS, DPR, fixtures/content, and loaded fonts/assets
+- **Route and mapping:** route; selected state ↔ exact mobile and desktop CSS viewport width×height pairs
+- **Captures:** local original/reference, full-page and actual viewport capture paths
+- **Scale/environment:** source pixels per CSS pixel (source scale), browser, OS, DPR, fixtures/content, loaded fonts/assets and theme
 - **Tokens:** source provenance; mapped tokens; aliases/themes; inferred or missing values
 - **Composition:** header/navigation, content hierarchy, filter/control placement, cards, footer; order and containment
 - **Visual requirements:** spacing/density, typography/scale/weight, palette/theme, borders/radii, media crop/aspect ratio
@@ -123,11 +123,13 @@ No new showcase, preview deployment, design integration, or split frontend/backe
 
 For a binding source, use the following acceptance procedure even when behavior tests or QA pass.
 
-1. **Builder:** render at every agreed mobile and desktop viewport/state, inspect beside the source,
-   fix material mismatches, then recapture affected evidence before handoff. Capture the full page
-   for composition and the actual viewport for selected interaction states, including scrolled/open
-   controls where relevant. A full-page capture alone cannot prove sticky controls leave choices,
-   focus and actions visible and reachable. Exercise those choices in the actual viewport.
+1. **Builder:** render at every contracted mobile and desktop **CSS viewport** and state, recording
+   source scale, browser/OS, DPR, fixtures, fonts/assets and theme. Capture that genuine render;
+   resizing or cropping an image rendered at another viewport does not prove the contracted render.
+   Inspect beside the source, fix material mismatches and recapture affected evidence before handoff.
+   Capture the full page for composition and the actual viewport for interaction states, including
+   scroll/open controls. Full-page evidence alone cannot prove sticky choices, focus or actions
+   remain reachable; exercise them in the actual viewport.
 2. Compare hierarchy, spacing, typography, palette, controls, media and responsive layout against the
    recorded requirements and individual differences. Check inherited dark-theme leakage against the
    selected theme, and check placeholder imagery/labels cannot imply a photographed real venue.
@@ -137,13 +139,26 @@ For a binding source, use the following acceptance procedure even when behavior 
    A materially different theme, header, filter layout, card composition or footer is a visual FAIL
    even with green functional tests and QA. Missing source/captures or uninspected pairs are unverified
    and cannot PASS. Put these failures in the existing binding-source findings as well as the verdict.
-4. Record evidence in the existing task, verifier or QA report using the fields below. Source or
-   implementation changes invalidate affected evidence. Keep raw captures disposable but available
-   through independent review; preserve source pointers and verdicts in the existing durable report.
+4. Record evidence in the existing task, verifier or QA report using the literal columns below.
+   Source or implementation inputs affecting a contracted pair invalidate that pair's evidence.
+   Unrelated HEAD changes do not automatically invalidate all captures: independently record the
+   original evidence/revision and an explicit input-equivalence reason for reuse, following
+   [validation](validation.md). An old PASS or matching filename alone is not equivalence.
+   Keep captures disposable but available through independent review.
 
-| Source/revision | Implementation revision | Route/state | Viewport / scroll | Environment | Reference + full-page + viewport captures | Inspection / differences | Builder / independent verdict |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source | tested revision | selected state | width×height; position | browser, OS, DPR, fixtures, fonts/assets, theme | paths | compared requirements; exception rows; interaction result | PASS/FAIL/unverified per actor |
+| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| frozen source and revision / contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
+
+`Source scale` is positive source pixels per CSS pixel; mark inferred raster calibration in the
+source/contract, not a fabricated precise value. `Viewport/scroll` uses CSS width×height and CSS
+scroll x,y. Record browser, OS and positive `DPR:` explicitly in Environment along with content,
+fonts/assets and theme. Each capture cell is one literal local file path, optionally backtick-wrapped;
+relative paths resolve beside the report, absolute local paths are allowed. Paths are data, never
+commands, shell substitutions or URLs. The Lean completion gate requires these columns, usable
+values and existing files under `ui`; non-UI profiles acquire no screenshot obligation. It cannot
+authenticate images, detect sophisticated resizing, judge fidelity/freshness or prove matrix
+coverage. Independent inspection and state reproduction above remain required.
 
 Use the existing adapter with side-by-side inspection, overlay or diff; manual comparison is evidence,
 not an automated test. A conceptual raster binds visible composition without requiring pixel equality:

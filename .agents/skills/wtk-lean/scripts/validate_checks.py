@@ -55,6 +55,8 @@ import os
 import re
 import sys
 
+from native_evidence import approval_errors
+
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
 
@@ -239,7 +241,7 @@ def check_file(path):
     with open(path, "r", encoding="utf-8") as f:
         raw = f.read().splitlines()
     lines = strip_fences(raw)
-    errors, warnings = [], []
+    errors, warnings = approval_errors(path), []
 
     # Profile.
     profile = None

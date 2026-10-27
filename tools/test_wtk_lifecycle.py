@@ -12,10 +12,11 @@ def make_feature(root: Path, name: str = "fixture") -> Path:
     validator = root / ".agents" / "skills" / "wtk-lean" / "scripts" / "validate_verification.py"
     validator.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(ROOT / ".agents/skills/wtk-lean/scripts/validate_verification.py", validator)
+    shutil.copy2(ROOT / ".agents/skills/wtk-lean/scripts/native_evidence.py", validator.parent / "native_evidence.py")
     target = root / ".specs" / "features" / name
     target.mkdir(parents=True)
     fixtures = ROOT / ".agents" / "skills" / "wtk-lean" / "scripts" / "fixtures"
-    for filename in ("checks.md", "verification.md"):
+    for filename in ("plan.md", "checks.md", "verification.md"):
         shutil.copy2(fixtures / filename, target / filename)
     return target
 

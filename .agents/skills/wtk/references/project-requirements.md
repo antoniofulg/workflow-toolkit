@@ -28,6 +28,12 @@ authority and explicit supersession; otherwise cite conflicting claims and the o
 decision. Inspect representative implementation and enforcement as evidence, not as policy adoption.
 Setup or policy revision is not required merely because a task reads existing guidance.
 
+User-owned scope, product behavior and departures from binding sources require an answer or
+explicit delegation before dependent implementation. Resolve routine facts and reversible detail
+from repository evidence. Record unanswered product choices as unresolved with dependent work
+blocked; an assumption/default or silence cannot authorize them. Record answers and delegation
+in the receiving turn under the native decision fields, using the approval and recovery procedures.
+
 Separate missing policy, missing expertise/required driver, and unavailable proof capability.
 An absent optional specialist alone does not block work when existing guidance suffices. An
 unavailable required driver needs a named affected responsibility and an authorized alternative or
@@ -92,6 +98,19 @@ where claimed. Skill metadata or source inspection alone cannot prove a browser 
 An unavailable runtime or source leaves the affected obligation unproven, not waived. Return failures
 to the builder through [review rounds](review-rounds.md); independently recheck fixes using
 [validation](validation.md) to retain valid unchanged proofs.
+
+### Challenge with independent examples
+
+Before the verdict, choose a small risk-based set of inputs or states the plan and checks do not
+name. Target boundaries, empty/repeated input or partial failure where listed proofs could stay
+green despite violating an approved claim. Derive expected outcomes from that claim and adopted
+rules, not the implementation; an unsettled product answer is a decision gap, not a new default.
+Run the examples through the claimed boundary with disposable requests or tests. Record the owning
+claim, exact input/state, expected and actual outcome, command and result in the existing report.
+Reuse an executed case only when its evidence independently settles that exact example. Explain
+when no distinct relevant example exists; unavailable execution leaves the affected claim unproven.
+Examples do not count as mutations or change the declared profile. Keep the selection bounded
+without a fixed quota, extra reviewer, new report or unapproved capability.
 
 ## When content-shaped loading is adopted
 
