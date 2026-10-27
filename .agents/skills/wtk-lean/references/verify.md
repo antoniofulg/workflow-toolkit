@@ -50,7 +50,7 @@ selection; the author never supplies the feature verdict.
 
 ## Read the profile first
 
-Under every profile, apply [independent project-requirement verification](../../wtk/references/project-requirements.md#verify-independently).
+Under every profile, apply [independent requirement and counterexample verification](../../wtk/references/project-requirements.md#verify-independently).
 Derive concerns and sources from the original request, actual change and authoritative routing;
 the planner's list is not the discovery boundary. Record omitted requirements and unproven outcomes
 in this verification report even when listed proofs pass. This precedes the `ui`-specific comparison.

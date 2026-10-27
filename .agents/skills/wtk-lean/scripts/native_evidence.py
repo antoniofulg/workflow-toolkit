@@ -32,6 +32,7 @@ def usable_value(value):
     value = value.strip().strip("`*").strip()
     return (
         value.lower() not in EMPTY_VALUES
+        and not re.fullmatch(r"[\s.…?_\-–—]+", value)
         and not re.search(r"<[^>]*>|^\[[^\]]*\]$|\b(?:TODO|TBD)\b|^placeholder\b", value, re.I)
         and not re.match(r"(?:template|example|sample)\b", value, re.I)
     )

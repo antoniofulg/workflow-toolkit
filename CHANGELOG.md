@@ -19,6 +19,9 @@ All notable changes to this project are documented here.
   viewport captures from the contracted CSS render. Old free-text capture rows must be corrected
   from real evidence. Structural gates do not authenticate approval or prove fidelity; independent
   inspection and impact-based input-equivalence reuse remain required. Non-UI profiles stay exempt.
+- Lean and modular verification challenge approved claims with bounded independent examples absent
+  from the plan and checks, recording actual boundary outcomes in the existing report without a
+  fixed quota, extra reviewer or changes to mutation profiles and evidence reuse.
 
 ### Fixed
 
@@ -26,6 +29,8 @@ All notable changes to this project are documented here.
   contents, without discarding genuine receipts elsewhere in the approval section.
 - UI completion rejects every supplied visual table with incomplete or unsupported provenance
   columns; a valid neighboring table no longer masks legacy evidence or missing capture provenance.
+- Native approval and visual provenance reject ellipses and other placeholder-only punctuation
+  instead of accepting them as usable evidence; meaningful revision and capture-path punctuation remains valid.
 
 ### Documentation
 

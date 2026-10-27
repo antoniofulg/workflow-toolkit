@@ -99,6 +99,19 @@ An unavailable runtime or source leaves the affected obligation unproven, not wa
 to the builder through [review rounds](review-rounds.md); independently recheck fixes using
 [validation](validation.md) to retain valid unchanged proofs.
 
+### Challenge with independent examples
+
+Before the verdict, choose a small risk-based set of inputs or states the plan and checks do not
+name. Target boundaries, empty/repeated input or partial failure where listed proofs could stay
+green despite violating an approved claim. Derive expected outcomes from that claim and adopted
+rules, not the implementation; an unsettled product answer is a decision gap, not a new default.
+Run the examples through the claimed boundary with disposable requests or tests. Record the owning
+claim, exact input/state, expected and actual outcome, command and result in the existing report.
+Reuse an executed case only when its evidence independently settles that exact example. Explain
+when no distinct relevant example exists; unavailable execution leaves the affected claim unproven.
+Examples do not count as mutations or change the declared profile. Keep the selection bounded
+without a fixed quota, extra reviewer, new report or unapproved capability.
+
 ## When content-shaped loading is adopted
 
 Read the affected view's real loaded composition before writing its loading criteria. Identify
