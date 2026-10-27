@@ -4,7 +4,7 @@ description: 'Turn decided sources into modular tasks with observable criteria a
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 # TLC Plan

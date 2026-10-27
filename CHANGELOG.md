@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-10-26
+
 ### Changed
 
 - Setup now reviews source-linked material rules in each relevant existing guideline area with
@@ -37,6 +39,23 @@ All notable changes to this project are documented here.
 - Add Frontend Craft to the main companion group and expand specialist guidance for investigation,
   focused verification, agent-instruction writing, document conversion and prose editing, including
   source links and the boundaries between companion guidance and WTK's phase responsibilities.
+
+### Upgrade
+
+- Refresh the complete 13-skill WTK set through the README installation/update instructions.
+  Pinned installations keep their recorded revision until explicitly refreshed.
+- Recover missing native approval and visual provenance from real evidence before resuming affected
+  feature gates. Examples, placeholder-only fields and execution-setting approval do not supply
+  feature authority; do not backdate consent or fabricate capture provenance.
+- Skill metadata versions advance independently of the toolkit release:
+
+| Skill | Version |
+| --- | --- |
+| `wtk` | 1.1.0 |
+| `wtk-setup` | 1.1.0 |
+| `wtk-lean` | 1.3.0 |
+| `wtk-plan` | 0.3.0 |
+| `wtk-implement` | 0.2.0 |
 
 ## [3.2.0] - 2026-10-21
 
