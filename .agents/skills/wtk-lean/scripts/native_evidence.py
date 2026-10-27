@@ -49,12 +49,21 @@ def approval_errors(checks_path):
     fields, active = {}, False
     intent = []
     in_intent = False
+    illustrative_depth = None
     for line in lines:
-        heading = re.match(r"^#{1,2}\s+(.+?)\s*$", line)
+        heading = re.match(r"^(#{1,6})\s+(.+?)\s*#*\s*$", line)
         if heading:
-            active = heading[1].lower() == "approval"
-            in_intent = heading[1].lower() == "intent"
-        elif active:
+            depth, title = len(heading[1]), heading[2]
+            if depth <= 2:
+                active = title.lower() == "approval"
+                in_intent = title.lower() == "intent"
+                illustrative_depth = None
+            elif active:
+                if illustrative_depth is not None and depth <= illustrative_depth:
+                    illustrative_depth = None
+                if illustrative_depth is None and re.search(r"\b(?:examples?|templates?|samples?)\b", title, re.I):
+                    illustrative_depth = depth
+        elif active and illustrative_depth is None:
             if re.match(r"^\s*(?:example|template|sample)\s*:", line, re.I):
                 return [f"{label}: approval is a template/example - recover the actual user decision"]
             match = re.match(r"^\s*[-*]\s+(Decision|Date|Source|Reviewed revision|Scope):\s*(.*?)\s*$", line, re.I)

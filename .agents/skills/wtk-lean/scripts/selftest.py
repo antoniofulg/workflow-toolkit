@@ -44,6 +44,9 @@ CASES = [
     ("validate_checks", "plan.md", "approval is a fenced example",
      lambda s: s.replace("## Approval", "```markdown\n## Approval").replace("## Problem", "```\n\n## Problem"),
      1, "approval missing usable decision"),
+    ("validate_checks", "plan.md", "approval exists only in an illustrative subsection",
+     lambda s: s.replace("## Approval", "## Approval\n\n### Example\n\n#### Receipt"),
+     1, "approval missing usable decision"),
     ("validate_checks", "plan.md", "approval scope is a placeholder",
      lambda s: s.replace("Both dunning slices and local implementation/commits; no remote delivery.", "<authorized scope>"),
      1, "approval missing usable scope"),
@@ -179,6 +182,10 @@ CASES = [
     ("validate_verification", "verification.md", "profile standard with no fault rows",
      lambda s: re.sub(r"## Faults injected\n.*?\n## Gate", "## Gate", s, flags=re.S),
      1, "no fault rows"),
+    ("validate_verification", "verification.md", "header-only fault table does not prove fault injection",
+     lambda s: re.sub(r"## Faults injected\n.*?\n## Gate",
+                      "## Faults injected\n\n| Mutation | Location | Killed |\n| --- | --- | --- |\n\n## Gate", s, flags=re.S),
+     1, "no fault rows"),
     ("validate_verification", "verification.md", "PASS with no file:line evidence",
      lambda s: re.sub(r"`[\w./-]+\.rb:\d+`", "`the test file`", s),
      1, "cites no file:line evidence"),
@@ -230,6 +237,9 @@ VISUAL_CASES = [
     ("validate_verification", "verification.md", "visual verdict unverified despite behavior PASS",
      lambda s: s.replace("no material drift | PASS |", "no material drift | unverified |"),
      1, "visual fidelity is not PASS"),
+    ("validate_verification", "verification.md", "valid visual table masks a second legacy schema",
+     lambda s: s + "\n| Source | Captures | Result |\n| --- | --- | --- |\n| mockup | missing.png | PASS |\n",
+     1, "unsupported or incomplete provenance columns"),
 ]
 
 # Negative controls: under `light` the profile-scoped steps must NOT be demanded. A gate that

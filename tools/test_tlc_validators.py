@@ -111,6 +111,43 @@ class WorkflowValidatorTests(unittest.TestCase):
                 result = run_gate(root, gate)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_approval_illustrative_subsections_do_not_supply_authority(self) -> None:
+        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
+        prefix, remainder = source.split("## Approval\n\n", 1)
+        receipt, remainder = remainder.split("## Problem", 1)
+        for heading in (
+            "### Example", "### Template receipt", "### SAMPLE",
+            "#### Examples", "##### Approval templates", "###### Sample approval",
+            "### Example\n\n#### Templates\n\n##### Supporting context",
+        ):
+            with self.subTest(heading=heading), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                (feature / "plan.md").write_text(
+                    prefix + "## Approval\n\n" + heading + "\n\n" + receipt + "## Problem" + remainder,
+                    encoding="utf-8",
+                )
+                for gate in ("validate_checks", "validate_verification"):
+                    result = run_gate(root, gate)
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn("approval missing usable decision", result.stdout)
+
+    def test_approval_genuine_receipt_survives_neighboring_examples(self) -> None:
+        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
+        prefix, remainder = source.split("## Approval\n\n", 1)
+        receipt, remainder = remainder.split("## Problem", 1)
+        example = "### Examples\n\n#### Template\n\n##### Supporting context\n\n" + receipt
+        for body in (receipt + example, example + "### Observed decision\n\n" + receipt):
+            with self.subTest(body=body), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                (feature / "plan.md").write_text(
+                    prefix + "## Approval\n\n" + body + "## Problem" + remainder, encoding="utf-8",
+                )
+                for gate in ("validate_checks", "validate_verification"):
+                    result = run_gate(root, gate)
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_approval_execution_route_does_not_authorize_feature_shape(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw).resolve()
@@ -229,6 +266,42 @@ class WorkflowValidatorTests(unittest.TestCase):
                     self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                     self.assertIn("not an existing local file", result.stdout)
                     capture.write_bytes(PNG)
+
+    def test_visual_mixed_table_schemas_cannot_hide_invalid_evidence(self) -> None:
+        fragment = (FIXTURES / "visual.md").read_text(encoding="utf-8")
+        valid = fragment.split("## Visual fidelity\n\n", 1)[1]
+        legacy = (
+            "| Source | Route/state | Viewport | Captures | Comparison | Result |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| mockup revision 1 | /venues open | 390x844 | missing.png | inspected | PASS |\n"
+        )
+        invalid_tables = {
+            "legacy": legacy,
+            "missing column": valid.replace("| Source scale |", "| Scale |"),
+            "duplicate column": valid.replace("| Source scale |", "| Implementation revision |"),
+            "empty legacy": "\n".join(legacy.splitlines()[:2]) + "\n",
+        }
+        for title, invalid in invalid_tables.items():
+            for first, second in ((valid, invalid), (invalid, valid)):
+                with self.subTest(schema=title,invalid_first=first == invalid), tempfile.TemporaryDirectory() as raw:
+                    root = Path(raw)
+                    feature = scaffold(root, ui=True)
+                    report = feature / "verification.md"
+                    prefix = report.read_text(encoding="utf-8").split("## Visual fidelity", 1)[0]
+                    report.write_text(prefix + "## Visual fidelity\n\n" + first + "\n" + second, encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn("unsupported or incomplete provenance columns", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root, ui=True)
+            report = feature / "verification.md"
+            report.write_text(
+                report.read_text(encoding="utf-8") + "\n" + valid.replace("/venues populated", "/venues filters open"),
+                encoding="utf-8",
+            )
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_visual_paths_are_literal_local_data(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

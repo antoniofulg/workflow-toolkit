@@ -20,6 +20,13 @@ All notable changes to this project are documented here.
   from real evidence. Structural gates do not authenticate approval or prove fidelity; independent
   inspection and impact-based input-equivalence reuse remain required. Non-UI profiles stay exempt.
 
+### Fixed
+
+- Approval gates exclude illustrative example/template/sample subsections, including their nested
+  contents, without discarding genuine receipts elsewhere in the approval section.
+- UI completion rejects every supplied visual table with incomplete or unsupported provenance
+  columns; a valid neighboring table no longer masks legacy evidence or missing capture provenance.
+
 ### Documentation
 
 - Add Frontend Craft to the main companion group and expand specialist guidance for investigation,

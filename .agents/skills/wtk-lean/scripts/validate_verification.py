@@ -85,7 +85,7 @@ def find_tables(lines):
             continue
         if buf:
             rows = [split_row(r) for r in buf if not is_separator(r)]
-            if len(rows) >= 2:
+            if rows:
                 tables.append(([c.lower() for c in rows[0]], rows[1:]))
             buf = []
     return tables
@@ -226,6 +226,7 @@ def _check_feature(fdir, name):
         evidence_rows = 0
         for header, rows in visual_tables:
             if not all(header.count(field) == 1 for field in required):
+                errors.append(f"{name}: visual fidelity table has unsupported or incomplete provenance columns - expected {', '.join(required)}")
                 continue
             for row in rows:
                 evidence_rows += 1
@@ -264,7 +265,7 @@ def _check_feature(fdir, name):
     for header, rows in tables:
         killed = column(header, "killed")
         if killed is not None:
-            saw_faults = True
+            saw_faults = saw_faults or bool(rows)
             for r in rows:
                 if killed >= len(r):
                     continue
