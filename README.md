@@ -24,9 +24,9 @@ unit; phase skills are listed for discoverability and are not a supported subset
 | `wtk-deep-review` | Run an independent implementation review. |
 | `wtk-ship` | Close and deliver proven work when the project authorizes it. |
 
-The canonical source paths are the `.agents/skills/<name>/` directories in this repository. Use
-the [Vercel Skills CLI](https://github.com/vercel-labs/skills#readme), whose current command is
-`skills add <owner>/<repository>`, to install the full WTK set into the project:
+The canonical source paths are the `.agents/skills/<name>/` directories in this repository.
+Choose an installer supported by your agent host. For example, the
+[Vercel Skills CLI](https://github.com/vercel-labs/skills#readme) installs the full WTK set with:
 
 ```bash
 npx skills@latest add antoniofulg/workflow-toolkit \
@@ -116,18 +116,23 @@ are optional and remain untouched. Fresh checking sessions and handoffs use the 
 
 Feature workflow state follows the [artifact lifecycle](.agents/skills/wtk/references/artifacts.md)
 and remains project-owned. The Lean builder runs sequentially, Deep Review is on demand with no
-automatic groups unless a feature requests it, and QA uses the `auto` adapter when the project has
-no task-scoped choice. Remediation uses the fixed default `stall_attempts = 3`. When a route
+automatic groups unless a feature requests it. QA uses the project's selected adapter or a capable
+available interface when none is selected. Remediation uses the fixed default `stall_attempts = 3`. When a route
 snapshot is needed, `.specs/features/<feature>/workflow.json` stores approved stage/model/effort
 choices, rationale, host limitations and exact approval evidence scoped to the feature and checkout.
 Unchanged retries and resume reuse those choices; changed rows need targeted acceptance.
 
 ## Recommended companion skills and tools
 
-These are independent choices. Install them through their own canonical skill or tool installer;
-WTK does not bundle or configure them. When the four security phase skills below are installed,
-WTK invokes them at the matching phase and uses its baseline security guidance when they are absent.
-Report companion use from actual execution evidence.
+These are recommendations, not workflow dependencies or an exclusive list. Choose any tool or
+companion that fits your project, including alternatives not listed here. WTK does not bundle,
+install, configure or activate third-party tools merely because they are available.
+
+Record adopted choices in the project's existing guidelines and route to those guidelines from
+its root instructions. For each choice, name the responsibility, trigger/phase, tool or skill,
+supported invocation, required access/data permissions and behavior when unavailable. A selected
+tool must preserve WTK's proof, independence and delivery boundaries. `wtk-setup` can help record
+these choices; it does not make the selection for you.
 
 | Companion | Source | Use it when |
 | --- | --- | --- |
@@ -143,8 +148,8 @@ interface design/build, and reuse or rendered-review guidance during verificatio
 contracts remain authoritative, and a working interface does not prove a sales or conversion gain.
 Its technical and commercial material have [different source terms](https://github.com/antoniofulg/frontend-craft#license-and-sources).
 
-To add the four security skills used by WTK's feature workflow, install them from the public
-security-lifecycle repository:
+If you choose the security-lifecycle companions, this example installs its four phase skills.
+Then reference the selected skills and their responsibilities in your project's security guidelines:
 
 ```sh
 npx skills add antoniofulg/security-lifecycle \
@@ -156,8 +161,20 @@ npx skills add antoniofulg/security-lifecycle \
 audits and authorized runtime testing; see the [security-lifecycle README](https://github.com/antoniofulg/security-lifecycle#usage)
 for their install options.
 
-When Graft or Graphify is absent or fails, WTK uses ordinary repository inspection and records that
-the optional tool was unavailable. Optional companion use never changes the WTK phase contracts.
+Repository inspection works without a graph product. Choose native search/symbol capabilities,
+Graft, Graphify or another tool according to the evidence needed; no automatic build, version pin
+or tool-specific context artifact is required by WTK.
+
+Other optional tooling choices belong in the same project guidelines:
+
+| Capability | Examples to consider | Project-owned choice |
+| --- | --- | --- |
+| Library documentation | [Context7](https://github.com/upstash/context7), official docs or another lookup service | Sources, version matching and permitted network access |
+| Browser QA | [Playwright MCP](https://github.com/microsoft/playwright-mcp), host-native browser controls such as Orca or Maestri, or manual walks | Adapter, fixtures, evidence capture and unavailable-adapter handling; no fixed preference order |
+| External review execution | An existing host runtime or a selected command runner such as Compozy | Supported provider/model/effort controls and the materialized job/output contract |
+| PR access and publication | [GitHub CLI](https://cli.github.com/), a connected hosting integration or the provider's API | Repository access, review identity, publication permissions and batching limits |
+| Analytics and errors | [PostHog](https://posthog.com/), [Sentry](https://sentry.io/) or the project's existing observability | Relevant queries, environment/release scope and sensitive-data access |
+| Linting and type checks | Existing project scripts, configured linters and CI | Exact commands and selectors; a language manifest alone does not choose a tool |
 
 Specialist workflow companions can supply deeper procedures when a project selects them:
 
@@ -186,8 +203,8 @@ For product and decision documents, TLC's
 [`tlc-prd`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28development%29/tlc-prd),
 [`create-rfc`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28creation%29/create-rfc), and
 [`create-adr`](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28creation%29/create-adr)
-are optional authoring companions. WTK uses an available companion for the requested artifact;
-otherwise it uses project templates and conventions. Project language, location and approval rules
+are optional authoring companions. Adopt one in project guidelines if useful, choose another, or
+use the project's own templates and conventions. Project language, location and approval rules
 take precedence. No additional WTK skill or companion installation is required.
 
 ## The workflow

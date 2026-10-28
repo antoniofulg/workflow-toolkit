@@ -79,8 +79,7 @@ identity and buys the same independence.
    A failed full run stays failed even when focused correction proofs pass.
 9. **A new control for an unobserved failure is Major (YAGNI) unless the spec named it.** A
    killed-process shim, a test-of-the-test, or a prefix allowlist the spec did not name is overbuild.
-   Filed-issue review uses the same rule. `ponytail-review` is the skill; this rule is what makes
-   YAGNI blocking.
+   Filed-issue review uses the same rule; YAGNI is blocking without a companion skill.
 ## Fingerprinted remediation accounting
 `fingerprint = requirement + root cause + failure path` is each finding's immutable identity. Maintain an independent cumulative failed-remediation counter and append-only generation history for each fingerprint; count every failed post-fix Verifier result, whether or not the build gate is green. The current generation's consecutive-stall state is separate and halts at the fixed default threshold of three attempts. The executable state lives in `review-fingerprints.json` through the stdlib convergence script, which delegates the pure transition to `remediation.py`.
 Rewording or reopening a finding preserves its fingerprint and counter. A distinct finding starts at count zero and does not consume another fingerprint's counter; the diagnostic cap is separate.

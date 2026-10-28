@@ -15,7 +15,7 @@ __pycache__/
 .wtk-deep-review/*
 !.wtk-deep-review/learnings.md
 
-# graft's local graph cache — regenerable, not committed (run `graft build`).
+# Existing checkout-local optional-tool output.
 graft/
 graphify-out/
 .repository-intelligence/

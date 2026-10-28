@@ -146,7 +146,7 @@ def test_approved_stage_selection_without_native_files() -> None:
     root = _fixture_root()
     try:
         stages = {
-            "implementation": _stage(model="human-selected-model", effort="high", scope="C2 through C6"),
+            "implementation": _stage(provider="project-runtime", model="human-selected-model", effort="high", scope="C2 through C6"),
             "verification": _stage(
                 model="inherited", effort="inherited", rationale="Fresh context checks every criterion.",
                 limitations=["model: host does not expose the checking model", "effort: inherited host default"],
@@ -285,7 +285,7 @@ def test_selection_validation_matrix() -> None:
             assert _resolve(root, selection=_selection(root, stages=selected, reference=f"User accepts {stage}."))["stages"] == selected
         before = _snapshot_path(root).read_bytes()
         invalid_rows = [
-            {"provider": "unknown"}, {"provider": ["codex"]}, {"provider": ""},
+            {"provider": " "}, {"provider": ["codex"]}, {"provider": ""},
             {"model": ""}, {"model": 3}, {"effort": " "}, {"effort": None},
             {"rationale": ""}, {"limitations": "none"}, {"limitations": [""]},
             {"limitations": [False]}, {"model": "inherited"}, {"effort": "inherited"},

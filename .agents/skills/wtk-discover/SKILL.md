@@ -1,6 +1,6 @@
 ---
 name: wtk-discover
-description: 'Explore an idea or product signal to a build or stop verdict and a slice-oriented design. Use for problem discovery, including PostHog analytics or Sentry signals; not implementation or bounded bug diagnosis.'
+description: 'Explore an idea or product signal to a build or stop verdict and a slice-oriented design. Use for problem discovery, including analytics or error signals; not implementation or bounded bug diagnosis.'
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
@@ -104,8 +104,8 @@ connection. Ask only for scope or access the current context cannot establish.
 
 | Signal | Focused evidence | What it can settle |
 | --- | --- | --- |
-| Product analytics, such as PostHog | Relevant trend, funnel, retention, path or replay; compare periods and affected segments when needed | Where users struggle, how often, and which journey states deserve work |
-| Error tracking, such as Sentry | Relevant issue/event, affected users, environment and release; linked traces, logs or replays when they distinguish hypotheses | Failure impact and evidence for a cause to check against the deployed code |
+| Product analytics | Relevant trend, funnel, retention, path or replay; compare periods and affected segments when needed | Where users struggle, how often, and which journey states deserve work |
+| Error tracking | Relevant issue/event, affected users, environment and release; linked traces, logs or replays when they distinguish hypotheses | Failure impact and evidence for a cause to check against the deployed code |
 | Support, logs or issue tracker | Recurring reports and the matching operational sequence | User cost, missing capability and existing workarounds |
 
 Separate observed facts, user reports and hypotheses. Record the source link/query, population,
@@ -335,7 +335,7 @@ Result: hand off; no `.design/` file from this skill.
 
 ### Example 4: Discovery from a product signal
 
-User says: "PostHog shows checkout abandonment, and Sentry has payment errors. What should we change?"
+User says: "Analytics shows checkout abandonment, and error tracking has payment errors. What should we change?"
 Actions:
 1. Establish the journey, environment, time window and signal that would change the decision.
 2. Use available analysis skills and connected tools to read the relevant funnel and issue context.

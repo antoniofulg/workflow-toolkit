@@ -21,7 +21,7 @@ Before delegated work, use [agent selection](.agents/skills/wtk/references/agent
 recommend and confirm task-specific provider/model/effort choices. Skills supply responsibilities;
 native role files are optional and remain untouched. `wtk-lean/scripts/workflow_route.py` freezes
 approved stage selections in the current checkout. WTK defaults to a sequential Lean builder,
-on-demand Deep Review, QA adapter `auto` without a task-scoped choice, and `stall_attempts = 3`.
+on-demand Deep Review, project-selected QA capabilities, and `stall_attempts = 3`.
 
 ## Critical rules
 
@@ -45,7 +45,7 @@ on-demand Deep Review, QA adapter `auto` without a task-scoped choice, and `stal
 ## How work happens
 
 Use `wtk` as the entrypoint; it selects feature work or bounded maintenance from the request and
-existing artifacts. Ponytail is an optional companion skill; WTK remains usable without it.
+existing artifacts. The consuming project's guidelines own optional tools and companion choices.
 
 Continue authorized work through implementation, applicable validation and local commit. Resolve
 routine choices and fix failures caused by the change without asking again; ask only for missing

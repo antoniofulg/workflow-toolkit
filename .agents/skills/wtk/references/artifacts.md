@@ -60,18 +60,17 @@ the `ad-index.py` helper applies only to a project's `AD-NNN` ledger in `STATE.m
 Choose an artifact for an unresolved question or an explicit document request, not as a mandatory
 chain before every feature:
 
-| Need | Artifact and optional companion | Handoff |
+| Need | Artifact | Handoff |
 | --- | --- | --- |
-| Product problem, outcome, scope or journey needs agreement | PRD — `tlc-prd` | Confirmed product intent feeds discovery for unresolved technical shape, or planning when shape is settled |
-| A consequential proposal needs alternatives and stakeholder agreement | RFC — `create-rfc` | Record the outcome before treating its direction as accepted; preserve lasting architectural choices in the decision store |
-| A significant architectural choice is made or being finalized | ADR — `create-adr` | Record its actual status; accepted decisions constrain affected feature work |
+| Product problem, outcome, scope or journey needs agreement | PRD | Confirmed product intent feeds discovery for unresolved technical shape, or planning when shape is settled |
+| A consequential proposal needs alternatives and stakeholder agreement | RFC | Record the outcome before treating its direction as accepted; preserve lasting architectural choices in the decision store |
+| A significant architectural choice is made or being finalized | ADR | Record its actual status; accepted decisions constrain affected feature work |
 | A separate system design review is needed | Technical design document | Reuse it as input; ordinary discovery and Lean plans already carry technical shape |
 
 For an artifact-only request, produce that document and stop before design or implementation unless
-also authorized. Use the installed companion when available; otherwise use the project template
-and report companion unavailability. If no template exists, use the artifact's purpose and the
-project's documentation conventions. Companion absence never requires installation or blocks the
-normal WTK path. Project language, location and authority rules override companion defaults.
+also authorized. Follow project templates, conventions and selected authoring guidance. If no
+template exists, use the artifact's purpose and the project's documentation conventions. Project
+language, location and authority rules govern the document.
 For an RFC, name the decision owner and approvers, criteria, viable alternatives, recommendation,
 and actual outcome/status; unresolved proposals remain visibly undecided.
 

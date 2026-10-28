@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Any
 
 
-PROVIDERS = ("claude", "codex", "cursor")
 STAGES = (
     "planning", "exploration", "design", "implementation", "verification", "qa",
     "deep_review", "remediation", "delivery",
@@ -125,9 +124,7 @@ def _validate_selection(root: Path, feature: str, selection: Any) -> dict[str, A
         required = {"provider", "model", "effort", "rationale", "limitations"}
         if not isinstance(row, dict) or not required <= set(row) <= required | {"scope"}:
             raise _error(f"selection stage {stage!r} has an incomplete schema")
-        if not isinstance(row["provider"], str) or row["provider"] not in PROVIDERS:
-            raise _error(f"selection stage {stage!r} has an invalid provider")
-        for field in ("model", "effort", "rationale"):
+        for field in ("provider", "model", "effort", "rationale"):
             if not _nonempty(row[field]):
                 raise _error(f"selection stage {stage!r} requires a nonempty {field}")
         if "scope" in row and not _nonempty(row["scope"]):

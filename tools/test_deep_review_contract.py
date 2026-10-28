@@ -6,7 +6,6 @@ Run: python3 tools/test_deep_review_contract.py
 from __future__ import annotations
 
 import json
-import hashlib
 import os
 import re
 import subprocess
@@ -26,10 +25,6 @@ RUN_JOBS = SCRIPTS / "run_jobs.py"
 RENDER_REVIEW = SCRIPTS / "render_review.py"
 RENDER_HTML = SCRIPTS / "render_html.py"
 BUILD_KNOWLEDGE = SCRIPTS / "build_knowledge.py"
-PUBLISH_RECIPE = (
-    Path(__file__).resolve().parents[1]
-    / ".agents/skills/wtk-deep-review/references/publish-github.md"
-)
 sys.path.insert(0, str(SCRIPTS))
 
 from _common import fingerprint, freeze_snapshot  # noqa: E402
@@ -48,14 +43,6 @@ def run_script(script: Path, root: Path, *args: str) -> subprocess.CompletedProc
     return subprocess.run(
         [sys.executable, str(script), *args], cwd=root, capture_output=True, text=True
     )
-
-
-def publish_walkthrough_recipe() -> str:
-    document = PUBLISH_RECIPE.read_text(encoding="utf-8")
-    section = document[document.index("## 1. Upsert the walkthrough comment") :]
-    start = section.index("```bash") + len("```bash\n")
-    end = section.index("```", start)
-    return section[start:end]
 
 
 def init_repo(raw: str) -> Path:
@@ -413,76 +400,6 @@ class DeepReviewContractTests(unittest.TestCase):
             result, row = validate_status(root, out)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(row["status"], "valid")
-
-    def test_walkthrough_publish_is_one_idempotent_upsert(self) -> None:
-        recipe = publish_walkthrough_recipe()
-        self.assertIn("--jq '[.[] | select(.body | contains(\"<!-- wtk-deep-review:walkthrough -->\"))][0].id // empty'", recipe)
-        self.assertIn('if [ -n "$CID" ]; then', recipe)
-        self.assertNotIn("/comments/null", recipe)
-
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw)
-            out = root / "out dir"
-            out.mkdir()
-            walkthrough = out / "walkthrough.md"
-            walkthrough.write_text("walkthrough\n", encoding="utf-8")
-            log = root / "gh.log"
-            fake_gh = root / "gh"
-            fake_gh.write_text(
-                "#!/bin/sh\n"
-                "printf 'CALL\\n' >> \"$GH_LOG\"\n"
-                "for arg do printf '<%s>\\n' \"$arg\" >> \"$GH_LOG\"; done\n"
-                "if [ \"$GH_MODE\" = existing ] && [ \"$2\" = \"repos/$R/issues/$N/comments\" ]; then\n"
-                "  printf '42\\n'\n"
-                "fi\n",
-                encoding="utf-8",
-            )
-            fake_gh.chmod(0o700)
-
-            def run_publish(mode: str) -> list[list[str]]:
-                env = os.environ.copy()
-                env.update(
-                    {
-                        "GH_LOG": str(log),
-                        "GH_MODE": mode,
-                        "PATH": f"{root}:{env['PATH']}",
-                        "R": "owner/repo",
-                        "N": "17",
-                        "OUT": str(out),
-                    }
-                )
-                log.write_text("", encoding="utf-8")
-                result = subprocess.run(
-                    ["sh", "-eu", "-c", recipe],
-                    cwd=root,
-                    env=env,
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-                calls: list[list[str]] = []
-                current: list[str] = []
-                for line in log.read_text(encoding="utf-8").splitlines():
-                    if line == "CALL":
-                        if current:
-                            calls.append(current)
-                        current = []
-                    else:
-                        current.append(line[1:-1])
-                if current:
-                    calls.append(current)
-                return calls
-
-            list_call = ["api", "repos/owner/repo/issues/17/comments", "--paginate", "--jq", "[.[] | select(.body | contains(\"<!-- wtk-deep-review:walkthrough -->\"))][0].id // empty"]
-            body_arg = f"body=@{walkthrough}"
-            self.assertEqual(
-                run_publish("empty"),
-                [list_call, ["api", "repos/owner/repo/issues/17/comments", "-F", body_arg]],
-            )
-            self.assertEqual(
-                run_publish("existing"),
-                [list_call, ["api", "repos/owner/repo/issues/comments/42", "-X", "PATCH", "-F", body_arg]],
-            )
 
     def test_html_renderer_emits_real_findings_advisories_suppressions_and_coverage(self) -> None:
         # IT-024 (P1 AC8)
@@ -1164,64 +1081,25 @@ class DeepReviewContractTests(unittest.TestCase):
             self.assertTrue((out / "rules.template.json").is_file())
             self.assertFalse((out / "rules.json").exists())
 
-    def test_graft_runs_by_default_and_ignores_legacy_config(self) -> None:
-        # IT-005 / IT-007: Graft is attempted for every selected review.
-        plan = {"cohorts": [{"id": "A", "name": "all", "risk": "normal", "files": ["file0.txt", "file1.txt", "file2.txt"]}]}
-        for opt_in in (False, True):
-            with self.subTest(opt_in=opt_in), tempfile.TemporaryDirectory() as raw:
-                root = init_repo(raw)
-                sentinel = root / "graft-invoked"
-                shim = "#!/bin/sh\n" f"touch '{sentinel}'\n" "exit 1\n"
-                shim_dir = root / "shim"
-                shim_dir.mkdir()
-                for path in (shim_dir / "graft", root / "node_modules" / ".bin" / "graft"):
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    path.write_text(shim, encoding="utf-8")
-                    path.chmod(0o700)
-                package = root / "node_modules" / "@nanonets" / "graft" / "package.json"
-                package.parent.mkdir(parents=True)
-                package.write_text(json.dumps({"version": "0.10.1"}), encoding="utf-8")
-                (root / ".gitignore").write_text("node_modules/\nshim/\ngraft-invoked\n", encoding="utf-8")
-                if opt_in:
-                    (root / ".wtk-deep-review.yaml").write_text("graft: true\n", encoding="utf-8")
-                git(root, "add", "-A")
-                git(root, "commit", "-qm", "chore: shim")
-                env = {**os.environ, "PATH": f"{shim_dir}:{os.environ['PATH']}"}
-                with unittest.mock.patch.dict(os.environ, env):
-                    out, build = full_fixture(root, plan)
-                self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
-                context = (out / "graft-context.md").read_text(encoding="utf-8")
-                self.assertTrue(sentinel.exists())
-                self.assertIn("status: fallback", context)
-                self.assertIn("plain repository inspection", context)
-                jobs = json.loads((out / "jobs.json").read_text(encoding="utf-8"))
-                expected_hash = hashlib.sha256("file0.txt file1.txt file2.txt".encode("utf-8")).hexdigest()
-                self.assertEqual(jobs["repository_intelligence"]["graft"]["question_hash"], expected_hash)
-
-    def test_degraded_context_keeps_frozen_review_validation(self) -> None:
-        # IT-017 / RIR-03.5: both degraded artifacts still flow through job validation and freeze checks.
+    def test_job_materialization_does_not_run_optional_inspection_tools(self) -> None:
         plan = {"cohorts": [{"id": "A", "name": "all", "risk": "normal", "files": ["file0.txt", "file1.txt", "file2.txt"]}]}
         with tempfile.TemporaryDirectory() as raw:
             root = init_repo(raw)
-            node_bin = root / "node_modules" / ".bin" / "graft"
-            node_bin.parent.mkdir(parents=True)
-            node_bin.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
-            node_bin.chmod(0o700)
-            package = root / "node_modules" / "@nanonets" / "graft" / "package.json"
-            package.parent.mkdir(parents=True)
-            package.write_text(json.dumps({"version": "0.10.1"}), encoding="utf-8")
-            (root / ".gitignore").write_text("node_modules/\n", encoding="utf-8")
+            sentinel = root / "inspection-invoked"
+            shim_dir = root / "shim"
+            shim_dir.mkdir()
+            for tool in ("graft", "graphify"):
+                shim = shim_dir / tool
+                shim.write_text(f"#!/bin/sh\ntouch '{sentinel}'\nexit 1\n", encoding="utf-8")
+                shim.chmod(0o700)
+            (root / ".gitignore").write_text("shim/\ninspection-invoked\n", encoding="utf-8")
             git(root, "add", ".gitignore")
-            git(root, "commit", "-qm", "chore: local graft shim")
-            out, build = full_fixture(root, plan)
+            git(root, "commit", "-qm", "test: expose optional inspection tools")
+            env = {**os.environ, "PATH": f"{shim_dir}:{os.environ['PATH']}"}
+            with unittest.mock.patch.dict(os.environ, env):
+                out, build = full_fixture(root, plan)
             self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
-            build = run_script(BUILD_JOBS, root, "--out", str(out), "--graphify-question", "shared boundary")
-            self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
-            metadata = json.loads((out / "jobs.json").read_text(encoding="utf-8"))["repository_intelligence"]
-            self.assertEqual(metadata["graft"]["status"], "fallback")
-            self.assertEqual(metadata["graphify"]["status"], "degraded")
-            self.assertIn("dual_use_reason", metadata)
-
+            self.assertFalse(sentinel.exists(), "materializing review jobs must not execute optional tools")
             jobs = json.loads((out / "jobs.json").read_text(encoding="utf-8"))["jobs"]
             for job in jobs:
                 (root / job["output"]).write_text(json.dumps({
@@ -1230,17 +1108,6 @@ class DeepReviewContractTests(unittest.TestCase):
                 }), encoding="utf-8")
             result = run_script(RUN_JOBS, root, "--out", str(out), "--validate-only")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            (root / "file0.txt").write_text("drifted\n", encoding="utf-8")
-            drifted = run_script(RUN_JOBS, root, "--out", str(out), "--validate-only")
-            self.assertEqual(drifted.returncode, 3, drifted.stdout + drifted.stderr)
-
-    def test_build_jobs_help_removes_graft_opt_in(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            root = init_repo(raw)
-            result = run_script(BUILD_JOBS, root, "--help")
-            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertIn("always prepares Graft context", result.stdout)
-            self.assertNotIn("graft: true", result.stdout)
 
     def test_validate_only_rejects_source_drift_before_accepting_valid_output(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

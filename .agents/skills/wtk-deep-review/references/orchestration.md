@@ -56,7 +56,7 @@ Defect cohorts are the only default review lane. Sweeps remain **opt-in and rare
 
 ## Engines
 
-The jobs contract makes engines interchangeable — pick one per run, record it in context-pack.md (`Mode: workflow | agent-fallback | subagent:<runtime>`), and always close the loop with `run_jobs.py --validate-only`. Validation rejects missing coverage rows, in-diff anchors outside job ownership, and unassigned rule ids.
+The jobs contract makes engines interchangeable. Use the project-selected mechanism, record its actual name in context-pack.md, and always close the loop with `run_jobs.py --validate-only`. Validation rejects missing coverage rows, in-diff anchors outside job ownership, and unassigned rule ids.
 
 **Skill-directed dispatch.** Follow [agent selection](../../wtk/references/agent-selection.md)
 before proposed reviewer work. Use the accepted `deep_review` row and materialized prompts with
@@ -73,95 +73,21 @@ serialized cumulative snapshots only and never assigns overlapping deltas to job
 Record the actual engine in context-pack.md, then run the validate-only gate. Provider-specific
 telemetry setup belongs in the runtime adapter guidance, not in this orchestration contract.
 
-Before prompts are materialized, `build_jobs.py` always prepares the pinned Graft context:
-`graft build`, repository-map lookup, blast-radius tracing, and symbol lookup are written to the
-prompt's context artifact. Graft is a non-blocking inspection aid: a missing binary, stale map, or failed
-command falls back to plain repository inspection and does not block review. Graft does not index
-dot-directories, so selected `.agents` paths always carry an explicit plain-inspection fallback.
+Collect repository maps, symbol/caller traces or architecture evidence only when the review needs
+them, using project-selected inspection tools or ordinary repository inspection. Put relevant
+evidence in context-pack.md and verify it against the frozen checkout. Prompt materialization
+does not invoke third-party inspection tools or require tool-specific artifacts.
 
-**Workflow engine.** Use the host's existing Workflow tool only when it can honor the accepted
-row. Pass each pending job its materialized prompt and single output path; repository files remain
-read-only. Apply the pinned concurrency and refill rules under Bounded dispatch below. If the tool
-inherits model/effort instead of exposing controls, obtain acceptance of those named inherited
-limitations before using it. An explicit accepted model is never silently replaced by that default.
+**Host dispatch.** Pass each pending job its materialized prompt and single output path through
+the project's available dispatch capability. Repository files remain read-only. Apply the pinned
+concurrency and refill rules below. If the host inherits model/effort instead of exposing controls,
+obtain acceptance of those named limitations first. Generic prompt dispatch is sufficient; pass
+no unsupported role argument. After dispatch, run the validate-only gate and resume only pending
+or invalid jobs with unchanged accepted choices. Inspect a failing output after two re-dispatches
+without progress.
 
-This inherited-control scheduler example accepts only a validated row matching the actual host
-provider. Supply that row after observing human acceptance of its model/effort limitations. When
-explicit controls are needed, use the host's supported invocation instead of this example.
-
-```js
-export const meta = {
-  name: 'wtk-deep-review-jobs',
-  description: 'Execute pending wtk-deep-review jobs; each agent reads a prompt file and writes one output file',
-  phases: [{ title: 'Execute' }],
-}
-// args: { jobs: [{label, prompt, output}], concurrency?: integer, approvedStage, actualProvider }
-// PENDING jobs only; approvedStage comes from the coordinator's validated selection.
-const approved = args.approvedStage
-if (!approved || approved.provider !== args.actualProvider ||
-    approved.model !== 'inherited' || approved.effort !== 'inherited') {
-  throw new Error('This Workflow example requires the confirmed inherited settings of the actual host provider')
-}
-phase('Execute')
-let returned = 0
-const inputJobs = [...(args.jobs ?? [])]
-const pending = [...inputJobs]
-const requestedConcurrency = args?.concurrency
-if (requestedConcurrency !== undefined &&
-    (!Number.isInteger(requestedConcurrency) || requestedConcurrency < 1 || requestedConcurrency > 6)) {
-  throw new Error('concurrency must be an integer from 1 through 6')
-}
-const resolvedConcurrency = requestedConcurrency === undefined ? 3 : requestedConcurrency
-const workerLimit = Math.min(resolvedConcurrency, pending.length)
-const active = []
-const resultsByLabel = new Map()
-let providerBlock = null
-while (pending.length || active.length) {
-  while (!providerBlock && pending.length && active.length < workerLimit) {
-    const j = pending.shift()
-    const promise = agent(`Read ${j.prompt} and follow it exactly. It defines the review task, the JSON ` +
-      `schema, and the single file you write (${j.output}). Repo files are read-only. ` +
-      `Reply with one sentence once the artifact is written.`,
-      { label: j.label, phase: 'Execute' }).then(
-        () => ({ label: j.label, status: 'pass' }),
-        (error) => {
-          const message = String(error?.message ?? error)
-          return { label: j.label, status: message.includes('usageLimitExceeded') ? 'blocked' : 'fail', error: message }
-        },
-      )
-    active.push({ label: j.label, promise })
-  }
-  if (!active.length) break
-  const finished = await Promise.race(active.map(({ promise }) => promise))
-  const index = active.findIndex(({ label }) => label === finished.label)
-  active.splice(index, 1)
-  resultsByLabel.set(finished.label, finished)
-  if (finished.status === 'blocked' && providerBlock === null) providerBlock = finished
-  if (finished.status === 'pass') returned += 1
-}
-const orderedJobs = inputJobs.map(({ label }) => resultsByLabel.get(label) ?? ({ label, status: 'pending' }))
-const unfinished = orderedJobs.filter(({ status }) => status !== 'pass')
-return {
-  dispatched: inputJobs.length,
-  returned,
-  jobs: orderedJobs,
-  blocker: providerBlock,
-  pending: unfinished,
-}
-```
-
-
-After the workflow returns, run the validate-only gate and re-invoke only still-pending jobs.
-Interrupted runs may use the host's existing resume mechanism with unchanged accepted choices.
-Two re-dispatches without progress require inspecting a failing output before continuing.
-
-**Agent engine (`--no-workflow` or no Workflow tool).** Use the same skill-directed job contract
-through the existing Agent tool. Generic prompt dispatch is sufficient when its advertised controls
-honor the row; pass no unsupported role argument. Apply the manifest concurrency bound, then run
-the validate-only gate. A different engine still needs the exact accepted provider/model/effort.
-
-**External runtimes (`--subagent` ≠ `native`).** `run_jobs.py --command` drives `compozy exec` per
-[subagent runtimes](subagent-runtimes.md), using the accepted row. The runner owns bounded execution,
+**External commands.** Use `run_jobs.py --command` with the project-selected runtime and accepted
+row, following [external runtime guidance](subagent-runtimes.md). The runner owns bounded execution,
 retries, output validation, provider-block detection and the freeze check.
 
 The orchestrator never reviews inline, regardless of PR size: reviewers spend their own context on their cohort; the orchestrator plans, dispatches, gates, and reports.

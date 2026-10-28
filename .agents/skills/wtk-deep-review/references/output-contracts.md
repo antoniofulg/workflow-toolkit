@@ -8,7 +8,7 @@ Exact templates for every artifact. Placeholders in `<angle brackets>`; keep sec
 - Finding block
 - review.md
 - review.html
-- ReportFindings mapping
+- Host reporting
 - Verdict rule
 
 ## walkthrough.md
@@ -134,9 +134,12 @@ Bracketed lines appear only when they apply. Every result has the certificate fo
 
 The human-facing dashboard, emitted by `scripts/render_html.py`, hydrates `assets/REVIEW_UI.html` with defects and advisories in separate sections plus suppression and coverage observability. The fixed template is self-contained (inline CSS/JS, no network) and `review.html` is never hand-edited. Before render_review.py writes the state entry, the verdict remains a neutral "round in progress" state.
 
-## ReportFindings mapping
+## Host reporting
 
-When the harness exposes the ReportFindings tool, call it once after review.md is written: one entry per defect and advisory, defects first by severity and then advisories by file. Use `file`/`line` from the anchor, `summary` from the claim, and the matching evidence certificate. Omit `verdict`; the certificate and refutation checks are the confidence signal.
+When the project adopts a host reporting interface, map one entry per defect and advisory after
+review.md is written: defects first by severity, then advisories by file. Preserve each anchor,
+claim and evidence certificate. The report and its evidence remain authoritative when no host
+reporting interface is selected.
 
 ## Verdict rule
 

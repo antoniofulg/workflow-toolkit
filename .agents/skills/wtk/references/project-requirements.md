@@ -28,6 +28,11 @@ authority and explicit supersession; otherwise cite conflicting claims and the o
 decision. Inspect representative implementation and enforcement as evidence, not as policy adoption.
 Setup or policy revision is not required merely because a task reads existing guidance.
 
+Project guidelines own tool and companion choices, their triggers, commands and permissions.
+Apply selected capabilities for the relevant responsibility; installation alone is not adoption.
+Without a selection, use existing host/repository capabilities that satisfy the required outcome.
+Keep third-party recommendations in the toolkit README, not in phase rules or vendor allowlists.
+
 User-owned scope, product behavior and departures from binding sources require an answer or
 explicit delegation before dependent implementation. Resolve routine facts and reversible detail
 from repository evidence. Record unanswered product choices as unresolved with dependent work

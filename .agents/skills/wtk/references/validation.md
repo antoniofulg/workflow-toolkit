@@ -121,8 +121,8 @@ authentication behavior and sensitive product data require full Verifier coverag
 ## Browser queue ownership
 
 When a consuming project already provides a browser execution queue or lock, use that existing
-coordination surface. Keep at most one queued browser execution per checkout; Playwright's internal
-workers are part of that execution; they do not count as separate runs. Compare the queued run's
+coordination surface. Keep at most one queued browser execution per checkout; the runner's internal
+workers are part of that execution and do not count as separate runs. Compare the queued run's
 checkout and relevant inputs with the current request before enqueueing. Treat a queued run as stale
 only when it is checkout-owned and relevant inputs changed; cancel it safely through the existing
 mechanism and confirm cancellation before enqueueing its replacement.

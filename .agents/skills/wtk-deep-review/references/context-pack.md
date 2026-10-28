@@ -57,21 +57,16 @@ Extract only rules that can bind a review result (error handling, testing shape,
 
 Detect what the repo already enforces and run it scoped to selected files; findings a lane reports are suppressed from the review (taxonomy rule 1).
 
-| Signal in repo | Lane command (scope to changed files where supported) |
-| --- | --- |
-| `Makefile` with `lint`/`check` target | `make lint` (authoritative when present — prefer it over raw tools) |
-| `golangci-lint` config / Go modules | `golangci-lint run <changed dirs>` |
-| `package.json` scripts `lint`/`typecheck` | the repo's own script via its package manager |
-| eslint/biome/oxlint config | corresponding tool on changed files |
-| `tsconfig.json` | `tsc --noEmit` (project-wide; cheap signal) |
-| `ruff.toml` / pyproject | `ruff check <files>` |
-| `Cargo.toml` | `cargo clippy` |
+Resolve each lane from the project's documented commands, package scripts, configured tools and CI.
+Prefer the owning project command over a raw tool invocation and scope it to selected files where
+supported. A language manifest or configuration filename alone does not select a linter or justify
+an unconfigured command.
 
 Record per lane: `ran` (attach findings on selected files, trimmed) or `unavailable` (tool missing/failed — overlap suppression is off for that lane and review.md must say so). Never install tools to fill a lane.
 
 ## 4. PR intent
 
-With `--pr`: title, description, linked issues (`gh pr view N --json title,body,closingIssuesReferences`), and base/head. Locally: `git log --oneline <base>..<head>` plus the user's stated intent. Reviewers judge the diff against *stated intent* — a change that does more than its description says is itself a finding.
+For a PR, read its title, description, linked issues and base/head through the project's selected integration. Locally: `git log --oneline <base>..<head>` plus the user's stated intent. Reviewers judge the diff against *stated intent* — a change that does more than its description says is itself a finding.
 
 ## 5. Spec contract (`--spec`)
 

@@ -4,6 +4,33 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Third-party tool and companion recommendations now live in README. Projects choose their own
+  tools, record responsibilities, triggers, commands and permissions in existing guidelines, and
+  reference those guidelines from root instructions. Installed companions no longer activate
+  automatically; security outcomes and independent verification remain required.
+- QA adapters, documentation lookup, linter commands, external reviewer runtimes and reporting
+  integrations follow project selections instead of vendor lists or fixed preference orders.
+- Approved route snapshots accept nonempty project-selected provider identities while retaining
+  exact approval, checkout ownership and inherited-control validation.
+
+### Removed
+
+- Bundled Graft/Graphify adapters, pinned versions, automatic repository-intelligence routing and
+  tool-specific review context artifacts. Review job generation uses the existing context pack.
+- Deep Review's Compozy-only transport, named runtime selectors, host-specific scheduler example,
+  GitHub CLI-only PR retrieval/publication recipes and implicit CodeRabbit configuration fallback.
+
+### Upgrade
+
+- Refresh the full WTK skill set and record desired third-party choices in project guidelines.
+  README recommendations do not adopt or install them.
+- Resolve PR base/head commits with the project's selected integration, then pass local
+  `--base`/`--head` refs to `build_manifest.py`; its former `--pr` option is removed.
+  External reviewer commands use `run_jobs.py --command` with approved settings. Rebuild review
+  jobs instead of reusing prompts tied to removed context artifacts or runtime selectors.
+
 ## [3.3.0] - 2026-10-26
 
 ### Changed
