@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-10-28
+
 ### Changed
 
 - Third-party tool and companion recommendations now live in README. Projects choose their own
@@ -30,6 +32,14 @@ All notable changes to this project are documented here.
   `--base`/`--head` refs to `build_manifest.py`; its former `--pr` option is removed.
   External reviewer commands use `run_jobs.py --command` with approved settings. Rebuild review
   jobs instead of reusing prompts tied to removed context artifacts or runtime selectors.
+- Skill metadata versions advance independently of the toolkit release:
+
+| Skill | Version |
+| --- | --- |
+| `wtk` | 1.2.0 |
+| `wtk-lean` | 1.4.0 |
+| `wtk-discover` | 0.9.1 |
+| `wtk-setup` | 1.1.1 |
 
 ## [3.3.0] - 2026-10-26
 

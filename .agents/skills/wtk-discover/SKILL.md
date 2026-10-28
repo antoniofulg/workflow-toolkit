@@ -4,7 +4,7 @@ description: 'Explore an idea or product signal to a build or stop verdict and a
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: 0.9.0
+  version: 0.9.1
 ---
 
 # TLC Discover
