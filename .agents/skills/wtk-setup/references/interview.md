@@ -63,8 +63,8 @@ same active interview; changed inputs reopen only the affected choice. Assessmen
   authorized, or what dependent work must remain blocked? Optional skill absence and unavailable
   browser execution are different gaps.
 - For UI/UX and frontend: which journeys/interactions and visual sources bind the work, and which
-  actually available specialist should supply the needed expertise? A recommendation such as
-  Frontend Craft is optional, not an adopted driver or permission to install it.
+  actually available specialist should supply the needed expertise? A recommendation is not an
+  adopted driver or permission to install it.
 - For a changed-input rerun: does the renamed source, removed skill or changed runtime alter the
   adopted responsibility? Ask only about that change and preserve unaffected decisions.
 

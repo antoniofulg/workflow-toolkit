@@ -46,13 +46,12 @@ command, or replace the automated gate.
 
 ## Browser adapter selection
 
-Use the consuming project's task-scoped QA adapter choice when one is supplied. Without one, use
-`auto`. The valid values are `auto`, `playwright-mcp`, `orca`, `maestri`, and `manual`. `auto` tries
-LLM + Playwright MCP first, then exactly one IDE-native Orca or Maestri adapter exposed by the host,
-then manual. If both IDE-native adapters are exposed, choose Orca before Maestri and invoke only that
-one. A direct value selects only that adapter; if its prerequisites are unavailable, record the
-limitation instead of substituting another adapter. Before another driver acts after an uncertain
-attempt, inspect or reset the fixture and confirm known isolated state.
+Use the adapter selected in project guidelines or an explicit task-scoped choice. Without a selection,
+use an available host capability that can exercise the required browser interaction and capture its
+evidence, or a reachable manual walk. There is no vendor list or fixed tool ordering.
+If a selected adapter is unavailable, record the limitation and follow the project's alternative
+or gap disposition rather than silently substituting it. Before another driver acts after an
+uncertain attempt, inspect or reset the fixture and confirm known isolated state.
 
 ## Procedure
 

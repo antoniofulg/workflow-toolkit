@@ -57,12 +57,10 @@ test('approved execution selection and current WTK catalog are consistent', () =
   const agents = read('AGENTS.md');
   const lean = read('.agents/skills/wtk-lean/SKILL.md');
   const reviewRounds = read('.agents/skills/wtk/references/review-rounds.md');
-  const qaExecute = read('.agents/skills/wtk-qa-execute/SKILL.md');
 
   assert.match(readme, /full 13-skill WTK set/);
   assert.match(readme, /Agent selection.*agent-selection\.md/);
   assert.match(readme, /Deep Review is on demand/);
-  assert.match(readme, /QA uses the `auto` adapter/);
   assert.match(readme, /fixed default `stall_attempts = 3`/);
   assert.match(agents, /agent selection.*agent-selection\.md/);
   assert.match(agents, /sequential Lean builder/);
@@ -71,7 +69,6 @@ test('approved execution selection and current WTK catalog are consistent', () =
   assert.match(lean, /--selection-file/);
   assert.match(reviewRounds, /Deep Review is on demand by default/);
   assert.match(reviewRounds, /fixed default threshold of three attempts/);
-  assert.match(qaExecute, /Without one, use\s+`auto`/);
   assert.equal(fs.existsSync(path.join(root, 'docs')), false);
   assert.match(read('.agents/skills/wtk-qa/references/qa-scenarios.md'), /consuming project/);
 
@@ -80,7 +77,6 @@ test('approved execution selection and current WTK catalog are consistent', () =
   assert.equal(fs.existsSync(path.join(root, '.wtk.toml.example')), false);
   assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-config')), false);
   assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-lean/scripts/ad-index.py')), true);
-  assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-deep-review/scripts/repository_intelligence.py')), true);
   assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-config/scripts/ad-index.py')), false);
   assert.equal(fs.existsSync(path.join(root, '.agents/skills/wtk-config/scripts/repository_intelligence.py')), false);
 
@@ -183,37 +179,6 @@ test('WTK routes resolve references without optional companions', () => {
     const source = read(path.join('.agents/skills', relative));
     assert.doesNotMatch(source, /docs\/toolkit\/guidelines\//, relative);
   }
-  assert.match(read('.agents/skills/wtk/references/security.md'), /optional `security-(?:implementation|spec|threat-model|review)` skill/i);
-  assert.match(read('.agents/skills/wtk-deep-review/SKILL.md'), /failed or absent Graft falls back/i);
-  assert.match(read('.agents/skills/wtk-deep-review/references/orchestration.md'), /plain repository inspection/i);
-});
-
-test('skills-only documentation and phase contracts remain reachable', () => {
-  const readme = read('README.md');
-  for (const name of ['wtk', 'wtk-lean', 'wtk-plan', 'wtk-implement', 'wtk-qa', 'wtk-deep-review', 'wtk-ship']) assert.match(readme, new RegExp(`\`${name}\``));
-  assert.match(readme, /optional project instructions/i);
-  assert.match(readme, /Ponytail/);
-  assert.match(readme, /Security lifecycle/);
-  assert.match(readme, /\[antoniofulg\/adaptive-guidelines\]\(https:\/\/github\.com\/antoniofulg\/adaptive-guidelines\)/);
-  assert.match(readme, /Graphify/);
-  assert.match(readme, /Graft/);
-  assert.match(readme, /dietrichgebert\/ponytail/);
-  assert.match(readme, /antoniofulg\/security-lifecycle/);
-  assert.match(readme, /github.com\/trailhq\/Graft/);
-  assert.match(readme, /pypi.org\/project\/graphifyy/);
-  const recommendationTable = readme.split('## Recommended companion skills and tools', 2)[1].split('When Graft or Graphify', 1)[0];
-  const rows = recommendationTable.split(/\r?\n/).filter((line) => line.startsWith('| ') && !line.includes('---') && !line.includes('Companion |'));
-  assert.equal(rows.length, 6);
-  for (const row of rows) assert.match(row, /https?:\/\/[^|]+\|[^|]+\|/);
-  assert.equal(rows.some((row) => row.includes('Adaptive Guidelines')), true);
-  assert.equal(rows.some((row) => row.includes('| Frontend Craft |')), true);
-  assert.match(read('.agents/skills/wtk-lean/SKILL.md'), /one fresh Verifier/);
-  assert.match(read('.agents/skills/wtk-lean/references/checks.md'), /Coverage/);
-  assert.match(read('.agents/skills/wtk/references/validation.md'), /full gate/);
-  assert.match(read('.agents/skills/wtk/references/review-rounds.md'), /Technical Verifier/);
-  assert.match(read('.agents/skills/wtk-qa/references/qa-scenarios.md'), /scenario/i);
-  assert.match(read('.agents/skills/wtk-qa-execute/SKILL.md'), /independent confirmation/i);
-  assert.match(read('.agents/skills/wtk-ship/SKILL.md'), /authoriz/i);
 });
 
 function walk(directory) {

@@ -2,8 +2,8 @@
 """Deep-review plan gate (bootstrap helper; writes only under --out).
 
 Validates plan.json cohorts against the manifest (every selected file owned
-exactly once; hunk_scope slices line-exact; size caps), always prepares Graft context,
-conditionally prepares one Graphify context, and renders every reviewer and sweep prompt from assets/PROMPT.md —
+exactly once; hunk_scope slices line-exact; size caps), and renders every reviewer
+and sweep prompt from assets/PROMPT.md —
 injecting only the rules whose scope globs match that cohort's files — and
 materializes jobs.json, the work
 contract every execution engine runs.
@@ -40,8 +40,6 @@ from _common import (
     skill_rel,
     write_json,
 )
-from graft_context import prepare_graft_context
-from graphify_context import prepare_graphify_context
 
 DEFAULT_MAX_COHORT_FILES = 100
 MAX_COHORT_CHANGED_LINES = 6000
@@ -50,12 +48,12 @@ TARGET_COHORT_CHANGED_LINES = 400
 REVIEWER_PLACEHOLDERS = {
     "cohort_name", "risk", "target", "file_list", "scope_instruction", "context",
     "taxonomy", "rules_block", "diff_command", "base", "output", "schema",
-    "lane_instruction", "coverage_contract", "graft_context", "prior_findings",
+    "lane_instruction", "coverage_contract", "prior_findings",
 }
 SWEEP_PLACEHOLDERS = {
     "sweep_key", "lens", "target", "context", "manifest", "taxonomy",
     "diff_command", "output", "schema", "rules_block",
-    "coverage_contract", "graft_context",
+    "coverage_contract",
 }
 
 DEFAULT_LENSES = {
@@ -388,10 +386,6 @@ def main() -> int:
         default=DEFAULT_MAX_COHORT_FILES,
         help=f"maximum files per cohort (default: {DEFAULT_MAX_COHORT_FILES})",
     )
-    parser.add_argument(
-        "--graphify-question",
-        help="one explicit architectural question for a bounded Graphify context",
-    )
     args = parser.parse_args()
 
     repo = repo_root()
@@ -429,14 +423,6 @@ def main() -> int:
         if errors:
             raise RuntimeError("plan validation failed:\n- " + "\n- ".join(errors))
         sweeps = [] if incremental else normalize_sweeps(plan)
-        graft = prepare_graft_context(repo, out, sorted(selected))
-        graphify = (
-            prepare_graphify_context(repo, out, args.graphify_question)
-            if args.graphify_question is not None
-            else None
-        )
-        if graphify is not None and graft.get("question_hash") == graphify.get("question_hash"):
-            raise RuntimeError("Graft and Graphify questions must be distinct")
 
         reviewer_template = load_template("reviewer")
         sweep_template = load_template("sweep")
@@ -447,15 +433,8 @@ def main() -> int:
             "taxonomy": f"{skill_rel(repo)}/references/taxonomy.md",
             "diff_command": manifest["diff_command"],
             "schema": schema,
-            "graft_context": rel(Path(graft["path"]), repo),
             "prior_findings": prior_findings_block(ledger) if incremental else "",
         }
-        graphify_note = ""
-        if graphify is not None:
-            graphify_note = (
-                f"\n\nGRAPHIFY CONTEXT: read `{rel(Path(graphify['path']), repo)}` for the one bounded "
-                "architectural question; verify every claim against the frozen checkout."
-            )
         prompts_dir = out / "prompts"
         prompts_dir.mkdir(parents=True, exist_ok=True)
         (out / "agents").mkdir(exist_ok=True)
@@ -486,7 +465,7 @@ def main() -> int:
                     "actionable maintainability or project-rule improvements in `advisories`."
                 ),
                 "coverage_contract": coverage_contract(required_hunks, [rule["id"] for rule in bound_rules]),
-            }) + graphify_note
+            })
             (prompts_dir / f"{label}.md").write_text(prompt, encoding="utf-8")
             jobs.append({
                 "label": label, "kind": "cohort", "lane": "defect", "required_hunks": required_hunks,
@@ -509,7 +488,7 @@ def main() -> int:
                 "output": rel(output, repo),
                 "rules_block": block,
                 "coverage_contract": coverage_contract([], [rule["id"] for rule in bound_rules]),
-            }) + graphify_note
+            })
             (prompts_dir / f"{label}.md").write_text(prompt, encoding="utf-8")
             jobs.append({
                 "label": label, "kind": "sweep", "lane": "sweep", "required_hunks": [],
@@ -517,30 +496,7 @@ def main() -> int:
                 "prompt": rel(prompts_dir / f"{label}.md", repo),
                 "output": rel(output, repo),
             })
-        write_json(out / "jobs.json", {
-            "jobs": jobs,
-            "repository_intelligence": {
-                "graft": {
-                    "status": graft["status"],
-                    "path": rel(Path(graft["path"]), repo),
-                    "question_hash": graft["question_hash"],
-                    **({"reason": graft["reason"]} if graft.get("reason") else {}),
-                },
-                "graphify": (
-                    {
-                        "status": graphify["status"],
-                        "path": rel(Path(graphify["path"]), repo),
-                        "question_hash": graphify["question_hash"],
-                        **({"reason": graphify["reason"]} if graphify.get("reason") else {}),
-                    }
-                    if graphify is not None else None
-                ),
-                "dual_use_reason": (
-                    "Graphify provides architecture relationships; Graft provides code callers and symbols."
-                    if graphify is not None else None
-                ),
-            },
-        })
+        write_json(out / "jobs.json", {"jobs": jobs})
     except RuntimeError as error:
         sys.stderr.write(f"{error}\n")
         return 1

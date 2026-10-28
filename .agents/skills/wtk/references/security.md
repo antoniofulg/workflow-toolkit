@@ -22,17 +22,15 @@ files and never delete them automatically.
 
 ## 1. Before coding — build with the right guidance loaded
 
-1. If the optional `security-implementation` skill is installed, apply it to secure-by-default
-   implementation and hardening. Otherwise use the baseline checks in this reference and surface any
-   Critical or High concern encountered immediately.
-2. If the optional `security-spec` skill is installed, invoke it during Specify to define security
-   requirements and negative tests. Otherwise add those cases directly to the feature contract.
-3. If the optional `security-threat-model` skill is installed, invoke it during Specify or Design
-   when section 4's surfaces apply. Otherwise record the assets, boundaries and threats here.
-4. Identify affected languages, frameworks and versions; load the applicable concept references.
+1. Apply project-selected guidance for secure implementation, security requirements and threat
+   modeling at the relevant phase. Use this reference's baseline when no specialist is selected;
+   surface any Critical or High concern encountered immediately.
+2. During Specify, put security requirements and negative cases directly in the feature contract.
+   When section 4's surfaces apply, record assets, boundaries and threats before building.
+3. Identify affected languages, frameworks and versions; load the applicable concept references.
    Verify framework APIs and defaults using the consumer's documentation tools and current official
-   docs for the installed version. Use a matching framework skill when available; record uncertainty.
-5. **Convert that guidance into security outcomes in the spec and the test contract.** Outcomes, not
+   docs for the installed version. Apply adopted framework guidance and record uncertainty.
+4. **Convert that guidance into security outcomes in the spec and the test contract.** Outcomes, not
    controls: a test asserts the required *result*, never the presence of a particular implementation.
 
 ## 2. At Specify — declare the surfaces
@@ -115,11 +113,10 @@ change. Behaviour-preserving refactors do not need one.
 With surfaces declared and controls tested, review looks for what the table missed rather than
 rediscovering the table.
 
-If the optional `security-review` skill is installed, the independent verifier uses it to review the
-complete feature diff. It detects flaws in code that now exists — injection, exposed secrets, broken
-access control, vulnerable dependencies — which the before-coding skills cannot catch because they
-ran before the code was written. When it is absent, the verifier applies the surface list, proof
-records, and native inspection below and reports that the optional review skill was unavailable.
+The independent verifier reviews the complete feature diff for injection, exposed secrets, broken
+access control, vulnerable dependencies and other affected security failures. Apply project-selected
+review guidance alongside the surface list, proof records and native inspection below. A specialist
+choice changes the procedure, not the required security coverage or evidence.
 
 Findings carry the same weight as any other: **unresolved Critical or High blocks completion**,
 regardless of any project priority label. Accepting a risk requires your explicit approval and a
@@ -159,4 +156,4 @@ The substance is unchanged. What goes is the bookkeeping:
   now means not applicable.
 - A gate that only reads the *shape* of security evidence, and never reads product code looking for a
   flaw, is not a security gate. Keep it out of the full gate.
-- The separate security-review artifact folds into the validation report. One evidence file.
+- The separate security review artifact folds into the validation report. One evidence file.

@@ -67,7 +67,7 @@ For a feature needing a snapshot, write a local selection JSON only after observ
   "checkout": "/absolute/path/to/current/checkout",
   "stages": {
     "implementation": {
-      "provider": "codex",
+      "provider": "host-provider",
       "model": "host-advertised-model",
       "effort": "host-supported-effort",
       "rationale": "This task needs one sequential coding worker.",
@@ -80,7 +80,7 @@ For a feature needing a snapshot, write a local selection JSON only after observ
     "reference": "Exact user reply or its durable reference accepting these rows",
     "stages": {
       "implementation": {
-        "provider": "codex",
+        "provider": "host-provider",
         "model": "host-advertised-model",
         "effort": "host-supported-effort",
         "rationale": "This task needs one sequential coding worker.",
@@ -95,9 +95,10 @@ For a feature needing a snapshot, write a local selection JSON only after observ
 Replace the example values with actual accepted choices; they are not model recommendations.
 `checkout` is the resolved current checkout path. Include only selected stage keys from the table.
 Each stage requires nonempty provider, model, effort and rationale plus a list of nonempty named
-limitations; `scope` is an optional nonempty string. Providers use existing `claude`, `codex` or
-`cursor` host mechanisms. For `model: inherited` or `effort: inherited`, include a limitation
-starting with `model:` or `effort:` respectively, stating what is inherited and unknown.
+limitations; `scope` is an optional nonempty string. The provider names the actual project-selected
+host mechanism; the snapshot does not impose a vendor list. For `model: inherited` or
+`effort: inherited`, include a limitation starting with `model:` or `effort:` respectively,
+stating what is inherited and unknown.
 
 `approval.stages` must exactly match the accepted rows, including scope and limitations. The
 reference records the observed human decision; for a targeted change, cite both prior acceptance

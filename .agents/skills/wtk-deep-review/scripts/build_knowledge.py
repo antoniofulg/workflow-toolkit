@@ -35,7 +35,7 @@ sys.dont_write_bytecode = True
 from _common import manifest_selected, read_json, rel, repo_root, write_json
 
 INSTRUCTION_NAMES = {"AGENTS.md", "CLAUDE.md"}
-CONFIG_SOURCES = (".wtk-deep-review.yaml", ".wtk-deep-review.yml", ".coderabbit.yaml", ".coderabbit.yml")
+CONFIG_SOURCES = (".wtk-deep-review.yaml", ".wtk-deep-review.yml")
 SKILL_ROOTS = (".agents/skills", ".claude/skills", ".codex/skills", "skills")
 REPO_SIGNAL_FILES = (
     "package.json", "go.mod", "Cargo.toml", "pyproject.toml", "requirements.txt",

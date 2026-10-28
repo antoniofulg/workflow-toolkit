@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.3.0'
+  version: '1.4.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
@@ -177,8 +177,8 @@ the last batch returns green; builders report and stop.
 
 ## Knowledge chain
 
-Use existing code and conventions, project docs, library docs (Context7 where available), then web
-search; mark anything still uncertain. Never invent an API, flag, command, or behaviour.
+Use existing code and conventions, project docs, current library docs through the project's selected
+lookup tools, then web search; mark anything still uncertain. Never invent an API, flag, command, or behaviour.
 
 ## Output
 

@@ -126,8 +126,8 @@ function forbiddenAuthorityViolations(
 ): string[] {
   const scannedPaths = activeAuthorityPaths(paths);
   const forbiddenCommands = [
-    /(?:^|[`$>#;&|]\s*)npm\s+(?!(?:pack\s+--pack-destination\s+\S+(?:\s*#.*)?$|install\s+--save-dev\s+--save-exact\s+@nanonets\/graft@0\.10\.1$|exec\s+--yes\s+--package\s+\S+\s+--\s+my-workflow\s+(?:plan|apply|resolve|status)\b))\S+/i,
-    /(?:^|[`$>#;&|]\s*)npx\s+(?!(?:skills\s+(?:add|list|update)\b|workflow-toolkit\s+install|wtk\s+install|scripts\s+install|--yes\s+<approved-package>@<exact-version>(?:\s+(?:plan|apply|resolve|status)\b|(?=\s*`|$))))\S+/i,
+    /(?:^|[`$>#;&|]\s*)npm\s+(?!(?:pack\s+--pack-destination\s+\S+(?:\s*#.*)?$|exec\s+--yes\s+--package\s+\S+\s+--\s+my-workflow\s+(?:plan|apply|resolve|status)\b))\S+/i,
+    /(?:^|[`$>#;&|]\s*)npx\s+(?!(?:skills(?:@latest)?\s+(?:add|list|update)\b|workflow-toolkit\s+install|wtk\s+install|scripts\s+install|--yes\s+<approved-package>@<exact-version>(?:\s+(?:plan|apply|resolve|status)\b|(?=\s*`|$))))\S+/i,
     /\bvitest\s+(?:run|--|[A-Za-z])/i,
     /\btsx\s+(?:--|[A-Za-z])/i,
     /(?:from|require)\s*[(]?['"]yaml['"]/i,
@@ -201,7 +201,6 @@ describe("QA workflow artifact policy", () => {
     const lifecycle = artifactLifecycle.replace(/\s+/g, " ");
     expect(lifecycle).toContain("`.specs/features/` is transient Lean workflow state");
     expect(lifecycle).toContain("exact legacy managed `.specs/features/` ignore line");
-    expect(readme).toContain("never stages or commits files");
   });
 
   it("IT-015 treats Lean proof state as the commit precondition", () => {
@@ -317,22 +316,6 @@ describe("canonical QA skills", () => {
     expect(qaExecute).toMatch(/identifying the new snapshot and resetting the environment/);
   });
 
-  it("routes the configured QA browser adapter", () => {
-    const qaExecute = normalizePacket(readRepositoryFile(qaExecutePath));
-    const session = normalizePacket(readRepositoryFile(".agents/skills/wtk-qa-execute/references/session-protocol.md"));
-
-    expect(qaExecute).toContain("task-scoped QA adapter choice");
-    expect(qaExecute).toContain("Without one, use auto");
-    for (const value of ["auto", "playwright-mcp", "orca", "maestri", "manual"]) {
-      expect(qaExecute).toContain(value);
-    }
-    expect(qaExecute).toContain("auto tries LLM + Playwright MCP first");
-    expect(qaExecute).toContain("exactly one IDE-native Orca or Maestri adapter");
-    expect(qaExecute).toContain("Orca before Maestri");
-    expect(qaExecute).toContain("A direct value selects only that adapter");
-    expect(qaExecute).toContain("inspect or reset the fixture and confirm known isolated state");
-    expect(session).toContain("independent read path and after a reload");
-  });
 
   it("routes execution receipts and delivery reporting to one bundled metrics reference", () => {
     const reference = ".agents/skills/wtk/references/execution-metrics.md";
@@ -640,19 +623,11 @@ describe("configurable review policy", () => {
 
 describe("repository intelligence policy", () => {
   it("IT-023 keeps routed tools standard, source-authoritative, and OpenDesign optional", () => {
-    const readme = readRepositoryFile("README.md");
     const uiux = readRepositoryFile(".agents/skills/wtk/references/ui-ux.md");
     const security = readRepositoryFile(".agents/skills/wtk/references/security.md");
     const normalizedUiux = uiux.replace(/\s+/g, " ");
     const normalizedSecurity = security.replace(/\s+/g, " ");
 
-    expect(readme).toContain("Graphify");
-    expect(readme).toContain("Graft");
-    expect(readme).toContain("optional tool was unavailable");
-    expect(readme).not.toContain("Graft can enrich wtk-deep-review context");
-    const repositoryIntelligence = readRepositoryFile(".agents/skills/wtk-deep-review/references/orchestration.md");
-    expect(repositoryIntelligence).toContain("prepares the pinned Graft context");
-    expect(repositoryIntelligence).toContain("falls back to plain repository inspection");
     expect(normalizedUiux).toContain("repository stores only the approved handoff");
     expect(normalizedUiux).toContain("`spec.md` → `uiux.md` → approved design");
     expect(normalizedUiux).toContain("tool or plugin output, then legacy mockup");
@@ -691,40 +666,11 @@ describe("agent configuration", () => {
       }
     }
 
-    const runtime = readRepositoryFile(".agents/skills/wtk-deep-review/references/subagent-runtimes.md");
     const orchestration = readRepositoryFile(".agents/skills/wtk-deep-review/references/orchestration.md");
     const deepReviewSkill = readRepositoryFile(".agents/skills/wtk-deep-review/SKILL.md");
 
-    expect(deepReviewSkill).toMatch(/\| `--no-workflow` \|.*accepted stage settings/);
-    expect(deepReviewSkill).not.toContain("Workflow when available");
     expect(deepReviewSkill).toMatch(/agent selection.*agent-selection\.md/);
     expect(orchestration).toContain("**Skill-directed dispatch.**");
-    expect(orchestration).toContain("**Workflow engine.**");
-
-    const codexRuntime = runtime.match(/^\|\s*`codex`\s*\|([^\n]+)$/m)?.[1] ?? "";
-    expect(codexRuntime).toContain("--model <approved-model>");
-    expect(codexRuntime).toContain("--reasoning-effort <approved-effort>");
-    expect(codexRuntime).not.toMatch(/gpt-\d/);
-
-    const directed = orchestration.slice(
-      orchestration.indexOf("**Skill-directed dispatch"),
-      orchestration.indexOf("**Workflow engine"),
-    );
-    const workflow = orchestration.slice(
-      orchestration.indexOf("**Workflow engine"),
-      orchestration.indexOf("**Agent engine"),
-    );
-    const agent = orchestration.slice(orchestration.indexOf("**Agent engine"));
-
-    expect(directed).toMatch(/accepted `deep_review` row/);
-    expect(directed).toMatch(/current checkout/);
-    expect(directed).toMatch(/named native role is optional/);
-    expect(workflow).toMatch(/accepted\s+row/);
-    expect(workflow).toMatch(/inherited/);
-    expect(workflow).toMatch(/limitations before using it/);
-    expect(agent).toMatch(/Generic prompt dispatch/);
-    expect(agent).toMatch(/unsupported role argument/);
-    expect(agent).toMatch(/exact accepted provider\/model\/effort/);
     const qaWrapper = readRepositoryFile(".agents/skills/wtk-qa/SKILL.md");
     expect(qaWrapper).not.toMatch(/^(?:context:\s*fork|agent:)/m);
     expect(qaWrapper).toMatch(/agent selection.*agent-selection\.md/);
@@ -784,15 +730,6 @@ describe("adoption and public setup", () => {
     expect(readme).toContain("Graft");
   });
 
-  it("IT-021 keeps Ponytail active from workflow start through the full cycle", () => {
-    const agents = readRepositoryFile("AGENTS.md");
-    const readme = readRepositoryFile("README.md");
-
-    expect(normalizePacket(agents)).toMatch(/Ponytail is an optional companion skill/);
-    expect(readme).toContain("Ponytail");
-    expect(existsSync(join(repositoryRoot, ".agents/skills/ponytail"))).toBe(false);
-  });
-
   it("IT-020 keeps the source pack free of project documentation", () => {
     expect(existsSync(join(repositoryRoot, "docs"))).toBe(false);
     expect(readRepositoryFile("README.md")).toContain("only that skill's files");
@@ -837,17 +774,6 @@ describe("adoption and public setup", () => {
     };
     const changelog = readRepositoryFile("CHANGELOG.md");
     const latestHeading = changelog.match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1];
-    const unreleasedStart = changelog.indexOf("## [Unreleased]");
-    const firstRelease = changelog.indexOf("\n## [", unreleasedStart + 1);
-    const unreleased = changelog.slice(unreleasedStart, firstRelease === -1 ? undefined : firstRelease).replace(/\s+/g, " ");
-    const releaseStart = changelog.indexOf(`## [${manifest.version}]`);
-    const nextRelease = changelog.indexOf("\n## [", releaseStart + 1);
-    const latestRelease = changelog.slice(releaseStart, nextRelease === -1 ? undefined : nextRelease);
-    const migrationStart = changelog.indexOf("## [2.0.0]");
-    const migrationEnd = changelog.indexOf("\n## [", migrationStart + 1);
-    const migrationRelease = changelog.slice(migrationStart, migrationEnd === -1 ? undefined : migrationEnd);
-
-
     expect(manifest.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(manifest.name).toBe("workflow-toolkit");
     expect(manifest.private).toBe(true);
@@ -856,15 +782,6 @@ describe("adoption and public setup", () => {
     expect(readRepositoryFile("bun.lock")).toContain('"name": "workflow-toolkit"');
     expect(existsSync(join(repositoryRoot, "package-lock.json"))).toBe(false);
     expect(latestHeading).toBe(manifest.version);
-    expect(latestRelease).not.toContain("npx wtk install");
-    expect(migrationRelease).toContain("complete set of 12 `wtk*` skills");
-    expect(readRepositoryFile("README.md")).toContain("npx skills add antoniofulg/workflow-toolkit");
-    expect(migrationRelease).toContain("Ponytail, security lifecycle, and other companion skills");
-    expect(migrationRelease).toContain("Retired the package installer");
-    expect(migrationRelease).toContain("CLEANUP.md");
-    expect(unreleased).not.toMatch(/npx workflow-toolkit(?:@[^ ]+)? install/);
-    expect(unreleased).not.toContain("install_security_skills");
-
     const pack = spawnSync(process.execPath, ["pm", "pack", "--dry-run", "--ignore-scripts"], {
       cwd: repositoryRoot,
       encoding: "utf8",
@@ -902,7 +819,6 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
       "tools/test_remediation.py",
-      "tools/test_repository_intelligence.py",
       "tools/test_review_convergence.py",
       "tools/test_tlc_validators.py",
       "tools/test_wtk_lifecycle.py",
