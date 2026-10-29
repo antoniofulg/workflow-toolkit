@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- A confirmed Minor Deep Review defect with no realistic trigger (no input or state the feature's
+  normal use can reach) is filed as an issue instead of blocking delivery; triggerable Minors still
+  close in the feature run.
+
 ## [4.0.0] - 2026-10-28
 
 ### Changed

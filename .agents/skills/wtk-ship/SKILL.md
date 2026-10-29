@@ -55,4 +55,4 @@ separately authorized.
 If required readiness evidence is missing, name the affected scope and required check. A builder
 never certifies its own feature; feature verification uses a fresh agent over the complete feature
 range. Confirmed Critical, Major,
-and Minor Deep Review findings are fixed in the feature run before delivery.
+and realistically triggered Minor Deep Review findings are fixed in the feature run before delivery.
