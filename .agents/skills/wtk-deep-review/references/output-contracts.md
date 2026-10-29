@@ -145,7 +145,7 @@ reporting interface is selected.
 
 Derive after Step 4's merge from open **defects only**; advisories never change the verdict:
 
-- **SHIP** — no Critical or Major defect is open; Minor defects enter the mandatory current-feature closeout batch without a remediation check; Trivials and advisories become follow-ups.
+- **SHIP** — no Critical or Major defect is open; Minor defects with a realistic trigger enter the mandatory current-feature closeout batch without a remediation check; Minor defects without one, Trivials and advisories become follow-ups.
 - **FIX_BEFORE_SHIP** — at least one Critical/Major defect is open, and remediation is local: the change's shape is right and each defect names a bounded fix.
 - **REWORK** — defects show structural failure needing redesign: one root cause across ≥3 cohorts or a Critical whose fix rewrites the change's core. REWORK always carries a named rationale; otherwise FIX_BEFORE_SHIP is the ceiling.
 

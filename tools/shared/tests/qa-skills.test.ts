@@ -568,13 +568,15 @@ describe("configurable review policy", () => {
     expect(deltaIndex).toBeGreaterThan(-1);
     expect(deltaIndex).toBeLessThan(rerunIndex);
     expect(wtkShip).toContain("selected `wtk-deep-review`");
+    expect(wtkShip).not.toContain("disable-model-invocation");
+    expect(wtkShip).toContain("only when a human asks in this session to ship the work");
     for (const source of [agents, reviewRounds, wtkShip, readme]) {
       expect(source).not.toContain("wtk-config");
       expect(source).not.toContain("workflow_config.py");
     }
   });
 
-  it("fixes every wtk-deep-review defect inside the originating feature run", () => {
+  it("fixes wtk-deep-review defects in the feature run and files trigger-less Minors", () => {
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
     const wtkShip = readRepositoryFile(".agents/skills/wtk-ship/SKILL.md");
     const implement = readRepositoryFile(".agents/skills/wtk-implement/SKILL.md");
@@ -582,6 +584,9 @@ describe("configurable review policy", () => {
       ".agents/skills/wtk-deep-review/references/output-contracts.md",
     );
     expect(reviewRounds).toContain("Fix every confirmed wtk-deep-review defect");
+    expect(reviewRounds).toContain("except a Minor with no realistic trigger, which is filed as an issue");
+    expect(reviewOutput).toContain("Minor defects without one, Trivials and advisories become follow-ups");
+    expect(wtkShip).toContain("realistically triggered Minor");
     expect(reviewRounds).toContain("a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check");
     expect(reviewRounds).toContain("Trivials and advisories become follow-ups");
     expect(reviewOutput).toContain("mandatory current-feature closeout batch");
