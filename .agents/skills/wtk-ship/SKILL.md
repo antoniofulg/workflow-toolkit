@@ -1,7 +1,6 @@
 ---
 name: wtk-ship
 description: Ship a proven feature through verification, local gates, lifecycle closeout, and authorized branch delivery. Use when asked to ship a proven feature.
-disable-model-invocation: true
 argument-hint: "[the work, in your own words]"
 ---
 
@@ -47,7 +46,8 @@ when a feature snapshot is required. Proposed delegation follows
 
 ## Delivery authority
 
-Invoking this skill authorizes the feature branch push, one pull request, and merge after readiness
+Invoke this skill only when a human asks in this session to ship the work; finishing work never
+invokes it. That invocation authorizes the feature branch push, one pull request, and merge after readiness
 is rechecked immediately before the merge. Do not pause between those scoped delivery steps. Deploy,
 release, production mutations, force-push, direct push to `main`, and unrelated remote actions remain
 separately authorized.

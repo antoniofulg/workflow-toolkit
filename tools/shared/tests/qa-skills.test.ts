@@ -568,6 +568,8 @@ describe("configurable review policy", () => {
     expect(deltaIndex).toBeGreaterThan(-1);
     expect(deltaIndex).toBeLessThan(rerunIndex);
     expect(wtkShip).toContain("selected `wtk-deep-review`");
+    expect(wtkShip).not.toContain("disable-model-invocation");
+    expect(wtkShip).toContain("only when a human asks in this session to ship the work");
     for (const source of [agents, reviewRounds, wtkShip, readme]) {
       expect(source).not.toContain("wtk-config");
       expect(source).not.toContain("workflow_config.py");

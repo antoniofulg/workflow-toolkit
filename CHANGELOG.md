@@ -9,6 +9,8 @@ All notable changes to this project are documented here.
 - A confirmed Minor Deep Review defect with no realistic trigger (no input or state the feature's
   normal use can reach) is filed as an issue instead of blocking delivery; triggerable Minors still
   close in the feature run.
+- An agent can invoke `wtk-ship` when a human asks in the session to ship the work, so "fix X and
+  ship it" no longer stops before delivery. Finishing work alone still never invokes it.
 
 ## [4.0.0] - 2026-10-28
 
