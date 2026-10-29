@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [4.1.0] - 2026-10-29
+
 ### Changed
 
 - A confirmed Minor Deep Review defect with no realistic trigger (no input or state the feature's
@@ -11,6 +13,11 @@ All notable changes to this project are documented here.
   close in the feature run.
 - An agent can invoke `wtk-ship` when a human asks in the session to ship the work, so "fix X and
   ship it" no longer stops before delivery. Finishing work alone still never invokes it.
+- Skill metadata versions advance independently of the toolkit release:
+
+| Skill | Version |
+| --- | --- |
+| `wtk` | 1.3.0 |
 
 ## [4.0.0] - 2026-10-28
 
