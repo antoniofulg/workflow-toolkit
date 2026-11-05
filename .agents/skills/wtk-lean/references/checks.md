@@ -249,7 +249,7 @@ python3 <skill-dir>/scripts/validate_checks.py <feature>
 
 It fails absent/unusable native approval in the sibling plan (or checks-only intent contract), a
 check with no `Proof:`, duplicate ids, incomplete coverage, missing swept dimensions or profile.
-Execution-setting acceptance does not replace feature approval. It warns on a proof without a test
+Execution settings do not replace feature approval. It warns on a proof without a test
 selector, vague claims and a plan Surface route absent from checks. The structural gate cannot judge
 approval authenticity/scope or proof adequacy; the independent review retains those obligations.
 

@@ -19,7 +19,7 @@ This is an original project-owned adaptation for this workflow, inspired by Pedr
 
 ## Inputs and boundaries
 
-Use the accepted `qa` stage and non-author session through
+Use the selected `qa` stage and non-author session through
 [agent selection](../wtk/references/agent-selection.md) before delegated planning.
 
 Read the feature contract or Verifier packet, the current diff, `docs/qa/README.md`, and the

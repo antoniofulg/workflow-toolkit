@@ -23,7 +23,7 @@ This is an original project-owned adaptation for this workflow, inspired by Pedr
 
 ## Inputs and boundaries
 
-Use the accepted `qa` stage and non-author session through
+Use the selected `qa` stage and non-author session through
 [agent selection](../wtk/references/agent-selection.md) before delegated execution.
 
 Read `docs/qa/README.md`, the QA Plan handoff, the in-scope scenarios and charters, open bugs, and

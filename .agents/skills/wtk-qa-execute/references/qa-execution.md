@@ -18,7 +18,7 @@ technical verification only. Record `no user-visible change` when no public prom
 
 ## Dispatch
 
-After the final implementation wtk-deep-review group, use the accepted `qa` stage through
+After the final implementation wtk-deep-review group, use the selected `qa` stage through
 [agent selection](../../wtk/references/agent-selection.md) in the current checkout, with one phase
 per packet and no mandatory named role:
 

@@ -1,4 +1,4 @@
-"""Contract tests for approved WTK stage selection and native-file preservation."""
+"""Contract tests for WTK stage selection and native-file preservation."""
 
 from __future__ import annotations
 
@@ -71,12 +71,9 @@ def _stage(**changes) -> dict:
     }
 
 
-def _selection(root: Path, feature: str = "fixture", *, stages=None, reference="User reply 1: accept the proposed rows.") -> dict:
+def _selection(root: Path, feature: str = "fixture", *, stages=None) -> dict:
     stages = copy.deepcopy(stages if stages is not None else {"implementation": _stage()})
-    return {
-        "version": 2, "feature": feature, "checkout": str(root), "stages": stages,
-        "approval": {"status": "confirmed", "reference": reference, "stages": copy.deepcopy(stages)},
-    }
+    return {"version": 3, "feature": feature, "checkout": str(root), "stages": stages}
 
 
 def _selection_file(root: Path, selection: dict) -> Path:
@@ -142,7 +139,7 @@ def test_source_checkout_has_no_wtk_toml() -> None:
         shutil.rmtree(scratch)
 
 
-def test_approved_stage_selection_without_native_files() -> None:
+def test_stage_selection_without_native_files() -> None:
     root = _fixture_root()
     try:
         stages = {
@@ -152,7 +149,7 @@ def test_approved_stage_selection_without_native_files() -> None:
                 limitations=["model: host does not expose the checking model", "effort: inherited host default"],
             ),
         }
-        selection = _selection(root, stages=stages, reference="User reply 2: use this model and high effort; accept the checking limits.")
+        selection = _selection(root, stages=stages)
         path = _selection_file(root, selection)
         result = subprocess.run(
             [sys.executable, str(ROUTE_PATH), "--root", str(root), "--feature", "fixture", "--selection-file", str(path)],
@@ -160,10 +157,10 @@ def test_approved_stage_selection_without_native_files() -> None:
         )
         assert result.returncode == 0, result.stderr
         snapshot = json.loads(result.stdout)
-        assert snapshot["version"] == 2
+        assert snapshot["version"] == 3
         assert snapshot["feature"] == "fixture" and snapshot["checkout"] == str(root)
         assert snapshot["stages"] == stages
-        assert snapshot["approval"] == selection["approval"]
+        assert "approval" not in snapshot
         assert snapshot["git_head"] == subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
         assert snapshot["profile"] is None and snapshot["verification_profile"] == "standard"
         assert "roles" not in snapshot and "overrides" not in snapshot and "config_version" not in snapshot
@@ -184,30 +181,18 @@ def test_review_is_on_demand() -> None:
         shutil.rmtree(root)
 
 
-def test_route_requires_confirmed_selection() -> None:
+def test_route_requires_selection_without_approval() -> None:
     root = _fixture_root()
     try:
-        unapproved = []
-        for change in ("pending", "absent", "mismatched", "empty-reference"):
-            candidate = _selection(root)
-            if change == "pending":
-                candidate["approval"]["status"] = "pending"
-            elif change == "absent":
-                del candidate["approval"]
-            elif change == "mismatched":
-                candidate["approval"]["stages"]["implementation"]["model"] = "another-model"
-            else:
-                candidate["approval"]["reference"] = " "
-            unapproved.append(candidate)
-        _reject(root, None, error="confirmed selection")
-        for candidate in unapproved:
-            _reject(root, candidate)
-            assert not _snapshot_path(root).exists()
+        _reject(root, None, error="selection file is required")
+        assert not _snapshot_path(root).exists()
+        obsolete = {**_selection(root), "approval": {"status": "confirmed"}}
+        _reject(root, obsolete, error="incomplete schema")
+        assert not _snapshot_path(root).exists()
         _resolve(root)
         before = _snapshot_path(root).read_bytes()
-        for candidate in unapproved:
-            _reject(root, candidate, refresh=True)
-            assert _snapshot_path(root).read_bytes() == before
+        _reject(root, obsolete, refresh=True, error="incomplete schema")
+        assert _snapshot_path(root).read_bytes() == before
     finally:
         shutil.rmtree(root)
 
@@ -223,15 +208,9 @@ def test_selection_resume_and_changes() -> None:
         assert _snapshot_path(root).read_bytes() == before
         changed = copy.deepcopy(selection)
         changed["stages"]["implementation"]["model"] = "human-override"
-        _reject(root, changed, error="approval")
-        changed["approval"]["stages"] = copy.deepcopy(changed["stages"])
-        _reject(root, changed, error="fresh approval reference")
-        assert _snapshot_path(root).read_bytes() == before
-        changed["approval"]["reference"] = "User reply 1 accepted unchanged rows; reply 3 accepts only the implementation override."
         updated = _resolve(root, selection=changed)
         assert updated["stages"] == changed["stages"]
         assert updated["stages"]["verification"] == snapshot["stages"]["verification"]
-        assert updated["approval"] == changed["approval"]
         assert workflow_route.resolve(root=root, feature="fixture") == updated
     finally:
         shutil.rmtree(root)
@@ -244,7 +223,7 @@ def test_selection_cli_failures_preserve_snapshot() -> None:
         _resolve(root)
         before = _snapshot_path(root).read_bytes()
         cases = ["{", "[]"]
-        duplicate = json.dumps(_selection(root)).replace('"status": "confirmed"', '"status": "pending", "status": "confirmed"')
+        duplicate = json.dumps(_selection(root)).replace('"feature": "fixture"', '"feature": "other", "feature": "fixture"')
         cases.append(duplicate)
         for key, value in (("version", 1), ("feature", "other"), ("checkout", str(foreign))):
             candidate = _selection(root)
@@ -282,7 +261,7 @@ def test_selection_validation_matrix() -> None:
     try:
         for stage in ("planning", "exploration", "design", "implementation", "verification", "qa", "deep_review", "remediation", "delivery"):
             selected = {stage: _stage()}
-            assert _resolve(root, selection=_selection(root, stages=selected, reference=f"User accepts {stage}."))["stages"] == selected
+            assert _resolve(root, selection=_selection(root, stages=selected))["stages"] == selected
         before = _snapshot_path(root).read_bytes()
         invalid_rows = [
             {"provider": " "}, {"provider": ["codex"]}, {"provider": ""},
@@ -301,7 +280,7 @@ def test_selection_validation_matrix() -> None:
             _reject(root, _selection(root, stages=stages))
             assert _snapshot_path(root).read_bytes() == before
         candidate = _selection(root)
-        candidate["version"] = 2.0
+        candidate["version"] = 3.0
         _reject(root, candidate, error="version")
         assert _snapshot_path(root).read_bytes() == before
     finally:
@@ -365,7 +344,7 @@ def test_route_derives_verification_profile_and_refreshes() -> None:
         assert workflow_route.resolve(root=root, feature="profiled") == first
         refreshed = _resolve(root, "profiled", refresh=True)
         assert refreshed["verification_profile"] == "light"
-        assert refreshed["stages"] == first["stages"] and refreshed["approval"] == first["approval"]
+        assert refreshed["stages"] == first["stages"]
         before = _snapshot_path(root, "profiled").read_bytes()
         _reject(root, _selection(root, "profiled"), feature="profiled", verification_profile="standard", error="does not match")
         assert _snapshot_path(root, "profiled").read_bytes() == before

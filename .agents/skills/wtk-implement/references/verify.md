@@ -21,11 +21,10 @@ tokens. It gets pointed at the last batch, and a pass over four checks reads exa
 over forty. The range is `<feature base>..HEAD` and the set is every check in the checklist,
 whoever wrote them.
 
-Dispatch the accepted `verification` stage through
+Dispatch the selected `verification` stage through
 [agent selection](../../wtk/references/agent-selection.md), with this skill's verification procedure
 and the original request, project routing and complete approved artifacts/range in the current
-checkout. Unsupported host settings block
-that dispatch until the affected choice is accepted; native role files are not required.
+checkout. Agent selection handles unsupported host settings; native role files are not required.
 Use [live recovery](../../wtk/references/context-handoff.md#record-dispatch-and-reconcile-ownership)
 to record pending intent before send and actual host identity/status after send; reconcile host
 status/reports before waiting or replacing work.

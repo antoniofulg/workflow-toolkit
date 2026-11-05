@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-11-04
+
+### Changed
+
+- Every fix, correction or refactor of executable code or tests, including a filed-issue fix or a
+  mixed change, gets a fresh Verifier over its diff before push or pull request. It needs no spec,
+  `verification.md`, deep review or QA. Documentation and instruction-only corrections keep their
+  direct path, and Lean features keep their own Verifier.
+- Provider, model and effort no longer need human approval. The agent chooses and states them, and
+  a choice the human names still wins. `workflow_route.py` drops the `approval` field and moves
+  selection files and `workflow.json` to version 3; replace any in-flight version 2 snapshot.
+- Skill metadata versions advance independently of the toolkit release:
+
+| Skill | Version |
+| --- | --- |
+| `wtk` | 1.4.0 |
+| `wtk-lean` | 1.5.0 |
+| `wtk-implement` | 0.2.1 |
+
 ## [4.1.0] - 2026-10-29
 
 ### Changed

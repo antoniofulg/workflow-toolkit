@@ -32,7 +32,7 @@ and fixes nothing. The plan is an input because
 half the enumerations it sweeps for - a route's statuses, an entity's constraints - are named
 there and only *owe* a row in the checks.
 
-**How to dispatch.** Use the accepted `verification` stage from the frozen project-owned route at
+**How to dispatch.** Use the selected `verification` stage from the frozen project-owned route at
 `../scripts/workflow_route.py`, following [agent selection](../../wtk/references/agent-selection.md).
 Launch a fresh skill-directed checking session in the current checkout, with no inherited
 conversation. Hand it this file,
@@ -45,7 +45,7 @@ Record pending dispatch before send and the real host identity/status after send
 reconcile host reports before waiting or replacing a Verifier on resume.
 
 **No supported independent dispatch?** Stop that dispatch and name the missing host capability.
-Obtain targeted acceptance of a supported checking choice or independent session through agent
+Choose a supported checking option or independent session through agent
 selection; the author never supplies the feature verdict.
 
 ## Read the profile first
@@ -62,7 +62,7 @@ For explicit reuse, construction-order or approval requirements, apply
 [construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
 Independently inspect the native feature approval's actual source, reviewed revision and scope;
 structurally valid Markdown does not authenticate user authority. The completion gate also checks
-the receipt, including checks-only intent, and never substitutes execution-selection approval.
+the receipt, including checks-only intent, and never substitutes execution settings.
 
 `checks.md` carries a `Profile:` line, and `light` is the default. Step 1 runs under `ui`. The
 `Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and

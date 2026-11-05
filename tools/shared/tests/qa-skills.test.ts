@@ -380,7 +380,7 @@ describe("canonical QA skills", () => {
     expect(qaPlan).toContain("wtk-qa-execute");
     expect(qaExecute).toContain("same non-author Verifier");
     expect(qaExecute).toContain("Do not walk a tree while it is being changed");
-    expect(reviewRounds).toContain("The accepted `verification` or `qa` stage executes exactly one phase per packet");
+    expect(reviewRounds).toContain("The selected `verification` or `qa` stage executes exactly one phase per packet");
     expect(reviewRounds).toContain("Deep-review is a separate orchestrator stage, not a Verifier phase");
     expect(reviewRounds).not.toContain("The existing provider `verifier` performs all stages");
     expect(reviewRounds).not.toMatch(/provider `verifier`[^.]*wtk-deep-review/i);
@@ -521,6 +521,8 @@ describe("canonical QA skills", () => {
     expect(filedIssueRule).toContain("If the fix changes user-visible behaviour");
     expect(filedIssueRule).toContain("flag its scenario");
     expect(filedIssueRule).toContain("walk it");
+    expect(filedIssueRule).toContain("fresh Verifier");
+    expect(filedIssueRule).not.toMatch(/no verifier/i);
   });
 
   it("IT-013 records the selected QA adapter and checkout-local evidence", () => {
@@ -552,7 +554,7 @@ describe("configurable review policy", () => {
     expect(readme).toMatch(/Agent selection.*agent-selection\.md/);
     expect(readme).toContain("fixed default `stall_attempts = 3`");
     expect(readme).toContain(".specs/features/<feature>/workflow.json");
-    expect(readme).toMatch(/approved stage\/model\/effort/);
+    expect(readme).toMatch(/selected stage\/model\/effort/);
     expect(reviewRounds).toContain("wtk-deep-review** (resolved implementation groups)");
     expect(reviewRounds).not.toContain("wtk-deep-review** (every slice)");
     const finalGroupInstruction =

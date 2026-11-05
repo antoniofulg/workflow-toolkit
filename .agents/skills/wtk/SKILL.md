@@ -4,7 +4,7 @@ description: Route Workflow Toolkit work to the smallest applicable procedure, i
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '1.3.0'
+  version: '1.4.0'
 ---
 
 # Workflow Toolkit
@@ -45,8 +45,8 @@ Load shared references only for the current operation:
   read and invoke `wtk-setup`. Assessment remains read-only; installation itself never runs setup.
 - An authorized bounded documentation, instruction-only skill, or direct correction: the active
   agent applies the maintenance route in `.agents/skills/wtk/references/validation.md`, including declarative
-  registration in an existing skill catalog. Complete its scoped checks and local commit without a
-  mandatory agent handoff. Escalate for a substantive behavior or authority change, not merely a new
+  registration in an existing skill catalog. Complete its scoped checks and local commit; a change
+  to executable code then gets that reference's fresh Verifier. Escalate for a substantive behavior or authority change, not merely a new
   skill name, registry entry, CLI label, or pending merge.
 - An unshaped idea, an analytics/error signal requiring a product or architecture decision, or
   competing solution alternatives: read and invoke `wtk-discover`. It may conclude build,

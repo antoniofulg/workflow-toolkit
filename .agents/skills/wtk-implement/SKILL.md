@@ -4,7 +4,7 @@ description: 'Implement approved modular work from a `.tasks` source into a `.ch
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 # TLC Implement
@@ -17,7 +17,7 @@ assigned stage receipt with session identity, interval and baseline/snapshot cou
 source checks, using the normal handoff format.
 
 Before delegated work, follow [agent selection](../wtk/references/agent-selection.md); use the
-accepted stage settings and selected skill in the current checkout, without mandatory native roles.
+selected stage settings and skill in the current checkout, without mandatory native roles.
 
 Before environment setup or handoff, apply [runtime lifecycle](../wtk/references/runtime-lifecycle.md)
 to the checkout's application/test services.

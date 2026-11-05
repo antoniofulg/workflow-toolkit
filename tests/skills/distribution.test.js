@@ -30,7 +30,7 @@ test('full WTK set has thirteen skills and no WTK config payload', () => {
   }
 });
 
-test('approved execution selection and current WTK catalog are consistent', () => {
+test('execution selection and current WTK catalog are consistent', () => {
   const packageJson = JSON.parse(read('package.json'));
   const packagedSkills = packageJson.files
     .filter((entry) => entry.startsWith('.agents/skills/wtk'))

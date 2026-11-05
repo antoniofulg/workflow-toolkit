@@ -371,7 +371,7 @@ Present the plan at the existing human review boundary. On receiving approval, w
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
 in that turn, with the actual decision/source, reviewed revision and scope. Do not prefill approval
 while drafting or require it in `validate_plan.py` before presentation. Checks and Build reuse
-this receipt within scope; execution-setting acceptance is separate.
+this receipt within scope; execution settings are separate.
 
 ## Template: `.specs/features/<feature>/plan.md`
 

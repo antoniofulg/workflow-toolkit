@@ -162,8 +162,7 @@ class WorkflowValidatorTests(unittest.TestCase):
                 "rationale": "One sequential builder for the fixture.", "limitations": [],
             }}
             snapshot = {
-                "version": 2, "feature": "fixture", "checkout": str(root), "stages": stages,
-                "approval": {"status": "confirmed", "reference": "Fixture user reply: accept these execution settings only.", "stages": stages},
+                "version": 3, "feature": "fixture", "checkout": str(root), "stages": stages,
                 "git_head": "a1b2c3d", "profile": None, "verification_profile": "standard",
                 "deep_review": {"cadence": "skip", "groups": []},
                 "parallelization": {"mode": "disabled"},

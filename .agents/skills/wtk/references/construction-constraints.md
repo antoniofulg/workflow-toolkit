@@ -38,8 +38,8 @@ approval pause. Otherwise use the existing review boundary, not an extra mandato
 
 Reuse genuine approval on unchanged resume within its scope. Ask targeted acceptance for a new
 user-owned product decision outside that scope; reversible detail and additive noncontradictory
-discoveries do not require blanket reapproval. Provider/model/effort acceptance in the execution
-route does not approve feature shape. Local Markdown is procedural evidence, not authentication:
+discoveries do not require blanket reapproval. Provider/model/effort choices in the execution
+route do not approve feature shape. Local Markdown is procedural evidence, not authentication:
 independent review still judges authenticity and scope. Local edits/commits do not authorize
 push, deploy or production mutations. Silence, Git history and passing tests supply no approval.
 

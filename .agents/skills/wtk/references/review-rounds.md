@@ -13,7 +13,7 @@ and filed Trivials make review end.
 | **Technical Verifier** (feature closing step) | Does one fresh independent pass prove every check over the complete feature range? | One full-feature pass after the last code-changing slice |
 | **wtk-deep-review** (resolved implementation groups) | Is the code correct, safe and maintainable? | Discovery once; one remediation check per batch until no Critical/Major is open or `stall_attempts` halts |
 | **QA session** (feature closing step when the public surface changes) | Does the finished feature work for a real user? | Plan as needed; one impact-scoped Execute cycle |
-The accepted `verification` or `qa` stage executes exactly one phase per packet: `technical`, `wtk-qa-plan`, or `wtk-qa-execute`.
+The selected `verification` or `qa` stage executes exactly one phase per packet: `technical`, `wtk-qa-plan`, or `wtk-qa-execute`.
 The orchestrator dispatches one technical packet over the complete feature range after
 the last code-changing slice and QA packets once, at feature close, when the feature changes public,
 UI, API, CLI, or adoption behaviour; no slice runs QA. Deep-review is a separate orchestrator stage, not a Verifier phase.
@@ -31,7 +31,7 @@ A discovery review reads the whole change, so its cost explodes with the diff. T
 reads only `reviewed_head..HEAD`, so remediation cost tracks the fix, not the feature.
 
 Use the project-owned `wtk-lean/scripts/workflow_route.py` snapshot when a feature route is needed.
-Follow [agent selection](agent-selection.md) before proposed delegation or a changed stage choice.
+Follow [agent selection](agent-selection.md) before delegation or a changed stage choice.
 Deep Review is on demand by default, and one pull request and one actor per stage remain unchanged.
 
 **Stages do not loop back into each other.** A wtk-deep-review finding never sends work back to
@@ -119,17 +119,17 @@ Filed issues are real work, not a disposal bin. They enter the backlog like any 
 
 ## Fixing a filed issue
 
-**A filed issue does not re-enter the loop above.** It was already reviewed — that is how it
-came to be filed — so a verifier, a QA pass and a wtk-deep-review would re-do work that is already
-done. A Minor with a realistic trigger never enters this path; it closes inside its originating feature run.
+**A filed issue does not re-enter the loop above, but its fix is still verified.** The review
+examined the defect, not the fix. A Minor with a realistic trigger never enters this path; it closes inside its originating feature run.
 
 Fix one, or a batch of them, as a small change:
 
 ```
-implement → scoped gate → one commit for the batch
+implement → scoped gate → one commit for the batch → fresh Verifier → delivery
 ```
 
-No spec, no tasks file, no verifier, no wtk-deep-review round. `wtk` already sizes this way:
+[Fix verification](validation.md#fix-verification) owns the Verifier and its exceptions. No spec, no
+tasks file, no wtk-deep-review round. `wtk` already sizes this way:
 a change of a few files with an obvious outcome skips planning entirely.
 
 Three things still apply, because they are about the change and not about the review:
