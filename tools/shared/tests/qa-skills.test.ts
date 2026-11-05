@@ -589,7 +589,7 @@ describe("configurable review policy", () => {
     expect(reviewRounds).toContain("except a Minor with no realistic trigger, which is filed as an issue");
     expect(reviewOutput).toContain("Minor defects without one, Trivials and advisories become follow-ups");
     expect(wtkShip).toContain("realistically triggered Minor");
-    expect(reviewRounds).toContain("a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check");
+    expect(reviewRounds).toContain("a Minor-only batch starts no full-feature Technical Verifier, QA phase, or remediation check, and gets [fix verification]");
     expect(reviewRounds).toContain("Trivials and advisories become follow-ups");
     expect(reviewOutput).toContain("mandatory current-feature closeout batch");
     expect(wtkShip).toContain("Confirmed Critical, Major,");

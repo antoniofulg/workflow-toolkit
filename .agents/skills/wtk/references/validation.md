@@ -51,7 +51,7 @@ suite cannot waive missing visual evidence or material fidelity failures. QA fla
 Every fix, correction or refactor of executable code or tests gets a fresh Verifier before push or
 pull request, including a mixed change. A builder never certifies its own fix. Only a documentation or
 instruction-only diff and the declarative configuration route below skip it. An active Lean feature
-keeps its own Verifier and review loop.
+keeps its own Verifier and review loop; only its Minor-only remediation batch gets this check.
 
 The Verifier is a fresh agent that did not build the change. It receives the diff, the defect or
 preserved behavior, and the checks, not the builder's conclusions. It reruns the proofs itself,

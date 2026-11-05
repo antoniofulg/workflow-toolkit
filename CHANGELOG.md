@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- A Minor-only remediation batch in a feature run gets a fresh Verifier over its diff. It still
+  starts no full-feature Verifier, QA phase or remediation check.
+
 ## [4.2.0] - 2026-11-04
 
 ### Changed

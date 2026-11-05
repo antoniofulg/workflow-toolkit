@@ -59,7 +59,7 @@ same non-author session reuse; packet phases remain distinct.
 
    `wtk` points here for remediation identity and counting; this rule prevents a renamed
    finding from resetting its history while allowing a distinct finding to proceed.
-2. **Nitpicks never trigger a review.** Fix every confirmed wtk-deep-review defect in the active feature run, except a Minor with no realistic trigger, which is filed as an issue. Critical and Major findings trigger one remediation batch, then one remediation check: a one-job incremental wtk-deep-review over `reviewed_head..HEAD` that dispositions every open prior finding and reviews the fix. Repeat batch + check until no Critical/Major is open or the default three-attempt stall bound halts. Minor findings join that batch, or close together in one Minor-only batch with one scoped gate and one commit; a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check. Trivials and advisories go to the pull request follow-up list. **In an active, already-approved review loop, fix blocking findings without new human approval and run the scoped gate after each correction; escalate only if the post-fix gate fails or the stall threshold is reached for the same fingerprint.** Local fixes only; remote actions retain separate approval requirements.
+2. **Nitpicks never trigger a review.** Fix every confirmed wtk-deep-review defect in the active feature run, except a Minor with no realistic trigger, which is filed as an issue. Critical and Major findings trigger one remediation batch, then one remediation check: a one-job incremental wtk-deep-review over `reviewed_head..HEAD` that dispositions every open prior finding and reviews the fix. Repeat batch + check until no Critical/Major is open or the default three-attempt stall bound halts. Minor findings join that batch, or close together in one Minor-only batch with one scoped gate and one commit; a Minor-only batch starts no full-feature Technical Verifier, QA phase, or remediation check, and gets [fix verification](validation.md#fix-verification) over its diff. Trivials and advisories go to the pull request follow-up list. **In an active, already-approved review loop, fix blocking findings without new human approval and run the scoped gate after each correction; escalate only if the post-fix gate fails or the stall threshold is reached for the same fingerprint.** Local fixes only; remote actions retain separate approval requirements.
 3. **Deduplicate by root cause, not by occurrence.** One missing null check repeated in six files is
    one finding that lists six files — not six findings.
 4. **Verify before flagging.** Check adjacent comments, accepted [project decisions](artifacts.md#decision-store),
@@ -111,8 +111,8 @@ one vocabulary:
 
 An unfixed `Critical` or `Major` means the verdict is `FIX_BEFORE_SHIP`, and only those severities
 trigger a remediation check. A realistic trigger is an input or state the feature's normal use can
-reach. Every `Minor` with one closes in the current remediation batch; the scoped gate and one commit
-close it without another proof cycle. A `Minor` without one, Trivials and advisories become follow-ups
+reach. Every `Minor` with one closes in the current remediation batch; a Minor-only batch closes through
+the scoped gate, one commit and fix verification. A `Minor` without one, Trivials and advisories become follow-ups
 and never hold a pull request.
 
 Filed issues are real work, not a disposal bin. They enter the backlog like any other item.
