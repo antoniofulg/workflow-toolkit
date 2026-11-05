@@ -4,7 +4,7 @@ title: Workflow Toolkit contract
 description: Workflow Toolkit replaces the task pipeline with upstream-shaped Lean and modular routes, sequential whole-slice builds, one full-feature Verifier, and transient feature artifacts.
 tags: [workflow-toolkit, lean, verification, lifecycle]
 status: stable
-generated: { by: codex/gpt-6, at: 2026-09-23T22:39:27Z }
+generated: { by: claude/opus-5.5, at: 2026-11-05T01:46:47Z }
 sources:
   - id: maintainer-contract
     resource: ../../raw/2026-09-12-workflow-toolkit-contract.md
@@ -38,6 +38,10 @@ sources:
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact Lifecycle
     last_modified: 2026-09-13
+  - id: maintainer-settings
+    resource: ../../raw/2026-11-04-fix-verification-and-execution-settings.md
+    title: Maintainer decision removing model approval
+    last_modified: 2026-11-04
   - id: upstream-pin
     resource: ../../../.agents/skills/wtk-lean/.skill-meta.json
     title: Lean skill upstream source metadata
@@ -65,7 +69,7 @@ existed; current runtime and documentation do not preserve those paths.[^state-a
 | Planning shapes | Integrated Lean owns `plan.md`, `checks.md`, and `verification.md`; direct modular discovery/planning retains `.design/`, `.tasks/`, and `.checks/` | Each upstream shape remains recognizable instead of passing through a local compatibility schema.[^toolkit-router][^state-ad-035] |
 | Build and proof | `Feature -> Slice -> Check`; builders run sequentially, hand off only between whole observable slices, and make coherent commits before one fresh independent Verifier covers the complete feature | Builder decomposition stays flexible while slice integrity, author/verifier independence, and complete-feature proof stay fixed.[^state-ad-036] |
 | Profiles and capabilities | Lean profiles are `light`, `standard`, and `ui`, with `standard` as default; security, UI, QA, review, and delivery load when their owning trigger applies | Conditional dispatch is not permission to skip a mandatory check. Deep Review runs on demand.[^state-ad-036][^state-ad-042] |
-| Agent settings | Each project owns native provider, model, and effort metadata; WTK's feature snapshot records provider and role identity only | WTK does not write project agent files or require a TOML configuration.[^state-ad-042] |
+| Agent settings | Each project owns native agent files. The coordinator chooses and states provider, model, and effort without human approval, a choice the human names wins, and the feature snapshot records the selected stage settings | WTK does not write project agent files or require a TOML configuration.[^state-ad-042] Feature approval stays separate.[^maintainer-settings] |
 | Lifecycle | Keep an exact feature directory through independent verification, selected gates, and required promotion; then delete that directory | Foreign pending work, unrequested legacy-plan adaptation, decisions, tests, product docs, QA evidence, and knowledge are outside cleanup.[^artifact-lifecycle][^state-ad-037] |
 
 The Lean source metadata remains part of the drift boundary, not merely attribution: local
@@ -86,6 +90,8 @@ and modular contracts.[^upstream-pin][^maintainer-contract]
 - [QA at feature close](/decisions/qa-at-feature-close.md) still prohibits per-slice QA. Workflow
   Toolkit changes technical proof to one full-feature independent Verifier; qualifying public
   changes still receive one feature-level QA cycle.
+- [Fix verification](/decisions/fix-verification.md) adds a diff-scoped Verifier outside the
+  full-feature pass and removes the human approval of execution settings.
 - [Workflow runtime ownership](/architecture/workflow-runtime-ownership.md) survives the
   replacement: namespace and artifact changes do not transfer product-owned content to the pack or
   broaden installer deletion authority.
@@ -98,4 +104,5 @@ and modular contracts.[^upstream-pin][^maintainer-contract]
 [^state-ad-041]: The consuming project owns its instructions and setup; WTK ships as skills.
 [^state-ad-042]: Native agent metadata owns model and effort; WTK records route identity only.
 [^artifact-lifecycle]: Durable facts move to their owning stores before exact-feature cleanup.
+[^maintainer-settings]: The maintainer removed human approval of provider, model and effort on 2026-11-04.
 [^upstream-pin]: The Lean skill records its upstream source, revision, content hash, and license in `.skill-meta.json`.

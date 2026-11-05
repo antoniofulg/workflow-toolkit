@@ -1,5 +1,9 @@
 # Update log
 
+## 2026-11-04
+
+* **Ingestion**: Added [Fix verification](/decisions/fix-verification.md) from the maintainer's decisions, and corrected the agent-settings row in [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md).
+
 ## 2026-10-21
 
 * **Maintenance**: Updated [Artifact ownership](/design/artifact-ownership.md) after implementing conditional artifact routing and a shared project decision-store rule; the original assessment remains in the immutable conversation source.
