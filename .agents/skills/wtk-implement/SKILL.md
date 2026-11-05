@@ -4,7 +4,7 @@ description: 'Implement approved modular work from a `.tasks` source into a `.ch
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: 0.2.1
+  version: '4.3.0'
 ---
 
 # TLC Implement

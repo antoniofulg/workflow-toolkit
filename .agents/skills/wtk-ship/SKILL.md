@@ -2,6 +2,8 @@
 name: wtk-ship
 description: Ship a proven feature through verification, local gates, lifecycle closeout, and authorized branch delivery. Use when asked to ship a proven feature.
 argument-hint: "[the work, in your own words]"
+metadata:
+  version: '4.3.0'
 ---
 
 # Workflow Toolkit Ship

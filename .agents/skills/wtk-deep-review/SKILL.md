@@ -3,6 +3,8 @@ name: wtk-deep-review
 description: "Review diffs, worktrees, or PRs in depth, including spec conformance and requested finding publication. Use for deep review; not fixes, spec edits, or quick feedback."
 disable-model-invocation: true
 argument-hint: "[--pr <reference> | --base <ref> | --staged | --worktree] [--head <ref>] [--files p1,p2] [--spec <path>] [--max-cohort-files N] [--publish] [--full] [--out <dir>]"
+metadata:
+  version: '4.3.0'
 ---
 
 # Deep Review

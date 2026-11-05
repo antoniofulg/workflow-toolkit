@@ -1,6 +1,8 @@
 ---
 name: wtk-knowledge-check
 description: Check `knowledge/` for source drift, naming, conformance, and harvested gaps. Use when verifying a knowledge bundle.
+metadata:
+  version: '4.3.0'
 ---
 
 # Knowledge Check

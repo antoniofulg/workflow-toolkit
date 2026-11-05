@@ -789,6 +789,13 @@ describe("adoption and public setup", () => {
     expect(readRepositoryFile("bun.lock")).toContain('"name": "workflow-toolkit"');
     expect(existsSync(join(repositoryRoot, "package-lock.json"))).toBe(false);
     expect(latestHeading).toBe(manifest.version);
+    const skillsRoot = join(repositoryRoot, ".agents/skills");
+    const skillVersions = readdirSync(skillsRoot).map((skill) => [
+      skill,
+      readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").match(/^  version: '(.+)'$/m)?.[1],
+    ]);
+    expect(skillVersions.length).toBe(13);
+    expect(skillVersions).toEqual(skillVersions.map(([skill]) => [skill, manifest.version]));
     const pack = spawnSync(process.execPath, ["pm", "pack", "--dry-run", "--ignore-scripts"], {
       cwd: repositoryRoot,
       encoding: "utf8",

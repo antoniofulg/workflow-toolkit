@@ -76,8 +76,8 @@ instructions, native agent files or old feature workflow snapshots; follow the r
 change notes separately.
 
 See the [Skills CLI documentation](https://github.com/vercel-labs/skills#readme) for installation
-sources and update scope. WTK's individual skill frontmatter versions are not the toolkit release
-number; use source/ref and installed content to identify what was installed.
+sources and update scope. Every WTK skill's frontmatter version is the toolkit release number, so an
+installed skill names the release it came from.
 
 ## Optional project instructions
 

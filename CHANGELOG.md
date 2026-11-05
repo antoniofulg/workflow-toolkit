@@ -4,10 +4,14 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [4.3.0] - 2026-11-04
+
 ### Changed
 
 - A Minor-only remediation batch in a feature run gets a fresh Verifier over its diff. It still
   starts no full-feature Verifier, QA phase or remediation check.
+- All 13 skills now carry the toolkit version in `metadata.version`, replacing independent skill
+  versions. A test fails if any skill differs from `package.json`.
 
 ## [4.2.0] - 2026-11-04
 

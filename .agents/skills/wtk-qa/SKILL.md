@@ -2,6 +2,8 @@
 name: wtk-qa
 description: "Run one tagged QA planning or execution phase through `/wtk-qa [plan] <flow>`. Use for verifier-owned journey work."
 argument-hint: "[plan] <flow>"
+metadata:
+  version: '4.3.0'
 ---
 
 # QA
