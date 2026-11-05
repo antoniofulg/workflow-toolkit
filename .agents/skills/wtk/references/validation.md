@@ -13,13 +13,13 @@ each proof or suite, not by file count, task label, commit identity or elapsed t
 | Documentation maintenance | Accuracy, affected links/headings and whitespace |
 | Bounded agent-instruction change | Consistency and an existing relevant contract check |
 | Instruction-only skill plus existing installer registration | Metadata/links and the existing package or adoption check for that registration |
-| Direct behavior-preserving correction | Narrowest canonical check covering the affected behavior |
-| Mixed documentation and executable change | Canonical tests for the changed executable behavior |
+| Direct fix, correction or refactor of executable code | Narrowest canonical check covering the affected behavior, then [fix verification](#fix-verification) |
+| Mixed documentation and executable change | Canonical tests for the changed executable behavior, then [fix verification](#fix-verification) |
 | Feature slice | Named proofs and the scoped gate |
 | Closing a task with a browser surface | The consuming project's browser scoped gate, filtered by `@feature:<slug>` |
 | Feature close | Fresh full-feature Verifier and the selected local/full gates |
 
-Bounded corrections do not start a feature plan, Verifier, deep review or QA cycle. A missing UI
+Bounded corrections do not start a feature plan, deep review or QA cycle. A missing UI
 selector is reported after the narrowest applicable check, not promoted to full e2e. Escalate only
 when evidence identifies a changed contract, shared behavior or risk outside that check's scope.
 `wtk` owns routing; `.agents/skills/wtk/references/evidence.md` owns the completion claim.
@@ -28,7 +28,8 @@ Creating a skill from decided instructions, registering it in an existing catalo
 CLI copy is bounded maintenance when it adds no executable skill helper, dependency, hook, expanded
 tool authority, data contract, new user interaction or unresolved product decision. The active agent completes it directly.
 Use the relevant existing checks once; no mandatory delegation, new plan/checks, fault injection,
-Verifier, QA charters or full-suite run. An optional forward probe needs a concrete uncertainty.
+QA charters or full-suite run. CLI copy in executable source still gets fix verification. An optional
+forward probe needs a concrete uncertainty.
 
 Delivery does not reclassify a bounded change. For a previously verified feature, retain its receipt
 and validate the subsequent diff at its own scope; do not reopen the whole branch or recreate closed
@@ -44,6 +45,23 @@ For reference-driven UI, validate the contract and builder/independent compariso
 `references/ui-ux.md`, including actual-viewport states and full-page captures. A green behavior
 suite cannot waive missing visual evidence or material fidelity failures. QA flags and journeys follow
 `../wtk-qa/references/qa-scenarios.md`; scenario tags scope walks, not automated tests.
+
+## Fix verification
+
+Every fix, correction or refactor of executable code or tests gets a fresh Verifier before push or
+pull request, including a mixed change. A builder never certifies its own fix. Only a documentation or
+instruction-only diff and the declarative configuration route below skip it. An active Lean feature
+keeps its own Verifier and review loop.
+
+The Verifier is a fresh agent that did not build the change. It receives the diff, the defect or
+preserved behavior, and the checks, not the builder's conclusions. It reruns the proofs itself,
+confirms they fail without the fix where practical, and reads the code connected to the diff. Its
+scope matches the diff, so it needs no spec, `verification.md`, full-feature pass, deep review or
+QA. A batch gets one Verifier over its whole range; a fix on top of verified work gets one over the
+subsequent diff.
+
+Findings use the [review severities](review-rounds.md#finding-shape). Blocking ones go to a
+remediation commit, and a non-author agent rechecks that delta, halting at three stalled attempts.
 
 ## Run and reuse evidence
 

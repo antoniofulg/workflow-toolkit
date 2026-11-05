@@ -61,7 +61,7 @@ its trigger fires, and [test contract](test-contract.md) for proofs; do not dupl
 Keep sources and dispositions reachable in existing Sources, criteria, Coverage, Swept, Unresolved
 or Handoff fields as appropriate. A checks-only feature retains these landings without a full plan.
 Bounded maintenance keeps its direct proportional route in [validation](validation.md), without a
-mandatory feature reviewer or delegation.
+mandatory feature reviewer; only its fix verification is delegated.
 
 ## Review criteria before dependent feature build
 

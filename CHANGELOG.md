@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-11-04
+
+### Changed
+
+- Every fix, correction or refactor of executable code or tests, including a filed-issue fix or a
+  mixed change, gets a fresh Verifier over its diff before push or pull request. It needs no spec,
+  `verification.md`, deep review or QA. Documentation and instruction-only corrections keep their
+  direct path, and Lean features are unchanged.
+- Skill metadata versions advance independently of the toolkit release:
+
+| Skill | Version |
+| --- | --- |
+| `wtk` | 1.4.0 |
+
 ## [4.1.0] - 2026-10-29
 
 ### Changed

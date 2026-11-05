@@ -32,7 +32,7 @@ do not create an agent or load every skill merely to fill the table.
 | `exploration` | A bounded read-only trace supporting the selected phase |
 | `design` | The relevant design/UI guidance when a design is needed |
 | `implementation` | `wtk-lean` Build or `wtk-implement`; one sequential builder |
-| `verification` | A fresh non-author session; the complete feature range and every check |
+| `verification` | A fresh non-author session; the complete feature range and every check, or a fix's diff under [fix verification](validation.md#fix-verification) |
 | `qa` | One `wtk-qa-plan` or `wtk-qa-execute` phase per packet |
 | `deep_review` | `wtk-deep-review`, on demand, with its existing job bounds |
 | `remediation` | Authorized fixes under the active workflow and review policy |

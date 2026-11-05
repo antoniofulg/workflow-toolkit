@@ -119,17 +119,17 @@ Filed issues are real work, not a disposal bin. They enter the backlog like any 
 
 ## Fixing a filed issue
 
-**A filed issue does not re-enter the loop above.** It was already reviewed — that is how it
-came to be filed — so a verifier, a QA pass and a wtk-deep-review would re-do work that is already
-done. A Minor with a realistic trigger never enters this path; it closes inside its originating feature run.
+**A filed issue does not re-enter the loop above, but its fix is still verified.** The review
+examined the defect, not the fix. A Minor with a realistic trigger never enters this path; it closes inside its originating feature run.
 
 Fix one, or a batch of them, as a small change:
 
 ```
-implement → scoped gate → one commit for the batch
+implement → scoped gate → one commit for the batch → fresh Verifier → delivery
 ```
 
-No spec, no tasks file, no verifier, no wtk-deep-review round. `wtk` already sizes this way:
+[Fix verification](validation.md#fix-verification) owns the Verifier and its exceptions. No spec, no
+tasks file, no wtk-deep-review round. `wtk` already sizes this way:
 a change of a few files with an obvious outcome skips planning entirely.
 
 Three things still apply, because they are about the change and not about the review:

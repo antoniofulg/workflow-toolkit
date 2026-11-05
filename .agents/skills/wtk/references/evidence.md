@@ -16,6 +16,7 @@ passing evidence can be reused; this document defines what the result supports.
 | Previously verified feature with bounded follow-ups | Recorded feature receipt plus scoped evidence for the subsequent changes; no new feature certification |
 | Visual reference matched | Paired evidence at the states/viewports required by `references/ui-ux.md` |
 | Bug fixed | Original symptom observed failing, then passing |
+| Fix or refactor ready for push or a pull request | Scoped checks plus a passing [fix verification](validation.md#fix-verification) |
 | Regression test discriminates | Red before the fix and green after |
 
 For spec-driven work, compare the deliverable with the approved criteria, checks and binding surface

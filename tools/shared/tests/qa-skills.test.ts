@@ -521,6 +521,8 @@ describe("canonical QA skills", () => {
     expect(filedIssueRule).toContain("If the fix changes user-visible behaviour");
     expect(filedIssueRule).toContain("flag its scenario");
     expect(filedIssueRule).toContain("walk it");
+    expect(filedIssueRule).toContain("fresh Verifier");
+    expect(filedIssueRule).not.toMatch(/no verifier/i);
   });
 
   it("IT-013 records the selected QA adapter and checkout-local evidence", () => {

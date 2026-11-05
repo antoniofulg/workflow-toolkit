@@ -18,7 +18,8 @@ in the normal handoff.
 ## Previously verified work
 
 Identify the recorded verified base and the subsequent diff. If that diff is bounded maintenance,
-use the existing receipt plus its scoped evidence and proceed to delivery. A merge request does not
+use the existing receipt plus its scoped evidence and proceed to delivery; a fix in that diff also
+needs its own [fix verification](../wtk/references/validation.md#fix-verification). A merge request does not
 trigger a new full-branch Verifier, full gate or QA cycle. Closed artifacts may remain in Git; do not
 recreate them merely to satisfy this entrypoint. Apply active feature closeout only to unverified
 feature work or a substantive change whose named risk requires that scope.
@@ -53,6 +54,6 @@ release, production mutations, force-push, direct push to `main`, and unrelated 
 separately authorized.
 
 If required readiness evidence is missing, name the affected scope and required check. A builder
-never certifies its own feature; feature verification uses a fresh agent over the complete feature
-range. Confirmed Critical, Major,
+never certifies its own work; feature verification uses a fresh agent over the complete feature
+range, and a fix gets fix verification over its diff. Confirmed Critical, Major,
 and realistically triggered Minor Deep Review findings are fixed in the feature run before delivery.
