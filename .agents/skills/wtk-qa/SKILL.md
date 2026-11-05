@@ -8,7 +8,7 @@ argument-hint: "[plan] <flow>"
 
 Run this phase for: $ARGUMENTS. If empty, stop and ask for the flow.
 
-Use the accepted `qa` stage through [agent selection](../wtk/references/agent-selection.md).
+Use the selected `qa` stage through [agent selection](../wtk/references/agent-selection.md).
 The coordinator dispatches or reuses a non-author checking session in the current checkout;
 this wrapper does not automatically fork or require a named role. A session that authored the
 product change returns dispatch responsibility to the coordinator before walking QA.

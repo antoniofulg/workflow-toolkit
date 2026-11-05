@@ -63,8 +63,8 @@ The manifest builder resolves `path_filters` into manifest.json; the knowledge s
   follow [execution metrics](../wtk/references/execution-metrics.md) for local session and worker
   receipt checks. Keep the review running normally.
 - Before reviewer dispatch, follow [agent selection](../wtk/references/agent-selection.md) for the
-  accepted `deep_review` row. Use skill-directed agents in the current checkout; native role files
-  are optional. Engine and external runtime choices must honor the accepted model/effort.
+  selected `deep_review` row. Use skill-directed agents in the current checkout; native role files
+  are optional. Engine and external runtime choices must honor the selected model/effort.
 - Reviewer concurrency is resolved before dispatch: `--concurrency N` overrides `.wtk-deep-review.yaml`, which overrides the default `3`; valid values are `1` through `6`. The resolved value is frozen in `manifest.json`. The legacy no-op `--workers` option is rejected.
 
 ## Procedure
@@ -150,7 +150,7 @@ With prior state (or fingerprints recovered from the PR thread), Step 1 scopes t
 ## Error handling
 
 - A selected PR integration is unavailable or unauthorized → retain the local report and name the missing access or capability; do not silently change the integration.
-- A selected execution engine cannot honor approved settings → stop the affected dispatch and follow agent selection's targeted decision branch.
+- A selected execution engine cannot honor selected settings → stop the affected dispatch and follow agent selection's unsupported-setting rule.
 - External command failure (model not available, missing/invalid output file, non-zero exit) → apply the failure handling loaded in Step 3.
 - Empty selection after the funnel → report "nothing reviewable" with the manifest counts; write no findings.
 - A linter lane unavailable → proceed and state in review.md that overlap suppression did not run for that lane.

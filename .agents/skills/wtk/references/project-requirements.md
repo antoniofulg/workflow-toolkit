@@ -68,7 +68,7 @@ mandatory feature reviewer; only its fix verification is delegated.
 The coordinator obtains **one fresh non-author criteria reviewer** for the complete feature
 contract. Use an existing Plan/Checks review when it fulfills this responsibility; add a specialist
 only for a concrete coverage gap. The `planning` stage in [agent selection](agent-selection.md)
-owns its approved execution settings; reuse session approvals within their scope.
+owns its execution settings.
 
 Give the reviewer the original request, proposed delta, authoritative project routing and native
 contract. The reviewer repeats **Discover applicability**, reads applicable sources/required driver

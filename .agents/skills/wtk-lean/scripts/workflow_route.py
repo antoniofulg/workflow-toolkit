@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Freeze human-confirmed WTK stage selections in a checkout-owned feature route."""
+"""Freeze WTK stage selections in a checkout-owned feature route."""
 
 from __future__ import annotations
 
@@ -17,8 +17,8 @@ STAGES = (
     "planning", "exploration", "design", "implementation", "verification", "qa",
     "deep_review", "remediation", "delivery",
 )
-SNAPSHOT_VERSION = 2
-SELECTION_KEYS = {"version", "feature", "checkout", "stages", "approval"}
+SNAPSHOT_VERSION = 3
+SELECTION_KEYS = {"version", "feature", "checkout", "stages"}
 SNAPSHOT_KEYS = SELECTION_KEYS | {
     "git_head", "profile", "verification_profile", "deep_review", "parallelization",
 }
@@ -112,7 +112,7 @@ def _validate_selection(root: Path, feature: str, selection: Any) -> dict[str, A
     if not isinstance(selection, dict) or set(selection) != SELECTION_KEYS:
         raise _error("selection has an incomplete schema")
     if type(selection["version"]) is not int or selection["version"] != SNAPSHOT_VERSION:
-        raise _error("selection version is stale; supply a newly confirmed version 2 selection")
+        raise _error("selection version is stale; supply a version 3 selection")
     if selection["feature"] != feature:
         raise _error("selection feature does not match the requested feature")
     if selection["checkout"] != str(root):
@@ -138,13 +138,6 @@ def _validate_selection(root: Path, feature: str, selection: Any) -> dict[str, A
                 for limit in limits
             ):
                 raise _error(f"selection stage {stage!r} inherited {field} requires a named limitation")
-    approval = selection["approval"]
-    if not isinstance(approval, dict) or set(approval) != {"status", "reference", "stages"}:
-        raise _error("selection approval must contain status, reference and exact stages")
-    if approval["status"] != "confirmed" or not _nonempty(approval["reference"]):
-        raise _error("selection requires confirmed approval with a human decision reference")
-    if approval["stages"] != stages:
-        raise _error("selection approval does not match the exact selected stages")
     return selection
 
 
@@ -197,7 +190,7 @@ def resolve(
     profile: str | None = None, verification_profile: str | None = None,
     refresh: bool = False,
 ) -> dict[str, Any]:
-    """Validate approval and freeze exact choices, or reuse an unchanged approved route."""
+    """Freeze exact choices, or reuse an unchanged route."""
     root = root.resolve()
     if not root.is_dir():
         raise _error(f"root is not a directory: {root}")
@@ -221,15 +214,11 @@ def resolve(
             raise _error("verification profile does not match the frozen snapshot; use --refresh")
     if selection_file is None:
         if existing is None or refresh:
-            raise _error("a confirmed selection file is required before creating or refreshing a route")
+            raise _error("a selection file is required before creating or refreshing a route")
         return existing
     selection = _validate_selection(root, feature, _read_json(selection_file, "selection file"))
-    if existing is not None:
-        changed = selection["stages"] != existing["stages"]
-        if changed and selection["approval"]["reference"] == existing["approval"]["reference"]:
-            raise _error("changed selections require a fresh approval reference")
-        if not refresh and selection == {key: existing[key] for key in SELECTION_KEYS}:
-            return existing
+    if existing is not None and not refresh and selection == {key: existing[key] for key in SELECTION_KEYS}:
+        return existing
     selected_profile = (
         existing["verification_profile"] if existing is not None and not refresh
         else _verification_profile(root, feature, verification_profile)

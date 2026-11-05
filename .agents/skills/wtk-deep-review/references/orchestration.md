@@ -59,11 +59,11 @@ Defect cohorts are the only default review lane. Sweeps remain **opt-in and rare
 The jobs contract makes engines interchangeable. Use the project-selected mechanism, record its actual name in context-pack.md, and always close the loop with `run_jobs.py --validate-only`. Validation rejects missing coverage rows, in-diff anchors outside job ownership, and unassigned rule ids.
 
 **Skill-directed dispatch.** Follow [agent selection](../../wtk/references/agent-selection.md)
-before proposed reviewer work. Use the accepted `deep_review` row and materialized prompts with
+before reviewer work. Use the selected `deep_review` row and materialized prompts with
 the host's supported model/effort controls in the current checkout. The skill supplies review
 responsibilities; a named native role is optional only when it honors those exact settings.
 Prefer a supported generic dispatch over a stale named-role preset. Missing controls or a provider
-block stop the affected dispatch; changing settings requires targeted acceptance.
+block stop the affected dispatch; agent selection handles changed settings.
 Keep manifest concurrency and worker-slot retries; after a provider block, active attempts finish
 and pending slots are not refilled.
 
@@ -81,9 +81,9 @@ does not invoke third-party inspection tools or require tool-specific artifacts.
 **Host dispatch.** Pass each pending job its materialized prompt and single output path through
 the project's available dispatch capability. Repository files remain read-only. Apply the pinned
 concurrency and refill rules below. If the host inherits model/effort instead of exposing controls,
-obtain acceptance of those named limitations first. Generic prompt dispatch is sufficient; pass
+name those limitations. Generic prompt dispatch is sufficient; pass
 no unsupported role argument. After dispatch, run the validate-only gate and resume only pending
-or invalid jobs with unchanged accepted choices. Inspect a failing output after two re-dispatches
+or invalid jobs with unchanged choices. Inspect a failing output after two re-dispatches
 without progress.
 
 **External commands.** Use `run_jobs.py --command` with the project-selected runtime and accepted

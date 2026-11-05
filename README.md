@@ -2,7 +2,7 @@
 
 Workflow Toolkit is a stack-agnostic set of Agent Skills for turning an idea into a reviewed,
 verified change. The `wtk` router selects the smallest phase skill and loads its references on
-demand. Projects keep ownership of their own instructions, approved execution choices,
+demand. Projects keep ownership of their own instructions, execution choices,
 tools, and QA records.
 
 ## Install the skills
@@ -108,9 +108,9 @@ owns inheritance, one fresh non-author criteria review before dependent feature 
 independent source/applicability discovery during final verification under every profile.
 Additional specialists require a concrete coverage gap; bounded maintenance keeps its direct route, and a code fix gets a fresh Verifier.
 
-Before delegated work, WTK proposes task-specific provider/model/effort settings using the host's
-current capabilities. You accept the needed stages or replace individual choices before dispatch.
-[Agent selection](.agents/skills/wtk/references/agent-selection.md) owns confirmation, overrides,
+Before delegated work, WTK chooses and states task-specific provider/model/effort settings using the
+host's current capabilities, without asking. A choice you name overrides them.
+[Agent selection](.agents/skills/wtk/references/agent-selection.md) owns overrides,
 inherited controls and unsupported-host handling. Skills supply responsibilities; native role files
 are optional and remain untouched. Fresh checking sessions and handoffs use the current checkout.
 
@@ -118,9 +118,9 @@ Feature workflow state follows the [artifact lifecycle](.agents/skills/wtk/refer
 and remains project-owned. The Lean builder runs sequentially, Deep Review is on demand with no
 automatic groups unless a feature requests it. QA uses the project's selected adapter or a capable
 available interface when none is selected. Remediation uses the fixed default `stall_attempts = 3`. When a route
-snapshot is needed, `.specs/features/<feature>/workflow.json` stores approved stage/model/effort
-choices, rationale, host limitations and exact approval evidence scoped to the feature and checkout.
-Unchanged retries and resume reuse those choices; changed rows need targeted acceptance.
+snapshot is needed, `.specs/features/<feature>/workflow.json` stores selected stage/model/effort
+choices, rationale and host limitations scoped to the feature and checkout.
+Unchanged retries and resume reuse those choices.
 
 ## Recommended companion skills and tools
 

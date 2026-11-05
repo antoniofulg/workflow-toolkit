@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.4.0'
+  version: '1.5.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
@@ -144,19 +144,19 @@ If execution is unavailable, inspect the same obligations and report the degrade
 ## Execution selection
 
 Before delegated work, follow [agent selection](../wtk/references/agent-selection.md) for the
-task-specific proposal, human confirmation, overrides and host limits. Skills supply stage
+task-specific settings, overrides and host limits. Skills supply stage
 responsibilities; native role files are optional and remain untouched. When a feature needs a
-persisted route, freeze its confirmed selection:
+persisted route, freeze its selection:
 
 ```bash
 python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
-  --root . --feature <feature-slug> --selection-file <confirmed-selection.json>
+  --root . --feature <feature-slug> --selection-file <selection.json>
 ```
 
-The version 2 route records approved stage/model/effort choices and approval evidence scoped to the
+The version 3 route records selected stage/model/effort choices scoped to the
 feature and current checkout. It derives the approved verification profile, keeps Deep Review on
 demand and the Lean builder sequential. It neither reads nor writes `.wtk.toml` or native role files.
-Unchanged retries and resume reuse the accepted selection through the same helper.
+Unchanged retries and resume reuse the selection through the same helper.
 
 ## Sub-agents and handoff
 
@@ -166,7 +166,7 @@ budget (default 150k tokens), one builder owns all whole slices sequentially; do
 transfer. When it exceeds the budget, stop before code and ask the user to choose the execution
 mechanism: sequential whole-slice handoff at the recorded surface boundary, or one builder with
 accepted compaction/context-loss risk. The coordinator chooses the cut, records the user's mechanism
-choice, and uses the host's supported handoff mechanism with the accepted stage selection in the
+choice, and uses the host's supported handoff mechanism with the stage selection in the
 current checkout.
 
 Handoffs occur only between slices and only after every proof in the batch is green. The outgoing

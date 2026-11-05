@@ -18,9 +18,9 @@ For features, Specify + Design + Tasks here. After approval, dispatch **implemen
 For bounded maintenance under `.agents/skills/wtk/references/validation.md`, the active agent edits and validates directly; delegation
 is optional, except the fresh Verifier that reference requires for a fix.
 Before delegated work, use [agent selection](.agents/skills/wtk/references/agent-selection.md) to
-recommend and confirm task-specific provider/model/effort choices. Skills supply responsibilities;
+choose and state task-specific provider/model/effort settings. Skills supply responsibilities;
 native role files are optional and remain untouched. `wtk-lean/scripts/workflow_route.py` freezes
-approved stage selections in the current checkout. WTK defaults to a sequential Lean builder,
+stage selections in the current checkout. WTK defaults to a sequential Lean builder,
 on-demand Deep Review, project-selected QA capabilities, and `stall_attempts = 3`.
 
 ## Critical rules

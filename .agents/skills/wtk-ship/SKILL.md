@@ -29,8 +29,8 @@ feature work or a substantive change whose named risk requires that scope.
 An active Lean feature has `.specs/features/<feature>/plan.md`, `checks.md`, and independent
 `verification.md`. The following steps apply to that feature scope.
 
-Resolve or resume the approved selection through `.agents/skills/wtk-lean/scripts/workflow_route.py`
-when a feature snapshot is required. Proposed delegation follows
+Resolve or resume the selection through `.agents/skills/wtk-lean/scripts/workflow_route.py`
+when a feature snapshot is required. Delegation follows
 [agent selection](../wtk/references/agent-selection.md) in the current checkout.
 
 1. Confirm the feature's verification report passes the profile recorded in `checks.md` by running

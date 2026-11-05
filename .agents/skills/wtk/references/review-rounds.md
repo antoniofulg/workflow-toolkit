@@ -13,7 +13,7 @@ and filed Trivials make review end.
 | **Technical Verifier** (feature closing step) | Does one fresh independent pass prove every check over the complete feature range? | One full-feature pass after the last code-changing slice |
 | **wtk-deep-review** (resolved implementation groups) | Is the code correct, safe and maintainable? | Discovery once; one remediation check per batch until no Critical/Major is open or `stall_attempts` halts |
 | **QA session** (feature closing step when the public surface changes) | Does the finished feature work for a real user? | Plan as needed; one impact-scoped Execute cycle |
-The accepted `verification` or `qa` stage executes exactly one phase per packet: `technical`, `wtk-qa-plan`, or `wtk-qa-execute`.
+The selected `verification` or `qa` stage executes exactly one phase per packet: `technical`, `wtk-qa-plan`, or `wtk-qa-execute`.
 The orchestrator dispatches one technical packet over the complete feature range after
 the last code-changing slice and QA packets once, at feature close, when the feature changes public,
 UI, API, CLI, or adoption behaviour; no slice runs QA. Deep-review is a separate orchestrator stage, not a Verifier phase.
@@ -31,7 +31,7 @@ A discovery review reads the whole change, so its cost explodes with the diff. T
 reads only `reviewed_head..HEAD`, so remediation cost tracks the fix, not the feature.
 
 Use the project-owned `wtk-lean/scripts/workflow_route.py` snapshot when a feature route is needed.
-Follow [agent selection](agent-selection.md) before proposed delegation or a changed stage choice.
+Follow [agent selection](agent-selection.md) before delegation or a changed stage choice.
 Deep Review is on demand by default, and one pull request and one actor per stage remain unchanged.
 
 **Stages do not loop back into each other.** A wtk-deep-review finding never sends work back to
