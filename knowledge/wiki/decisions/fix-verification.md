@@ -29,9 +29,9 @@ sources:
 ## What it reversed
 
 The filed-issue path skipped a Verifier because the defect had already been reviewed. That reasoning
-conflated two subjects: the review examined the defect, and nobody had examined the fix. Reported
-failures from a consuming project supplied the evidence, including a fix whose own test passed 18
-focused repeats and then failed in a wider lane.[^maintainer-decisions]
+conflated two subjects: the review examined the defect, and nobody had examined the fix.[^review-rounds]
+Reported failures from a consuming project supplied the evidence, including a fix whose own test
+passed 18 focused repeats and then failed in a wider lane.[^maintainer-decisions]
 
 ## Where the line sits
 
@@ -39,7 +39,7 @@ focused repeats and then failed in a wider lane.[^maintainer-decisions]
 | --- | --- | --- |
 | Fix, correction or refactor of code or tests, or a mixed change | Fresh Verifier over the diff | The builder's own label cannot decide whether its change preserved behaviour[^validation][^maintainer-decisions] |
 | Documentation or instruction-only correction | None | There is no behaviour to rerun[^maintainer-decisions] |
-| Minor-only batch in a feature run | Fresh Verifier over the batch diff | It can land after the feature's Verifier pass, so nothing else would examine it[^review-rounds] |
+| Minor-only batch in a feature run | Fresh Verifier over the batch diff | Without it only the builder's scoped gate closes the batch[^review-rounds]; the batch can also land after the feature's Verifier pass (the agent's inference) |
 | Critical or Major batch in a feature run | Remediation check | That incremental Deep Review already examines the fix[^review-rounds] |
 
 ## Trade-offs accepted
@@ -48,8 +48,9 @@ focused repeats and then failed in a wider lane.[^maintainer-decisions]
   the agent recommended exempting pure refactors. The maintainer chose the wider rule, so this is a
   judgement rather than a response to a refactor defect. Reversing it needs no new evidence about
   fixes.[^maintainer-decisions]
-- **Every code fix now costs an agent run.** That cost is what made a per-dispatch model question
-  untenable, which links the two decisions below.
+- **Every code fix now costs an agent run.** The maintainer met the model question on a fix Verifier and
+  removed it. The source records no stated reason, so linking the two decisions by cost is the agent's
+  inference.[^maintainer-decisions]
 
 ## Execution settings
 
