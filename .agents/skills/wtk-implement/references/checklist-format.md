@@ -109,7 +109,7 @@ Two resolutions count - a proof at each place, or one shared assembly both paths
 
 Under `profile: ui` the designed screens are a set too, with a row of their own - [screens.md](screens.md) has its shape.
 
-The last two lines close the level gap the same way. List every check whose claim names a status code, a route or a response shape; each of them needs a proof that crosses the boundary. Writing the ids down is the whole mechanism: a check claiming a `400` while all its proofs sit below the boundary has to appear in that list, and the line is then false on its face.
+The last two lines close the level gap the same way. List every check whose claim names an outcome, interface or response shape; each of them needs a proof that crosses the boundary. Writing the ids down is the whole mechanism: a check claiming the request is rejected as invalid while all its proofs sit below the boundary has to appear in that list, and the line is then false on its face.
 
 Find the real commands first: read the package manifest, the task runner and the CI workflows. Prefer a command that already runs in CI. When nothing exists for what a check needs, ask - never invent a command, because a proof that cannot run is worse than none.
 

@@ -43,8 +43,10 @@ shared phase dependencies. WTK does not provide a package installer executable.
 The full 14-skill WTK set is self-contained: its scripts, assets, and conditional references live
 below the distributed skill directories.
 
-Projects that used the retired package installer can follow the [legacy cleanup guide](CLEANUP.md)
-before installing the skills.
+**Runtime requirements.** The bundled validators need Python 3, and `wtk-knowledge-check` needs Bun.
+When one is absent, run the procedure manually and record that the validator was unavailable.
+
+Retired package installer: see the [cleanup guide](CLEANUP.md).
 
 ## Updating an existing installation
 
@@ -70,9 +72,7 @@ diff, then commit them in the consuming project. Future updates follow the defau
 
 For a global installation, use `npx skills@latest update --global`; its tracking file is
 `~/.agents/.skill-lock.json` (or `$XDG_STATE_HOME/skills/.skill-lock.json` when configured).
-A missing `skillPath` or an installation made by the retired WTK
-package installer also requires reinstalling through the current skill installer; use the
-[cleanup guide](CLEANUP.md) for the retired installer. Updating skills does not rewrite project
+A missing `skillPath` requires reinstalling through the current skill installer. Updating skills does not rewrite project
 instructions, native agent files or old feature workflow snapshots; follow the release's breaking
 change notes separately.
 
@@ -183,7 +183,7 @@ Specialist workflow companions can supply deeper procedures when a project selec
 | --- | --- | --- |
 | `investigate-first` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/investigate-first) | An unclear failure or performance regression needs evidence-ranked hypotheses and a credible cause before editing. |
 | `safe-refactor` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/safe-refactor) | Build or verification needs behavior-preserving extraction, consolidation or ownership changes, with the same proof before and after edits. |
-| `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams. Broad suite audits remain separately scoped. |
+| `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams beyond the `wtk-test-review` baseline. Broad suite audits remain separately scoped. |
 | `migration` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/migration) | A project requires staged schema, data, API, configuration or dependency transitions with preservation, rollback and partial-failure evidence. |
 | `verify-and-stop` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/verify-and-stop) | A validation-only request needs the smallest sufficient proof set and a clear stopping point. Required independent feature verification still applies. |
 | `writing-for-agents` | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) | Skills or agent instructions need clear triggers, progressive disclosure and one owner per rule. |
@@ -277,8 +277,8 @@ This repository is the source pack and maintainer checkout. Run the focused skil
 bun run test
 ```
 
-The source checkout keeps skill tests and local development helpers. Selecting a WTK skill installs
-only that skill's files.
+The source checkout keeps skill tests and local development helpers; an installation carries only
+the skill directories.
 
 ## Provenance and license
 

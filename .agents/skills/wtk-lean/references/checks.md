@@ -38,7 +38,7 @@ listed must be green.
 Four things must be true before you write one:
 
 - someone could **observe** the outcome - if you cannot say what would be seen, it is too vague
-- it carries a **concrete value** - a status code, a field, a bound
+- it carries a **concrete value** - an outcome, a field, a bound
 - **one run settles it** - a single execution either satisfies it or does not
 - you can name the **proof** - the test or command whose exit code decides
 
@@ -155,15 +155,15 @@ Grouped by the spec's slices; numbering runs across the whole feature.
 ### S1 - <slice>
 
 **C1** - A failed charge sets status to Suspended, never Cancelled (FEAT-01, AC 1)
-Proof: `bin/rails test test/billing/dunning_test.rb -n "/failed_charge_suspends/"`
+Proof: `<test command> <dunning test file> <name filter: failed_charge_suspends>`
 
 **C2** - Every provider status maps to exactly one local status (FEAT-01, AC 4)
-Proof: `bin/rails test test/billing/status_map_test.rb -n "/every_provider_status/"`
+Proof: `<test command> <status map test file> <name filter: every_provider_status>`
 
 ### S2 - <slice>
 
 **C3** - Retrying the same webhook delivery id changes nothing (FEAT-02, AC 5)
-Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
+Proof: `<test command> <ingest test file> <name filter: retry_is_idempotent>`
 
 ## Coverage
 

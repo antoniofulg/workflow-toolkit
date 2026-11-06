@@ -129,7 +129,8 @@ equivalent. Batch the selected fresh proofs below.
 **Batch selected proofs by runner target, not one invocation per proof.** Runners take many
 files and many name patterns in a single call - `bin/rails test a_test.rb b_test.rb -n
 "/one|two/"`, `pytest f.py g.py -k "one or two"`, `jest --testPathPattern` with one
-`--testNamePattern` alternation. Batching per *file* is the mistake that looks like batching: forty
+`--testNamePattern` alternation. Elsewhere: `dotnet test --filter "Name~One|Name~Two"`,
+`mvn -Dtest="ATest#one+two"` or Gradle `--tests`, `ctest -R "one|two"`. Batching per *file* is the mistake that looks like batching: forty
 checks across twelve files is twelve process starts, and the process start is the cost.
 
 The guarantee is unchanged as long as **each named test appears in the output individually** as
@@ -205,9 +206,10 @@ under a wrong implementation".
 
 Only where human judgment decides the outcome - a UI flow, an interaction pattern. Backend and
 infrastructure work is settled by the checks. Present one test at a time, expected outcome stated,
-and log anything that is not a clear pass verbatim. Infer severity from the words, never ask for it:
-crash / error / exception → blocker; doesn't work / wrong / missing → major; slow / weird / off →
-minor; colour / font / spacing → assess against the binding visual contract (material drift is major); unclear → major.
+and log anything that is not a clear pass verbatim. Infer severity from the words, never ask for it, using the
+[taxonomy](../../wtk-deep-review/references/taxonomy.md#severity): crash / error / exception →
+Critical; doesn't work / wrong / missing → Major; slow / weird / off → Minor; colour / font /
+spacing → assess against the binding visual contract (material drift is Major); unclear → Major.
 
 ## 6. Report
 
@@ -221,6 +223,7 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 **Diff range**: <base>..<head>
 **Round**: 1 - full
 **Verifier**: independent sub-agent (author != verifier)
+**Quarantined tests**: none (or each test with its owner, cap and expiry)
 
 ## Binding sources
 
@@ -238,7 +241,7 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 | Check | Claim | Proof run | Evidence | Result |
 | --- | --- | --- | --- | --- |
-| C1 | suspends, never cancels | `bin/rails test ... -n "/failed_charge_suspends/"` exit 0 | `test/billing/dunning_test.rb:118` - `assert_equal "suspended", sub.status` | PASS |
+| C1 | suspends, never cancels | `<test command> <name filter: failed_charge_suspends>` exit 0 | `tests/billing/dunning_test.<ext>:118` - `<assertion: status == suspended>` | PASS |
 
 ## Coverage
 
@@ -250,20 +253,28 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 | Row | Files it classifies | Required proof | Expectation met |
 | --- | --- | --- | --- |
-| Decides, reached across a boundary | `subscription.rb` | boundary C1 · own layer C2 | yes |
+| Decides, reached across a boundary | `subscription.<ext>` | boundary C1 · own layer C2 | yes |
 
 ## Faults injected
 
-| Mutation | Location | Killed |
+| Mutation | Location | Disposition |
 | --- | --- | --- |
-| returned status `suspended` -> `cancelled` | `subscription.rb:88` | yes |
+| returned status `suspended` -> `cancelled` | `subscription.<ext>:88` | killed |
+| log level `info` -> `debug` | `subscription.<ext>:97` | arid - logging only, no decision reads it |
+
+## Mutation run
+
+| Command | Scope | Killed | Survived |
+| --- | --- | --- | --- |
+| the project's declared mutation command | files or line ranges of `<base>..<head>` | 41 | 1 |
 
 ## Gate
 
 `<command>` - <N> passed, 0 failed
 ```
 
-A non-empty `Contradiction` or `Uncovered` cell, a `Killed` cell reading `no`, a non-empty
+A non-empty `Contradiction` or `Uncovered` cell, a `Disposition` other than `killed`,
+`equivalent - <reason>` or `arid - <reason>`, more run survivors than equivalent/arid rows, a non-empty
 `Unproven` cell, a check whose `Result` is not PASS, or an unmet `Test policy` row all mean the
 verdict is FAIL. The gate script reads those columns and refuses a PASS its own rows contradict,
 so do not soften a row to fit a verdict - change the verdict.
@@ -272,11 +283,11 @@ Then run the completion gate and return a compact verdict in chat:
 
 ```bash
 python3 <skill-dir>/scripts/validate_verification.py <feature>
+```
 
 `0` is a report that was read and held up. `1` is a report its own rows contradict. `2` is
 **gated nothing** - the feature or the report could not be resolved - and it is not a pass:
 name the feature explicitly rather than letting it search.
-```
 
 ```markdown
 ## Verification: <feature> - PASS

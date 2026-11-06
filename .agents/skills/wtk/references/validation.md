@@ -38,7 +38,7 @@ Unrelated findings become follow-ups unless they prevent the requested behavior 
 relevant security boundary. Do not grow a maintenance task into a repository certification.
 
 Feature verification still accounts for every approved check, using fresh or demonstrably reusable
-evidence. Feature close, review remediation and delivery do not automatically require a full gate.
+evidence. Feature close, review remediation and delivery need no extra local full gate; T2 still gates merge.
 Full gates follow the impact conditions below, including at initial feature close.
 
 For reference-driven UI, validate the contract and builder/independent comparison required by
@@ -48,27 +48,28 @@ suite cannot waive missing visual evidence or material fidelity failures. QA fla
 
 ## Test tiers
 
-The project declares its commands per tier; runner tags, filters and shards (for example Playwright
+The project declares its commands per tier, and where T2 runs, under `tiers` in its
+[settings](project-settings.md); runner tags, filters and shards (for example Playwright
 tags and `--shard`, JUnit or NUnit categories, xUnit traits, CTest labels, pytest markers) are
 examples, not requirements.
 
 | Tier | When | Runs |
 | --- | --- | --- |
 | T0 | Every change | Static checks, then affected unit and integration tests, fail-fast. Select them with the project's impact tool or the stack's changed/related selection. |
-| T1 | Every PR or push | T0, affected e2e, and a capped `@smoke` cohort (about three minutes or less): auth, the app shell, one core transaction path, and security smoke. |
+| T1 | Every PR or push | T0, affected e2e, and a capped `@smoke` cohort (about three minutes or less): the product's critical entry points (e.g. auth, app shell, one core transaction path, where the product has them) and security smoke. |
 | T2 | Pre-merge | The full e2e suite, sharded when the runner supports it. Nothing merges without a green T2. |
 
 T2 is a merge requirement, run where the project's delivery runs it; it does not widen the local
 validation a change selects below. When impact is unknown, run the full suite under the
 [full-gate conditions](#full-gate-conditions-and-failures).
-A quarantined flaky test needs an owner, a cap and an expiry, and the quarantine is reported at
-feature close.
+A quarantined flaky test needs an owner, a cap and an expiry (the `quarantine` setting), and the
+verification report's `Quarantined tests` line names it at feature close.
 
 ## Fix verification
 
 Every fix, correction or refactor of executable code or tests gets a fresh Verifier before push or
 pull request, including a mixed change. A builder never certifies its own fix. Only a documentation or
-instruction-only diff and the declarative configuration route below skip it. An active Lean feature
+instruction-only diff and the declarative [configuration](#configuration-and-shared-locks) change skip it. An active Lean feature
 keeps its own Verifier and review loop; only its Minor-only remediation batch gets this check.
 
 The Verifier is a fresh agent that did not build the change. It receives the diff, the defect or
@@ -105,8 +106,8 @@ After merging or rebasing main, examine the incoming delta as well as resolved c
 files and newly connected paths; disjoint files can still interact. Reuse unaffected evidence.
 A review finding invalidates evidence on its causal path, not every previously approved module.
 
-For example, a Members typography fix and a Dashboard mobile-card fix receive their own coverage.
-If only Dashboard needs another correction, rerun its affected checks and retain Members evidence.
+For example, fix A and fix B receive their own coverage. If only fix B needs another correction,
+rerun its affected checks and retain fix A's evidence.
 A shared style or layout primitive expands coverage to the consumers actually affected.
 
 ## Full-gate conditions and failures
@@ -138,37 +139,11 @@ or delete one, to make a red gate pass. Removing a redundant test is a separate,
 under the [test-pruning procedure](test-contract.md#pruning). Never describe a failed/unrun gate as passing. Knowledge checks run with bundle
 writes, not as an added feature-delivery gate; dependency inventories are not vulnerability proofs.
 
-## Credential-free declarative agent-tool configuration
+## Configuration and shared locks
 
-This route applies only when the whole diff contains agent/server names, public URLs and non-secret
-options. Commands, hooks, plugins, dependencies, credentials, OAuth/scopes, permissions, runtime code,
-CI/deploy changes and external mutations follow their applicable normal route.
-
-The active agent edits directly and makes one atomic commit, without feature artifacts, delegation,
-Verifier, deep review or QA. Before committing:
-
-1. Parse changed files and compare intended names, URLs, keys and values with the client schema.
-2. Check for credential material.
-3. Query the relevant installed clients read-only, returning only `name`, `url`, `enabled` and `auth_status`.
-4. Run `git diff --check` and the project's commit-message validator.
-
-OAuth requires explicit human authorization. Credentials, OAuth clients/scopes, permissions,
-authentication behavior and sensitive product data require full Verifier coverage.
-
-## Browser queue ownership
-
-When a consuming project already provides a browser execution queue or lock, use that existing
-coordination surface. Keep at most one queued browser execution per checkout; the runner's internal
-workers are part of that execution and do not count as separate runs. Compare the queued run's
-checkout and relevant inputs with the current request before enqueueing. Treat a queued run as stale
-only when it is checkout-owned and relevant inputs changed; cancel it safely through the existing
-mechanism and confirm cancellation before enqueueing its replacement.
-
-Do not cancel a running test merely to replace queued work; a separately authorized cancellation may
-use the consuming project's existing controls. Never kill a foreign run or take a foreign lock
-holder's lock. Do not introduce a scheduler, framework, or new lock. If ownership of an existing
-queued execution or lock cannot be established, do not kill it or enqueue a duplicate; report the
-limitation and leave the existing state unchanged.
+A declarative configuration change with no code, credential or permission is validated by its own
+read-only query of the configured client, with no Verifier. Never take or break another checkout's
+lock or queued run.
 
 ## Runtime isolation
 

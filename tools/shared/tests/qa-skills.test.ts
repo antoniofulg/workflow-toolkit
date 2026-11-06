@@ -732,7 +732,9 @@ describe("adoption and public setup", () => {
 
   it("IT-020 keeps the source pack free of project documentation", () => {
     expect(existsSync(join(repositoryRoot, "docs"))).toBe(false);
-    expect(readRepositoryFile("README.md")).toContain("only that skill's files");
+    expect(readRepositoryFile("README.md").replace(/\s+/g, " ")).toContain(
+      "an installation carries only the skill directories",
+    );
   });
 
   it("IT-011 keeps stack-specific QA capabilities in the operational profile", () => {
@@ -985,8 +987,58 @@ describe("testing policy", () => {
     expect(testContract).toMatch(/^## Mutation$/m);
     expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit or integration test can prove.");
     expect(normalized).toContain("Never remove the only proof of cross-component wiring.");
-    expect(normalized).toContain("Never prune a SEC proof without a named replacement at a lower layer.");
+    expect(normalized).toContain(
+      "Never prune a member of the permanent security smoke suite; any other SEC proof needs a named lower-layer replacement.",
+    );
     expect(readRepositoryFile(".agents/skills/wtk/references/validation.md")).toMatch(/^## Test tiers$/m);
+  });
+
+  it("keeps one member of an equal-kill set and protects smoke and sole journey proofs", () => {
+    const testContract = readRepositoryFile(".agents/skills/wtk/references/test-contract.md").replace(/\s+/g, " ");
+    const testReview = readRepositoryFile(".agents/skills/wtk-test-review/SKILL.md").replace(/\s+/g, " ");
+    for (const source of [testContract, testReview]) {
+      expect(source).toContain("at most one removal per equal-kill set, keeping its lowest-layer member");
+      expect(source).toContain("never a `@smoke` cohort member or the sole proof of a journey or of wiring");
+    }
+    expect(testContract).toContain("Without a mutation tool, class (b) is not proposed");
+    expect(testContract).toContain("the manual faults the removed test used to kill");
+    expect(testReview).toContain("A member of the permanent security smoke suite is never proposed for removal");
+  });
+
+  it("declares project settings in one optional AGENTS.md section linked from its consumers", () => {
+    const owner = ".agents/skills/wtk/references/project-settings.md";
+    const settings = readRepositoryFile(owner);
+    expect(settings).toMatch(/^## wtk-settings$/m);
+    for (const key of ["tiers", "mutation", "quarantine", "qa root", "compatibility", "language",
+      "commit validator", "execution metrics", "merge", "test-review scopes"]) {
+      expect(settings).toContain(`\`${key}\``);
+    }
+    const linksTo = (path: string) =>
+      [...readRepositoryFile(path).matchAll(/\[[^\]]+\]\(([^)#]+)(?:#[^)]*)?\)/g)]
+        .some((match) => resolve(repositoryRoot, dirname(path), match[1]!) === resolve(repositoryRoot, owner));
+    for (const path of [
+      ".agents/skills/wtk/SKILL.md",
+      ".agents/skills/wtk/references/validation.md",
+      ".agents/skills/wtk/references/dx.md",
+      ".agents/skills/wtk-qa/references/qa-scenarios.md",
+      ".agents/skills/wtk-lean/references/build.md",
+      ".agents/skills/wtk-ship/SKILL.md",
+      ".agents/skills/wtk-test-review/SKILL.md",
+      ".agents/skills/wtk-setup/references/interview.md",
+    ]) {
+      expect([path, linksTo(path)]).toEqual([path, true]);
+    }
+  });
+
+  it("rechecks T2 and required checks on the merge head before ship merges", () => {
+    const ship = readRepositoryFile(".agents/skills/wtk-ship/SKILL.md").replace(/\s+/g, " ");
+    const gates = readRepositoryFile(".agents/skills/wtk/references/validation.md").replace(/\s+/g, " ");
+    expect(ship).toContain("needs no extra local full gate; T2 still gates merge");
+    expect(gates).toContain("need no extra local full gate; T2 still gates merge");
+    expect(ship).toContain("(full e2e) green wherever the project runs it (CI or local), plus the project's required checks");
+    expect(ship).toContain("Report the quarantined tests");
+    expect(ship).toContain("Stop at the pull request when told so up front");
+    expect(ship).toContain("declared merge authority, required reviews, branch protection and required checks win");
   });
 });
 

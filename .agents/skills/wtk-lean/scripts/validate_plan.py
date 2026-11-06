@@ -71,6 +71,8 @@ import os
 import re
 import sys
 
+from native_evidence import usable_value
+
 # Each entry is a tuple of acceptable heading names (first is canonical).
 REQUIRED_SECTIONS = [
     ("Problem", "Problem Statement"),
@@ -482,7 +484,7 @@ def check_file(path):
                 continue
             outcome_cell = cells[3] if len(cells) > 3 else ""
             outcomes = [o.strip(" `") for o in re.split(r"[,·;]", outcome_cell)]
-            if not any(o and not PLACEHOLDER_RE.match(o) for o in outcomes):
+            if not any(usable_value(o) and not PLACEHOLDER_RE.match(o) for o in outcomes):
                 errors.append(
                     f"Surface '{cells[0][:48]}': Outcomes names no outcome - those outcomes are the "
                     "set that owes a Coverage row in checks.md"

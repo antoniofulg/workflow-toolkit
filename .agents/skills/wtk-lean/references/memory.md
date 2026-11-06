@@ -25,7 +25,7 @@ decision store owns the records, keep only Handoff here.
 
 **Feature**: <name>
 **Where**: <check id> - <what is done, what is not>
-**In progress**: `path/to/file.rb:88` - <what was being changed>
+**In progress**: `path/to/file.<ext>:88` - <what was being changed>
 **Next step**: <the concrete next action>
 **Blockers**: <none | description>
 **Uncommitted**: <files>

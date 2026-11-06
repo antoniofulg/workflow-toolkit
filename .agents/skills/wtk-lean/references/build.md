@@ -87,8 +87,8 @@ A new door that contradicts nothing already approved never stops the build.
 
 ## Commit
 
-One coherent piece per commit. Follow the project's own commit convention and validator when it has
-one. Otherwise use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
+One coherent piece per commit. Follow the project's own commit convention and its `commit validator`
+[setting](../../wtk/references/project-settings.md) when it has one. Otherwise use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
 `<type>(<scope>): <description>` with the [default types](../../wtk/references/git.md#types).
 Imperative mood, lowercase, no trailing period. A `!` marker needs no `BREAKING CHANGE:` footer.
 

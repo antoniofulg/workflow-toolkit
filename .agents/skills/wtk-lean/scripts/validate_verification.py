@@ -20,7 +20,8 @@ What it checks:
   ERROR  - the verdict is FAIL, missing, or still the '[PASS | FAIL]' placeholder
   ERROR  - PASS with no file:line evidence anywhere (evidence-or-zero)
   ERROR  - profile standard/ui with no fault rows, or with no recomputed Coverage section
-  ERROR  - PASS while a fault row says the mutant survived
+  ERROR  - PASS while a fault row's Disposition is not killed, equivalent - <reason> or arid - <reason>
+  ERROR  - PASS while a mutation-run row reports more survivors than equivalent/arid rows record
   ERROR  - PASS while a Coverage row leaves a member Unproven
   ERROR  - PASS while a binding source records a Contradiction or leaves an element Uncovered
   ERROR  - profile ui with missing, incomplete or non-PASS visual fidelity evidence
@@ -52,7 +53,7 @@ from native_evidence import intent_errors, unfenced_lines, usable_value
 EVIDENCE_RE = re.compile(r"[\w./-]+\.[A-Za-z0-9]+:\d+")
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE | re.MULTILINE)
 EMPTY_CELL = {"", "-", "—", "–", "none", "n/a", "na", "nothing"}
-SURVIVED_RE = re.compile(r"\b(no|survived|alive|not killed)\b", re.IGNORECASE)
+DISPOSITION_RE = re.compile(r"^(killed|equivalent|arid)\b\s*(?:[-–—:]\s*(.*))?$", re.IGNORECASE)
 UNMET_RE = re.compile(r"\b(no|not met|unmet|fail|failed|gap)\b", re.IGNORECASE)
 
 
@@ -261,22 +262,37 @@ def _check_feature(fdir, name):
             errors.append(f"{name}: ui requires a visual fidelity evidence table with {', '.join(required)}")
 
     saw_faults = False
+    survivors_run = survivors_recorded = 0
 
     for header, rows in tables:
-        killed = column(header, "killed")
-        if killed is not None:
+        disposition = column(header, "disposition")
+        if disposition is not None:
             saw_faults = saw_faults or bool(rows)
             for r in rows:
-                if killed >= len(r):
-                    continue
-                cell = r[killed]
-                if cell.lower() in EMPTY_CELL and cell.lower() != "no":
-                    continue
-                if SURVIVED_RE.match(cell) or "survived" in cell.lower():
+                cell = r[disposition].strip("` ") if disposition < len(r) else ""
+                m = DISPOSITION_RE.match(cell)
+                if not m:
                     errors.append(
-                        f"{name}: PASS but a mutant survived ({r[0][:50]}) - the assertion would "
-                        f"pass under a plausible wrong implementation"
+                        f"{name}: PASS but mutant '{r[0][:50]}' has disposition {cell[:30]!r} - "
+                        f"expected killed, equivalent - <reason> or arid - <reason>; a survivor is a finding"
                     )
+                elif m[1].lower() != "killed":
+                    if not usable_value(m[2] or ""):
+                        errors.append(f"{name}: {m[1].lower()} mutant '{r[0][:50]}' needs a one-line reason")
+                    survivors_recorded += 1
+
+        survived = column(header, "survived")
+        if survived is not None and column(header, "command") is not None:
+            command = column(header, "command")
+            for r in rows:
+                saw_faults = True
+                if command >= len(r) or not usable_value(r[command]):
+                    errors.append(f"{name}: mutation-run row names no command ({r[0][:40]})")
+                count = r[survived].strip("` ") if survived < len(r) else ""
+                if not count.isdigit():
+                    errors.append(f"{name}: mutation-run Survived must be a count, got {count[:20]!r}")
+                else:
+                    survivors_run += int(count)
 
         unproven = column(header, "unproven")
         if unproven is not None:
@@ -312,6 +328,12 @@ def _check_feature(fdir, name):
                         f"{name}: PASS but a Test policy row is unmet ({r[0][:40]}: '{r[met][:40]}') "
                         f"- the rows priced work the checks do not name"
                     )
+
+    if survivors_run > survivors_recorded:
+        errors.append(
+            f"{name}: PASS but the mutation run reports {survivors_run} survivor(s) and only "
+            f"{survivors_recorded} carry an equivalent or arid disposition - kill or record each one"
+        )
 
     # Fault injection is profile-scoped (standard, ui), like tlc-implement. Under `light` a
     # report with no fault rows is correct, and the profile line is what says so.

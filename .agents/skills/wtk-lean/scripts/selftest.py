@@ -141,6 +141,12 @@ CASES = [
     ("validate_plan", "plan.md", "assumption with no rationale",
      lambda s: s.replace("| this team tracks billing-related support cases |", "|  |"),
      1, "empty 'Rationale'"),
+    ("validate_plan", "plan.md", "surface outcome is a dash placeholder",
+     lambda s: s.replace("| `200`, `409`, `422` |", "| - |"),
+     1, "Outcomes names no outcome"),
+    ("validate_plan", "plan.md", "surface outcomes are only n/a and TBD",
+     lambda s: s.replace("| `200`, `409`, `422` |", "| n/a · TBD |"),
+     1, "Outcomes names no outcome"),
     ("validate_plan", "plan.md", "missing Traceability section",
      lambda s: s.replace("## Traceability", "## Requirements Map"),
      1, "missing required section: ## Traceability"),
@@ -163,8 +169,22 @@ CASES = [
      0, "do not read as resolved"),
 
     ("validate_verification", "verification.md", "surviving mutant next to PASS",
-     lambda s: s.replace("| `app/webhooks/ingest.rb:31` | yes |", "| `app/webhooks/ingest.rb:31` | no |"),
-     1, "a mutant survived"),
+     lambda s: s.replace("| `app/webhooks/ingest.rb:31` | killed |", "| `app/webhooks/ingest.rb:31` | survived |"),
+     1, "has disposition 'survived'"),
+    ("validate_verification", "verification.md", "equivalent mutant with no reason",
+     lambda s: s.replace("| arid - logging only, no decision reads it |", "| equivalent |"),
+     1, "equivalent mutant 'log level"),
+    ("validate_verification", "verification.md", "arid mutant with a placeholder reason",
+     lambda s: s.replace("| arid - logging only, no decision reads it |", "| arid - TBD |"),
+     1, "needs a one-line reason"),
+    ("validate_verification", "verification.md", "tool run reports more survivors than dispositions",
+     lambda s: s.replace("## Gate", "## Mutation run\n\n| Command | Scope | Killed | Survived |\n| --- | --- | --- | --- |\n"
+                         "| `cargo mutants --in-diff main.diff` | `app/models/billing/` | 40 | 2 |\n\n## Gate", 1),
+     1, "reports 2 survivor(s) and only 1"),
+    ("validate_verification", "verification.md", "tool run with a non-numeric survivor count",
+     lambda s: s.replace("## Gate", "## Mutation run\n\n| Command | Scope | Killed | Survived |\n| --- | --- | --- | --- |\n"
+                         "| `mvn pitest:scmMutationCoverage` | changed classes | 40 | some |\n\n## Gate", 1),
+     1, "Survived must be a count"),
     ("validate_verification", "verification.md", "PASS with an unproven coverage member",
      lambda s: s.replace("`trial_will_end` C10 | - |", "`trial_will_end` C10 | `paused` |"),
      1, "unproven"),
@@ -173,7 +193,7 @@ CASES = [
      1, "no fault rows"),
     ("validate_verification", "verification.md", "header-only fault table does not prove fault injection",
      lambda s: re.sub(r"## Faults injected\n.*?\n## Gate",
-                      "## Faults injected\n\n| Mutation | Location | Killed |\n| --- | --- | --- |\n\n## Gate", s, flags=re.S),
+                      "## Faults injected\n\n| Mutation | Location | Disposition |\n| --- | --- | --- |\n\n## Gate", s, flags=re.S),
      1, "no fault rows"),
     ("validate_verification", "verification.md", "PASS with no file:line evidence",
      lambda s: re.sub(r"`[\w./-]+\.rb:\d+`", "`the test file`", s),
@@ -243,6 +263,9 @@ NEGATIVE_CONTROLS = [
       "verification.md": lambda s: re.sub(
           r"## Coverage\n.*?\n## Faults injected\n.*?\n## Gate", "## Gate",
           s.replace("**Profile**: standard", "**Profile**: light"), flags=re.S)}),
+    ("validate_verification", "a tool run whose survivor carries a disposition is accepted",
+     {"verification.md": lambda s: s.replace("## Gate", "## Mutation run\n\n| Command | Scope | Killed | Survived |\n"
+                                               "| --- | --- | --- | --- |\n| `dotnet stryker --since:main` | changed files | 40 | 1 |\n\n## Gate", 1)}),
 ]
 
 

@@ -32,8 +32,10 @@ features. The phase references carry its entry points; profiles never waive inhe
 ## Core contract
 
 1. Every check is one observable claim with a concrete value and a proof whose exit code settles it.
-2. Tests come from the approved checks, never from the implementation. Do not weaken, skip, or
-   delete a test to pass a gate; a wrong or impossible check stops for user renegotiation.
+2. Tests come from the approved checks, never from the implementation. Never weaken or skip a
+   test, or delete one, to make a red gate pass; redundant-test removal follows
+   [pruning](../wtk/references/test-contract.md#pruning). A wrong or impossible check stops for user
+   renegotiation.
 3. Approved `checks.md` and `Test policy` rows are fixed. New `Landing`, `Relations`, and `Surface`
    rows may be added when building discovers a door, entity, or interface; approved rows are never
    rewritten. Keep `Flow` and `Impact` current when the path changes.

@@ -78,12 +78,33 @@ All notable changes to this project are documented here.
 - The critical rule reads "Never weaken or skip a test, or delete one, to make a red gate pass";
   removing a redundant test is a separate, reviewed change under the pruning procedure.
 - The visual fixtures use the neutral listing sample.
+- `wtk-ship` rechecks T2 (full e2e) and the project's required checks on the merge head and
+  reports quarantined tests; its push, pull request and merge authority is a default that a
+  project's merge authority, required reviews, branch protection and required checks override, and
+  it stops at the pull request when told so up front.
+- Verification reports record each fault's `Disposition` (`killed`, `equivalent - <reason>`,
+  `arid - <reason>`), a `Mutation run` summary row and a `Quarantined tests` line;
+  `validate_verification.py` accepts reasoned survivors and fails unrecorded ones.
+- `validate_plan.py` rejects placeholder Surface outcomes such as `-`, `n/a`, `none` and `TBD`.
+- One optional `## wtk-settings` section in a project's `AGENTS.md`, documented in
+  `wtk/references/project-settings.md`, declares tiers, mutation, quarantine, QA root,
+  compatibility, language, commit validator, execution metrics, merge authority and test-review
+  scopes; setup asks about them.
+- Pruning never removes a permanent security smoke member, proposes at most one removal per
+  equal-kill set, protects `@smoke` members and sole journey or wiring proofs, and falls back to
+  manual faults without a mutation tool.
+- Security severities use the review taxonomy (Critical or Major); a specialist "High" maps to
+  Major. Review rounds drop the second YAGNI severity rule.
+- `wtk` routes plain-language capability requests; `wtk-qa` reads the flow from the request when
+  no argument expands; examples, tiers and the README runtime requirements are stack-neutral.
 
 ### Removed
 
 - `wtk-ship/scripts/review_convergence.py` and `wtk-ship/remediation.py`; the stall rule is now
   prose in `review-rounds.md`. Deep Review drops the `REMOVED_SWEEPS` table, so an unknown sweep
   fails like any other. Prose tombstones about removed options and earlier ceremony are gone.
+- The optional `Review-Signal:` trailer section and `tools/review-metrics.py`, which only read it;
+  the agent-tool configuration and browser-queue routes in `validation.md` shrink to two rules.
 
 ## [4.3.0] - 2026-11-04
 

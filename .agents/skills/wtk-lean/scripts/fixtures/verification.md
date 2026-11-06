@@ -5,6 +5,7 @@
 **Diff range**: a1b2c3d..e4f5g6h
 **Round**: 1 - full
 **Verifier**: independent sub-agent (author != verifier)
+**Quarantined tests**: none
 
 ## Checks
 
@@ -30,11 +31,12 @@
 
 ## Faults injected
 
-| Mutation | Location | Killed |
+| Mutation | Location | Disposition |
 | --- | --- | --- |
-| returned status `suspended` -> `cancelled` | `app/models/billing/subscription.rb:88` | yes |
-| removed the delivery-id guard | `app/webhooks/ingest.rb:31` | yes |
-| bound `>= 3` -> `> 3` on retry count | `app/models/billing/dunning.rb:22` | yes |
+| returned status `suspended` -> `cancelled` | `app/models/billing/subscription.rb:88` | killed |
+| removed the delivery-id guard | `app/webhooks/ingest.rb:31` | killed |
+| bound `>= 3` -> `> 3` on retry count | `app/models/billing/dunning.rb:22` | killed |
+| log level `info` -> `debug` on the retry trace | `app/models/billing/dunning.rb:40` | arid - logging only, no decision reads it |
 
 ## Gate
 

@@ -16,7 +16,8 @@ delete, skip or weaken a test here; a removal is a separate change under
 
 ## Settings
 
-Read the project's declared test-review settings from its `AGENTS.md` or test documentation:
+Read the project's `tiers`, `mutation` and `test-review scopes`
+[settings](../wtk/references/project-settings.md):
 
 - the mutation command and how it scopes to files or line ranges;
 - the [test tiers](../wtk/references/validation.md#test-tiers) and their commands;
@@ -40,18 +41,21 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
 4. **Classify.** Sort tests into the pruning candidate classes and report each against its
    evidence:
    - **killing** - kills at least one mutant no other test kills;
-   - **redundant** - kills no mutant, or only mutants another test also kills;
+   - **redundant** - kills no mutant, or only mutants another test also kills; propose at most one
+     removal per equal-kill set, keeping its lowest-layer member, and none without a mutation tool;
    - **e2e replaceable by lower layer** - under the
      [lowest-layer rule](../wtk/references/test-contract.md#choosing-the-layer), with each e2e
      assertion mapped to the unit or integration test that asserts the same outcome through the
-     same contract, or marked as having none;
+     same contract, or marked as having none; never a `@smoke` cohort member or the sole proof of a
+     journey or of wiring;
    - **forbidden subject** - copy, snapshots, config or CSS, unless that artifact is the contract;
    - **duplicate suite**.
 5. **Gaps.** Report each surviving mutant on decision code and each claim with no proof as a
    missing test, naming the layer that should own it.
 
-A SEC proof is never proposed for removal without a named lower-layer replacement. A mapping that
-leaves an assertion with no kept proof keeps the test.
+A member of the permanent security smoke suite is never proposed for removal; any other SEC proof
+needs a named lower-layer replacement. A mapping that leaves an assertion with no kept proof keeps
+the test.
 
 ## Result
 

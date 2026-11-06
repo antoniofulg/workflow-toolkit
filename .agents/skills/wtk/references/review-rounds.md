@@ -74,18 +74,9 @@ same non-author session reuse; packet phases remain distinct.
 7. **Documentation and instruction changes follow the proportional classifier in `.agents/skills/wtk/references/validation.md`.** Pure maintenance and bounded instruction changes do not start wtk-deep-review or QA by default; mixed changes run canonical checks for changed executable behavior. Named concrete risk or changed public promise can select stronger review; file count and the word "feature" do not escalate them.
 8. **A passing verdict requires valid evidence for its scope.** Apply `.agents/skills/wtk/references/validation.md` to the finding's causal path and retain unaffected results.
    A failed full run stays failed even when focused correction proofs pass.
-9. **A new control for an unobserved failure is Major (YAGNI) unless the spec named it.** A
-   killed-process shim, a test-of-the-test, or a prefix allowlist the spec did not name is overbuild.
-   Filed-issue review uses the same rule; YAGNI is blocking without a companion skill.
 
 ## Fingerprinted remediation accounting
 `fingerprint = requirement + root cause + failure path` is each finding's identity. Rewording or reopening a finding preserves its fingerprint and its attempt count; a distinct finding starts at zero.
-## The Review-Signal trailer
-
-The delivery commit for a pull request carries one `Review-Signal:` line recording its review
-outcome, so the record survives the pruning of `.specs/features/`. The line is optional, and no
-bundled validator checks it.
-
 ## Finding shape
 Every finding states, in this order:
 

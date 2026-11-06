@@ -36,12 +36,15 @@ scope* are policy the user approved; there is nothing in the code for them to be
 A green suite proves the tests run. Fault injection proves they can catch a regression - it is
 the only step that produces that information, and under `light` it does not run.
 
-1. **Isolate.** `git worktree add <scratch> HEAD`. Never mutate the real tree, and **never use
+1. **Isolate.** `git worktree add <scratch> HEAD`, and prepare it with the project's restore/build
+   command, or use the mutation tool's own sandbox when it never writes the real tree. Never mutate the real tree, and **never use
    `git stash`**: it records state from *before* the mutation, so popping it does not reverse a
    fault applied afterwards, and on a clean tree it creates no entry at all.
 2. **Baseline.** Record `git status --porcelain` of the real tree first.
 3. **Inject.** When the project declares a mutation command, run it in the scratch with the scope
-   the [mutation policy](test-contract.md#mutation) sets, and skip step 4. Otherwise inject a
+   the [mutation policy](test-contract.md#mutation) sets, and skip step 4. Record the run as one
+   `Mutation run` row (command, scope, killed and survived counts) and each survivor as a
+   `Faults injected` row whose `Disposition` is `killed`, `equivalent - <reason>` or `arid - <reason>`. Otherwise inject a
    **behaviour-level fault** in the new code: flip a condition, change a returned value or
    status, shift a bound by one, remove a required side effect.
 4. **Run the narrowest covering proof** in the scratch and confirm it FAILS - the mutant is killed.

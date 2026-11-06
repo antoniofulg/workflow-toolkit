@@ -5,8 +5,7 @@
 **Why this exists:** Instruction files compete with the work for the same window. Dispatch by
 condition; growing a file with restated prose is a defect.
 
-`AGENTS.md` loads into every Cursor and Codex prompt. `CLAUDE.md` is `@AGENTS.md` — Claude Code
-imports it; Cursor does not expand `@`, so a symlink that duplicates the contract is a defect.
+Root instruction files load into every prompt; keep any host import file a single pointer.
 
 ## Rules
 

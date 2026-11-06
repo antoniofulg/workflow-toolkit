@@ -103,6 +103,38 @@ class WorkflowValidatorTests(unittest.TestCase):
                 errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
                 self.assertTrue(any("Outcomes names no outcome" in error for error in errors), errors)
 
+    def test_surface_rejects_placeholder_outcomes(self) -> None:
+        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
+        outcomes = "| `200`, `409`, `422` |"
+        for placeholder in ("-", "n/a", "none", "TBD", "`-` · n/a"):
+            with self.subTest(placeholder=placeholder), tempfile.TemporaryDirectory() as raw:
+                feature = scaffold(Path(raw))
+                (feature / "plan.md").write_text(source.replace(outcomes, f"| {placeholder} |"), encoding="utf-8")
+                errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
+                self.assertTrue(any("Outcomes names no outcome" in error for error in errors), errors)
+
+    def test_fault_disposition_accepts_only_killed_or_reasoned_survivors(self) -> None:
+        source = (FIXTURES / "verification.md").read_text(encoding="utf-8")
+        row = "| `app/webhooks/ingest.rb:31` | killed |"
+        self.assertIn(row, source)
+        cases = {
+            "killed": True,
+            "equivalent - same result on every input": True,
+            "arid - logging only": True,
+            "survived": False,
+            "no": False,
+            "equivalent": False,
+            "arid - n/a": False,
+        }
+        for value, accepted in cases.items():
+            with self.subTest(disposition=value), tempfile.TemporaryDirectory() as raw:
+                feature = scaffold(Path(raw))
+                (feature / "verification.md").write_text(
+                    source.replace(row, f"| `app/webhooks/ingest.rb:31` | {value} |"), encoding="utf-8"
+                )
+                errors, _warnings = validate_verification._check_feature(str(feature), "fixture")
+                self.assertEqual(errors == [], accepted, errors)
+
     def test_approval_receipt_is_a_verifier_judgment_not_a_gate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

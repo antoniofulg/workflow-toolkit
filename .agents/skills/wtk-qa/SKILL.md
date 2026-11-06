@@ -1,6 +1,6 @@
 ---
 name: wtk-qa
-description: "Run one tagged QA planning or execution phase through `/wtk-qa [plan] <flow>`. Use for verifier-owned journey work."
+description: "Run one tagged QA planning or execution phase through `/wtk-qa [plan] <flow>`. Use for verifier-owned journey work; not product fixes, test authoring or framework setup."
 argument-hint: "[plan] <flow>"
 metadata:
   version: '4.3.0'
@@ -8,7 +8,8 @@ metadata:
 
 # QA
 
-Run this phase for: $ARGUMENTS. If empty, stop and ask for the flow.
+Run this phase for: $ARGUMENTS. When that is empty or unexpanded, read the flow (and `plan`, if
+named) from the request; if the request names none, stop and ask for the flow.
 
 Use the selected `qa` stage through [agent selection](../wtk/references/agent-selection.md).
 The coordinator dispatches or reuses a non-author checking session in the current checkout;

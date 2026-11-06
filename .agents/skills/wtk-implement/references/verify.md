@@ -117,7 +117,8 @@ equivalent. Batch the selected fresh proofs below.
 **Batch selected proofs by runner target, not one invocation per proof.** Runners take
 many files and many name patterns in a single call - `bin/rails test a_test.rb b_test.rb -n
 "/one|two/"`, `pytest f.py g.py -k "one or two"`, `jest --testPathPattern` with one
-`--testNamePattern` alternation. Batching per *file* is the mistake that looks like batching:
+`--testNamePattern` alternation. Elsewhere: `dotnet test --filter "Name~One|Name~Two"`,
+`mvn -Dtest="ATest#one+two"` or Gradle `--tests`, `ctest -R "one|two"`. Batching per *file* is the mistake that looks like batching:
 forty checks across twelve files is twelve process starts, and the process start is the cost.
 
 The guarantee is unchanged as long as each named test appears in the output individually as
@@ -208,6 +209,7 @@ Write `.checks/<feature>.verified.md`. Lead with the verdict.
 **Diff range**: <base>..<head>
 **Round**: 1 - full
 **Verifier**: independent sub-agent (author != verifier)
+**Quarantined tests**: none (or each test with its owner, cap and expiry)
 
 ## Binding sources
 
@@ -238,10 +240,16 @@ Write `.checks/<feature>.verified.md`. Lead with the verdict.
 
 ## Faults injected
 
-| Mutation | Location | Killed |
+| Mutation | Location | Disposition |
 |---|---|---|
-| returned status `suspended` -> `cancelled` | `subscription.py:88` | yes |
-| removed the `subscription.suspended` emit | `subscription.py:104` | no - fix required |
+| returned status `suspended` -> `cancelled` | `subscription.py:88` | killed |
+| removed the `subscription.suspended` emit | `subscription.py:104` | survived - fix required |
+
+## Mutation run
+
+| Command | Scope | Killed | Survived |
+|---|---|---|---|
+| the project's declared mutation command | files or line ranges of `<base>..<head>` | 41 | 1 |
 
 ## Gate
 

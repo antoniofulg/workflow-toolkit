@@ -41,8 +41,9 @@ passes. Read `references/test-policy.md` only for `standard` or `ui` checklist r
 ## Critical rules
 
 1. Every check names its **proof**: the test or command whose exit code settles it.
-2. Tests assert checklist outcomes, never the implementation. Never weaken, skip, or delete one to
-   pass a suite; a wrong check stops for user clarification.
+2. Tests assert checklist outcomes, never the implementation. Never weaken or skip a test, or delete
+   one, to make a red gate pass; redundant-test removal follows
+   [pruning](../wtk/references/test-contract.md#pruning). A wrong check stops for user clarification.
 3. The checklist and test-policy rows are fixed while building. `Landing` is additive: record a new
    door with its literal shape and rejected alternative before writing the closing code.
 4. A build agent never spawns another agent at all. The coordinator dispatches one fresh sub-agent as Verifier after

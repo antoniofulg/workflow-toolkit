@@ -48,11 +48,12 @@ What this feature deletes or breaks: callers, migration and deprecation window.
    improvised in a catch block.
 4. **The surface freezes before internals.** Internals are designed to serve it. Reopening it later is
    an explicit decision, not a quiet adaptation.
-5. **Compatibility follows the project's declared policy for the surface.** A breaking removal lists
+5. **Compatibility follows the project's declared policy for the surface** (the `compatibility`
+   [setting](project-settings.md)). A breaking removal lists
    its callers, their migration and the deprecation window.
 6. **It respects the project's boundary.** The consuming project's architecture docs name the product
    boundary. A surface that would violate that boundary is wrong at design time, not at build time.
-7. **Versioned or published text follows the project's language policy.**
+7. **Versioned or published text follows the project's language policy** (the `language` setting).
 
 ## What to grill before freezing
 

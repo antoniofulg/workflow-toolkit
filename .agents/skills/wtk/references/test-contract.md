@@ -24,8 +24,9 @@ The native profile owns mutation depth: `standard` and `ui` inject faults; `ligh
    component or boundary exists. Security cases also follow `security.md` when its
    condition fires.
 2. **Every claim names an exact input, condition, concrete value, and expected result.** "Test the
-   happy path" is not a claim. "`POST` the create route with an unknown region returns 422 and no
-   row" is. Name one or more exact tests or commands whose exit codes settle it; repeat `Proof:` when
+   happy path" is not a claim. "Creating an order with an unknown region is rejected as
+   invalid and stores nothing" is, whether the interface is a `POST` route, a CLI verb exiting
+   non-zero, or an event that lands on the dead-letter topic. Name one or more exact tests or commands whose exit codes settle it; repeat `Proof:` when
    a proof cannot settle the whole claim.
 3. **Coverage is explicit.** Every enumerated set gets a `Coverage` row with each member as its own
    token beside the check or proof that asserts it. Shared or table-driven proofs may be reused when
@@ -120,16 +121,21 @@ Removing a redundant test is its own reviewed change, never part of a fix or a r
 2. List its tests per layer and map each to the claim or invariant it proves.
 3. Find candidates:
    - (a) a higher-layer test whose assertions the lower-layer owner all covers, proven under the
-     [lowest-layer rule](#choosing-the-layer);
+     [lowest-layer rule](#choosing-the-layer); never a `@smoke` cohort member or the sole proof of
+     a journey or of wiring;
    - (b) a test that kills no mutant, or only mutants another test also kills, found by a
-     [mutation](#mutation) run over the scope that reports every killing test (no bail);
+     [mutation](#mutation) tool run over the scope that reports every killing test (no bail).
+     Propose at most one removal per equal-kill set, keeping its lowest-layer member. Without a
+     mutation tool, class (b) is not proposed;
    - (c) a test over a forbidden subject: copy, snapshots, config or CSS;
    - (d) a duplicate suite.
 4. For each candidate, map every unique assertion to the proof that is kept.
 5. Delete in its own `test(...)` commit, never inside a fix.
-6. Re-run mutation over the scope. The kill set must not shrink; a new survivor reverts that deletion.
+6. Re-run mutation over the scope, or without a tool the manual faults the removed test used to
+   kill. The kill set must not shrink; a new survivor reverts that deletion.
 7. A fresh Verifier checks the mapping.
-8. Never prune a SEC proof without a named replacement at a lower layer.
+8. Never prune a member of the permanent security smoke suite; any other SEC proof needs a named
+   lower-layer replacement.
 
 ## Test execution cost
 

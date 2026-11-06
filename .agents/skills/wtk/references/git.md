@@ -34,7 +34,7 @@ refactor/repository-boundaries
 | `refactor` | Structure changes, no behaviour change |
 | `perf` | Behaviour unchanged, measurably faster |
 | `docs` | Documentation and guidelines only |
-| `test` | Test-only work — rare, since tests ship with their behaviour |
+| `test` | Test-only work, including pruning commits — rare otherwise, since tests ship with their behaviour |
 | `build` | Tooling and dependencies |
 | `ci` | CI configuration |
 

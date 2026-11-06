@@ -165,8 +165,8 @@ The patterns exist so that failure states, state transitions and optional behavi
 first-class criteria instead of footnotes squeezed into a subordinate clause of some other
 line. That is the whole reason not to use one shape.
 
-**Rules.** One requirement per criterion, never two behaviours bundled. Concrete values - a
-status code, a field, a bound - never "quickly", "gracefully" or "properly". Every criterion
+**Rules.** One requirement per criterion, never two behaviours bundled. Concrete values - an
+outcome, a field, a bound - never "quickly", "gracefully" or "properly". Every criterion
 contains a SHALL and is measurable. Edge cases are criteria, usually IF/THEN, not a separate
 list.
 

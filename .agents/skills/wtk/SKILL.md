@@ -34,8 +34,9 @@ Load shared references only for the current operation:
 | Preserve explicit reuse, construction order or approval requirements | [Construction constraints](references/construction-constraints.md) |
 | Phase checkpoint, resume, compaction, context pressure or session transfer | [Context recovery](references/context-handoff.md) |
 | Edit agent instructions or skill references | [Context budget](references/context-budget.md) |
-| Implementation through delivery, when the project's `AGENTS.md` opts into execution metrics | [Execution metrics](references/execution-metrics.md) |
+| Implementation through delivery, when the project's `AGENTS.md` opts into execution metrics ([settings](references/project-settings.md)) | [Execution metrics](references/execution-metrics.md) |
 | Derive criteria/checks, build, verify, or apply adopted project guidance | [Project requirements](references/project-requirements.md) |
+| Read or record a project-declared WTK command, path or policy | [Project settings](references/project-settings.md) |
 
 - An explicit PRD, RFC or ADR authoring request: follow
   [product and decision artifacts](references/artifacts.md#product-and-decision-artifacts).
@@ -64,6 +65,9 @@ Load shared references only for the current operation:
   route to discovery merely because the cause is unknown.
 - A user explicitly names a capability (`wtk-deep-review`, `wtk-qa`, `wtk-ship`, or
   another `wtk-*` skill): invoke that capability directly and do not reopen planning.
+- A capability requested in plain words routes the same way: "review in depth" → `wtk-deep-review`,
+  "check reuse" → `wtk-reuse-review`, "walk QA" → `wtk-qa`, "ship it" → `wtk-ship`, "check
+  knowledge" → `wtk-knowledge-check`, "review the tests of X" → `wtk-test-review`.
 
 When `wtk-discover` resolves an idea that entered through this router, continue into the integrated
 Lean route after the discovery decision. Direct invocation of `wtk-discover` retains its upstream
