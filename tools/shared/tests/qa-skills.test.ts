@@ -787,7 +787,7 @@ describe("adoption and public setup", () => {
       skill,
       readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").match(/^  version: '(.+)'$/m)?.[1],
     ]);
-    expect(skillVersions.length).toBe(13);
+    expect(skillVersions.length).toBe(14);
     expect(skillVersions).toEqual(skillVersions.map(([skill]) => [skill, manifest.version]));
     const agentBlockedSkills = readdirSync(skillsRoot).filter((skill) =>
       readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").includes("disable-model-invocation"),
@@ -987,5 +987,22 @@ describe("testing policy", () => {
     expect(normalized).toContain("Never remove the only proof of cross-component wiring.");
     expect(normalized).toContain("Never prune a SEC proof without a named replacement at a lower layer.");
     expect(readRepositoryFile(".agents/skills/wtk/references/validation.md")).toMatch(/^## Test tiers$/m);
+  });
+});
+
+describe("test review skill", () => {
+  it("is an agent-invocable, proposal-only skill routed from wtk", () => {
+    const path = ".agents/skills/wtk-test-review/SKILL.md";
+    const source = readRepositoryFile(path);
+    const { name, description } = skillMetadata(path);
+    expect(name).toBe("wtk-test-review");
+    expect(description).toContain("Use when");
+    expect(description).toContain("not deleting tests");
+    expect(source).not.toContain("disable-model-invocation");
+    expect(source).toContain("../wtk/references/test-contract.md#pruning");
+    expect(source).toContain("../wtk/references/validation.md#test-tiers");
+    expect(source).toContain("e2e replaceable by lower layer");
+    expect(readRepositoryFile(".agents/skills/wtk/SKILL.md")).toContain("`wtk-test-review`");
+    expect(readRepositoryFile("README.md")).toContain("`wtk-test-review`");
   });
 });

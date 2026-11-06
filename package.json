@@ -30,6 +30,7 @@
     ".agents/skills/wtk-qa-execute",
     ".agents/skills/wtk-deep-review",
     ".agents/skills/wtk-ship",
+    ".agents/skills/wtk-test-review",
     "!**/__pycache__/**",
     "!**/*.pyc"
   ],

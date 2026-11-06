@@ -58,6 +58,8 @@ Load shared references only for the current operation:
   which produces the upstream `.tasks/<name>.md` contract.
 - An approved modular `.tasks/<name>.md` or `.checks/<feature>.md`: read and invoke
   `wtk-implement`.
+- A request to review, audit or slim the tests of a module, feature or page: read and invoke
+  `wtk-test-review`. It proposes removals and missing tests; it never deletes a test.
 - A diagnosis with no unresolved product or architecture choice: continue diagnosis directly; do not
   route to discovery merely because the cause is unknown.
 - A user explicitly names a capability (`wtk-deep-review`, `wtk-qa`, `wtk-ship`, or

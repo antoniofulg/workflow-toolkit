@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- `wtk-test-review`, an agent-invocable skill that reviews one scope's tests with scoped mutation,
+  classifies them (killing, redundant, e2e replaceable by lower layer, forbidden subject, duplicate
+  suite) and proposes removals and missing tests. It never deletes a test; removals follow the
+  pruning procedure. The full set is now 14 skills.
+
 ### Changed
 
 - `wtk-deep-review` no longer sets `disable-model-invocation`, so agents can invoke it through the
