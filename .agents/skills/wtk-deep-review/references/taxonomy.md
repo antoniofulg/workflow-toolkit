@@ -1,6 +1,6 @@
 # Review Taxonomy
 
-The grammar for defects, advisories, evidence, and objective suppressions. Every review uses one assertive posture: report every specific, actionable survivor regardless of size.
+The grammar for defects, advisories, severity, volume, evidence, and objective suppressions; the single owner of severity and volume rules. Every review uses one assertive posture: report every specific, actionable survivor regardless of size.
 
 ## Result classes
 
@@ -21,6 +21,10 @@ There is no advisory quota. A small advisory is valid when the premise is observ
 | `🔵 Trivial` | advisory | Cheap clarity, naming, documentation, small deduplication, or idiom improvement. |
 
 Severity measures impact if unfixed, not confidence or effort. Choose the lower level when between two levels.
+
+A violation of an architecture invariant or module boundary that the project declares is a `🟠 Major`
+defect, never an advisory: name the declared rule and its source as the Premise. An undeclared
+structural preference stays an advisory.
 
 ## Effort modifier
 

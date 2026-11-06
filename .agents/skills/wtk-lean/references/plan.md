@@ -87,7 +87,7 @@ manufactures questions the same way a checklist with no `n/a` escape manufacture
 
 **What you do not know is findable, and the next two sections are the two lists that find it.**
 `## Observable` walks the surfaces this feature exposes, because every surface carries the
-same decisions every time; the nine dimensions after it walk the system properties. Neither is a
+same decisions every time; the eleven dimensions after it walk the system properties. Neither is a
 prompt to think harder - both are enumerations, for the same reason: "consider the edge cases"
 finds nothing, and a fixed list with a mandatory `n/a` escape finds the item nobody mentioned.
 
@@ -130,7 +130,7 @@ do not ask "what did I forget about this screen", you walk the row.
 | a document or copy someone reads | structure, tone, depth, and what the reader is meant to do next |
 | a collection being organised | the grouping criterion, naming, ordering, what happens to duplicates, and the exception that does not fit |
 
-Nothing about state, persistence or contracts is here - that is the nine dimensions below, and
+Nothing about state, persistence or contracts is here - that is the eleven dimensions below, and
 duplicating it in both places produces two answers that disagree.
 
 **Each item resolves to a criterion, to something that already behaves that way, or to an explicit
@@ -165,8 +165,8 @@ The patterns exist so that failure states, state transitions and optional behavi
 first-class criteria instead of footnotes squeezed into a subordinate clause of some other
 line. That is the whole reason not to use one shape.
 
-**Rules.** One requirement per criterion, never two behaviours bundled. Concrete values - a
-status code, a field, a bound - never "quickly", "gracefully" or "properly". Every criterion
+**Rules.** One requirement per criterion, never two behaviours bundled. Concrete values - an
+outcome, a field, a bound - never "quickly", "gracefully" or "properly". Every criterion
 contains a SHALL and is measurable. Edge cases are criteria, usually IF/THEN, not a separate
 list.
 
@@ -183,7 +183,7 @@ below. Walk the failure that would produce the forbidden thing - the remote call
 the local write did not - because that is the path nobody pictures. Where no mechanism exists it
 is a door or a question, never a criterion standing alone.
 
-## Sweep the nine dimensions
+## Sweep the eleven dimensions
 
 The source covers what somebody thought of. This is the list of what nobody writes down, and
 it is fixed so a blank cannot look like nothing to answer:
@@ -199,13 +199,15 @@ it is fixed so a blank cannot look like nothing to answer:
 | External-dependency failure | circuit breakers, fallbacks |
 | State transitions | valid transitions, guards |
 | Observability | logging, metrics, tracing |
+| Deploy compatibility / rollback | mixed-version window, expand/contract, rollout flag, how it reverses |
+| Performance budget | load, hot paths, N+1 queries, payload size |
 
-Walk all nine. Each resolves to a criterion, to something the code already handles, or to an
+Walk all eleven. Each resolves to a criterion, to something the code already handles, or to an
 explicit `n/a because [reason]`. The `n/a` escape is mandatory - it is what stops the list from
 manufacturing requirements. Where a dimension needs a product answer it becomes an open
 question, never a criterion you invented.
 
-Concurrency and observability hide better than the other seven, because neither is visible to
+Concurrency and observability hide better than the other nine, because neither is visible to
 a user until it fails. Those two are why this list exists.
 
 A landing must observe **that** dimension. Reaching for a number already used on another line
@@ -214,7 +216,8 @@ says nothing about two requests arriving at once. When you catch yourself borrow
 answers are `n/a` with the reason, or a question.
 
 **Where the record lives:** the landing for each dimension is written in `checks.md` under
-`## Swept`, because each one has to cite a check number. Do not duplicate it here.
+`## Swept`, because each one has to cite a check number. Do not duplicate it here. A Swept line
+never requires a new test: it cites a check, an existing constraint, or `n/a`.
 
 # Writing: what is being built
 
@@ -268,16 +271,19 @@ that disagrees with the schema in three months.
 
 ## Surface - the signature
 
-Only a route this feature adds or whose signature changes. An existing route that still works
-is a criterion or an `Impact` row, not a Surface line. The **signature, not a specification**:
-route, what goes in, what comes out, which statuses. A payload key stops being yours to rename
+Only an interface this feature adds or whose signature changes: an HTTP route (`METHOD /path`), a
+CLI verb, an exported symbol or an event topic. An existing interface that still works is a
+criterion or an `Impact` row, not a Surface line. The **signature, not a specification**: the
+interface, what goes in, what comes out, which outcomes - HTTP statuses, exit codes, error types
+or event names. A payload key stops being yours to rename
 the moment something outside this codebase reads it, which is why this is a review and not
 documentation.
 
-Do **not** put check numbers here - checks do not exist yet. Each route's statuses become a set
+Do **not** put check numbers here - checks do not exist yet. Each interface's outcomes become a set
 row in the `Coverage` join in `checks.md`, which is what proves none of them went unclaimed.
 
-`None - nothing consumed outside` is complete.
+`None - nothing consumed outside` is complete. When a public surface changes, write
+[the public surface contract](../../wtk/references/dx.md) before internal design.
 
 ## Landing - the one-way doors
 
@@ -289,6 +295,8 @@ Each row shows the **literal shape** the next person will copy and what you reje
 the property that disqualified it: "cleaner" cannot be argued with, "cannot express the next
 state" can. Where the choice was forced rather than compared, name the constraint that forced
 it. Keep the row short - `Relations` and `Surface` carry the diagram and the signature.
+When module boundaries or reuse are in play, judge the rows against
+[modeling](../../wtk/references/modeling.md) and [code reuse](../../wtk/references/code-reuse.md).
 
 `None - <why nothing here is one-way>` is a complete answer, and stating it is what makes the
 omission contestable.
@@ -344,10 +352,10 @@ Before presenting the plan, five checks. Nothing proceeds unresolved **and** unm
    nobody populated, a credential nobody issued. Three kinds: `blocks`, `blocks go-live`,
    `open`.
 4. **Both enumerations are walked, not skimmed.** Every item of every surface present has a
-   landing in `## Observable`, and all nine dimensions have one in `checks.md`. A blank in either
+   landing in `## Observable`, and all eleven dimensions have one in `checks.md`. A blank in either
    is the failure both lists exist to make visible.
 5. **Every criterion has somewhere to land in the shape.** A criterion whose behaviour crosses
-   no hop in `Flow`, touches nothing in `Relations` and appears on no route in `Surface` is
+   no hop in `Flow`, touches nothing in `Relations` and appears on no interface in `Surface` is
    either out of scope or a gap in the shape. This is the check the two halves being one file
    buys, and it is the reason to write them in one sitting.
 
@@ -363,15 +371,13 @@ python3 <skill-dir>/scripts/validate_plan.py <feature>
 It fails a missing or empty section, a criterion that is not EARS-shaped, an assumption row with
 an empty default or rationale, a malformed requirement ID, an `Observable` row whose landing is blank or whose `n/a` carries
 no reason, a `Landing` row with no literal shape or no rejected alternative, a `Relations` block
-that names columns or types, a `Surface` row missing its statuses, and check numbers written
+that names columns or types, a `Surface` row missing its outcomes, and check numbers written
 into `Surface` before checks exist. It warns on a `Flow` hop naming a module marked neither as
 existing nor as a door. Judgment calls stay yours.
 
-Present the plan at the existing human review boundary. On receiving approval, write its native
+Present the plan at the existing human review boundary. On receiving approval, write its
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
-in that turn, with the actual decision/source, reviewed revision and scope. Do not prefill approval
-while drafting or require it in `validate_plan.py` before presentation. Checks and Build reuse
-this receipt within scope; execution settings are separate.
+in that turn; never prefill it while drafting.
 
 ## Template: `.specs/features/<feature>/plan.md`
 
@@ -430,11 +436,13 @@ One-way constraints: <field> unique (door <n>), <field> not null with <value> in
 
 ## Surface
 
-Only routes this adds or whose signature changes.
+Only interfaces this adds or whose signature changes: `METHOD /path`, a CLI verb, an exported
+symbol or an event topic. Outcomes are the enumerated results: HTTP statuses, exit codes, error
+types or event names.
 
-| Route | In | Out | Status |
+| Interface | In | Out | Outcomes |
 | --- | --- | --- | --- |
-| `<METHOD> /<path>` | `<field>`, `<field>` | `<field>` · `<field>` | `<code>`, `<code>`, `<code>` |
+| `<interface>` | `<field>`, `<field>` | `<field>` · `<field>` | `<outcome>`, `<outcome>`, `<outcome>` |
 
 <Or:> `None - nothing consumed outside`
 
@@ -538,7 +546,7 @@ Point at `Flow`, at `Impact`, and at any `Landing` door that still has a live al
 those are the three a reviewer would want named, not buried. Where `Relations` changes data
 that already exists or `Surface` changes something already consumed, say that too.
 
-Then continue into [checks.md](checks.md). Every route's statuses, every door, and every entity
+Then continue into [checks.md](checks.md). Every interface's outcomes, every door, and every entity
 here owes a set row or a check there - that derivation is the next step's job, and it is the one
 that catches what this file left implicit.
 

@@ -4,6 +4,115 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-11-06
+
+### Added
+
+- `wtk-test-review`, an agent-invocable skill that reviews one scope's tests with scoped mutation,
+  classifies them (killing, redundant, e2e replaceable by lower layer, forbidden subject, duplicate
+  suite) and proposes removals and missing tests. It never deletes a test; removals follow the
+  pruning procedure. The full set is now 14 skills.
+
+### Changed
+
+- `wtk-deep-review` no longer sets `disable-model-invocation`, so agents can invoke it through the
+  Skill tool. A test fails if any skill sets that flag.
+- `ad-index.py` reads the `| AD-NNN | ... |` decision table that `memory.md` documents, instead of
+  `### AD-NNN` headings, and accepts `--root`. The knowledge checker scans each feature's
+  `verification.md` and no longer checks a hardcoded architecture spine file.
+- Skill references fix broken cross-skill paths, a duplicated rule number, the `light` default
+  profile claim (`standard` is the default), false `Review-Signal` validation claims and a commit
+  hook path that failed in linked worktrees. A test fails on any unresolved relative `.md` path.
+- Project policy is now an overridable default: the QA root, branch naming, commit types and
+  validator, compatibility and language rules in the public surface contract (moved to
+  `wtk/references/dx.md` and routed from Plan), and tactical DDD layout rules. `check_commit.py`
+  accepts a `!` marker without a footer and no longer accepts `style` or `chore`; the pack drops
+  its attribution-trailer ban.
+- The implicit-dimension sweep gains deploy compatibility / rollback and performance budget, and
+  `test-contract.md` covers test doubles and consumer-driven contracts. Route snapshots drop the
+  constant `deep_review` and `parallelization` fields.
+- Execution metrics are opt-in: one router line in `wtk/SKILL.md` loads them when the project's
+  `AGENTS.md` opts in, replacing the per-skill preambles.
+- The Lean validators no longer judge the `## Approval` receipt; the Verifier confirms it names who
+  approved which revision. Checks-only work still needs `## Intent`.
+- Builds no longer estimate context with `wc -c / 4` or stop at a token budget. One builder runs
+  every slice and asks only when it actually hits a context limit.
+- `memory.md` defers to a project's `knowledge/` or decision docs when they exist.
+- The Lean `Surface` table is stack-neutral: an `Interface` column takes `METHOD /path`, a CLI verb,
+  an exported symbol or an event topic, and an `Outcomes` column takes any enumerated token (HTTP
+  status, exit code, error type or event name). The Coverage linkage is unchanged.
+- `ui` visual evidence records `runtime:` (browser or device/OS) and `scale:` (DPR or device scale),
+  with the viewport in CSS px or device points.
+- Discover's identifier ceiling includes commands, events and exported symbols, and its Contract,
+  Schema and Flow templates are labelled as HTTP/SQL examples with non-HTTP alternatives.
+- Deep Review's built-in excludes no longer skip `fixtures`, `testdata`, `*.d.ts` or `build`, and a
+  project can drop a built-in exclude with `!!pat` in `path_filters`.
+- Review severity and volume live only in the Deep Review taxonomy; `review-rounds.md` drops its
+  copy of the severity table and the prune-above-20 rule. A violation of a project-declared
+  architecture invariant or module boundary is a Major defect, and the optional `boundaries` sweep
+  lens reviews dependency direction, boundary leaks, cohesion and representable invalid states.
+- The reviewer must be a fresh agent without the author's transcript; a different model alone is
+  not sufficient. Same-turn Verifier dispatch is stated once, in the `wtk-lean` core contract.
+- Both verify procedures link one shared `wtk/references/verify-core.md` for approval, evidence or
+  zero, visual evidence, the swept re-read and scratch-worktree fault injection. Level gaps name
+  an outcome, interface or response shape, and the visual table's `Route/state` column is now
+  `Screen/state`.
+- Examples are stack- and product-neutral: English UI sample strings, a generic binding mockup
+  regression, placeholder paths in Deep Review, and no walkthrough effort or minutes estimate.
+  `usageLimitExceeded` and the SQLite telemetry reader are documented as one host's adapter.
+- Plan, modular planning and discovery link `modeling.md` and `code-reuse.md` when module
+  boundaries or reuse are in play, and `wtk-ship` states its modular `.tasks/`/`.checks/` closeout.
+- The knowledge checker reads `AD-NNN` ids from the decision table, matching `ad-index.py`, and
+  the Deep Review execution-metrics pointer applies only when the project opts in.
+- Testing policy limits test growth. An extra test names a regression no existing proof catches; a
+  decision table is enumerated once, at its own layer, and the boundary proof asserts the contract,
+  the wiring and one case per distinct outcome. A Swept line never requires a new test, and one SEC
+  case gets one integration proof by default.
+- `test-contract.md` adds the binding lowest-layer rule (no e2e for what a unit or integration test
+  proves), a `## Mutation` policy scoped to changed decision code with example tools per stack and
+  no global score, and a `## Pruning` procedure. Fault injection runs a declared mutation command
+  and otherwise keeps up to five manual faults.
+- UI arrangement, order, count and copy are proven by paired visual captures; each screen keeps one
+  structural e2e guard, and the modular Screens table follows that split.
+- `validation.md` adds tool-neutral test tiers (T0 every change, T1 every PR or push with a capped
+  `@smoke` cohort, T2 full e2e pre-merge) and a flaky-test quarantine rule. The e2e feature marker
+  is runner-neutral.
+- The critical rule reads "Never weaken or skip a test, or delete one, to make a red gate pass";
+  removing a redundant test is a separate, reviewed change under the pruning procedure.
+- The visual fixtures use the neutral listing sample.
+- `wtk-ship` rechecks T2 (full e2e) and the project's required checks on the merge head and
+  reports quarantined tests; its push, pull request and merge authority is a default that a
+  project's merge authority, required reviews, branch protection and required checks override, and
+  it stops at the pull request when told so up front.
+- Verification reports record each fault's `Disposition` (`killed`, `equivalent - <reason>`,
+  `arid - <reason>`), a `Mutation run` summary row and a `Quarantined tests` line;
+  `validate_verification.py` accepts reasoned survivors and fails unrecorded ones.
+- `validate_plan.py` rejects placeholder Surface outcomes such as `-`, `n/a`, `none` and `TBD`.
+- One optional `## wtk-settings` section in a project's `AGENTS.md`, documented in
+  `wtk/references/project-settings.md`, declares tiers, mutation, quarantine, QA root,
+  compatibility, language, commit validator, execution metrics, merge authority and test-review
+  scopes; setup asks about them.
+- Pruning never removes a permanent security smoke member, proposes at most one removal per
+  equal-kill set, protects `@smoke` members and sole journey or wiring proofs, and falls back to
+  manual faults without a mutation tool.
+- Security severities use the review taxonomy (Critical or Major); a specialist "High" maps to
+  Major. Review rounds drop the second YAGNI severity rule.
+- `wtk` routes plain-language capability requests; `wtk-qa` reads the flow from the request when
+  no argument expands; examples, tiers and the README runtime requirements are stack-neutral.
+
+- A Minor-only remediation batch in a feature run gets a fresh Verifier over its diff. It still
+  starts no full-feature Verifier, QA phase or remediation check.
+- Every skill now carries the toolkit version in `metadata.version`, replacing independent
+  skill versions. A test fails if any skill differs from `package.json`.
+
+### Removed
+
+- `wtk-ship/scripts/review_convergence.py` and `wtk-ship/remediation.py`; the stall rule is now
+  prose in `review-rounds.md`. Deep Review drops the `REMOVED_SWEEPS` table, so an unknown sweep
+  fails like any other. Prose tombstones about removed options and earlier ceremony are gone.
+- The optional `Review-Signal:` trailer section and `tools/review-metrics.py`, which only read it;
+  the agent-tool configuration and browser-queue routes in `validation.md` shrink to two rules.
+
 ## [4.2.0] - 2026-11-04
 
 ### Changed

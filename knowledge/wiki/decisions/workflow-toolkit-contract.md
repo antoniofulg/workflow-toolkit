@@ -1,10 +1,10 @@
 ---
 type: Decision
 title: Workflow Toolkit contract
-description: Workflow Toolkit replaces the task pipeline with upstream-shaped Lean and modular routes, sequential whole-slice builds, one full-feature Verifier, and transient feature artifacts.
+description: Workflow Toolkit replaces the task pipeline with upstream-shaped Lean and modular routes, sequential whole-slice builds, one full-feature Verifier over a shared verify core, and transient feature artifacts.
 tags: [workflow-toolkit, lean, verification, lifecycle]
 status: stable
-generated: { by: codex/gpt-6, at: 2026-09-23T22:39:27Z }
+generated: { by: claude/opus-5.5, at: 2026-11-06T12:00:00Z }
 sources:
   - id: maintainer-contract
     resource: ../../raw/2026-09-12-workflow-toolkit-contract.md
@@ -33,15 +33,31 @@ sources:
   - id: toolkit-router
     resource: ../../../.agents/skills/wtk/SKILL.md
     title: Workflow Toolkit route contract
-    last_modified: 2026-09-23
+    last_modified: 2026-11-06
   - id: artifact-lifecycle
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact Lifecycle
-    last_modified: 2026-09-13
+    last_modified: 2026-11-06
+  - id: maintainer-settings
+    resource: ../../raw/2026-11-04-fix-verification-and-execution-settings.md
+    title: Maintainer decision removing model approval
+    last_modified: 2026-11-04
   - id: upstream-pin
     resource: ../../../.agents/skills/wtk-lean/.skill-meta.json
     title: Lean skill upstream source metadata
-    last_modified: 2026-09-23
+    last_modified: 2026-10-20
+  - id: generalization
+    resource: ../../raw/2026-11-06-skill-pack-generalization.md
+    title: Maintainer-approved skill-pack generalization
+    last_modified: 2026-11-06
+  - id: verify-core
+    resource: ../../../.agents/skills/wtk/references/verify-core.md
+    title: Verify Core — obligations both verify routes share
+    last_modified: 2026-11-06
+  - id: dx
+    resource: ../../../.agents/skills/wtk/references/dx.md
+    title: Public surface contract
+    last_modified: 2026-11-06
 ---
 
 # Workflow Toolkit contract
@@ -61,11 +77,14 @@ existed; current runtime and documentation do not preserve those paths.[^state-a
 
 | Concern | Current contract | Boundary it protects |
 | --- | --- | --- |
-| Public identity | Twelve `wtk` and `wtk-*` skills installed as one set through a skill installer | Ponytail and security lifecycle stay optional external skills.[^state-ad-041][^state-ad-042] |
+| Public identity | The full `wtk` and `wtk-*` skill set installed as one set through a skill installer | Ponytail and security lifecycle stay optional external skills.[^state-ad-041][^state-ad-042] |
 | Planning shapes | Integrated Lean owns `plan.md`, `checks.md`, and `verification.md`; direct modular discovery/planning retains `.design/`, `.tasks/`, and `.checks/` | Each upstream shape remains recognizable instead of passing through a local compatibility schema.[^toolkit-router][^state-ad-035] |
 | Build and proof | `Feature -> Slice -> Check`; builders run sequentially, hand off only between whole observable slices, and make coherent commits before one fresh independent Verifier covers the complete feature | Builder decomposition stays flexible while slice integrity, author/verifier independence, and complete-feature proof stay fixed.[^state-ad-036] |
+| Shared verification | Lean and modular verify procedures link one verify core for approval, evidence or zero, visual evidence, the swept re-read and scratch-worktree fault injection; each keeps its route-specific steps | The two routes cannot drift on the obligations they share.[^verify-core][^generalization] |
+| Approval | `## Approval` is a written convention; no validator judges it, and the Verifier confirms it names who approved which revision | Markdown cannot authenticate authority, so judgment sits with the independent Verifier.[^generalization] |
+| Public surfaces | Both planning routes load `wtk/references/dx.md` when a public surface changes; compatibility and language follow the project's declared policy | One contract serves Lean and modular planning.[^dx][^generalization] |
 | Profiles and capabilities | Lean profiles are `light`, `standard`, and `ui`, with `standard` as default; security, UI, QA, review, and delivery load when their owning trigger applies | Conditional dispatch is not permission to skip a mandatory check. Deep Review runs on demand.[^state-ad-036][^state-ad-042] |
-| Agent settings | Each project owns native provider, model, and effort metadata; WTK's feature snapshot records provider and role identity only | WTK does not write project agent files or require a TOML configuration.[^state-ad-042] |
+| Agent settings | Each project owns native agent files. The coordinator chooses and states provider, model, and effort without human approval, a choice the human names wins, and the feature snapshot records the selected stage settings | WTK does not write project agent files or require a TOML configuration.[^state-ad-042] Feature approval stays separate.[^maintainer-settings] |
 | Lifecycle | Keep an exact feature directory through independent verification, selected gates, and required promotion; then delete that directory | Foreign pending work, unrequested legacy-plan adaptation, decisions, tests, product docs, QA evidence, and knowledge are outside cleanup.[^artifact-lifecycle][^state-ad-037] |
 
 The Lean source metadata remains part of the drift boundary, not merely attribution: local
@@ -82,10 +101,12 @@ and modular contracts.[^upstream-pin][^maintainer-contract]
 - AD-041 replaces the package installer with a complete skill-installer set, and AD-042 removes
   WTK-owned configuration and packet generation.[^state-ad-041][^state-ad-042]
 - [Deep review cadence](/decisions/deep-review-cadence.md) remains a separate reversible cost choice:
-  Workflow Toolkit renames the capability but preserves `skip` as the default.
+  Deep Review stays on demand, and route snapshots no longer record the constant cadence field.
 - [QA at feature close](/decisions/qa-at-feature-close.md) still prohibits per-slice QA. Workflow
   Toolkit changes technical proof to one full-feature independent Verifier; qualifying public
   changes still receive one feature-level QA cycle.
+- [Fix verification](/decisions/fix-verification.md) adds a diff-scoped Verifier outside the
+  full-feature pass and removes the human approval of execution settings.
 - [Workflow runtime ownership](/architecture/workflow-runtime-ownership.md) survives the
   replacement: namespace and artifact changes do not transfer product-owned content to the pack or
   broaden installer deletion authority.
@@ -98,4 +119,8 @@ and modular contracts.[^upstream-pin][^maintainer-contract]
 [^state-ad-041]: The consuming project owns its instructions and setup; WTK ships as skills.
 [^state-ad-042]: Native agent metadata owns model and effort; WTK records route identity only.
 [^artifact-lifecycle]: Durable facts move to their owning stores before exact-feature cleanup.
+[^maintainer-settings]: The maintainer removed human approval of provider, model and effort on 2026-11-04.
 [^upstream-pin]: The Lean skill records its upstream source, revision, content hash, and license in `.skill-meta.json`.
+[^generalization]: Decisions 5, 7 and 8: approval judged by the Verifier, `dx.md` location, shared verify core.
+[^verify-core]: The shared obligations and the links from both verify procedures.
+[^dx]: Public surface contract and its project-owned compatibility and language policy.

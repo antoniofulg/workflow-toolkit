@@ -4,7 +4,7 @@ description: 'Turn decided sources into modular tasks with observable criteria a
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: 0.3.0
+  version: '5.0.0'
 ---
 
 # TLC Plan
@@ -15,7 +15,10 @@ This skill plans modular work and does not implement it.
 
 When implementing a selected image or design, freeze [the UI contract](../wtk/references/ui-ux.md)
 before coding and carry its source and evidence requirements through build and independent verification.
-Use the `ui` profile for binding interface sources.
+Use the `ui` profile for binding interface sources. When the work adds or changes a public surface,
+write [the public surface contract](../wtk/references/dx.md) before the criteria that depend on it.
+When module boundaries or reuse are in play, apply [modeling](../wtk/references/modeling.md) and
+[code reuse](../wtk/references/code-reuse.md) before recording `Decided` choices.
 
 ## Source and scope
 
@@ -75,10 +78,11 @@ walk never creates a criterion just to fill a row.
 | Document/copy | Structure, tone, depth and the reader's next action |
 | Organized collection | Grouping, naming, ordering, duplicates and exceptions |
 
-Record the landing for each of the nine implicit dimensions in `Swept`: validation, failure modes,
+Record the landing for each of the eleven implicit dimensions in `Swept`: validation, failure modes,
 idempotency and retry, authorization, concurrency and ordering, data lifecycle, external-dependency
-failure, state transitions, and observability. Each lands on an existing criterion, existing behavior,
-`n/a` with a reason, or `Unresolved`; these dimensions do not authorize extra scope.
+failure, state transitions, observability, deploy compatibility / rollback, and performance budget.
+Each lands on an existing criterion, existing behavior, `n/a` with a reason, or `Unresolved`; these
+dimensions do not authorize extra scope.
 
 A cited criterion must observe that dimension. For example, rejecting an existing duplicate does
 not prove concurrent writes are safe, and event deduplication does not prove ordering. Keep the
@@ -106,10 +110,8 @@ Use existing source material to complete the artifact without asking the user to
 Present the task or justified split, followed by unresolved decisions with blockers first. Complete
 the requested planning artifact and its applicable checks; do not begin implementation unless it
 was also authorized. A source with unresolved product intent remains provisional.
-Record observed authorization in the task's native
-[`## Approval` receipt](../wtk/references/construction-constraints.md#native-feature-approval),
-including actual decision/source, reviewed revision and scope. An already authorizing request or
-accepted source may supply this evidence without another human stop. Execution settings are separate.
+Record observed authorization in the task's
+[`## Approval` receipt](../wtk/references/construction-constraints.md#native-feature-approval).
 
 Tasks are verification units; pull requests are review units. Preparation may belong in a commit
 or PR without being its own task. If review needs smaller PRs, propose that separately using the

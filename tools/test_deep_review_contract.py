@@ -511,6 +511,37 @@ class DeepReviewContractTests(unittest.TestCase):
                 result = run_script(BUILD_MANIFEST, root, "--out", str(root / ".wtk-deep-review/out"), "--base", "HEAD", "--head", "HEAD")
                 self.assertNotEqual(result.returncode, 0)
 
+    def test_default_filters_keep_test_assets_and_allow_negation(self) -> None:
+        paths = ("tests/fixtures/input.txt", "pkg/testdata/case.txt", "types/api.d.ts", "build/rules.txt",
+                 "src/generated/client.txt")
+
+        def dispositions(root: Path, base: str) -> dict[str, str]:
+            result = run_script(BUILD_MANIFEST, root, "--out", str(root / ".wtk-deep-review/out"), "--base", base, "--full")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            manifest = json.loads((root / ".wtk-deep-review/out/manifest.json").read_text(encoding="utf-8"))
+            return {item["path"]: item["disposition"] for item in manifest["files"]}
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = init_repo(raw)
+            base = git(root, "rev-parse", "HEAD")
+            for path in paths:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text("content\n", encoding="utf-8")
+            git(root, "add", ".")
+            git(root, "commit", "-qm", "add assets")
+            found = dispositions(root, base)
+            for path in paths[:4]:
+                self.assertEqual(found[path], "selected", path)
+            self.assertEqual(found["src/generated/client.txt"], "ignored")
+
+            (root / ".wtk-deep-review.yaml").write_text("path_filters:\n  - \"!!**/generated/**\"\n", encoding="utf-8")
+            self.assertEqual(dispositions(root, base)["src/generated/client.txt"], "selected")
+
+            (root / ".wtk-deep-review.yaml").write_text("path_filters:\n  - \"!!**/nothing/**\"\n", encoding="utf-8")
+            result = run_script(BUILD_MANIFEST, root, "--out", str(root / ".wtk-deep-review/out"), "--base", base, "--full")
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+            self.assertIn("no built-in exclude to negate: !!**/nothing/**", result.stderr)
+
     def test_runner_rejects_removed_workers_option(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -884,16 +915,16 @@ class DeepReviewContractTests(unittest.TestCase):
             self.assertEqual([job["lane"] for job in jobs], ["defect"])
             self.assertNotIn("polish", build.stdout)
 
-    def test_removed_sweeps_are_rejected_by_name(self) -> None:
+    def test_unknown_sweeps_are_rejected(self) -> None:
         # IT-012 (P3 AC3)
-        for sweep, owner in (("tests", "test adequacy"), ("spec-parity", "spec parity")):
+        for sweep in ("tests", "spec-parity"):
             with self.subTest(sweep=sweep), tempfile.TemporaryDirectory() as raw:
                 root = init_repo(raw)
                 _, build = full_fixture(root, {"sweeps": [sweep], "cohorts": [
                     {"id": "A", "name": "all", "risk": "normal", "files": ["file0.txt", "file1.txt", "file2.txt"]},
                 ]})
                 self.assertEqual(build.returncode, 1, build.stdout + build.stderr)
-                self.assertIn(f"sweep '{sweep}' was removed: the Technical Verifier owns {owner}", build.stderr)
+                self.assertIn(f"sweep '{sweep}' has no built-in lens", build.stderr)
 
     def test_spec_contract_without_spec_parity_job_ships_with_no_conformance_section(self) -> None:
         # IT-013 (P3 AC4)
@@ -932,6 +963,17 @@ class DeepReviewContractTests(unittest.TestCase):
             self.assertEqual([job["kind"] for job in jobs], ["cohort", "cohort", "cohort", "sweep"])
             cohort_prompt = (out / "prompts/cohort-c0.md").read_text(encoding="utf-8")
             self.assertIn("concrete, actionable maintainability or project-rule improvements", cohort_prompt)
+
+    def test_boundaries_sweep_is_a_built_in_lens(self) -> None:
+        # F31: the optional boundaries lens uses the REPORT GATE shape and cites the wtk modeling rubric
+        with tempfile.TemporaryDirectory() as raw:
+            root = init_repo(raw)
+            out, build = full_fixture(root, {"sweeps": ["boundaries"], "cohorts": self.one_cohort_per_file()}, lines=300)
+            self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
+            prompt = (out / "prompts/sweep-boundaries.md").read_text(encoding="utf-8")
+            for anchor in ("REPORT GATE:", "references/modeling.md", "references/code-reuse.md",
+                           "dependency direction", "declared invariant is Major"):
+                self.assertIn(anchor, prompt)
 
     def test_sweep_may_not_re_report_a_single_cohort_result(self) -> None:
         # C9: a sweep result inside cohort-owned hunks needs also_applies across two other files

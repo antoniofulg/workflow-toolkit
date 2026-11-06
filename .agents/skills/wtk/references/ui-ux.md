@@ -28,9 +28,9 @@ selected source; record and resolve each conflict before coding.
 - **Approved source/frame:** tool and frame, or checked-in export path
 - **Revision/frozen export:** revision, or frozen export path plus commit/hash
 - **Intent:** binding implementation (default), or inspiration with the user instruction cited
-- **Route and mapping:** route; selected state ↔ exact mobile and desktop CSS viewport width×height pairs
+- **Route and mapping:** route or screen; selected state ↔ exact viewport width×height pairs (CSS px or device points)
 - **Captures:** local original/reference, full-page and actual viewport capture paths
-- **Scale/environment:** source pixels per CSS pixel (source scale), browser, OS, DPR, fixtures/content, loaded fonts/assets and theme
+- **Scale/environment:** source pixels per viewport unit (source scale), runtime (browser or device/OS), scale (DPR or device scale), fixtures/content, loaded fonts/assets and theme
 - **Tokens:** source provenance; mapped tokens; aliases/themes; inferred or missing values
 - **Composition:** header/navigation, content hierarchy, filter/control placement, cards, footer; order and containment
 - **Visual requirements:** spacing/density, typography/scale/weight, palette/theme, borders/radii, media crop/aspect ratio
@@ -71,7 +71,7 @@ Screens and components this feature deliberately does not touch.
    for a material redesign. “Use project tokens” is not an exception: map matching tokens or add a
    scoped variant through the canonical system. Preserve unaffected source requirements. Never render
    unsupported controls or metrics. Use clearly identified placeholder media when real photos are
-   missing; stock/generated imagery must not imply it depicts a real venue.
+   missing; stock/generated imagery must not imply it depicts the real subject.
 5. **Freeze the surface before internals.** Reopen this document explicitly when the surface changes.
 6. Its existence marks the feature UI-bearing for QA when the proportional classifier selects QA.
 7. **Trace the common completion path.** Walk from user intent to completion for each changed
@@ -123,8 +123,8 @@ No new showcase, preview deployment, design integration, or split frontend/backe
 
 For a binding source, use the following acceptance procedure even when behavior tests or QA pass.
 
-1. **Builder:** render at every contracted mobile and desktop **CSS viewport** and state, recording
-   source scale, browser/OS, DPR, fixtures, fonts/assets and theme. Capture that genuine render;
+1. **Builder:** render at every contracted **viewport** and state, recording source scale, runtime,
+   scale, fixtures, fonts/assets and theme. Capture that genuine render;
    resizing or cropping an image rendered at another viewport does not prove the contracted render.
    Inspect beside the source, fix material mismatches and recapture affected evidence before handoff.
    Capture the full page for composition and the actual viewport for interaction states, including
@@ -132,11 +132,11 @@ For a binding source, use the following acceptance procedure even when behavior 
    remain reachable; exercise them in the actual viewport.
 2. Compare hierarchy, spacing, typography, palette, controls, media and responsive layout against the
    recorded requirements and individual differences. Check inherited dark-theme leakage against the
-   selected theme, and check placeholder imagery/labels cannot imply a photographed real venue.
+   selected theme, and check placeholder imagery/labels cannot imply a photograph of the real subject.
 3. **Independent Verifier:** open the source and captures, check freshness against the implementation
    revision and environment, and judge every contracted pair independently of the builder's verdict.
    Reproduce selected interaction states in actual viewports when captures cannot prove reachability.
-   A materially different theme, header, filter layout, card composition or footer is a visual FAIL
+   A materially different theme, region, layout or composition is a visual FAIL
    even with green functional tests and QA. Missing source/captures or uninspected pairs are unverified
    and cannot PASS. Put these failures in the existing binding-source findings as well as the verdict.
 4. Record evidence in the existing task, verifier or QA report using the literal columns below.
@@ -146,14 +146,14 @@ For a binding source, use the following acceptance procedure even when behavior 
    [validation](validation.md). An old PASS or matching filename alone is not equivalence.
    Keep captures disposable but available through independent review.
 
-| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| Source/revision | Source scale | Implementation revision | Screen/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source and revision / contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
+| frozen source and revision / contract row | 1x | tested revision | screen and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
 
-`Source scale` is positive source pixels per CSS pixel; mark inferred raster calibration in the
-source/contract, not a fabricated precise value. `Viewport/scroll` uses CSS width×height and CSS
-scroll x,y. Record browser, OS and positive `DPR:` explicitly in Environment along with content,
-fonts/assets and theme. Each capture cell is one literal local file path, optionally backtick-wrapped;
+`Source scale` is positive source pixels per viewport unit; mark inferred raster calibration in the
+source/contract, not a fabricated precise value. `Viewport/scroll` uses width×height and scroll x,y
+in CSS px or device points. Record `runtime:` (browser or device/OS) and a positive `scale:` (DPR
+or device scale) explicitly in Environment along with content, fonts/assets and theme. Each capture cell is one literal local file path, optionally backtick-wrapped;
 relative paths resolve beside the report, absolute local paths are allowed. Paths are data, never
 commands, shell substitutions or URLs. The Lean completion gate requires these columns, usable
 values and existing files under `ui`; non-UI profiles acquire no screenshot obligation. It cannot

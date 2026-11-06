@@ -30,7 +30,9 @@ on-demand Deep Review, project-selected QA capabilities, and `stall_attempts = 3
   non-English messages do not change the artifact language.
 - **Do not preserve backward compatibility.** Remove obsolete paths instead of adding compatibility
   layers, fallbacks, or migrations. A rename updates code, schema, API, tests and docs in one change.
-- **Never weaken, skip or delete a test to make a gate pass.**
+- **Never weaken or skip a test, or delete one, to make a red gate pass.** Removing a redundant test
+  is a separate, reviewed change under the test-pruning procedure in
+  `.agents/skills/wtk/references/test-contract.md`.
 - Derive tests from acceptance criteria or an identified invariant, not implementation details or a
   coverage target. Extend the canonical suite at the owning layer.
 - **Remote delivery follows `wtk-ship`.** Invoking it, or a human go-ahead on proven-ready work,
@@ -68,7 +70,6 @@ Delivery is human-scheduled. Git and the artifacts named below own durable state
 ## wtk-lean
 
 profile: standard
-budget: 200k
 
 ## Load (the heading, not the whole file)
 
@@ -82,7 +83,7 @@ budget: 200k
 | Adds or changes a screen | `.agents/skills/wtk/references/ui-ux.md` |
 | Front-end code or a mockup | `.agents/skills/wtk/references/frontend.md` — only the heading in dispute |
 | Module boundary, port, or domain type | `.agents/skills/wtk/references/modeling.md` |
-| Public surface — route, CLI verb, config key | `.agents/skills/wtk-plan/references/dx.md` |
+| Public surface — route, CLI verb, config key | `.agents/skills/wtk/references/dx.md` |
 | Diff changes user-visible behaviour | `.agents/skills/wtk-qa/references/qa-scenarios.md` |
 | QA pass at the end of a feature | `.agents/skills/wtk-qa-execute/references/qa-execution.md` |
 | Reviewing, or acting on findings | `.agents/skills/wtk/references/review-rounds.md` |

@@ -77,102 +77,74 @@ class WorkflowValidatorTests(unittest.TestCase):
         errors, _warnings = validate_verification._check_feature(str(FIXTURES), "fixture")
         self.assertEqual(errors, [])
 
-    def test_approval_receipts_reach_both_cli_gates(self) -> None:
+    def test_surface_accepts_non_http_interfaces_and_outcomes(self) -> None:
         source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
-        receipt, rest = source.split("## Problem", 1)
-        invalid = {
-            "absent": "# Dunning\n\n## Problem" + rest,
-            "empty": source.replace("## Approval", "## Approval\n\n## Empty", 1),
-            "fenced example": "# Dunning\n\n```markdown\n" + receipt + "```\n\n## Problem" + rest,
-            "tilde fenced example": "# Dunning\n\n~~~markdown\n" + receipt + "~~~\n\n## Problem" + rest,
-            "placeholder": source.replace("User approved the dunning plan in TLC-412 comment 7.", "<actual user decision>"),
-            "bracket placeholder": source.replace("dunning-plan-3 on base a1b2c3d", "[reviewed revision]"),
-            "example": source.replace("User approved the dunning plan in TLC-412 comment 7.", "Example: user approves"),
-            "unfenced template": source.replace("## Approval", "## Approval\n\nTemplate: proposed receipt"),
-            "plain placeholder": source.replace("dunning-plan-3 on base a1b2c3d", "reviewed revision"),
-            "ellipsis decision": source.replace("User approved the dunning plan in TLC-412 comment 7.", "..."),
-            "unicode ellipsis revision": source.replace("dunning-plan-3 on base a1b2c3d", "…"),
-            "punctuation-only scope": source.replace("Both dunning slices and local implementation/commits; no remote delivery.", "._? –"),
-            "duplicate decision": source.replace("## Approval", "## Approval\n\n- Decision: user approved another scope"),
-            "execution settings only": source.replace("## Approval", "## Execution selection approval"),
-            "empty scope": source.replace("Both dunning slices and local implementation/commits; no remote delivery.", ""),
-            "no source or date": "\n".join(line for line in source.splitlines() if not line.startswith(("- Source:", "- Date:"))),
+        http_row = "| `POST /webhooks/provider` | the provider envelope as sent | `{}` · `{error}` | `200`, `409`, `422` |"
+        self.assertIn(http_row, source)
+        rows = {
+            "billing suspend <account>": "| `billing suspend <account>` | account id | summary line | exit `0`, exit `2`, `AccountNotFound` |",
+            "billing.subscription_suspended": "| `billing.subscription_suspended` | charge result | event payload | `emitted`, `skipped` |",
         }
-        for title, plan in invalid.items():
-            with self.subTest(title=title), tempfile.TemporaryDirectory() as raw:
+        for interface, row in rows.items():
+            with self.subTest(interface=interface), tempfile.TemporaryDirectory() as raw:
                 root = Path(raw)
                 feature = scaffold(root)
-                (feature / "plan.md").write_text(plan, encoding="utf-8")
-                for gate in ("validate_checks", "validate_verification"):
-                    result = run_gate(root, gate)
-                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                    self.assertIn("approval", result.stdout.lower())
+                (feature / "plan.md").write_text(source.replace(http_row, row), encoding="utf-8")
+                errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
+                self.assertEqual(errors, [])
+                _errors, warnings, _profile = validate_checks.check_file(str(feature / "checks.md"))
+                self.assertTrue(any(f"`{interface}`" in warning for warning in warnings), warnings)
+                checks = feature / "checks.md"
+                checks.write_text(checks.read_text(encoding="utf-8") + f"\nCovers `{interface}`.\n", encoding="utf-8")
+                _errors, warnings, _profile = validate_checks.check_file(str(checks))
+                self.assertFalse(any(f"`{interface}`" in warning for warning in warnings), warnings)
+                empty = source.replace(http_row, row.rsplit("|", 2)[0] + "|  |")
+                (feature / "plan.md").write_text(empty, encoding="utf-8")
+                errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
+                self.assertTrue(any("Outcomes names no outcome" in error for error in errors), errors)
+
+    def test_surface_rejects_placeholder_outcomes(self) -> None:
+        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
+        outcomes = "| `200`, `409`, `422` |"
+        for placeholder in ("-", "n/a", "none", "TBD", "`-` · n/a"):
+            with self.subTest(placeholder=placeholder), tempfile.TemporaryDirectory() as raw:
+                feature = scaffold(Path(raw))
+                (feature / "plan.md").write_text(source.replace(outcomes, f"| {placeholder} |"), encoding="utf-8")
+                errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
+                self.assertTrue(any("Outcomes names no outcome" in error for error in errors), errors)
+
+    def test_fault_disposition_accepts_only_killed_or_reasoned_survivors(self) -> None:
+        source = (FIXTURES / "verification.md").read_text(encoding="utf-8")
+        row = "| `app/webhooks/ingest.rb:31` | killed |"
+        self.assertIn(row, source)
+        cases = {
+            "killed": True,
+            "equivalent - same result on every input": True,
+            "arid - logging only": True,
+            "survived": False,
+            "no": False,
+            "equivalent": False,
+            "arid - n/a": False,
+        }
+        for value, accepted in cases.items():
+            with self.subTest(disposition=value), tempfile.TemporaryDirectory() as raw:
+                feature = scaffold(Path(raw))
+                (feature / "verification.md").write_text(
+                    source.replace(row, f"| `app/webhooks/ingest.rb:31` | {value} |"), encoding="utf-8"
+                )
+                errors, _warnings = validate_verification._check_feature(str(feature), "fixture")
+                self.assertEqual(errors == [], accepted, errors)
+
+    def test_approval_receipt_is_a_verifier_judgment_not_a_gate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
-            scaffold(root)
+            feature = scaffold(root)
+            plan = feature / "plan.md"
+            source = plan.read_text(encoding="utf-8")
+            plan.write_text(source[:source.index("## Approval")] + source[source.index("## Problem"):], encoding="utf-8")
             for gate in ("validate_checks", "validate_verification"):
                 result = run_gate(root, gate)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-
-    def test_approval_illustrative_subsections_do_not_supply_authority(self) -> None:
-        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
-        prefix, remainder = source.split("## Approval\n\n", 1)
-        receipt, remainder = remainder.split("## Problem", 1)
-        for heading in (
-            "### Example", "### Template receipt", "### SAMPLE",
-            "#### Examples", "##### Approval templates", "###### Sample approval",
-            "### Example\n\n#### Templates\n\n##### Supporting context",
-        ):
-            with self.subTest(heading=heading), tempfile.TemporaryDirectory() as raw:
-                root = Path(raw)
-                feature = scaffold(root)
-                (feature / "plan.md").write_text(
-                    prefix + "## Approval\n\n" + heading + "\n\n" + receipt + "## Problem" + remainder,
-                    encoding="utf-8",
-                )
-                for gate in ("validate_checks", "validate_verification"):
-                    result = run_gate(root, gate)
-                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                    self.assertIn("approval missing usable decision", result.stdout)
-
-    def test_approval_genuine_receipt_survives_neighboring_examples(self) -> None:
-        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
-        prefix, remainder = source.split("## Approval\n\n", 1)
-        receipt, remainder = remainder.split("## Problem", 1)
-        example = "### Examples\n\n#### Template\n\n##### Supporting context\n\n" + receipt
-        for body in (receipt + example, example + "### Observed decision\n\n" + receipt):
-            with self.subTest(body=body), tempfile.TemporaryDirectory() as raw:
-                root = Path(raw)
-                feature = scaffold(root)
-                (feature / "plan.md").write_text(
-                    prefix + "## Approval\n\n" + body + "## Problem" + remainder, encoding="utf-8",
-                )
-                for gate in ("validate_checks", "validate_verification"):
-                    result = run_gate(root, gate)
-                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-
-    def test_approval_execution_route_does_not_authorize_feature_shape(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw).resolve()
-            feature = scaffold(root)
-            plan = feature / "plan.md"
-            plan.write_text(plan.read_text(encoding="utf-8").replace("## Approval", "## Awaiting feature review"), encoding="utf-8")
-            stages = {"implementation": {
-                "provider": "codex", "model": "gpt-6.1-sol", "effort": "max",
-                "rationale": "One sequential builder for the fixture.", "limitations": [],
-            }}
-            snapshot = {
-                "version": 3, "feature": "fixture", "checkout": str(root), "stages": stages,
-                "git_head": "a1b2c3d", "profile": None, "verification_profile": "standard",
-                "deep_review": {"cadence": "skip", "groups": []},
-                "parallelization": {"mode": "disabled"},
-            }
-            self.assertEqual(workflow_route.validate_snapshot(root, "fixture", snapshot), snapshot)
-            (feature / "workflow.json").write_text(json.dumps(snapshot), encoding="utf-8")
-            for gate in ("validate_checks", "validate_verification"):
-                result = run_gate(root, gate)
-                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                self.assertIn("approval missing usable decision", result.stdout)
 
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -194,21 +166,6 @@ class WorkflowValidatorTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                 self.assertIn("## Intent", result.stdout)
 
-    def test_approval_plan_cannot_be_bypassed_by_checks_receipt(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw)
-            feature = scaffold(root)
-            plan = feature / "plan.md"
-            source = plan.read_text(encoding="utf-8")
-            receipt = source[source.index("## Approval"):source.index("## Problem")]
-            plan.write_text(source.replace("## Approval", "## Awaiting approval"), encoding="utf-8")
-            checks = feature / "checks.md"
-            checks.write_text(checks.read_text(encoding="utf-8") + receipt, encoding="utf-8")
-            for gate in ("validate_checks", "validate_verification"):
-                result = run_gate(root, gate)
-                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                self.assertIn("plan.md: approval", result.stdout)
-
     def test_approval_is_not_required_before_presenting_plan(self) -> None:
         source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
         with tempfile.TemporaryDirectory() as raw:
@@ -218,7 +175,7 @@ class WorkflowValidatorTests(unittest.TestCase):
             self.assertEqual(errors, [])
 
     def test_visual_provenance_and_results_reach_completion_cli(self) -> None:
-        fields = ("Source/revision", "Source scale", "Implementation revision", "Route/state",
+        fields = ("Source/revision", "Source scale", "Implementation revision", "Screen/state",
                   "Viewport/scroll", "Environment", "Reference capture", "Full-page capture",
                   "Viewport capture", "Comparison", "Result")
         with tempfile.TemporaryDirectory() as raw:
@@ -243,10 +200,10 @@ class WorkflowValidatorTests(unittest.TestCase):
                 "fenced table": original.replace("## Visual fidelity", "```markdown\n## Visual fidelity") + "\n```\n",
                 "invalid second row": original + original.splitlines()[-1].replace("| viewport.png |", "| missing.png |") + "\n",
                 "old schema": original.replace("Source/revision", "Source").replace("Viewport/scroll", "Viewport"),
-                "no DPR": original.replace("DPR: 1;", ""),
-                "zero DPR": original.replace("DPR: 1;", "DPR: 0;"),
-                "empty browser": original.replace("browser: Chromium 130;", "browser: -;"),
-                "empty OS": original.replace("OS: Linux;", "OS: n/a;"),
+                "no scale": original.replace("scale: 1;", ""),
+                "zero scale": original.replace("scale: 1;", "scale: 0;"),
+                "empty runtime": original.replace("runtime: Chromium 130 on Linux;", "runtime: -;"),
+                "no runtime": original.replace("runtime: Chromium 130 on Linux;", ""),
                 "no scroll": original.replace("390x844; scroll: 0,0", "390x844"),
                 "bad viewport": original.replace("390x844", "0x844"),
                 "bad source scale": original.replace("| 1x |", "| 0x |"),
@@ -275,9 +232,9 @@ class WorkflowValidatorTests(unittest.TestCase):
         fragment = (FIXTURES / "visual.md").read_text(encoding="utf-8")
         valid = fragment.split("## Visual fidelity\n\n", 1)[1]
         legacy = (
-            "| Source | Route/state | Viewport | Captures | Comparison | Result |\n"
+            "| Source | Screen/state | Viewport | Captures | Comparison | Result |\n"
             "| --- | --- | --- | --- | --- | --- |\n"
-            "| mockup revision 1 | /venues open | 390x844 | missing.png | inspected | PASS |\n"
+            "| mockup revision 1 | /listings open | 390x844 | missing.png | inspected | PASS |\n"
         )
         invalid_tables = {
             "legacy": legacy,
@@ -301,7 +258,7 @@ class WorkflowValidatorTests(unittest.TestCase):
             feature = scaffold(root, ui=True)
             report = feature / "verification.md"
             report.write_text(
-                report.read_text(encoding="utf-8") + "\n" + valid.replace("/venues populated", "/venues filters open"),
+                report.read_text(encoding="utf-8") + "\n" + valid.replace("/listings populated", "/listings filters open"),
                 encoding="utf-8",
             )
             result = run_gate(root, "validate_verification")
@@ -352,9 +309,10 @@ class CommitContractTests(unittest.TestCase):
 
     def test_invalid_type_is_rejected(self) -> None:
         self.assertEqual(self._exit_code("release(wtk): publish package"), 1)
+        self.assertEqual(self._exit_code("chore(wtk): tidy files"), 1)
 
-    def test_breaking_marker_requires_footer(self) -> None:
-        self.assertEqual(self._exit_code("feat(wtk)!: rename public command"), 1)
+    def test_breaking_marker_needs_no_footer(self) -> None:
+        self.assertEqual(self._exit_code("feat(wtk)!: rename public command"), 0)
         self.assertEqual(
             self._exit_code("feat(wtk)!: rename public command\n\nBREAKING CHANGE: old command removed"),
             0,

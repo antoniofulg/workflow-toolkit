@@ -292,7 +292,7 @@ def main() -> int:
     parser.add_argument("--command", help="subprocess template; {prompt} required, {output}/{label} optional")
     parser.add_argument("--attempts", type=int, default=2)
     parser.add_argument("--timeout-min", type=int, default=35)
-    parser.add_argument("--block-on", action="append", default=None, help="provider-block substring (repeatable)")
+    parser.add_argument("--block-on", action="append", default=None, help="provider-block substring (repeatable; default usageLimitExceeded, one host's signal)")
     parser.add_argument("--status-file", help="default: <out>/runs/<jobs-stem>-status.json")
     parser.add_argument("--no-freeze-check", action="store_true")
     parser.add_argument("--metrics", action="store_true", help="observe compatible provider token metrics")

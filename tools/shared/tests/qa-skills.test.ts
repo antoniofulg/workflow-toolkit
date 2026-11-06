@@ -200,7 +200,6 @@ describe("QA workflow artifact policy", () => {
     );
     const lifecycle = artifactLifecycle.replace(/\s+/g, " ");
     expect(lifecycle).toContain("`.specs/features/` is transient Lean workflow state");
-    expect(lifecycle).toContain("exact legacy managed `.specs/features/` ignore line");
   });
 
   it("IT-015 treats Lean proof state as the commit precondition", () => {
@@ -317,19 +316,24 @@ describe("canonical QA skills", () => {
   });
 
 
-  it("routes execution receipts and delivery reporting to one bundled metrics reference", () => {
+  it("loads execution metrics only from one opt-in router line", () => {
     const reference = ".agents/skills/wtk/references/execution-metrics.md";
     expect(existsSync(join(repositoryRoot, reference))).toBe(true);
-    for (const owner of [
-      ".agents/skills/wtk/SKILL.md",
-      ".agents/skills/wtk-lean/SKILL.md",
-      ".agents/skills/wtk-implement/SKILL.md",
-      ".agents/skills/wtk-ship/SKILL.md",
-      ".agents/skills/wtk/references/evidence.md",
-    ]) {
-      const links = [...readRepositoryFile(owner).matchAll(/\[[^\]]+\]\(([^)]+)\)/g)]
-        .map((match) => resolve(repositoryRoot, dirname(owner), match[1]!));
-      expect(links).toContain(resolve(repositoryRoot, reference));
+    const linksTo = (owner: string) =>
+      [...readRepositoryFile(owner).matchAll(/\[[^\]]+\]\(([^)]+)\)/g)]
+        .map((match) => resolve(repositoryRoot, dirname(owner), match[1]!))
+        .includes(resolve(repositoryRoot, reference));
+    const routerLine = readRepositoryFile(".agents/skills/wtk/SKILL.md")
+      .split("\n")
+      .filter((line) => line.includes("references/execution-metrics.md"));
+    expect(routerLine).toHaveLength(1);
+    expect(routerLine[0]).toMatch(/opts into execution metrics/);
+    expect(readRepositoryFile(reference)).toMatch(/Without that declaration, collect nothing/);
+    expect(normalizePacket(readRepositoryFile(".agents/skills/wtk-deep-review/SKILL.md"))).toContain(
+      "When the project's AGENTS.md opts into execution metrics, follow [execution metrics]",
+    );
+    for (const skill of ["wtk-lean", "wtk-implement", "wtk-ship", "wtk-reuse-review", "wtk-qa-execute"]) {
+      expect(linksTo(`.agents/skills/${skill}/SKILL.md`)).toBe(false);
     }
   });
 
@@ -349,12 +353,10 @@ describe("canonical QA skills", () => {
 
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
     expect(reviewRounds).toContain("fingerprint = requirement + root cause + failure path");
-    expect(reviewRounds).toContain("independent cumulative failed-remediation counter and append-only generation history");
-    expect(reviewRounds).toContain("fixed default threshold of three attempts");
-    expect(reviewRounds).toContain("every failed post-fix Verifier result, whether or not the build gate is green");
-    expect(reviewRounds).toContain("Rewording or reopening a finding preserves its fingerprint and counter");
-    expect(reviewRounds).toContain("A distinct finding starts at count zero and does not consume another fingerprint's counter");
+    expect(reviewRounds).toContain("Rewording or reopening a finding preserves its fingerprint and its attempt count");
+    expect(reviewRounds).toContain("a distinct finding starts at zero");
     expect(reviewRounds).not.toMatch(/one global (?:remediation|blocker) counter/i);
+    expect(reviewRounds).not.toMatch(/review_convergence|remediation\.py/);
 
     expect(readRepositoryFile(".agents/skills/wtk-ship/SKILL.md")).toContain("Confirmed Critical, Major,");
     // The router no longer restates the loop; it routes to the phase skills that own it.
@@ -364,9 +366,6 @@ describe("canonical QA skills", () => {
     expect(readRepositoryFile(".agents/skills/wtk-lean/SKILL.md")).toContain(
       "validate_verification.py",
     );
-    const convergence = readRepositoryFile(".agents/skills/wtk-ship/scripts/review_convergence.py");
-    expect(convergence).toContain("failed_remediations");
-    expect(convergence).toContain("os.replace");
   });
 
   it("IT-003 dispatches all QA phases through each existing Verifier", () => {
@@ -391,34 +390,11 @@ describe("canonical QA skills", () => {
     expect(remediation).toContain("While a remediation check leaves a Critical/Major open");
     expect(remediation).toContain("run its scoped gate after every attempt");
     expect(remediation).toContain(
-      "stable signature from sorted failing-test identifiers after removing timings, absolute paths, and line numbers",
+      "Halt after three attempts (`stall_attempts`) on the same fingerprint without measurable progress",
     );
-    expect(remediation).toContain(
-      "current failing-test set that is a strict subset of the running minimum failing-test set resets the counter",
-    );
-    expect(remediation).toContain("equal-size set, including one with different members");
-    expect(remediation).toContain("a larger set increments it");
-    expect(remediation).toContain(
-      "when the third stall is reached, halt with the repeated signature, attempt count, and fixes tried",
-    );
-    expect(remediation).toContain(
-      "If the gate is unavailable, halt immediately without another remediation check",
-    );
-    expect(remediation).toContain("An open Critical alone does not halt while attempts establish new minima");
+    expect(remediation).toContain("If the gate is unavailable, halt immediately");
     expect(remediation.indexOf("While a remediation check leaves a Critical/Major open")).toBeLessThan(
       remediation.indexOf("run its scoped gate after every attempt"),
-    );
-    expect(remediation.indexOf("run its scoped gate after every attempt")).toBeLessThan(
-      remediation.indexOf("stable signature from sorted failing-test identifiers"),
-    );
-    expect(remediation.indexOf("stable signature from sorted failing-test identifiers")).toBeLessThan(
-      remediation.indexOf("strict subset of the running minimum"),
-    );
-    expect(remediation.indexOf("strict subset of the running minimum")).toBeLessThan(
-      remediation.indexOf("when the third stall is reached"),
-    );
-    expect(remediation.indexOf("a larger set increments it")).toBeGreaterThan(
-      remediation.indexOf("strict subset of the running minimum"),
     );
     expect(wtkShip).toContain("close_feature.py");
     expect(wtkShip).toContain("feature branch push, one pull request, and merge");
@@ -558,7 +534,7 @@ describe("configurable review policy", () => {
     expect(reviewRounds).toContain("wtk-deep-review** (resolved implementation groups)");
     expect(reviewRounds).not.toContain("wtk-deep-review** (every slice)");
     const finalGroupInstruction =
-      "Before final QA, complete the final pending implementation wtk-deep-review group; cadence `skip` resolves no groups, so nothing waits for wtk-deep-review.";
+      "Before final QA, complete any pending wtk-deep-review group; Deep Review runs on demand, so nothing waits for it unless one was requested.";
     const qaHeading = "## The feature closing step";
     const remediationInstruction =
       "For QA code remediation, review only `reviewed_head..HEAD`, then re-walk affected scenario rows.";
@@ -589,12 +565,29 @@ describe("configurable review policy", () => {
     expect(reviewRounds).toContain("except a Minor with no realistic trigger, which is filed as an issue");
     expect(reviewOutput).toContain("Minor defects without one, Trivials and advisories become follow-ups");
     expect(wtkShip).toContain("realistically triggered Minor");
-    expect(reviewRounds).toContain("a Minor-only batch starts no fresh Technical Verifier, QA phase, or remediation check");
-    expect(reviewRounds).toContain("Trivials and advisories become follow-ups");
+    expect(reviewRounds).toContain("a Minor-only batch starts no full-feature Technical Verifier, QA phase, or remediation check, and gets [fix verification]");
+    expect(reviewRounds).toContain("Trivials and advisories go to the pull request follow-up list");
     expect(reviewOutput).toContain("mandatory current-feature closeout batch");
     expect(wtkShip).toContain("Confirmed Critical, Major,");
     expect(implement).toContain("coherent pieces");
     expect(implement).toContain("fresh sub-agent");
+  });
+
+  it("keeps severity and volume in the taxonomy and blocks on declared invariants", () => {
+    const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
+    const taxonomy = normalizePacket(readRepositoryFile(".agents/skills/wtk-deep-review/references/taxonomy.md"));
+    const verdict = normalizePacket(readRepositoryFile(".agents/skills/wtk-deep-review/references/output-contracts.md"));
+    expect(reviewRounds).toContain("taxonomy.md#severity");
+    expect(reviewRounds).not.toContain("| Severity | Meaning |");
+    expect(reviewRounds).not.toMatch(/Above 20 findings/);
+    expect(taxonomy).toContain("There is no numeric cap");
+    expect(taxonomy).toContain(
+      "A violation of an architecture invariant or module boundary that the project declares is a 🟠 Major defect, never an advisory",
+    );
+    expect(verdict).toContain("including a violated project-declared architecture invariant or module boundary");
+    expect(normalizePacket(reviewRounds)).toContain(
+      "The reviewer is a fresh agent without the author's transcript; a different model is preferred, not sufficient.",
+    );
   });
 
   it("bridges workflow resolution and feature-closing QA ordering", () => {
@@ -620,10 +613,10 @@ describe("configurable review policy", () => {
       expect(source).not.toMatch(/public slices?|per-slice QA/i);
     }
     expect(gates).toContain(
-      "| Closing a task with a browser surface | The consuming project's browser scoped gate, filtered by `@feature:<slug>` |",
+      "| Closing a task with an e2e surface | The consuming project's scoped e2e gate, filtered by the feature marker |",
     );
     expect(normalizedTestContract).toContain(
-      "The `@feature:<slug>` tag is the selector the consuming project's browser scoped gate uses",
+      "The feature marker is the selector the consuming project's scoped e2e gate uses",
     );
   });
 });
@@ -739,7 +732,9 @@ describe("adoption and public setup", () => {
 
   it("IT-020 keeps the source pack free of project documentation", () => {
     expect(existsSync(join(repositoryRoot, "docs"))).toBe(false);
-    expect(readRepositoryFile("README.md")).toContain("only that skill's files");
+    expect(readRepositoryFile("README.md").replace(/\s+/g, " ")).toContain(
+      "an installation carries only the skill directories",
+    );
   });
 
   it("IT-011 keeps stack-specific QA capabilities in the operational profile", () => {
@@ -789,6 +784,17 @@ describe("adoption and public setup", () => {
     expect(readRepositoryFile("bun.lock")).toContain('"name": "workflow-toolkit"');
     expect(existsSync(join(repositoryRoot, "package-lock.json"))).toBe(false);
     expect(latestHeading).toBe(manifest.version);
+    const skillsRoot = join(repositoryRoot, ".agents/skills");
+    const skillVersions = readdirSync(skillsRoot).map((skill) => [
+      skill,
+      readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").match(/^  version: '(.+)'$/m)?.[1],
+    ]);
+    expect(skillVersions.length).toBe(14);
+    expect(skillVersions).toEqual(skillVersions.map(([skill]) => [skill, manifest.version]));
+    const agentBlockedSkills = readdirSync(skillsRoot).filter((skill) =>
+      readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").includes("disable-model-invocation"),
+    );
+    expect(agentBlockedSkills).toEqual([]);
     const pack = spawnSync(process.execPath, ["pm", "pack", "--dry-run", "--ignore-scripts"], {
       cwd: repositoryRoot,
       encoding: "utf8",
@@ -799,7 +805,6 @@ describe("adoption and public setup", () => {
       ".agents/skills/wtk-lean/scripts/validate_verification.py",
       ".agents/skills/wtk-ship/scripts/close_feature.py",
       ".agents/skills/wtk-deep-review/SKILL.md",
-      ".agents/skills/wtk-ship/remediation.py",
       ".agents/skills/wtk/references/execution-metrics.md",
     ]) {
       expect(packOutput).toContain(requiredPath);
@@ -825,8 +830,6 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_token_metrics.py",
       "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
-      "tools/test_remediation.py",
-      "tools/test_review_convergence.py",
       "tools/test_tlc_validators.py",
       "tools/test_wtk_lifecycle.py",
     ];
@@ -960,5 +963,98 @@ describe("selected-design fidelity routing", () => {
     const contract = readRepositoryFile(".agents/skills/wtk/references/ui-ux.md");
     expect(contract).toContain("ui-fidelity-example.md");
     expect(existsSync(join(repositoryRoot, ".agents/skills/wtk/references/ui-fidelity-example.md"))).toBe(true);
+  });
+});
+
+describe("testing policy", () => {
+  it("allows redundant-test removal only through the pruning procedure", () => {
+    const deletionRule = "Never weaken or skip a test, or delete one, to make a red gate pass.";
+    const pruningRule = "Removing a redundant test is a separate, reviewed change under the test-pruning procedure";
+    for (const path of ["AGENTS.md", ".agents/skills/wtk/references/validation.md"]) {
+      const source = readRepositoryFile(path)
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .replace(/\s+/g, " ")
+        .replace(/\*\*/g, "");
+      expect(source).toContain(deletionRule);
+      expect(source).toContain(pruningRule);
+    }
+  });
+
+  it("owns pruning, the lowest-layer rule and mutation scope in the test contract", () => {
+    const testContract = readRepositoryFile(".agents/skills/wtk/references/test-contract.md");
+    const normalized = testContract.replace(/\s+/g, " ");
+    expect(testContract).toMatch(/^## Pruning$/m);
+    expect(testContract).toMatch(/^## Mutation$/m);
+    expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit or integration test can prove.");
+    expect(normalized).toContain("Never remove the only proof of cross-component wiring.");
+    expect(normalized).toContain(
+      "Never prune a member of the permanent security smoke suite; any other SEC proof needs a named lower-layer replacement.",
+    );
+    expect(readRepositoryFile(".agents/skills/wtk/references/validation.md")).toMatch(/^## Test tiers$/m);
+  });
+
+  it("keeps one member of an equal-kill set and protects smoke and sole journey proofs", () => {
+    const testContract = readRepositoryFile(".agents/skills/wtk/references/test-contract.md").replace(/\s+/g, " ");
+    const testReview = readRepositoryFile(".agents/skills/wtk-test-review/SKILL.md").replace(/\s+/g, " ");
+    for (const source of [testContract, testReview]) {
+      expect(source).toContain("at most one removal per equal-kill set, keeping its lowest-layer member");
+      expect(source).toContain("never a `@smoke` cohort member or the sole proof of a journey or of wiring");
+    }
+    expect(testContract).toContain("Without a mutation tool, class (b) is not proposed");
+    expect(testContract).toContain("the manual faults the removed test used to kill");
+    expect(testReview).toContain("A member of the permanent security smoke suite is never proposed for removal");
+  });
+
+  it("declares project settings in one optional AGENTS.md section linked from its consumers", () => {
+    const owner = ".agents/skills/wtk/references/project-settings.md";
+    const settings = readRepositoryFile(owner);
+    expect(settings).toMatch(/^## wtk-settings$/m);
+    for (const key of ["tiers", "mutation", "quarantine", "qa root", "compatibility", "language",
+      "commit validator", "execution metrics", "merge", "test-review scopes"]) {
+      expect(settings).toContain(`\`${key}\``);
+    }
+    const linksTo = (path: string) =>
+      [...readRepositoryFile(path).matchAll(/\[[^\]]+\]\(([^)#]+)(?:#[^)]*)?\)/g)]
+        .some((match) => resolve(repositoryRoot, dirname(path), match[1]!) === resolve(repositoryRoot, owner));
+    for (const path of [
+      ".agents/skills/wtk/SKILL.md",
+      ".agents/skills/wtk/references/validation.md",
+      ".agents/skills/wtk/references/dx.md",
+      ".agents/skills/wtk-qa/references/qa-scenarios.md",
+      ".agents/skills/wtk-lean/references/build.md",
+      ".agents/skills/wtk-ship/SKILL.md",
+      ".agents/skills/wtk-test-review/SKILL.md",
+      ".agents/skills/wtk-setup/references/interview.md",
+    ]) {
+      expect([path, linksTo(path)]).toEqual([path, true]);
+    }
+  });
+
+  it("rechecks T2 and required checks on the merge head before ship merges", () => {
+    const ship = readRepositoryFile(".agents/skills/wtk-ship/SKILL.md").replace(/\s+/g, " ");
+    const gates = readRepositoryFile(".agents/skills/wtk/references/validation.md").replace(/\s+/g, " ");
+    expect(ship).toContain("needs no extra local full gate; T2 still gates merge");
+    expect(gates).toContain("need no extra local full gate; T2 still gates merge");
+    expect(ship).toContain("(full e2e) green wherever the project runs it (CI or local), plus the project's required checks");
+    expect(ship).toContain("Report the quarantined tests");
+    expect(ship).toContain("Stop at the pull request when told so up front");
+    expect(ship).toContain("declared merge authority, required reviews, branch protection and required checks win");
+  });
+});
+
+describe("test review skill", () => {
+  it("is an agent-invocable, proposal-only skill routed from wtk", () => {
+    const path = ".agents/skills/wtk-test-review/SKILL.md";
+    const source = readRepositoryFile(path);
+    const { name, description } = skillMetadata(path);
+    expect(name).toBe("wtk-test-review");
+    expect(description).toContain("Use when");
+    expect(description).toContain("not deleting tests");
+    expect(source).not.toContain("disable-model-invocation");
+    expect(source).toContain("../wtk/references/test-contract.md#pruning");
+    expect(source).toContain("../wtk/references/validation.md#test-tiers");
+    expect(source).toContain("e2e replaceable by lower layer");
+    expect(readRepositoryFile(".agents/skills/wtk/SKILL.md")).toContain("`wtk-test-review`");
+    expect(readRepositoryFile("README.md")).toContain("`wtk-test-review`");
   });
 });

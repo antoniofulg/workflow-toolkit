@@ -2,12 +2,11 @@
 name: wtk-reuse-review
 description: Verify implementation reuse and UI consistency across a diff or named scope. Use for reuse verification or explicitly requested whole-codebase audits; not fixes or general simplification reviews.
 license: CC-BY-4.0
+metadata:
+  version: '5.0.0'
 ---
 
 # Reuse review
-
-Before work, read [execution metrics](../wtk/references/execution-metrics.md); return the assigned
-stage receipt with session identity, interval and baseline/snapshot counters after its source checks.
 
 Verify [code reuse and ownership](../wtk/references/code-reuse.md). Review read-only: return
 findings and evidence; apply no fixes. When invoked by a feature Verifier, run within that

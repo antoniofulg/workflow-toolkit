@@ -20,6 +20,7 @@ affect every area. Group the relevant material rules by area and cite each ownin
 | Security and privacy | Assets, actors, trust boundaries, secrets, permissions, permitted disclosures | Apply WTK's existing security phases plus adopted project security guidance |
 | Quality and evidence | Proof layers, fixtures, browser capability, evidence limits | Choose proofs reaching the claimed boundaries; preserve unproven outcomes |
 | Runtime and operations | Checkout/resource ownership, cleanup, observability, performance, incident recovery | Carry runtime and operational requirements into work and handoff |
+| WTK settings | Tier commands and where T2 runs, mutation command and threshold, quarantine owner and cap, QA root, compatibility and language policy, commit validator, execution-metrics opt-in, merge authority or stop-at-PR, test-review scopes | Record only declared keys in one `## wtk-settings` section under [project settings](../../wtk/references/project-settings.md); absent keys keep their defaults |
 | Agent workflow | Source precedence, roles, phase/concern routing, tool authority | Bind actual available skills to explicit planning/build/checking responsibilities |
 
 ## Small baseline to propose

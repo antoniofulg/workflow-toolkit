@@ -2,12 +2,10 @@
 
 **Read when:** editing `AGENTS.md`, `CLAUDE.md`, or reusable agent instructions and skill references.
 
-**Why this exists:** Instruction files compete with the work for the same window. A previous
-arrangement loaded more than a thousand mandatory lines before any task, most of it irrelevant.
-Dispatch by condition; growing a file with restated prose is a defect.
+**Why this exists:** Instruction files compete with the work for the same window. Dispatch by
+condition; growing a file with restated prose is a defect.
 
-`AGENTS.md` loads into every Cursor and Codex prompt. `CLAUDE.md` is `@AGENTS.md` — Claude Code
-imports it; Cursor does not expand `@`, so a symlink that duplicates the contract is a defect.
+Root instruction files load into every prompt; keep any host import file a single pointer.
 
 ## Rules
 
@@ -34,8 +32,8 @@ imports it; Cursor does not expand `@`, so a symlink that duplicates the contrac
 | All conditional references together | Under 1,500 lines, of which a typical task reads two or three |
 
 A rule guideline states what must be true and can nearly always be shortened. A reference guideline
-carries content that is irreducible — `SECURITY.md` owns the surface list, `QA-SCENARIOS.md` owns a
-field schema, `KNOWLEDGE-WIKI.md` owns four operations. Cutting those does not save context, it just
+carries content that is irreducible — `security.md` owns the surface list, `qa-scenarios.md` owns a
+field schema, `knowledge-wiki.md` owns four operations. Cutting those does not save context, it just
 moves the lookup somewhere else and costs a round trip.
 
 These are targets, not gates. A file at its limit because nobody pruned it is the problem this
@@ -58,7 +56,7 @@ Ask, in order:
 - History or rationale, except the one sentence needed to stop a rule being undone
 - Anything the repository already states: file structure, available commands, code conventions the
   linter enforces
-- Speculative rules for problems that have not happened
 
 A rule earns its lines by preventing a defect that occurred, or by resolving an ambiguity an agent
-actually hit.
+actually hit. State the rule without the incident's names or stack; a rule that cannot be stated
+generally belongs in the consuming project, or in a regression test there.

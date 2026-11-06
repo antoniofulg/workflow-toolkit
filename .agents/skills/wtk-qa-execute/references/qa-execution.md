@@ -32,7 +32,7 @@ observer reuse, and impact-selected retests; a defect does not end all independe
 
 ## Authorities and adapters
 
-- `../wtk-qa/references/qa-scenarios.md` owns scenario fields, ids, statuses, and flag/reset rules.
+- `../../wtk-qa/references/qa-scenarios.md` owns scenario fields, ids, statuses, and flag/reset rules.
 - `docs/qa/README.md` owns the consuming project's public interfaces, existing adapter, setup,
   authentication, fixtures, cleanup, and limitations.
 - `wtk-qa-execute` selects the declared browser, API, CLI, mobile, or manual adapter. It records the

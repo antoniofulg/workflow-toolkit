@@ -58,7 +58,6 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const URI_SCHEME = /^[a-z][a-z0-9+.-]*:/i;
 const STATE_PATH = join(".specs", "STATE.md");
 const FEATURES_PATH = join(".specs", "features");
-const SPINE_PATH = join("docs", "architecture", "ARCHITECTURE-SPINE.md");
 
 type SourceEntry = {
   id: string | null;
@@ -338,6 +337,27 @@ function checkDrift(
   return findings;
 }
 
+/** `AD-NNN` ids from every table row whose header names ID, Decision and Status (the `memory.md` ledger). */
+function decisionIds(state: string): string[] {
+  const ids: string[] = [];
+  let idColumn: number | undefined;
+  for (const line of state.split(/\r?\n/)) {
+    if (!line.trimStart().startsWith("|")) {
+      idColumn = undefined;
+      continue;
+    }
+    const cells = line.trim().split(/(?<!\\)\|/).slice(1, -1).map((cell) => cell.trim().toLowerCase());
+    if (["id", "decision", "status"].every((name) => cells.includes(name))) {
+      idColumn = cells.indexOf("id");
+      continue;
+    }
+    if (idColumn === undefined) continue;
+    const id = cells[idColumn]?.replaceAll("`", "").toUpperCase();
+    if (id !== undefined && /^AD-\d+$/.test(id)) ids.push(id);
+  }
+  return ids;
+}
+
 /** Decisions and verified features that accumulated in `.specs/` without a concept harvesting them. */
 function checkGaps(
   rootDirectory: string,
@@ -350,9 +370,7 @@ function checkGaps(
   if (existsSync(statePath)) {
     const state = readFileSync(statePath, "utf8");
     const seenStateLabels = new Set<string>();
-    for (const match of state.matchAll(/^### (AD-\d+)\s*$/gm)) {
-      const label = match[1];
-      if (label === undefined) continue;
+    for (const label of decisionIds(state)) {
       if (seenStateLabels.has(label)) {
         findings.push({
           kind: "conformance",
@@ -373,25 +391,6 @@ function checkGaps(
     }
   }
 
-  const spinePath = join(rootDirectory, SPINE_PATH);
-  if (existsSync(spinePath)) {
-    const seenSpineLabels = new Set<string>();
-    for (const match of readFileSync(spinePath, "utf8").matchAll(/^### (AD-\d+)\b/gm)) {
-      const label = match[1];
-      if (label === undefined) continue;
-      if (seenSpineLabels.has(label)) {
-        findings.push({
-          kind: "conformance",
-          severity: "error",
-          file: toPosix(SPINE_PATH),
-          message: `${label} appears more than once`,
-        });
-        continue;
-      }
-      seenSpineLabels.add(label);
-    }
-  }
-
   const featuresPath = join(rootDirectory, FEATURES_PATH);
   let features: Dirent[];
   try {
@@ -401,14 +400,14 @@ function checkGaps(
   }
   for (const feature of features) {
     if (!feature.isDirectory()) continue;
-    const validation = join(FEATURES_PATH, feature.name, "validation.md");
-    if (!existsSync(join(rootDirectory, validation))) continue;
-    if (harvestedPaths.has(toPosix(validation))) continue;
+    const verification = join(FEATURES_PATH, feature.name, "verification.md");
+    if (!existsSync(join(rootDirectory, verification))) continue;
+    if (harvestedPaths.has(toPosix(verification))) continue;
     findings.push({
       kind: "gap",
       severity: "warning",
-      file: toPosix(validation),
-      message: `feature "${feature.name}" is verified but no concept cites its validation`,
+      file: toPosix(verification),
+      message: `feature "${feature.name}" is verified but no concept cites its verification`,
     });
   }
   return findings;

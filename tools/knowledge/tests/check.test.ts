@@ -18,6 +18,20 @@ function makeBundle(files: Record<string, string>): string {
   return root;
 }
 
+/** A `.specs/STATE.md` decision table, the ledger format `memory.md` documents. */
+function ledger(...ids: string[]): string {
+  return [
+    "# Project state",
+    "",
+    "## Decisions",
+    "",
+    "| ID | Decision | Rationale | Status | Date |",
+    "| --- | --- | --- | --- | --- |",
+    ...ids.map((id) => `| ${id} | decision | rationale | active | 2026-08-01 |`),
+    "",
+  ].join("\n");
+}
+
 /** Pins the "source last changed" clock so drift is asserted without a git repository. */
 function frozenClock(date: string) {
   return () => date;
@@ -200,7 +214,7 @@ describe("drift against repository sources", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
       "knowledge/wiki/decisions/ad-001.md": concept("2026-08-01"),
-      ".specs/STATE.md": "### AD-001\n",
+      ".specs/STATE.md": ledger("AD-001"),
     });
 
     const findings = checkKnowledge(root, { sourceLastChanged: frozenClock("2026-08-08") });
@@ -214,7 +228,7 @@ describe("drift against repository sources", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
       "knowledge/wiki/decisions/ad-001.md": concept("2026-08-08"),
-      ".specs/STATE.md": "### AD-001\n",
+      ".specs/STATE.md": ledger("AD-001"),
     });
 
     expect(checkKnowledge(root, { sourceLastChanged: frozenClock("2026-08-08") })).toEqual([]);
@@ -386,7 +400,7 @@ describe("drift against repository sources", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
       "knowledge/wiki/decisions/ad-001.md": concept("08/08/2026"),
-      ".specs/STATE.md": "### AD-001\n",
+      ".specs/STATE.md": ledger("AD-001"),
     });
 
     const findings = checkKnowledge(root, { sourceLastChanged: frozenClock("2026-08-08") });
@@ -460,8 +474,7 @@ describe("gaps in what has been harvested", () => {
   it("reports every AD-NNN with no concept citing it", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
-      ".specs/STATE.md":
-        "# STATE\n\n### AD-001\n- **Decision**: a\n\n### AD-002\n- **Decision**: b\n",
+      ".specs/STATE.md": ledger("AD-001", "AD-002"),
     });
 
     const findings = checkKnowledge(root);
@@ -470,6 +483,18 @@ describe("gaps in what has been harvested", () => {
     expect(findings.every((finding) => finding.severity === "warning")).toBe(true);
     expect(findings[0]?.message).toContain("AD-001");
     expect(findings[1]?.message).toContain("AD-002");
+  });
+
+  it("reads decisions from the ledger table, not from AD-NNN headings", () => {
+    const root = makeBundle({
+      "knowledge/wiki/index.md": ROOT_INDEX,
+      ".specs/STATE.md": "### AD-009\n\n" + ledger("`AD-001`") + "\n| AD-002 | outside a ledger table |\n",
+    });
+
+    const findings = checkKnowledge(root);
+
+    expect(kinds(findings)).toEqual(["gap"]);
+    expect(findings[0]?.message).toContain("AD-001");
   });
 
   it("counts an AD as harvested once a concept carries its source id", () => {
@@ -484,7 +509,7 @@ describe("gaps in what has been harvested", () => {
         "---",
         "",
       ].join("\n"),
-      ".specs/STATE.md": "### AD-001\n\n### AD-002\n",
+      ".specs/STATE.md": ledger("AD-001", "AD-002"),
     });
 
     const findings = checkKnowledge(root);
@@ -493,10 +518,10 @@ describe("gaps in what has been harvested", () => {
     expect(findings[0]?.message).toContain("AD-002");
   });
 
-  it("fails when two ledger headings share an AD-NNN label", () => {
+  it("fails when two ledger rows share an AD-NNN label", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
-      ".specs/STATE.md": "### AD-060\n\n### AD-060\n",
+      ".specs/STATE.md": ledger("AD-060", "AD-060"),
     });
 
     const findings = checkKnowledge(root);
@@ -517,24 +542,6 @@ describe("gaps in what has been harvested", () => {
     ]);
   });
 
-  it("fails when two spine headings share an AD-N label", () => {
-    const root = makeBundle({
-      "knowledge/wiki/index.md": ROOT_INDEX,
-      "docs/architecture/ARCHITECTURE-SPINE.md": "### AD-3 — one\n\n### AD-3 — two\n",
-    });
-
-    const findings = checkKnowledge(root);
-
-    expect(findings).toEqual([
-      expect.objectContaining({
-        kind: "conformance",
-        severity: "error",
-        file: "docs/architecture/ARCHITECTURE-SPINE.md",
-        message: "AD-3 appears more than once",
-      }),
-    ]);
-  });
-
   it("ignores a matching id that labels a source other than the ledger", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
@@ -548,7 +555,7 @@ describe("gaps in what has been harvested", () => {
         "---",
         "",
       ].join("\n"),
-      ".specs/STATE.md": "### AD-001\n",
+      ".specs/STATE.md": ledger("AD-001"),
     });
 
     const findings = checkKnowledge(root);
@@ -560,29 +567,29 @@ describe("gaps in what has been harvested", () => {
   it("reports a verified feature that no concept cites", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
-      ".specs/features/sample-feature/validation.md": "# Validation\n",
+      ".specs/features/sample-feature/verification.md": "# Verification\n",
     });
 
     const findings = checkKnowledge(root);
 
     expect(kinds(findings)).toEqual(["gap"]);
-    expect(findings[0]?.file).toBe(".specs/features/sample-feature/validation.md");
+    expect(findings[0]?.file).toBe(".specs/features/sample-feature/verification.md");
   });
 
-  it("stays quiet once a concept cites the feature validation", () => {
+  it("stays quiet once a concept cites the feature verification", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
       "knowledge/wiki/product/sample-requirement.md": [
         "---",
         "type: Requirement",
         "sources:",
-        "  - id: landing-validation",
-        "    resource: ../../../.specs/features/sample-feature/validation.md",
+        "  - id: landing-verification",
+        "    resource: ../../../.specs/features/sample-feature/verification.md",
         "    last_modified: 2026-08-08",
         "---",
         "",
       ].join("\n"),
-      ".specs/features/sample-feature/validation.md": "# Validation\n",
+      ".specs/features/sample-feature/verification.md": "# Verification\n",
     });
 
     expect(checkKnowledge(root, { sourceLastChanged: frozenClock("2026-08-08") })).toEqual([]);

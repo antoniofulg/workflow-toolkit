@@ -5,20 +5,20 @@ One line per AD-NNN. Agents load the index, not the log.
 
   python3 .agents/skills/wtk-lean/scripts/ad-index.py          write the index
   python3 .agents/skills/wtk-lean/scripts/ad-index.py --check  exit 1 if the index is stale
+  --root PATH                                                project root (default: the installing project)
 """
 
 from __future__ import annotations
 
+import argparse
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
-STATE = ROOT / ".specs" / "STATE.md"
-INDEX = ROOT / ".specs" / "AD-INDEX.md"
 
-AD_HEADER = re.compile(r"^### (AD-\d+)\s*$")
-FIELD = re.compile(r"^- \*\*(Decision|Status)\*\*: (.*)$")
+AD_ID = re.compile(r"^AD-\d+$")
+CELL_SPLIT = re.compile(r"(?<!\\)\|")
 
 
 def first_sentence(text: str, limit: int = 140) -> str:
@@ -30,54 +30,31 @@ def first_sentence(text: str, limit: int = 140) -> str:
     return sentence
 
 
+def cells(line: str) -> list[str]:
+    parts = CELL_SPLIT.split(line.strip())[1:-1]
+    return [part.strip().replace("\\|", "|") for part in parts]
+
+
 def parse(state: str) -> list[tuple[int, str, str, str]]:
+    """Read every `| AD-NNN | ... |` row of a table whose header names ID, Decision and Status."""
     rows: list[tuple[int, str, str, str]] = []
-    current: str | None = None
-    decision_parts: list[str] = []
-    status = "active"
-    capturing_decision = False
-
-    def flush() -> None:
-        nonlocal current, decision_parts, status, capturing_decision
-        if current is None:
-            return
-        number = int(current.split("-")[1])
-        rows.append((number, current, first_sentence(" ".join(decision_parts)), status))
-        current = None
-        decision_parts = []
-        status = "active"
-        capturing_decision = False
-
+    columns: dict[str, int] | None = None
     for line in state.splitlines():
-        header = AD_HEADER.match(line)
-        if header:
-            flush()
-            current = header.group(1)
+        if not line.lstrip().startswith("|"):
+            columns = None
             continue
-        if current is None:
+        row = cells(line)
+        names = [cell.lower() for cell in row]
+        if {"id", "decision", "status"} <= set(names):
+            columns = {name: names.index(name) for name in ("id", "decision", "status")}
             continue
-        if line.startswith("## "):
-            flush()
+        if columns is None or len(row) <= max(columns.values()):
             continue
-        field = FIELD.match(line)
-        if field:
-            name, value = field.group(1), field.group(2)
-            if name == "Decision":
-                capturing_decision = True
-                decision_parts = [value]
-            elif name == "Status":
-                capturing_decision = False
-                status = value.strip()
-            else:
-                capturing_decision = False
+        ident = row[columns["id"]].strip("`")
+        if not AD_ID.match(ident):
             continue
-        if capturing_decision and line.startswith("- **"):
-            capturing_decision = False
-            continue
-        if capturing_decision and line.strip():
-            decision_parts.append(line.strip())
-
-    flush()
+        status = row[columns["status"]] or "active"
+        rows.append((int(ident.split("-")[1]), ident, first_sentence(row[columns["decision"]]), status))
     rows.sort(key=lambda row: row[0])
     return rows
 
@@ -86,9 +63,9 @@ def render(rows: list[tuple[int, str, str, str]]) -> str:
     lines = [
         "# Project decision index",
         "",
-        "One line per `AD-NNN`. The append-only body lives in `.specs/STATE.md`.",
+        "One line per `AD-NNN`. The append-only log lives in `.specs/STATE.md`.",
         "",
-        "Body: `rg -A 20 '^### AD-NNN' .specs/STATE.md`. Resume: `rg -A 20 '^## Handoff' .specs/STATE.md`.",
+        "Row: `rg '^\\| AD-NNN ' .specs/STATE.md`. Resume: `rg -A 20 '^## Handoff' .specs/STATE.md`.",
         "When recording an `AD-NNN`, run the bundled wtk-lean ad-index.py in the same commit.",
         "",
         "| ID | Status | Decision |",
@@ -102,20 +79,26 @@ def render(rows: list[tuple[int, str, str, str]]) -> str:
 
 
 def main() -> int:
-    if not STATE.is_file():
-        print(f"missing {STATE}", file=sys.stderr)
+    parser = argparse.ArgumentParser(description="Regenerate .specs/AD-INDEX.md from .specs/STATE.md.")
+    parser.add_argument("--root", type=Path, default=ROOT, help="project root (default: the installing project)")
+    parser.add_argument("--check", action="store_true", help="exit 1 if the index is stale")
+    args = parser.parse_args()
+    root = args.root.resolve()
+    state = root / ".specs" / "STATE.md"
+    index = root / ".specs" / "AD-INDEX.md"
+    if not state.is_file():
+        print(f"missing {state}", file=sys.stderr)
         return 1
-    text = render(parse(STATE.read_text()))
-    check = "--check" in sys.argv[1:]
-    if check:
-        current = INDEX.read_text() if INDEX.is_file() else ""
+    text = render(parse(state.read_text()))
+    if args.check:
+        current = index.read_text() if index.is_file() else ""
         if current != text:
             print("stale .specs/AD-INDEX.md; run the bundled wtk-lean ad-index.py", file=sys.stderr)
             return 1
         print("AD-INDEX.md up to date")
         return 0
-    INDEX.write_text(text, encoding="utf-8")
-    print(f"wrote {INDEX.relative_to(ROOT)}")
+    index.write_text(text, encoding="utf-8")
+    print(f"wrote {index.relative_to(root)}")
     return 0
 
 

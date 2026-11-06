@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-lessons.py - deterministic bookkeeping for the tlc-spec-lean lessons layer.
+lessons.py - deterministic bookkeeping for the wtk-lean lessons layer.
 
 The LLM supplies judgment (which failure happened, how to phrase the lesson, what
 signal grounds it). This script owns everything mechanical: IDs, distinct-feature
@@ -21,7 +21,7 @@ Commands:
   list       Print lessons (default: confirmed) for loading at Plan/Checks.
   penalize   Mark a confirmed lesson as having failed when applied (-> quarantine).
   prune      Drop stale uncorroborated candidates (also runs automatically on add/list).
-  status     Print counts (used by the self-check in verify.md).
+  status     Print counts.
   init       Create empty store + rendered file.
   selftest   Run stdlib regressions (normalization).
 
@@ -369,7 +369,7 @@ def cmd_status(root, args):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(prog="lessons.py", description="Deterministic lessons bookkeeping for tlc-spec-lean.")
+    p = argparse.ArgumentParser(prog="lessons.py", description="Deterministic lessons bookkeeping for wtk-lean.")
     p.add_argument("--root", default=".", help="Project root containing .specs/ (default: current dir)")
     sub = p.add_subparsers(dest="cmd", required=True)
 

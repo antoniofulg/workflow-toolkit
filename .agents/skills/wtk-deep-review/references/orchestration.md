@@ -28,10 +28,10 @@ Both job kinds (`cohort`, `sweep`) return the same schema: defects, advisories, 
 ```json
 { "cohorts": [
     { "id": "c01", "name": "store: task queue", "risk": "high",
-      "files": ["internal/store/queue.go", "internal/store/queue_test.go"] },
-    { "id": "c02a", "name": "loop/action.go — hunks 1-14", "risk": "high",
-      "files": ["internal/loop/action.go"],
-      "hunk_scope": { "internal/loop/action.go": [{"start": 12, "lines": 40, "side": "new"}] } }
+      "files": ["<src>/store/queue.<ext>", "<test>/store/queue.<ext>"] },
+    { "id": "c02a", "name": "<src>/loop/action.<ext> — hunks 1-14", "risk": "high",
+      "files": ["<src>/loop/action.<ext>"],
+      "hunk_scope": { "<src>/loop/action.<ext>": [{"start": 12, "lines": 40, "side": "new"}] } }
   ],
   "sweeps": ["contracts", {"key": "layering", "lens": "custom lens text"}] }
 ```
@@ -53,6 +53,7 @@ Defect cohorts are the only default review lane. Sweeps remain **opt-in and rare
 | `migrations` | schema/migration files in diff | destructive ops, missing migration for model change, ordering/identity hazards |
 | `consistency` | renames or repeated patterns in diff | incomplete renames, sibling paths not mirroring a fix, duplicated logic |
 | `config` | config keys/flags/env vars changed | unwired or undocumented keys, dead flags, default mismatches |
+| `boundaries` | the project declares architecture invariants or module boundaries and the diff crosses modules | dependency direction, boundary leaks, cohesion, representable invalid states; rubric: `wtk/references/modeling.md` and `code-reuse.md` |
 
 ## Engines
 
@@ -100,4 +101,4 @@ The manifest builder resolves reviewer concurrency once, with precedence `--conc
 `min(concurrency, pending jobs)`, refills a worker slot after completion, and never schedules a
 new job after the first provider block. Active attempts finish; pending and blocked jobs remain in
 the blocker ledger. Results are stored by label and emitted in jobs-file order, regardless of
-completion order. The removed legacy `--workers` option is rejected.
+completion order.

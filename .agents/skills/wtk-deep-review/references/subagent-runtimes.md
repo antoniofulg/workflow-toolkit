@@ -30,11 +30,16 @@ The runner consumes the manifest's bounded concurrency, keeps retries in their o
 preserves valid outputs on resume and enforces source freeze. Optional metrics use the existing
 execution receipt and available billing evidence; runtime identity alone proves neither cost nor spend.
 
+**Host adapter (optional).** `--metrics-db` feeds `token_metrics.read_telemetry`, which reads one
+host's thread-state SQLite database (Codex's `threads` table). It is host-specific: on any other
+host, omit `--metrics` or supply an equivalent adapter. Review execution never depends on it.
+
 ## Failure handling
 
 - Exit 2: a provider block stopped scheduling; active attempts finish and `run-blocker.json`
-  records pending work. Resume the same accepted invocation after the block clears. Supply
-  `--block-on` patterns when the provider's documented signals differ.
+  records pending work. Resume the same accepted invocation after the block clears. The default
+  pattern, `usageLimitExceeded`, is one host's signal; supply `--block-on` patterns for the
+  provider's documented signals.
 - Exit 1: inspect `runs/<label>.attempt-*.err` and invalid output artifacts before retrying.
   Repair the failure without dropping unfinished coverage.
 - Missing runtime or unsupported model/control: name the gap and follow agent selection's

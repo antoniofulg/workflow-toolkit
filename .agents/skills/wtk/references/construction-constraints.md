@@ -30,39 +30,37 @@ beside `## Intent` in `checks.md`; create no synthetic plan. Use these literal f
 - Scope: <authorized work and limits>
 ```
 
-Replace placeholders only from observed evidence. `Decision`, `Reviewed revision` and `Scope`,
-plus `Source` or `Date`, must be usable unfenced data; empty fields and template/example receipts
-do not qualify. Cite the actual source whenever available. If the current request already
-authorizes bounded checks-only or decided modular work, record that request: do not add a redundant
-approval pause. Otherwise use the existing review boundary, not an extra mandatory stop.
+Fill the fields only from observed evidence and cite the actual source whenever available. No
+validator judges the receipt; the Verifier does. If the current request already authorizes bounded
+checks-only or decided modular work, record that request: do not add a redundant approval pause.
+Otherwise use the existing review boundary, not an extra mandatory stop.
 
 Reuse genuine approval on unchanged resume within its scope. Ask targeted acceptance for a new
 user-owned product decision outside that scope; reversible detail and additive noncontradictory
 discoveries do not require blanket reapproval. Provider/model/effort choices in the execution
-route do not approve feature shape. Local Markdown is procedural evidence, not authentication:
-independent review still judges authenticity and scope. Local edits/commits do not authorize
-push, deploy or production mutations. Silence, Git history and passing tests supply no approval.
+route do not approve feature shape. Local edits/commits do not authorize push, deploy or
+production mutations. Silence, Git history and passing tests supply no approval.
 
 ## Dispatch and build
 
 Before dispatch or the first dependent edit, the coordinator and builder check the native feature
 receipt's source, reviewed revision and scope, prerequisite completion and any separately required
-implementation approval. Lean's pre-build and completion validators enforce receipt structure;
-modular Extract/Build and its independent completion review enforce the same native-task contract.
-The assignment cites governing criteria/checks, shared owner and allowed extension points. File
-ownership does not authorize recreating a shared implementation. Missing or unusable prerequisites
-keep dependent work blocked: return the gap to the coordinator; repair only from real evidence,
-and ask only if authority or the contract must change.
+implementation approval. The assignment cites governing criteria/checks, shared owner and allowed
+extension points. File ownership does not authorize recreating a shared implementation. Missing or
+unusable prerequisites keep dependent work blocked: return the gap to the coordinator; repair only
+from real evidence, and ask only if authority or the contract must change.
 
 Implementation order and extraction remain the builder's choice within these constraints. At
 phase boundaries, preserve their current state through [context recovery](context-handoff.md).
 
 ## Verify
 
-Under every profile, reconcile explicit construction requirements with criteria and checks; an
-omitted requirement is a finding even when all listed proofs pass. Trace consumers into the actual
-shared implementation and inspect the contracted dependency direction. A shared import with duplicated
-behavior, a passing behavior test or a screenshot alone does not prove implementation reuse.
+Under every profile, confirm the `## Approval` receipt names who approved which revision and
+scope; a missing or unattributed receipt is a finding. Reconcile explicit construction
+requirements with criteria and checks; an omitted requirement is a finding even when all listed
+proofs pass. Trace consumers into the actual shared implementation and inspect the contracted
+dependency direction. A shared import with duplicated behavior, a passing behavior test or a
+screenshot alone does not prove implementation reuse.
 
 For required sequencing, inspect recorded prerequisite completion and approval before dependent
 dispatch or edits. Final code cannot prove historical order. Report missing evidence as unproven;

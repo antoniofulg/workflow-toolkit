@@ -2,8 +2,8 @@
 
 Workflow Toolkit is a stack-agnostic set of Agent Skills for turning an idea into a reviewed,
 verified change. The `wtk` router selects the smallest phase skill and loads its references on
-demand. Projects keep ownership of their own instructions, execution choices,
-tools, and QA records.
+demand. Projects own their instructions, execution choices, tools, and QA content; WTK supplies a
+default QA layout that a project can relocate.
 
 ## Install the skills
 
@@ -19,6 +19,7 @@ unit; phase skills are listed for discoverability and are not a supported subset
 | `wtk-plan` | Write a modular task contract from a decided source. |
 | `wtk-implement` | Implement an approved modular task. |
 | `wtk-reuse-review` | Check implementation ownership and reuse. |
+| `wtk-test-review` | Review a scope's tests with scoped mutation and propose removals and missing tests. |
 | `wtk-knowledge-check` | Check a project's optional `knowledge/` bundle. |
 | `wtk-qa`, `wtk-qa-plan`, `wtk-qa-execute` | Plan and execute user-visible QA. |
 | `wtk-deep-review` | Run an independent implementation review. |
@@ -32,18 +33,20 @@ Choose an installer supported by your agent host. For example, the
 npx skills@latest add antoniofulg/workflow-toolkit \
   --skill wtk wtk-deep-review wtk-discover wtk-implement \
   wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute \
-  wtk-qa-plan wtk-reuse-review wtk-setup wtk-ship \
+  wtk-qa-plan wtk-reuse-review wtk-setup wtk-ship wtk-test-review \
   --agent '*' --copy --yes
 ```
 
 Use `npx skills@latest list` to inspect the project installation. The full WTK set carries the
 shared phase dependencies. WTK does not provide a package installer executable.
 
-The full 13-skill WTK set is self-contained: its scripts, assets, and conditional references live
+The full 14-skill WTK set is self-contained: its scripts, assets, and conditional references live
 below the distributed skill directories.
 
-Projects that used the retired package installer can follow the [legacy cleanup guide](CLEANUP.md)
-before installing the skills.
+**Runtime requirements.** The bundled validators need Python 3, and `wtk-knowledge-check` needs Bun.
+When one is absent, run the procedure manually and record that the validator was unavailable.
+
+Retired package installer: see the [cleanup guide](CLEANUP.md).
 
 ## Updating an existing installation
 
@@ -64,20 +67,18 @@ reinstall from the unpinned source to advance beyond that revision.
 If WTK remains on 2.0.x, inspect the `wtk*` entries in the project's `skills-lock.json`. To leave
 a pinned revision, rerun the [complete install command above](#install-the-skills) with the bare
 `antoniofulg/workflow-toolkit` source, without a tag, commit or `/tree/<ref>` suffix. This replaces
-the recorded WTK source/ref and refreshes all 13 skills. Review the installed files and lockfile
+the recorded WTK source/ref and refreshes all 14 skills. Review the installed files and lockfile
 diff, then commit them in the consuming project. Future updates follow the default branch.
 
 For a global installation, use `npx skills@latest update --global`; its tracking file is
 `~/.agents/.skill-lock.json` (or `$XDG_STATE_HOME/skills/.skill-lock.json` when configured).
-A missing `skillPath` or an installation made by the retired WTK
-package installer also requires reinstalling through the current skill installer; use the
-[cleanup guide](CLEANUP.md) for the retired installer. Updating skills does not rewrite project
+A missing `skillPath` requires reinstalling through the current skill installer. Updating skills does not rewrite project
 instructions, native agent files or old feature workflow snapshots; follow the release's breaking
 change notes separately.
 
 See the [Skills CLI documentation](https://github.com/vercel-labs/skills#readme) for installation
-sources and update scope. WTK's individual skill frontmatter versions are not the toolkit release
-number; use source/ref and installed content to identify what was installed.
+sources and update scope. Every WTK skill's frontmatter version is the toolkit release number, so an
+installed skill names the release it came from.
 
 ## Optional project instructions
 
@@ -182,7 +183,7 @@ Specialist workflow companions can supply deeper procedures when a project selec
 | --- | --- | --- |
 | `investigate-first` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/investigate-first) | An unclear failure or performance regression needs evidence-ranked hypotheses and a credible cause before editing. |
 | `safe-refactor` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/safe-refactor) | Build or verification needs behavior-preserving extraction, consolidation or ownership changes, with the same proof before and after edits. |
-| `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams. Broad suite audits remain separately scoped. |
+| `test-audit` | Project-owned or portable adaptation of the selected skill | Checks, test authoring or review needs a value gate for distinct regressions, canonical test ownership, duplication or test-only seams beyond the `wtk-test-review` baseline. Broad suite audits remain separately scoped. |
 | `migration` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/migration) | A project requires staged schema, data, API, configuration or dependency transitions with preservation, rollback and partial-failure evidence. |
 | `verify-and-stop` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman/tree/main/skills/verify-and-stop) | A validation-only request needs the smallest sufficient proof set and a clear stopping point. Required independent feature verification still applies. |
 | `writing-for-agents` | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) | Skills or agent instructions need clear triggers, progressive disclosure and one owner per rule. |
@@ -220,12 +221,11 @@ The public hierarchy is `Feature -> Slice -> Check`:
 The feature artifacts are `.specs/features/<feature>/plan.md`, `checks.md`, and `verification.md`.
 The project decides its validation command, provider route, QA adapter, and delivery authority.
 
-Feature approval is separate from execution settings: record the actual user decision/source,
-reviewed revision and scope in the native plan/task `## Approval`, in the receiving turn. Lean's
-pre-build and completion gates reject missing, empty or template-only receipts; checks-only work
-keeps its receipt with `## Intent` without a synthetic plan or redundant approval pause. Unchanged
-in-scope approval is reusable; new user-owned product choices need targeted acceptance. Markdown
-cannot authenticate authority, and local edits/commits do not authorize remote delivery.
+Feature approval is separate from execution settings: record who approved which revision and scope
+in the native plan/task `## Approval`, in the receiving turn, as
+[construction constraints](.agents/skills/wtk/references/construction-constraints.md#native-feature-approval)
+describes. No validator judges the receipt; the Verifier confirms it. Local edits/commits do not
+authorize remote delivery.
 
 Live recovery records decisions immediately, dispatch intent before send, and actual host identity
 after send. Coordinators reconcile host status/reports before waiting, retrying or replacing work;
@@ -233,8 +233,8 @@ uncertain ownership blocks duplicate dispatch. Builders report and stop; the coo
 the independent Verifier.
 
 For `ui` verification, visual-fidelity rows explicitly name source/revision and scale, implementation
-revision, route/state, CSS viewport/scroll, environment including DPR, separate local reference,
-full-page and viewport paths, comparison and result. Relative capture paths resolve beside the report.
+revision, screen/state, viewport/scroll, environment including runtime and scale, separate local
+reference, full-page and viewport paths, comparison and result. Relative capture paths resolve beside the report.
 The completion gate rejects missing provenance/files; non-UI profiles need no captures. Render at
 the contracted viewport: resizing/cropping another viewport's image is not proof. Structural
 acceptance still requires independent image inspection, fidelity judgment and interaction reproduction.
@@ -277,8 +277,8 @@ This repository is the source pack and maintainer checkout. Run the focused skil
 bun run test
 ```
 
-The source checkout keeps skill tests and local development helpers. Selecting a WTK skill installs
-only that skill's files.
+The source checkout keeps skill tests and local development helpers; an installation carries only
+the skill directories.
 
 ## Provenance and license
 

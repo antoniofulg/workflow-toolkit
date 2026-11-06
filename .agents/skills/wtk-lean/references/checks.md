@@ -12,7 +12,7 @@ how to work.
 built; this turns both into obligations with proofs.
 So the shape - the path, the entities, the interface, the doors - is not written here and not
 re-argued here. What *is* this file's job is the derivation, and it is where omissions surface:
-every route's statuses in `Surface`, every door in `Landing`, every entity in `Relations` owes a
+every interface's outcomes in `Surface`, every door in `Landing`, every entity in `Relations` owes a
 set row in `Coverage` or a check. A shape section with nothing pointing back at it from here is
 either dead or unproven, and both are findings.
 
@@ -21,9 +21,9 @@ either dead or unproven, and both are findings.
 Apply [project requirements](../../wtk/references/project-requirements.md) before deriving checks,
 including for checks-only features. Carry source-backed landings and gap dispositions from the
 plan, reconcile omissions, and obtain its fresh criteria review before dependent feature build.
-Carry the plan's [native approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
-within its reviewed scope. With no plan, retain `## Intent` and `## Approval` in this file; an
-already authorizing current request supplies the receipt without a new approval pause.
+With no plan, keep `## Intent` and the
+[`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+in this file.
 
 Read the package manifest, the task runner and the CI workflows. Prefer a command that already
 runs in CI. Where nothing exists for what a check needs, ask - never invent a command, because
@@ -38,7 +38,7 @@ listed must be green.
 Four things must be true before you write one:
 
 - someone could **observe** the outcome - if you cannot say what would be seen, it is too vague
-- it carries a **concrete value** - a status code, a field, a bound
+- it carries a **concrete value** - an outcome, a field, a bound
 - **one run settles it** - a single execution either satisfies it or does not
 - you can name the **proof** - the test or command whose exit code decides
 
@@ -54,13 +54,15 @@ a second proof, and it is a question about coverage rather than about test style
 as a response at a boundary is not settled by a test that never crosses it. A claim about a
 decision table is not settled by one path through it. When the claim and the proof sit at
 different levels, either split the claim or name the second proof - never let the level slide to
-whichever is cheaper to write.
+whichever is cheaper to write. A proof at end-to-end states the reason the
+[lowest-layer rule](../../wtk/references/test-contract.md#choosing-the-layer) requires.
 
 **Obligations add up rather than substitute.** A test proves the layer where it *asserts*, not
 the layers it happens to *pass through*. An end-to-end test that traverses a branch exercises one
 path through it and cannot fail when a second branch is wrong. Treating it as proof of the code
 it traversed is level substitution, and it is the most common way a green suite ships a broken
-branch table.
+branch table. Enumerate a decision table once, at its own layer: the boundary proof asserts only
+the contract, the wiring and one representative case per distinct outcome, never the table rows.
 
 ## Coverage - the join
 
@@ -69,8 +71,9 @@ the check that proves it.
 
 A set collapsed into a sentence - "dispatches over paused, updated, deleted and trial_will_end" -
 has no empty cell, so a member can go missing while the sentence still reads perfectly. That is
-how a branch named in your own evidence ships unproven. One proof that is table-driven over the
-whole set may stand for it, with the size stated, because there the enumeration lives in the test.
+how a branch named in your own evidence ships unproven. Prefer one table-driven proof per set,
+with the size stated, because there the enumeration lives in the test. Several checks may cite the
+same test when each check has its own located assertion.
 
 Walk it **from the sets, not from the checks.** Summarising the checks you just wrote can only
 find a check with nothing behind it; it cannot find a name with no check, which is the failure
@@ -78,8 +81,8 @@ that costs. The rows are not a new inventory - they are the enumerations already
 a door in the plan's `Landing`, a decision table in the level evidence, the input space behind
 a claim. Anything enumerated in prose owes a row here.
 
-**Every route in the plan's `Surface` owes a row, and its members are the statuses.** That row
-is the only thing that turns the signature you reviewed into an obligation; without it a status
+**Every interface in the plan's `Surface` owes a row, and its members are the outcomes.** That row
+is the only thing that turns the signature you reviewed into an obligation; without it an outcome
 listed in the plan can ship with nothing behind it, and the artifact that named it looks like
 evidence that it was covered.
 
@@ -135,7 +138,7 @@ build under them and leave the files alone.
 ````markdown
 # <Feature> checks
 
-Profile: light
+Profile: standard
 Plan: `.specs/features/<feature>/plan.md`
 
 ## Intent
@@ -149,18 +152,18 @@ the present tense, then what is different for a user when this ships.>
 
 Grouped by the spec's slices; numbering runs across the whole feature.
 
-### S1 - <slice> · 4 files · 38 KB · ~10k
+### S1 - <slice>
 
 **C1** - A failed charge sets status to Suspended, never Cancelled (FEAT-01, AC 1)
-Proof: `bin/rails test test/billing/dunning_test.rb -n "/failed_charge_suspends/"`
+Proof: `<test command> <dunning test file> <name filter: failed_charge_suspends>`
 
 **C2** - Every provider status maps to exactly one local status (FEAT-01, AC 4)
-Proof: `bin/rails test test/billing/status_map_test.rb -n "/every_provider_status/"`
+Proof: `<test command> <status map test file> <name filter: every_provider_status>`
 
-### S2 - <slice> · 9 files · 140 KB · ~35k
+### S2 - <slice>
 
 **C3** - Retrying the same webhook delivery id changes nothing (FEAT-02, AC 5)
-Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
+Proof: `<test command> <ingest test file> <name filter: retry_is_idempotent>`
 
 ## Coverage
 
@@ -170,10 +173,10 @@ Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
 | webhook event types (5) | `paused` C12 · `updated` C13 · `deleted` C14 · `trial_will_end` C15 · other C16 | - |
 | `trial_days` bound (4 edges) | 0 C5 · 1 C5 · 30 C5 · 31 C5 | - |
 | `Suspended` transitions (3) | into it C1 · out to `Active` C6 · out to `Cancelled` C7 | - |
-| `POST /webhooks/provider` statuses (3) | 200 C3 · 409 C7 · 422 C16 | - |
+| `POST /webhooks/provider` outcomes (3) | 200 C3 · 409 C7 · 422 C16 | - |
 | startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3 | - |
 
-- Claims naming a status code, route or response shape: C7, C12, C16 - each has a proof that
+- Claims naming an outcome, interface or response shape: C7, C12, C16 - each has a proof that
   crosses the boundary
 - No other check claims more than the single case its proof exercises
 
@@ -184,7 +187,7 @@ section entirely otherwise.>
 
 | Code | Required proofs | Coverage expectation |
 | --- | --- | --- |
-| Decides, reached across a boundary | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
+| Decides, reached across a boundary | one at the boundary **and** one at its own layer | at the boundary: the contract, the wiring and one case per distinct outcome; at its own layer: one asserted case per row of the decision table |
 | Decides, not reached across a boundary | one at its own layer | one asserted case per row of the decision table |
 | Entry point that decides nothing | one at the boundary | accepted input, each rejected input, each error path |
 | Instrumentation, pass-throughs | none of its own | covered by its consumer's proof |
@@ -200,7 +203,7 @@ proven only by a path that happens to traverse them.
 
 ## Swept
 
-Where each unwritten requirement landed. All nine, one line each, every time.
+Where each unwritten requirement landed. All eleven, one line each, every time.
 
 - validation: C5
 - failure modes: C1
@@ -211,6 +214,8 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 - dependency failure: C6
 - state transitions: C1, C2
 - observability: n/a - no logging requirement in this slice
+- deploy compatibility: n/a - <why no mixed-version window or rollback concern exists>
+- performance budget: n/a - <why no load or hot-path concern exists>
 
 ## Out of scope
 
@@ -218,20 +223,8 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 
 ## Handoff
 
-Size, with the arithmetic, written after the checks exist and before any code. The coordinator
-chooses the cut; the user chooses the execution mechanism only when the estimate exceeds the
-declared budget.
-
-Under the budget - one builder, no ask:
-
-- S1 = 10k, all in Billing; S2 enters Webhooks at 25k total, under the 150k budget - one builder
-
-Over the budget - stop, ask (handoff vs one builder), then record the choice:
-
-- S1-S3 = 118k, all in Billing; S4 enters Webhooks at 190k -> proposed cut after S3
-- Mechanism: handoff | one builder (compaction accepted) - <the user's choice>
-
-<Appended by each builder as it finishes, three lines each:>
+<Only when a builder hit its context limit and handed off at a whole-slice boundary, three lines
+each:>
 
 - **Boundary:** C1-C7 closed at `<sha>`
 - **Settled mid-build:** <links to decisions recorded in their receiving turns; do not wait for this checkpoint>
@@ -247,11 +240,10 @@ everything about the requirements and the solution's shape: [plan.md](plan.md).
 python3 <skill-dir>/scripts/validate_checks.py <feature>
 ```
 
-It fails absent/unusable native approval in the sibling plan (or checks-only intent contract), a
-check with no `Proof:`, duplicate ids, incomplete coverage, missing swept dimensions or profile.
-Execution settings do not replace feature approval. It warns on a proof without a test
-selector, vague claims and a plan Surface route absent from checks. The structural gate cannot judge
-approval authenticity/scope or proof adequacy; the independent review retains those obligations.
+It fails a checks-only feature without `## Intent`, a check with no `Proof:`, duplicate ids,
+incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
+selector, vague claims and a plan Surface interface absent from checks. It does not judge approval or
+proof adequacy; the independent review retains those obligations.
 
 A non-zero exit means fix before writing code. The script checks structure; the judgment - is the
 proof the right one, does the level match the claim - stays yours.

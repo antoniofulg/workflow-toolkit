@@ -60,7 +60,7 @@ describe("bun run knowledge", () => {
   it("exits 0 when only gaps remain, since a gap is work to do rather than a defect", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": '---\nokf_version: "0.2"\n---\n\n# Bundle\n',
-      ".specs/STATE.md": "### AD-001\n",
+      ".specs/STATE.md": "| ID | Decision | Status |\n| --- | --- | --- |\n| AD-001 | decision | active |\n",
     });
 
     const result = runKnowledgeScript(root);

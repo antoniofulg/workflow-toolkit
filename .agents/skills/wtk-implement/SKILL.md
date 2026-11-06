@@ -4,17 +4,13 @@ description: 'Implement approved modular work from a `.tasks` source into a `.ch
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: 0.2.1
+  version: '5.0.0'
 ---
 
 # TLC Implement
 
 Implement approved modular work: extract the checks, build, and leave independent verification to
 the coordinator. The checklist fixes obligations; implementation decomposition is yours.
-
-Before execution, read [execution metrics](../wtk/references/execution-metrics.md) and return the
-assigned stage receipt with session identity, interval and baseline/snapshot counters after its
-source checks, using the normal handoff format.
 
 Before delegated work, follow [agent selection](../wtk/references/agent-selection.md); use the
 selected stage settings and skill in the current checkout, without mandatory native roles.
@@ -30,15 +26,14 @@ and verification handoff. At phase boundaries or context recovery, use
 ## Profile and handoff
 
 The project declares `profile: light|standard|ui` and optional `handoff: on|off` in `AGENTS.md` or
-equivalent. Absent a declaration, use `light` and `handoff: on`; the resolver may set a stronger
-profile. A project budget overrides the 150k-token default. Handoff affects build batching only,
-never independent verification.
+equivalent. Absent a declaration, use `standard` and `handoff: on`; the resolver may set a stronger
+profile. Handoff affects build batching only, never independent verification.
 
 | Profile | Adds |
 | --- | --- |
 | `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
 | `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
-| `ui` | standard plus binding-source comparison and per-screen copy and arrangement enumeration; read [screens.md](references/screens.md) |
+| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, and one structural guard per screen; read [screens.md](references/screens.md) |
 
 Use the `ui` profile for binding interface sources. The profile is a floor and the report names it. Empty inputs are recorded as such, not treated as
 passes. Read `references/test-policy.md` only for `standard` or `ui` checklist rows.
@@ -46,8 +41,9 @@ passes. Read `references/test-policy.md` only for `standard` or `ui` checklist r
 ## Critical rules
 
 1. Every check names its **proof**: the test or command whose exit code settles it.
-2. Tests assert checklist outcomes, never the implementation. Never weaken, skip, or delete one to
-   pass a suite; a wrong check stops for user clarification.
+2. Tests assert checklist outcomes, never the implementation. Never weaken or skip a test, or delete
+   one, to make a red gate pass; redundant-test removal follows
+   [pruning](../wtk/references/test-contract.md#pruning). A wrong check stops for user clarification.
 3. The checklist and test-policy rows are fixed while building. `Landing` is additive: record a new
    door with its literal shape and rejected alternative before writing the closing code.
 4. A build agent never spawns another agent at all. The coordinator dispatches one fresh sub-agent as Verifier after
@@ -64,16 +60,15 @@ before dependent feature build, reusing an upstream review when it covers the co
 Read the approved `.tasks/<name>.md` source completely, then ground its checks in the touched code
 and existing conventions. Refuse a claim without a nameable proof, concrete value, or explicit
 boundary; ask when the source leaves a real decision open rather than guessing.
-Inspect the source's [native feature approval](../wtk/references/construction-constraints.md#native-feature-approval)
-before dependent Build: actual decision/source, reviewed revision and scope, separate from execution
-settings. Record already-granted authority without asking again; missing evidence remains blocked
-until recovered from the real source. Link the owning receipt in the checklist, not a second copy.
+Confirm the source's [approval receipt](../wtk/references/construction-constraints.md#native-feature-approval)
+before dependent Build and link it in the checklist, not a second copy.
 
 Reuse the approved source's Swept dispositions and map them to checklist checks or existing proof.
 Revisit only missing, contradictory, or changed inputs. When no upstream sweep exists, perform it
 once across validation, failure modes, idempotency/retry, authorization, concurrency/ordering, data
-lifecycle, external-dependency failure, state transitions, and observability. Record each landing
-as a check, existing behaviour, `n/a - <reason>`, or unresolved question. Under `ui`, a
+lifecycle, external-dependency failure, state transitions, observability, deploy compatibility /
+rollback, and performance budget. Record each landing as a check, existing behaviour,
+`n/a - <reason>`, or unresolved question. Under `ui`, a
 design marked binding supplies concrete screen values; read [screens.md](references/screens.md).
 Under `light` or `standard`, skip that reference.
 
@@ -105,13 +100,13 @@ is additive and does not stop the build.
 
 ### When one agent is not enough
 
-Use one builder by default. Estimate context and record a split under `## Handoff` only when a
-concrete context limit or planned transfer requires it. Pack **whole slices** under the declared
-budget (150k tokens by default); never split a slice. Before handoff, record closed checks, user decisions, and
-abandoned approaches. Handoff occurs only on green, with every proof in the batch passing; the next
-builder reads the checklist and landed diff, not a narrative. If one slice exceeds the budget, report
-that the upstream task cut it too coarsely. `handoff: off` keeps one builder in one session;
-recover after compaction through the shared context handoff reference above.
+Use one builder and do not estimate size up front. Ask the user only when that builder actually hits
+a context limit: hand off at the next whole-slice boundary, or continue with accepted compaction.
+Hand off whole slices only; never split a slice. Before handoff, record closed checks, user
+decisions, and abandoned approaches under `## Handoff`. Handoff occurs only on green, with every
+proof in the batch passing; the next builder reads the checklist and landed diff, not a narrative.
+`handoff: off` keeps one builder in one session; recover after compaction through the shared context
+handoff reference above.
 
 ## Verify
 

@@ -13,11 +13,11 @@ const wtkSkills = fs.readdirSync(path.join(root, '.agents/skills'), { withFileTy
 const optionalSkills = ['ponytail', 'prompt-review', 'security-implementation', 'security-review', 'security-spec', 'security-threat-model'];
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
-test('full WTK set has thirteen skills and no WTK config payload', () => {
+test('full WTK set has fourteen skills and no WTK config payload', () => {
   assert.deepEqual(wtkSkills, [
     'wtk', 'wtk-deep-review', 'wtk-discover', 'wtk-implement',
     'wtk-knowledge-check', 'wtk-lean', 'wtk-plan', 'wtk-qa', 'wtk-qa-execute',
-    'wtk-qa-plan', 'wtk-reuse-review', 'wtk-setup', 'wtk-ship',
+    'wtk-qa-plan', 'wtk-reuse-review', 'wtk-setup', 'wtk-ship', 'wtk-test-review',
   ]);
   const sourceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wtk-isolated-source-'));
   try {
@@ -58,7 +58,7 @@ test('execution selection and current WTK catalog are consistent', () => {
   const lean = read('.agents/skills/wtk-lean/SKILL.md');
   const reviewRounds = read('.agents/skills/wtk/references/review-rounds.md');
 
-  assert.match(readme, /full 13-skill WTK set/);
+  assert.match(readme, /full 14-skill WTK set/);
   assert.match(readme, /Agent selection.*agent-selection\.md/);
   assert.match(readme, /Deep Review is on demand/);
   assert.match(readme, /fixed default `stall_attempts = 3`/);
@@ -68,7 +68,7 @@ test('execution selection and current WTK catalog are consistent', () => {
   assert.match(lean, /workflow_route\.py/);
   assert.match(lean, /--selection-file/);
   assert.match(reviewRounds, /Deep Review is on demand by default/);
-  assert.match(reviewRounds, /fixed default threshold of three attempts/);
+  assert.match(reviewRounds, /Halt after three attempts \(`stall_attempts`\)/);
   assert.equal(fs.existsSync(path.join(root, 'docs')), false);
   assert.match(read('.agents/skills/wtk-qa/references/qa-scenarios.md'), /consuming project/);
 
@@ -98,6 +98,9 @@ function assertSkillReferences(sourceRoot, skill) {
         if (!target || target.includes('[') || target.includes('*') || target.includes('?') || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('mailto:')) continue;
         assert.equal(fs.existsSync(path.resolve(path.dirname(path.join(skillRoot, relative)), target)), true, `${skill}/${relative}: ${target}`);
       }
+      for (const match of source.matchAll(/`(\.\.?\/[A-Za-z0-9_.()/-]+\.md)(?:#[^`]*)?`/g)) {
+        assert.equal(fs.existsSync(path.resolve(path.dirname(path.join(skillRoot, relative)), match[1])), true, `${skill}/${relative}: ${match[1]}`);
+      }
       for (const match of source.matchAll(/(?:^|[ `(])((?:references|scripts)\/[A-Za-z0-9_.()/-]+\.(?:md|py|mjs|ts))(?=$|[` )])/gm)) {
         if (match[1].includes('[') || match[1].includes('*') || match[1].includes('?')) continue;
         assert.equal(fs.existsSync(path.join(skillRoot, match[1])), true, `${skill}/${relative}: ${match[1]}`);
@@ -115,12 +118,12 @@ test('Skills CLI discovers every WTK skill when the source lock has no self entr
     const cli = path.join(root, 'node_modules/skills/dist/cli.mjs');
     const clean = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
     assert.equal(clean.status, 0, clean.stderr);
-    assert.match(clean.stdout, /Found 13 skills/);
+    assert.match(clean.stdout, /Found 14 skills/);
 
     fs.writeFileSync(path.join(source, 'skills-lock.json'), JSON.stringify({ version: 1, skills: { wtk: {}, 'wtk-lean': {}, 'wtk-deep-review': {} } }));
     const locked = spawnSync(process.execPath, [cli, 'add', source, '--list', '--full-depth'], { cwd: source, encoding: 'utf8' });
     assert.equal(locked.status, 0, locked.stderr);
-    assert.match(locked.stdout, /Found 10 skills/);
+    assert.match(locked.stdout, /Found 11 skills/);
   } finally {
     fs.rmSync(source, { recursive: true, force: true });
   }

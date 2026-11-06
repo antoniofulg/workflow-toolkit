@@ -2,7 +2,8 @@
 
 Three things outlive a session: decisions that constrain future features, a handoff snapshot for
 picking work back up, and lessons distilled from real verification failures. All three live under
-`.specs/` by default; decisions follow the project's existing store.
+`.specs/` by default; decisions follow the project's existing store. When the project keeps a
+`knowledge/` bundle or decision docs, those win over `.specs/STATE.md` and the lessons layer.
 
 ## `.specs/STATE.md`
 
@@ -24,7 +25,7 @@ decision store owns the records, keep only Handoff here.
 
 **Feature**: <name>
 **Where**: <check id> - <what is done, what is not>
-**In progress**: `path/to/file.rb:88` - <what was being changed>
+**In progress**: `path/to/file.<ext>:88` - <what was being changed>
 **Next step**: <the concrete next action>
 **Blockers**: <none | description>
 **Uncommitted**: <files>
@@ -49,15 +50,6 @@ Follow [context recovery](../../wtk/references/context-handoff.md) to reconcile 
 contract, handoff, Git and evidence before the next action. It owns checkpoint contents and
 session-transfer rules; keep this file's section-scoped write and decision-log rules. For Lean
 features, `checks.md` remains the proof-state authority after recovery.
-
-## Feature task memory
-
-When a feature uses multiple implementation tasks, keep durable cross-task constraints in
-`.specs/features/<feature>/memory/MEMORY.md` and task-local facts in `task_NN.md`. Read both before
-the first edit and update the applicable file before a completion claim or commit. Promote only a
-constraint, decision, or risk that another task needs and that is not already stated in the plan,
-checks, or repository. Never copy spec text or command transcripts into memory; cite the owning
-artifact instead. The repository wins when memory is stale.
 
 ## Lessons
 

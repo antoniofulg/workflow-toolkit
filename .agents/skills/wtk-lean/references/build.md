@@ -11,27 +11,16 @@ for the model to obey, you are rebuilding the thing this skill removed.
 Apply [project requirements](../../wtk/references/project-requirements.md#build-and-recover): read
 inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
 before dependent edits. This applies under every profile, including checks-only features.
-Run `validate_checks.py <feature>` before dependent edits and inspect the native
-[approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval) for
-actual authority over the reviewed revision/scope. Record new user decisions in their receiving
-turn via [live recovery](../../wtk/references/context-handoff.md); a batch checkpoint is too late.
+Run `validate_checks.py <feature>` before dependent edits and confirm the
+[approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval).
+Record new user decisions in their receiving turn via
+[live recovery](../../wtk/references/context-handoff.md); a batch checkpoint is too late.
 
 For a selected image or design, load [UI/UX](../../wtk/references/ui-ux.md) before coding;
 freeze its contract and complete the builder capture/compare/fix loop before handoff.
 
-
-The checks exist, so the size is visible. Write `## Handoff` with `wc -c / 4` arithmetic for the
-files each whole slice touches. Then:
-
-- The cumulative estimate fits the declared budget -> one builder. Do not ask or offer a transfer.
-- The estimate exceeds it -> stop before code. Ask the user to choose **handoff** at the recorded
-  whole-slice boundary or **one builder** with accepted compaction/context-loss risk. Record the
-  choice in `## Handoff`.
-
-The coordinator chooses the cut and uses the host's supported handoff mechanism with the
-[stage selection](../../wtk/references/agent-selection.md) in the current checkout.
-Never split a slice. A slice that alone exceeds the budget is too coarse; report that
-instead of splitting it mid-outcome.
+One builder takes every slice in order. Do not estimate size or ask about a transfer up front;
+[Running out of context](#running-out-of-context) covers an actual limit. Never split a slice.
 
 ## What is fixed and what is not
 
@@ -69,16 +58,18 @@ bug it was supposed to catch.
 **Hard constraints, no exceptions:**
 
 - Do not weaken an assertion to make it pass.
-- Do not delete a test, and do not use the framework's skip / disable / pending mechanism to
-  bypass a failing one.
+- Never weaken or skip a test (the framework's skip / disable / pending mechanism included), or
+  delete one, to make a red gate pass. Removing a redundant test is a separate, reviewed change
+  under the [test-pruning procedure](../../wtk/references/test-contract.md#pruning).
 - Do not modify a check's test afterwards to make the implementation pass.
 
 A red proof is a stop, not a note. If a check turns out to be wrong or impossible, stop and
 renegotiate with the user. The same holds for a `Landing` row the user approved that the build
 proves unbuildable - they approved that shape specifically.
 
-Extra tests beyond the proofs are welcome and there is no quota. A guard clause, a log line, a
-clear error message at an edge the checks did not name: that is the work, not scope creep.
+A guard clause, a log line, a clear error message at an edge the checks did not name: that is the
+work, not scope creep. An extra test must name a regression no existing proof catches, under the
+[test contract](../../wtk/references/test-contract.md#never-add-a-test-just-to-raise-coverage).
 
 ## Landing rows go in before the code
 
@@ -96,12 +87,12 @@ A new door that contradicts nothing already approved never stops the build.
 
 ## Commit
 
-One coherent piece per commit, [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
-`<type>(<scope>): <description>`, types `feat` `fix` `refactor` `docs` `test` `style` `perf`
-`build` `ci` `chore`. Imperative mood, lowercase, no trailing period. A `!` marker requires a
-`BREAKING CHANGE:` footer.
+One coherent piece per commit. Follow the project's own commit convention and its `commit validator`
+[setting](../../wtk/references/project-settings.md) when it has one. Otherwise use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
+`<type>(<scope>): <description>` with the [default types](../../wtk/references/git.md#types).
+Imperative mood, lowercase, no trailing period. A `!` marker needs no `BREAKING CHANGE:` footer.
 
-Validate before committing:
+Without a project validator, validate before committing:
 
 ```bash
 python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on failed charge"
@@ -110,7 +101,8 @@ python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on
 Optional git-level guard, independent of any agent:
 
 ```bash
-ln -sf <skill-dir>/scripts/check_commit.py .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+hook="$(git rev-parse --git-path hooks)/commit-msg"
+ln -sf "$(pwd)/<skill-dir>/scripts/check_commit.py" "$hook" && chmod +x "$hook"
 ```
 
 Skip the hook if the project manages hooks its own way. When a slice's proofs are all green, mark
@@ -118,8 +110,6 @@ its checks complete in `checks.md` and commit that with the slice. The slice is 
 checkpoint: marking check by check adds bookkeeping the build does not need, and a resume reads
 the marks plus the diff to see which slices landed. A check whose proof spans several slices stays
 unmarked until the last one lands.
-
-Never add Co-Authored-By, Made-with, or any agent attribution trailer.
 
 ## How to write the code
 
@@ -157,8 +147,10 @@ Two ways through it, and they are not equivalent. Automatic compaction summarise
 *artifact*, at a boundary you chose. This skill is built for the second - that is why `Landing`
 rows are appended before the code that closes them rather than at the end.
 
-**Handing off.** Execute the mechanism recorded at the size gate. Transfer only on green, with every
-proof in the batch passing. The next builder reads
+**Handing off.** When a builder actually hits its context limit, ask the user: hand off at the next
+whole-slice boundary, or continue with accepted compaction. The coordinator uses the host's
+supported handoff mechanism with the [stage selection](../../wtk/references/agent-selection.md) in
+the current checkout. Transfer only on green, with every proof in the batch passing. The next builder reads
 `checks.md` and the **diff of what already landed** - never a narrative summary. The diff is the
 state, and it carries the hundred reversible choices that sit below the `Landing` bar: naming,
 error shape, where the helper went. Those are exactly what drifts between builders and exactly
@@ -168,34 +160,12 @@ Then append the three `## Handoff` lines - boundary, links to decisions already 
 receiving turns, and abandoned approaches. Live dispatch state and recovery follow the shared
 context handoff procedure; the next builder reads the artifact rather than a prompt-only briefing.
 
-If the user chose one builder over a budget miss, compaction is the accepted path. **After
+If the user chose to continue, compaction is the accepted path. **After
 compaction or on resume,** use [context recovery](../../wtk/references/context-handoff.md) before
 continuing. Keep the batch handoff boundary above; recovery alone does not require a new agent.
 
 ## Then stop
 
 When the last check of **your batch** is committed, report and stop: checks closed, commit
-hashes, proof results, deviations. Do not dispatch the Verifier - that is the orchestrator's
-step, after the last batch of the whole feature, over the full check set. A Verifier briefed by
-the builder that just closed the final batch inherits that builder's scope even though it
-inherits none of its tokens, and reports a pass over four checks that reads exactly like a pass
-over forty. See [verify.md](verify.md).
-
-The builder always stops here. When the final batch returns green, the coordinator dispatches the
-fresh Verifier in that same turn. Do not ask or wait for a separate "verify work" prompt.
-
-## What was deliberately removed
-
-If you are used to a per-task cycle, these are gone on purpose:
-
-| Removed | Why |
-| --- | --- |
-| Granular task breakdown with `Where` / `Tools` / `Depends on` | buys ordering, not correctness, and competes with the checks for attention |
-| Per-task test adequacy review with evidence tables | author self-review reproduces the author's own blind spot; the Verifier does it once, better |
-| Pre-implementation assumption declaration per task | the assumptions that matter are in the spec, closed by its gate |
-| The component catalogue in a design doc - `Purpose` / `Location` / `Interfaces` / `Dependencies` per class | reversible detail that goes stale with the authority of a document; the plan keeps the path, the entities, the signature and the doors, and nothing per-component |
-| The `graph TD` architecture diagram, as the default rendering of the path | a picture of five boxes carries less than five lines that each say what enters, what crosses and what is handed on, and it rots silently while `Flow` is kept true through the build; a mermaid `flowchart` stays available for the case a list genuinely cannot express - a fan-out, a fork, an async hand-off |
-| The `Code Reuse Analysis` table - `Component` / `Location` / `How to Use` | the inventory is already distributed through `Flow`, where each hop marks whether its module exists; what a table adds beyond that is the catalogue again, so only the decision survives, as the sentence opening `Flow` on what is reused instead of duplicated |
-| The pace question (`Quick` / `Guided` / `Detailed`) and a `context.md` of its own | a meta-question spends a turn deciding how to spend turns; the elicitation rules apply always, and their output lands in the plan's `Assumptions` |
-| A quota of gray areas to generate per feature | a quota manufactures questions; the surface rubric in `## Observable` is a fixed enumeration with an `n/a` escape instead, which finds items without inventing them |
-| An offer to spawn sub-agents | logistics the user cannot decide better than you |
+hashes, proof results, deviations. Do not dispatch the Verifier; the coordinator owns it under
+[core contract 4](../SKILL.md#core-contract), and [verify.md](verify.md) says why.

@@ -3,12 +3,10 @@ name: wtk-qa-execute
 description: Execute planned QA through existing public interfaces and record evidence or defects. Use when a Verifier walks QA; Don't use for planning, product fixes, or framework setup.
 metadata:
   author: Antonio Fulgêncio
+  version: '5.0.0'
 ---
 
 # QA Execute
-
-Before work, read [execution metrics](../wtk/references/execution-metrics.md); return the assigned
-stage receipt with session identity, interval and baseline/snapshot counters after its source checks.
 
 Walk the current QA plan through the consuming project's public surfaces. Select the adapter already
 declared by the project, capture evidence, write durable results, and return product defects to an
@@ -26,6 +24,7 @@ This is an original project-owned adaptation for this workflow, inspired by Pedr
 Use the selected `qa` stage and non-author session through
 [agent selection](../wtk/references/agent-selection.md) before delegated execution.
 
+Resolve the [QA root](../wtk-qa/references/qa-scenarios.md#layout); `docs/qa/` below means that root.
 Read `docs/qa/README.md`, the QA Plan handoff, the in-scope scenarios and charters, open bugs, and
 [`../wtk-qa/references/qa-scenarios.md`](../wtk-qa/references/qa-scenarios.md) in full. The guideline owns scenario fields, ids, statuses, and
 flag/reset rules. Read [`references/session-protocol.md`](references/session-protocol.md) in full

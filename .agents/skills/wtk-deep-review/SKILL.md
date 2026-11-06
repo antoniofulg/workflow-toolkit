@@ -1,8 +1,9 @@
 ---
 name: wtk-deep-review
 description: "Review diffs, worktrees, or PRs in depth, including spec conformance and requested finding publication. Use for deep review; not fixes, spec edits, or quick feedback."
-disable-model-invocation: true
 argument-hint: "[--pr <reference> | --base <ref> | --staged | --worktree] [--head <ref>] [--files p1,p2] [--spec <path>] [--max-cohort-files N] [--publish] [--full] [--out <dir>]"
+metadata:
+  version: '5.0.0'
 ---
 
 # Deep Review
@@ -39,7 +40,7 @@ Optional repo-root file for review configuration. Top-level keys, all optional:
 | Key | Meaning |
 | --- | --- |
 | `concurrency` | Maximum simultaneous reviewer jobs, an integer from `1` through `6`; defaults to `3` and is pinned in `manifest.json` |
-| `path_filters` | Globs over repo-relative paths: `!pat` excludes; bare patterns, when present, restrict review to their matches and beat any exclude; built-in excludes (locks, vendor, generated, testdata, snapshots) always append |
+| `path_filters` | Globs over repo-relative paths: `!pat` excludes; bare patterns, when present, restrict review to their matches and beat any exclude; built-in excludes (locks, vendor, generated, snapshots) append unless negated with `!!pat`, for example `!!**/generated/**` |
 | `path_instructions` | `path` glob + verbatim `instructions` entries — the highest-precedence rubric source (Step 2) |
 | `request_changes_workflow` | publish-mode review-event gate |
 
@@ -59,13 +60,14 @@ The manifest builder resolves `path_filters` into manifest.json; the knowledge s
 - Optional metrics snapshot provider totals and cumulative checkpoints without changing dispatch,
   retries, outputs, or exits. The main thread records serialized cumulative checkpoints without
   per-job token attribution; totals finalize only after the full scope completes. Hosts without a
-  compatible adapter record adapter metrics as `unavailable`; before reporting tokens unavailable,
-  follow [execution metrics](../wtk/references/execution-metrics.md) for local session and worker
-  receipt checks. Keep the review running normally.
+  compatible adapter record adapter metrics as `unavailable`. When the project's `AGENTS.md` opts
+  into execution metrics, follow [execution metrics](../wtk/references/execution-metrics.md) for
+  local session and worker receipt checks before reporting tokens unavailable. Keep the review
+  running normally.
 - Before reviewer dispatch, follow [agent selection](../wtk/references/agent-selection.md) for the
   selected `deep_review` row. Use skill-directed agents in the current checkout; native role files
   are optional. Engine and external runtime choices must honor the selected model/effort.
-- Reviewer concurrency is resolved before dispatch: `--concurrency N` overrides `.wtk-deep-review.yaml`, which overrides the default `3`; valid values are `1` through `6`. The resolved value is frozen in `manifest.json`. The legacy no-op `--workers` option is rejected.
+- Reviewer concurrency is resolved before dispatch: `--concurrency N` overrides `.wtk-deep-review.yaml`, which overrides the default `3`; valid values are `1` through `6`. The resolved value is frozen in `manifest.json`.
 
 ## Procedure
 
@@ -155,7 +157,7 @@ With prior state (or fingerprints recovered from the PR thread), Step 1 scopes t
 - Empty selection after the funnel → report "nothing reviewable" with the manifest counts; write no findings.
 - A linter lane unavailable → proceed and state in review.md that overlap suppression did not run for that lane.
 - A bootstrap gate failing (build_manifest.py, build_knowledge.py, build_jobs.py, merge_findings.py) → stop and surface stderr. Missing knowledge accounting or incomplete defect coverage is a review failure, not a warning.
-- run_jobs.py exit 2 (blocked) → a provider limit interrupted the fan-out; valid outputs are preserved and `<out>/run-blocker.json` lists the pending jobs — resume by re-running the same command once the limit clears. Providers that signal limits differently need extra `--block-on` patterns.
+- run_jobs.py exit 2 (blocked) → a provider limit interrupted the fan-out; valid outputs are preserved and `<out>/run-blocker.json` lists the pending jobs — resume by re-running the same command once the limit clears. The default pattern, `usageLimitExceeded`, is one host's signal; providers that signal limits differently need their own `--block-on` patterns.
 - run_jobs.py exit 3 or a render_review freeze failure → the checkout drifted mid-round; findings would anchor to stale lines. Restart from Step 1 — the round increments and prior artifacts are archived.
 - Publication limits → use the selected integration's documented batching limits without dropping results.
 

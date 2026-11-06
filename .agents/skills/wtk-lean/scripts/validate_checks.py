@@ -55,7 +55,7 @@ import os
 import re
 import sys
 
-from native_evidence import approval_errors
+from native_evidence import intent_errors
 
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
@@ -66,7 +66,8 @@ PROOF_RE = re.compile(r"^\**\s*Proof\s*\**\s*:\s*(.+)$", re.IGNORECASE)
 CID_RE = re.compile(r"\bC\d+\b")
 PLACEHOLDER_RE = re.compile(r"^\s*[\[<].+[\]>]\s*$")
 SIZE_RE = re.compile(r"\((\d+)\s*(?:[a-z\- ]+)?\)")
-ROUTE_RE = re.compile(r"(/[A-Za-z0-9_\-/:{}.]*)")
+HTTP_ROUTE_RE = re.compile(r"\b(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(/[A-Za-z0-9_\-/:{}.]*)")
+CODE_SPAN_RE = re.compile(r"`([^`]+)`")
 TABLE_DRIVEN_RE = re.compile(r"table[- ]driven", re.IGNORECASE)
 
 SELECTOR_TOKENS = (
@@ -95,6 +96,10 @@ DIMENSIONS = {
     ),
     "state transitions": ("state transitions", "transitions", "state-transition integrity"),
     "observability": ("observability", "logging and metrics", "telemetry"),
+    "deploy compatibility": (
+        "deploy compatibility", "deploy compatibility / rollback", "deploy compatibility and rollback", "rollback",
+    ),
+    "performance budget": ("performance budget", "performance"),
 }
 
 
@@ -218,30 +223,30 @@ def count_members(cell):
     return sum(1 for p in parts if CID_RE.search(p))
 
 
-def plan_routes(checks_path):
-    """Route paths named in the sibling plan.md's Surface table, if there is one."""
+def plan_interfaces(checks_path):
+    """Interfaces named in the sibling plan.md's Surface table: an HTTP route's path, else the
+    first code span - a CLI verb, an exported symbol or an event topic."""
     plan = os.path.join(os.path.dirname(os.path.abspath(checks_path)), "plan.md")
     if not os.path.isfile(plan):
         return []
     with open(plan, "r", encoding="utf-8") as f:
         lines = strip_fences(f.read().splitlines())
     bounds = section_bounds(lines, "Surface")
-    routes = []
+    interfaces = []
     for r in table_rows(lines, bounds):
         cells = split_row(r)
-        if not cells or PLACEHOLDER_RE.match(cells[0]):
+        if not cells or not cells[0] or PLACEHOLDER_RE.match(cells[0]):
             continue
-        m = ROUTE_RE.search(cells[0])
-        if m:
-            routes.append(m.group(1))
-    return routes
+        m = HTTP_ROUTE_RE.search(cells[0]) or CODE_SPAN_RE.search(cells[0])
+        interfaces.append(m.group(1).strip() if m else cells[0].strip())
+    return interfaces
 
 
 def check_file(path):
     with open(path, "r", encoding="utf-8") as f:
         raw = f.read().splitlines()
     lines = strip_fences(raw)
-    errors, warnings = approval_errors(path), []
+    errors, warnings = intent_errors(path), []
 
     # Profile.
     profile = None
@@ -340,7 +345,7 @@ def check_file(path):
                     break
         for canon in DIMENSIONS:
             if canon not in found:
-                errors.append(f"Swept: dimension '{canon}' has no line - all nine, every time")
+                errors.append(f"Swept: dimension '{canon}' has no line - all eleven, every time")
                 continue
             landing, line_no = found[canon]
             if not landing or PLACEHOLDER_RE.match(landing):
@@ -369,14 +374,14 @@ def check_file(path):
     for cid in sorted(referenced - set(checks), key=lambda c: int(c[1:])):
         errors.append(f"{cid} is referenced in Coverage or Swept but is not defined in ## Checks")
 
-    # The derivation. checks.md is derived from plan.md, so a route reviewed there with
+    # The derivation. checks.md is derived from plan.md, so an interface reviewed there with
     # nothing pointing back at it here is either dead or unproven - and the plan naming it
     # is what makes it look covered.
-    for route in plan_routes(path):
-        if route not in "\n".join(lines):
+    for interface in plan_interfaces(path):
+        if interface not in "\n".join(lines):
             warnings.append(
-                f"plan.md's Surface names `{route}` but nothing here mentions it - its statuses "
-                f"owe a Coverage row, or the route is dead"
+                f"plan.md's Surface names `{interface}` but nothing here mentions it - its outcomes "
+                f"owe a Coverage row, or the interface is dead"
             )
 
     # Blocking questions.

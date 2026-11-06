@@ -22,6 +22,9 @@ are in play and each needs its own asserted proof:
 - the **decision table inside**: every branch that changes the outcome, asserted case by case,
   isolated from the transport so the cases can be enumerated at all.
 
+Enumerate the table once, at its own layer. The boundary proof asserts only the contract, the
+wiring and one representative case per distinct outcome; it does not replay the table rows.
+
 The second one is what gets lost. It disappears whenever a requirement is phrased as an
 observable outcome, because the observable outcome names the entry point and the decision hides
 behind it.
@@ -99,7 +102,7 @@ rows above. Use the repo's own level names, locations and commands; invent none.
 
 | Code | Required proofs | Coverage expectation |
 | --- | --- | --- |
-| Decides, and is reached across a boundary | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
+| Decides, and is reached across a boundary | one at the boundary **and** one at its own layer | at the boundary: the contract, the wiring and one case per distinct outcome; at its own layer: one asserted case per row of the decision table |
 | Decides, not reached across a boundary | one at its own layer | one asserted case per row of the decision table |
 | Entry point or adapter that decides nothing | one at the boundary | accepted input, each rejected input, each error path |
 | Instrumentation, pass-throughs | none of its own | covered by its consumer's proof |
@@ -115,7 +118,7 @@ Cost: <n> proofs at their own layer, across <n> files. Without these rows, <n> d
 are proven only by a path that happens to traverse them.
 ```
 
-A floor, never a ceiling, and a target rather than a description of what exists today. State the
+The rows are a target rather than a description of what exists today. State the
 cost in the proposal - a row set nobody can price is a governance debate, and a row set with a
 number next to it is a five-second decision.
 

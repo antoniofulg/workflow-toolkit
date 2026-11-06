@@ -1,5 +1,14 @@
 # Update log
 
+## 2026-11-06
+
+* **Ingestion**: Added the maintainer-approved skill-pack generalization to `raw/`. Updated [Deep review cadence](/decisions/deep-review-cadence.md) for the removed constant route fields and blocking on project-declared invariants, and [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md) for the shared verify core, the Verifier-judged approval convention and the `dx.md` location.
+* **Lint**: Re-read sources changed on this branch and bumped `last_modified` in [QA at feature close](/decisions/qa-at-feature-close.md), [Fix verification](/decisions/fix-verification.md), [Design reference fidelity](/design/design-reference-fidelity.md) and [Artifact ownership](/design/artifact-ownership.md); their claims still hold.
+
+## 2026-11-04
+
+* **Ingestion**: Added [Fix verification](/decisions/fix-verification.md) from the maintainer's decisions, and corrected the agent-settings row in [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md).
+
 ## 2026-10-21
 
 * **Maintenance**: Updated [Artifact ownership](/design/artifact-ownership.md) after implementing conditional artifact routing and a shared project decision-store rule; the original assessment remains in the immutable conversation source.

@@ -113,8 +113,6 @@ def test_toml_free_route_preserves_native_agents() -> None:
         snapshot = _resolve(root)
         resumed = workflow_route.resolve(root=root, feature="fixture")
         assert resumed == snapshot
-        assert snapshot["deep_review"] == {"cadence": "skip", "groups": []}
-        assert snapshot["parallelization"] == {"mode": "disabled"}
         assert all((root / relative).read_bytes() == value for relative, value in before.items())
         assert not (root / ".wtk.toml").exists()
     finally:
@@ -171,12 +169,12 @@ def test_stage_selection_without_native_files() -> None:
         shutil.rmtree(root)
 
 
-def test_review_is_on_demand() -> None:
+def test_snapshot_carries_no_constant_review_or_parallelization_fields() -> None:
     root = _fixture_root()
     try:
         route = _resolve(root)
-        assert route["deep_review"] == {"cadence": "skip", "groups": []}
-        assert route["parallelization"] == {"mode": "disabled"}
+        assert set(route) == workflow_route.SNAPSHOT_KEYS
+        assert "deep_review" not in route and "parallelization" not in route
     finally:
         shutil.rmtree(root)
 

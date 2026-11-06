@@ -34,7 +34,7 @@ Sources:
 
 ## Checks
 
-### S1 - Suspension on a failed charge · 4 files · 38 KB · ~10k
+### S1 - Suspension on a failed charge
 
 **C1** - A failed charge sets status to Suspended, never Cancelled
 Proof: `pytest tests/billing/test_dunning.py::test_failed_charge_suspends`
@@ -42,7 +42,7 @@ Proof: `pytest tests/billing/test_dunning.py::test_failed_charge_suspends`
 **C2** - Every provider status maps to exactly one local status
 Proof: `pytest tests/billing/test_status_map.py::test_every_provider_status_maps`
 
-### S2 - Webhook ingest · 9 files · 140 KB · ~35k
+### S2 - Webhook ingest
 
 **C3** - Retrying the same webhook delivery id changes nothing
 Proof: `bun test -- -t "retry is idempotent"`
@@ -58,6 +58,8 @@ Proof: `bun test -- -t "retry is idempotent"`
 - dependency failure: C6
 - state transitions: C1, C2
 - observability: not in scope - no log requirement in V1
+- deploy compatibility: n/a - additive change, old code ignores it
+- performance budget: n/a - one request per user action
 
 ## Coverage
 
@@ -69,7 +71,7 @@ Proof: `bun test -- -t "retry is idempotent"`
 | `Suspended` transitions (3) | into it C1 · out to `Active` C6 · out to `Cancelled` C7 | - |
 | startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3 | - |
 
-- Claims naming a status code, route or response shape: C7, C12, C16 - each has a proof
+- Claims naming an outcome, interface or response shape: C7, C12, C16 - each has a proof
   that crosses the boundary
 - No other check claims more than the single case its proof exercises
 ```
@@ -87,17 +89,15 @@ project decision approval.
 
 **Checks group under the slices they came from.** The upstream task already cuts the work into slices of one observable outcome each; flattening them into `C1..Cn` loses a structure the source had and that `## Handoff` later refers to by name. Keep the slice, keep its name, number the checks straight through.
 
-Each slice heading carries its **size**, and the arithmetic is `wc -c` on the files that slice touches - the ones its checks land in, which `Landing` and your own walk already named - divided by four. That is a floor: it counts what you will read, not the iteration on top, which is the larger and less predictable half. It is still worth writing, because ranking slices by weight is the decision, and a floor ranks correctly even when it under-counts.
-
 A check is **one** observable claim. If you need "and", split it. The proof must name a specific test, not a whole suite - a suite going green says nothing about *this* claim. Repeat `Proof:` when one test cannot settle the whole claim, and every proof listed must be green.
 
 Read the code before choosing the proof, then check the claim against the input space behind it. A claim about nine provider statuses is not proven by a proof that exercises two - that gap needs a second proof, and it is a question about coverage rather than about test style.
 
-The proof also has to be able to **reach the claim's subject**. A claim phrased as a response at a boundary is not settled by a test that never crosses it, and a claim about a decision table is not settled by one path through it. When the claim and the proof sit at different levels, either split the claim or name the second proof - never let the level slide to whichever one is cheaper to write.
+The proof also has to be able to **reach the claim's subject**. A claim phrased as a response at a boundary is not settled by a test that never crosses it, and a claim about a decision table is not settled by one path through it. When the claim and the proof sit at different levels, either split the claim or name the second proof - never let the level slide to whichever one is cheaper to write. A proof at end-to-end states the reason the [lowest-layer rule](../../wtk/references/test-contract.md#choosing-the-layer) requires.
 
 **The level is the project's call, not this skill's** - but a proof settles the layer it asserts at, never the layers it passes through, so a claim proven at the boundary leaves the decision table behind it unproven. Follow what the repo declares - `AGENTS.md`, contributing docs, testing guidelines - and where its declaration does not say which code must be proven at which level and how deeply, derive that from the shape of the code, propose it with the checklist, and write the approved rows into the repo's own guidelines so the next run inherits them - under `standard` or `ui`, following [test-policy.md](test-policy.md); under `light` follow the repo and leave the gap unclosed, which is one of the things that profile buys you. Never impose a pyramid the codebase does not have, and never read a thin existing suite as the bar for logic it does not cover.
 
-`Coverage` answers the sampling question in writing, while it is still cheap to act on. It is a **join, not a summary**: every set a proof must cover gets a row, and every member of that set is written as its own token beside the check that proves it. A set collapsed into a sentence - "dispatches over paused, updated, deleted and trial_will_end" - has no empty cell, so a member can go missing while the sentence still reads perfectly. That is how a branch named in your own evidence ships unproven. One proof that is table-driven over the whole set may stand for it, with the size stated, because there the enumeration lives in the test.
+`Coverage` answers the sampling question in writing, while it is still cheap to act on. It is a **join, not a summary**: every set a proof must cover gets a row, and every member of that set is written as its own token beside the check that proves it. A set collapsed into a sentence - "dispatches over paused, updated, deleted and trial_will_end" - has no empty cell, so a member can go missing while the sentence still reads perfectly. That is how a branch named in your own evidence ships unproven. Prefer one table-driven proof per set, with the size stated, because there the enumeration lives in the test. Several checks may cite the same test when each check has its own located assertion.
 
 The rows are not a new inventory - they are the enumerations this artifact has already named somewhere: a door in `Landing`, a decision table in the test-policy evidence, the input space behind a claim. Anything you enumerated in prose owes a row here, which is the point: the two places have to agree, and only one of them can hide a member.
 
@@ -109,13 +109,13 @@ Two resolutions count - a proof at each place, or one shared assembly both paths
 
 Under `profile: ui` the designed screens are a set too, with a row of their own - [screens.md](screens.md) has its shape.
 
-The last two lines close the level gap the same way. List every check whose claim names a status code, a route or a response shape; each of them needs a proof that crosses the boundary. Writing the ids down is the whole mechanism: a check claiming a `400` while all its proofs sit below the boundary has to appear in that list, and the line is then false on its face.
+The last two lines close the level gap the same way. List every check whose claim names an outcome, interface or response shape; each of them needs a proof that crosses the boundary. Writing the ids down is the whole mechanism: a check claiming the request is rejected as invalid while all its proofs sit below the boundary has to appear in that list, and the line is then false on its face.
 
 Find the real commands first: read the package manifest, the task runner and the CI workflows. Prefer a command that already runs in CI. When nothing exists for what a check needs, ask - never invent a command, because a proof that cannot run is worse than none.
 
 Write the checklist, satisfy the [project-requirements criteria review](../../wtk/references/project-requirements.md#review-criteria-before-dependent-feature-build), then continue into Build. No additional human approval is needed when the source is already decided and the checklist derives from it.
-The source must retain a usable [native approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval);
-inspect its real authority before dependent edits. Record decisions in their receiving turn and
+Confirm the source's [approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+before dependent edits. Record decisions in their receiving turn and
 reconcile actual host status through the shared [Handoff](../../wtk/references/context-handoff.md)
 before dispatch/recovery. These requirements add no approval pause for already authorized work.
 

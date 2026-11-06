@@ -35,7 +35,7 @@ What this feature adds to a package's public interface, and what now depends on 
 
 ## Removals
 
-What this feature deletes. Hard cuts, no aliases, no dual fields.
+What this feature deletes or breaks: callers, migration and deprecation window.
 ```
 
 ## Rules
@@ -48,11 +48,12 @@ What this feature deletes. Hard cuts, no aliases, no dual fields.
    improvised in a catch block.
 4. **The surface freezes before internals.** Internals are designed to serve it. Reopening it later is
    an explicit decision, not a quiet adaptation.
-5. **Removals are listed.** This workflow does not preserve backward compatibility — so a change that
-   removes something states exactly what goes, and the same change updates every caller.
+5. **Compatibility follows the project's declared policy for the surface** (the `compatibility`
+   [setting](project-settings.md)). A breaking removal lists
+   its callers, their migration and the deprecation window.
 6. **It respects the project's boundary.** The consuming project's architecture docs name the product
    boundary. A surface that would violate that boundary is wrong at design time, not at build time.
-7. **Write all versioned or published text in English.**
+7. **Versioned or published text follows the project's language policy** (the `language` setting).
 
 ## What to grill before freezing
 

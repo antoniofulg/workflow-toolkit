@@ -4,7 +4,7 @@ description: 'Run spec-driven feature work through a reviewed plan, proof-backed
 license: CC-BY-4.0
 metadata:
   author: Tech Leads Club - github.com/tech-leads-club
-  version: '1.5.0'
+  version: '5.0.0'
 ---
 
 # Tech Lead's Club - Spec, Lean
@@ -12,10 +12,6 @@ metadata:
 Run a decided feature through four moves: `PLAN → CHECKS → BUILD → VERIFY`. A human reviews the
 feature shape before checks freeze its obligations; builders choose reversible implementation detail;
 one fresh Verifier proves the complete feature. There is no task breakdown or component catalogue.
-
-At execution or verification start, read [execution metrics](../wtk/references/execution-metrics.md);
-include the assigned stage receipt with session identity, interval and baseline/snapshot counters
-after its source checks, using the normal handoff format.
 
 Before environment setup or handoff, apply [runtime lifecycle](../wtk/references/runtime-lifecycle.md)
 to the checkout's application/test services.
@@ -36,10 +32,12 @@ features. The phase references carry its entry points; profiles never waive inhe
 ## Core contract
 
 1. Every check is one observable claim with a concrete value and a proof whose exit code settles it.
-2. Tests come from the approved checks, never from the implementation. Do not weaken, skip, or
-   delete a test to pass a gate; a wrong or impossible check stops for user renegotiation.
+2. Tests come from the approved checks, never from the implementation. Never weaken or skip a
+   test, or delete one, to make a red gate pass; redundant-test removal follows
+   [pruning](../wtk/references/test-contract.md#pruning). A wrong or impossible check stops for user
+   renegotiation.
 3. Approved `checks.md` and `Test policy` rows are fixed. New `Landing`, `Relations`, and `Surface`
-   rows may be added when building discovers a door, entity, or route; approved rows are never
+   rows may be added when building discovers a door, entity, or interface; approved rows are never
    rewritten. Keep `Flow` and `Impact` current when the path changes.
 4. The coordinator dispatches one fresh Verifier over `<feature base>..HEAD` with every check in
    the same turn after the feature's last commit. The builder reports and stops; verification is
@@ -58,14 +56,13 @@ and `checks.md` plus the verification report must name the same value.
 ## wtk-lean
 
 profile: standard
-budget: 150k
 ```
 
 | Profile | Proof obligations |
 | --- | --- |
 | `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
 | `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
-| `ui` | standard plus binding-source comparison and per-screen copy and arrangement enumeration |
+| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, and one structural guard per screen |
 
 An empty input costs a recorded line, not a skipped step. `validate_verification.py` rejects a
 profile mismatch and missing sections required by `standard` or `ui`. If the declared floor is too
@@ -93,29 +90,27 @@ The plan is the human review boundary. Write the problem, walk the surfaces, wri
 record the shape that implements them. File order serves the reviewer: `Problem`, `Flow`, `Impact`,
 `Relations`, `Surface`, `Landing`, `Criteria`, `Traceability`, `Out of scope`, `Assumptions`,
 `Observable`, and `Sources`. `Flow` is the path, `Relations` the entities and one-way constraints,
-`Surface` the route/signature/statuses, `Landing` the literal irreversible choices and rejected
+`Surface` the interface/signature/outcomes, `Landing` the literal irreversible choices and rejected
 alternatives, and `Impact` what existing terms or data change. Placement and reversible
 implementation detail stay in the diff.
 
-`checks.md` derives proof-backed checks from the plan and joins every enumerated route, entity,
-status, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
+`checks.md` derives proof-backed checks from the plan and joins every enumerated interface, entity,
+outcome, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
 distinct: the first freezes reviewed shape, the second freezes obligations, and the third is the
 independent evidence. An unresolved architecture choice needs its own ADR/RFC/spike before it can
 be recorded as a `Landing` decision.
 
 ## Phase references
 
-- **Plan:** human review of EARS criteria, boundary, surfaces, nine implicit dimensions, and the
+- **Plan:** human review of EARS criteria, boundary, surfaces, eleven implicit dimensions, and the
   five shape sections. Ask only genuine decisions; use `n/a - <reason>` where a dimension does not
   apply. Full procedure and closure gate: [plan.md](references/plan.md).
-- **Checks:** derive proof-backed claims, join every enumerated set member, record swept landings,
-  and close with `## Handoff` arithmetic: [checks.md](references/checks.md).
-- **Build:** after the size gate resolves the execution mechanism, tests come from checks and
-  implementation decomposition is yours. Keep new `Landing`, `Relations`, and `Surface` rows
+- **Checks:** derive proof-backed claims, join every enumerated set member, and record swept
+  landings: [checks.md](references/checks.md).
+- **Build:** tests come from checks and implementation decomposition is yours. Keep new `Landing`, `Relations`, and `Surface` rows
   additive before closing code, then use the scope guardrail and handoff procedure:
   [build.md](references/build.md).
-- **Verify:** in the same turn after the feature's last commit, the coordinator sends one fresh
-  Verifier over the full range with every check; procedure and report schema:
+- **Verify:** dispatch per core contract 4; procedure and report schema:
   [verify.md](references/verify.md).
 - **Memory:** decisions, handoff, and lessons live in [memory.md](references/memory.md).
 
@@ -129,16 +124,15 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | --- | --- |
 | Before presenting the plan | `validate_plan.py <feature>` |
 | Before starting to build | `validate_checks.py <feature>` |
-| Before each commit | `check_commit.py --message "<msg>"` |
+| Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"` |
 | Before declaring done | `validate_verification.py <feature>` |
 | At distillation | `lessons.py add ...` |
 | After editing a validator or template | `selftest.py` |
 
 The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
-`validate_checks.py` catches missing native approval, proofs, coverage, swept rows and profile.
-`validate_verification.py` also requires native approval and, under `ui`, visual provenance and
-existing local captures. Structural acceptance cannot authenticate approval or judge image fidelity;
-the independent Verifier owns those judgments. Run `selftest.py` after validator/template changes.
+`validate_checks.py` catches missing proofs, coverage, swept rows and profile.
+`validate_verification.py` also requires, under `ui`, visual provenance and existing local captures.
+Approval and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
 If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection
@@ -155,25 +149,20 @@ python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
 
 The version 3 route records selected stage/model/effort choices scoped to the
 feature and current checkout. It derives the approved verification profile, keeps Deep Review on
-demand and the Lean builder sequential. It neither reads nor writes `.wtk.toml` or native role files.
+demand and the Lean builder sequential.
 Unchanged retries and resume reuse the selection through the same helper.
 
 ## Sub-agents and handoff
 
-Estimate the files each slice touches from `wc -c / 4`, and record the arithmetic under
-`## Handoff` after checks exist and before Build. When the cumulative estimate fits the declared
-budget (default 150k tokens), one builder owns all whole slices sequentially; do not ask or offer a
-transfer. When it exceeds the budget, stop before code and ask the user to choose the execution
-mechanism: sequential whole-slice handoff at the recorded surface boundary, or one builder with
-accepted compaction/context-loss risk. The coordinator chooses the cut, records the user's mechanism
-choice, and uses the host's supported handoff mechanism with the stage selection in the
-current checkout.
+One builder owns all whole slices sequentially; do not estimate size, ask or offer a transfer. Ask
+the user only when that builder actually hits a context limit: hand off to a fresh builder at the
+next whole-slice boundary, or continue with accepted compaction. The coordinator uses the host's
+supported handoff mechanism with the stage selection in the current checkout.
 
 Handoffs occur only between slices and only after every proof in the batch is green. The outgoing
 builder records closed checks, user decisions, and abandoned approaches. The next builder reads the
 artifact and landed diff, not a narrative. Never split a slice or create a task DAG. The coordinator
-owns checkpoint synchronization and dispatches the final full-range Verifier in the same turn after
-the last batch returns green; builders report and stop.
+owns checkpoint synchronization and the Verifier dispatch in core contract 4.
 
 ## Knowledge chain
 

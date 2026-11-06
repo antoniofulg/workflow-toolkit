@@ -14,23 +14,23 @@ sources:
   - id: readme
     resource: ../../../README.md
     title: Public artifact and companion guidance
-    last_modified: 2026-10-21
+    last_modified: 2026-11-06
   - id: memory
     resource: ../../../.agents/skills/wtk-lean/references/memory.md
     title: Lean memory — project decision-store ownership
-    last_modified: 2026-10-21
+    last_modified: 2026-11-06
   - id: plan
     resource: ../../../.agents/skills/wtk-lean/references/plan.md
     title: Lean planning — active decisions and unresolved choices
-    last_modified: 2026-10-21
+    last_modified: 2026-11-06
   - id: lifecycle
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact lifecycle — promotion before feature cleanup
-    last_modified: 2026-10-21
+    last_modified: 2026-11-06
   - id: discovery
     resource: ../../../.agents/skills/wtk-discover/SKILL.md
     title: WTK discovery — product framing and technical shape
-    last_modified: 2026-10-21
+    last_modified: 2026-11-06
   - id: tlc-prd
     resource: https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-prd/SKILL.md
     title: TLC PRD

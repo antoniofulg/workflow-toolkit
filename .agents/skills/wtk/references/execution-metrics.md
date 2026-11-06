@@ -1,7 +1,8 @@
 # Execution metrics
 
-**Read when:** starting implementation, verification, QA, review, or delivery; report below the
-normal completion summary, including a stop at the PR or a blocked handoff.
+**Read when:** the project's `AGENTS.md` opts into execution metrics and implementation,
+verification, QA, review, or delivery starts; report below the normal completion summary,
+including a stop at the PR or a blocked handoff. Without that declaration, collect nothing.
 
 ## Collect during work
 

@@ -3,12 +3,9 @@
 **Goal:** an independent answer to "is every check actually proven?", written as evidence rather
 than as an opinion.
 
-This is the only mechanism standing between "done" and a self-report, so it is never prompted,
-never optional, never waiting to be asked, and never skipped because the author feels confident.
-
-**When:** the last commit of the feature has landed. Dispatch in that turn. The work is not done
-at that commit; it is done when this report accounts for every check. "verify work" is recovery
-for a feature that already landed without a report, not the happy path.
+**When:** [core contract 4](../SKILL.md#core-contract) owns dispatch timing. The work is done when
+this report accounts for every check; "verify work" is recovery for a feature that already landed
+without a report.
 
 ## Author is not verifier
 
@@ -58,13 +55,10 @@ in this verification report even when listed proofs pass. This precedes the `ui`
 For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
 within this verification pass and include its findings and coverage limits in the existing report.
 
-For explicit reuse, construction-order or approval requirements, apply
-[construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
-Independently inspect the native feature approval's actual source, reviewed revision and scope;
-structurally valid Markdown does not authenticate user authority. The completion gate also checks
-the receipt, including checks-only intent, and never substitutes execution settings.
+Under every profile, apply the shared [verify core](../../wtk/references/verify-core.md): approval, evidence or zero,
+visual evidence, the swept re-read and fault injection. The steps below link each where it runs.
 
-`checks.md` carries a `Profile:` line, and `light` is the default. Step 1 runs under `ui`. The
+`checks.md` carries a `Profile:` line, and `standard` is the default. Step 1 runs under `ui`. The
 `Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and
 `ui`. Everything else runs always: the proofs at `HEAD`, each named test shown to exist and have
 run, one located assertion per check, the level and sampling judgment, and the `Swept existing`
@@ -104,28 +98,25 @@ failing one: a red test says the code disagrees with the checks, this says the c
 with the decision, and the build ships the second faithfully.
 
 **A check nobody wrote contradicts nothing, so comparing cannot find it.** Enumerate instead: per
-screen, list what the design decides that a selector reaches - which controls and indicators are
-present, which absent, their order, their count, what they read, and **how they are arranged**:
-how many regions the screen has and what sits inside what. Confirm each has a check. An element
-with no check is a coverage gap; an element the code renders that the design does not draw is the
+screen, list what the design decides - which controls and indicators are present, which absent,
+their order, their count, what they read, and **how they are arranged**: how many regions the
+screen has and what sits inside what. Confirm each is covered under
+[visual acceptance evidence](../../wtk/references/test-contract.md#visual-acceptance-evidence): arrangement, order, count and copy by a PASS paired capture;
+behaviour, contracted copy and the screen's one structural guard by a check. A decided element
+neither covers is a coverage gap; an element the code renders that the design does not draw is the
 same finding facing the other way.
 
 **Arrangement is the one this step keeps missing.** A screen can pass every label, count and
 order check and still be a different composition - a ring where the design draws a bar, one column
-where there are two. Those are selector-reachable and not exempt, so a screen whose checks are all
-copy and no structure is a finding even when each is green. Apply the binding-source contract and individual token adaptations in
-[UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen). Independently inspect the source
-and implementation captures; record missing evidence or material visual mismatches in `Binding sources`
-as `Uncovered` or `Contradiction`, so a functional PASS cannot conceal a visual FAIL.
+where there are two. Compare the captures for composition, not only for labels; a screen whose
+captures are missing or show another composition fails even when every check is green. Apply the binding-source contract and individual token adaptations in
+[UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen), then the core's
+[visual evidence](../../wtk/references/verify-core.md#visual-evidence-ui).
 
 **An exemption that does not enumerate is a gap, not a limitation.** The checks may put spacing,
 colour and type weight out of reach, named against the screen they belong to. They may not say
 "visual fidelity is unproven" and stop - that sentence also covers everything a selector could
 have reached. Treat a blanket clause as a finding, then enumerate what it was covering.
-
-Under `ui`, include one `Visual fidelity` row per contracted viewport/state pair using the report
-template below and the shared UI evidence fields. A missing or non-PASS pair blocks completion.
-The gate checks evidence structure; the Verifier checks actual images, freshness and matrix coverage.
 
 ## 2. Account for every proof
 
@@ -138,7 +129,8 @@ equivalent. Batch the selected fresh proofs below.
 **Batch selected proofs by runner target, not one invocation per proof.** Runners take many
 files and many name patterns in a single call - `bin/rails test a_test.rb b_test.rb -n
 "/one|two/"`, `pytest f.py g.py -k "one or two"`, `jest --testPathPattern` with one
-`--testNamePattern` alternation. Batching per *file* is the mistake that looks like batching: forty
+`--testNamePattern` alternation. Elsewhere: `dotnet test --filter "Name~One|Name~Two"`,
+`mvn -Dtest="ATest#one+two"` or Gradle `--tests`, `ctest -R "one|two"`. Batching per *file* is the mistake that looks like batching: forty
 checks across twelve files is twelve process starts, and the process start is the cost.
 
 The guarantee is unchanged as long as **each named test appears in the output individually** as
@@ -148,10 +140,6 @@ green" settles no single check.
 Then confirm each named test **exists and ran**. A filter matching nothing exits zero on several
 runners - `passWithNoTests` and its equivalents - which would be a green check with no test behind
 it. Show the hit; a name that appears nowhere in the tree is a finding.
-
-Do that lookup with `rg -n` and enough context to carry the test body rather than by reading the
-file. The same hit that proves the test exists yields the line numbers step 3 has to cite, so it is
-one search instead of two. One pass per file, not per check.
 
 Existing tests may prove a corrected behavior without being edited themselves. Confirm their
 assertions cover the affected invariant. An earlier result remains valid only after checking its
@@ -170,9 +158,7 @@ repository exploration.
 Cite the one or two assertions that **settle** the claim, not every assertion in the test. Setup
 lines earn a citation only when the claim names the precondition.
 
-**Evidence or zero.** A check with no located `file:line` counts as not proven - per check, never
-one citation standing in for twenty. Search before concluding something is absent, and show the
-search.
+Apply [evidence or zero](../../wtk/references/verify-core.md#evidence-or-zero) to every check.
 
 **Recompute the `Coverage` join rather than reading it** (`standard`, `ui`). A join you only read
 is the author's self-report with a table around it, which is precisely what `light` gives up. For each row, take the members from the code itself and confirm
@@ -194,7 +180,7 @@ show the line. A suite that boots its own assembly structurally cannot fail on a
 green proof there is evidence about the test's assembly and nothing else.
 
 Two more, mechanically: a claim about nine cases proven on two is a coverage gap; and a claim naming
-a status code, route or response shape whose proofs all sit below that boundary is a **level gap**,
+an outcome, interface or response shape whose proofs all sit below that boundary is a **level gap**,
 no matter how many assertions it carries.
 
 **Judge the level against the `Test policy` rows whenever the artifact carries them** (`standard`,
@@ -208,43 +194,22 @@ repo's own convention decide.
 Where the checks left a value imprecise, record a **precision gap** rather than passing a vague
 assertion - that is a finding about the checks, and the most useful thing this step produces.
 
-Read the `Swept` rows that resolve to **existing** against the code: is the constraint they cite
-actually there? A cited constraint that is not there is a finding. Rows that say `n/a` are policy
-the user approved; there is nothing in the code for them to be wrong about.
+Apply the [swept re-read](../../wtk/references/verify-core.md#swept-re-read).
 
 ## 4. Inject faults (`standard`, `ui`)
 
-A green suite proves the tests run. Fault injection proves they can catch a regression - it is
-the only step that produces that information, and under `light` it does not run, which is what
-that row of the profile table means by "a test that would pass under a wrong implementation".
-
-1. **Isolate.** `git worktree add <scratch> HEAD`. Never mutate the real tree, and **never use
-   `git stash`**: it records state from *before* the mutation, so popping it does not reverse a
-   fault applied afterwards, and on a clean tree it creates no entry at all.
-2. **Baseline.** Record `git status --porcelain` of the real tree first.
-3. **Inject a behaviour-level fault** in the new code: flip a condition, change a returned value or
-   status, shift a bound by one, remove a required side effect.
-4. **Run the narrowest covering proof** in the scratch and confirm it FAILS - the mutant is killed.
-5. **Discard** the scratch and confirm the real tree's porcelain matches the baseline. If it
-   differs, STOP, restore the tree, and treat the run as invalid.
-
-**One fault per distinct assertion surface, not per risky line.** Three mutations killed by the same
-two proofs ran the same experiment three times. Choose faults that force *different* proofs to fail,
-stop once every proof carrying a check has been made to fail once, and cap it at five however risky
-the feature looks - a quota that scales with risk costs most exactly where checks cluster in risky
-code. A second covering proof per fault adds a run and no information. Use real mutation tooling
-where the stack has it (Stryker, mutmut, cargo-mutants, pitest): it gets many mutants from one run.
-
-**A surviving mutant is a finding, not a footnote.** It means the assertion would pass under a
-plausible wrong implementation.
+Run [fault injection](../../wtk/references/verify-core.md#fault-injection-standard-ui) in a scratch worktree. Under `light`
+it does not run, which is what that row of the profile table means by "a test that would pass
+under a wrong implementation".
 
 ## 5. Walk the flow with the user (user-facing only)
 
 Only where human judgment decides the outcome - a UI flow, an interaction pattern. Backend and
 infrastructure work is settled by the checks. Present one test at a time, expected outcome stated,
-and log anything that is not a clear pass verbatim. Infer severity from the words, never ask for it:
-crash / error / exception → blocker; doesn't work / wrong / missing → major; slow / weird / off →
-minor; colour / font / spacing → assess against the binding visual contract (material drift is major); unclear → major.
+and log anything that is not a clear pass verbatim. Infer severity from the words, never ask for it, using the
+[taxonomy](../../wtk-deep-review/references/taxonomy.md#severity): crash / error / exception →
+Critical; doesn't work / wrong / missing → Major; slow / weird / off → Minor; colour / font /
+spacing → assess against the binding visual contract (material drift is Major); unclear → Major.
 
 ## 6. Report
 
@@ -258,6 +223,7 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 **Diff range**: <base>..<head>
 **Round**: 1 - full
 **Verifier**: independent sub-agent (author != verifier)
+**Quarantined tests**: none (or each test with its owner, cap and expiry)
 
 ## Binding sources
 
@@ -267,15 +233,15 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 ## Visual fidelity
 
-| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| Source/revision | Source scale | Implementation revision | Screen/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source revision / UI contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
+| frozen source revision / UI contract row | 1x | tested revision | screen and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
 
 ## Checks
 
 | Check | Claim | Proof run | Evidence | Result |
 | --- | --- | --- | --- | --- |
-| C1 | suspends, never cancels | `bin/rails test ... -n "/failed_charge_suspends/"` exit 0 | `test/billing/dunning_test.rb:118` - `assert_equal "suspended", sub.status` | PASS |
+| C1 | suspends, never cancels | `<test command> <name filter: failed_charge_suspends>` exit 0 | `tests/billing/dunning_test.<ext>:118` - `<assertion: status == suspended>` | PASS |
 
 ## Coverage
 
@@ -287,20 +253,28 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 | Row | Files it classifies | Required proof | Expectation met |
 | --- | --- | --- | --- |
-| Decides, reached across a boundary | `subscription.rb` | boundary C1 · own layer C2 | yes |
+| Decides, reached across a boundary | `subscription.<ext>` | boundary C1 · own layer C2 | yes |
 
 ## Faults injected
 
-| Mutation | Location | Killed |
+| Mutation | Location | Disposition |
 | --- | --- | --- |
-| returned status `suspended` -> `cancelled` | `subscription.rb:88` | yes |
+| returned status `suspended` -> `cancelled` | `subscription.<ext>:88` | killed |
+| log level `info` -> `debug` | `subscription.<ext>:97` | arid - logging only, no decision reads it |
+
+## Mutation run
+
+| Command | Scope | Killed | Survived |
+| --- | --- | --- | --- |
+| the project's declared mutation command | files or line ranges of `<base>..<head>` | 41 | 1 |
 
 ## Gate
 
 `<command>` - <N> passed, 0 failed
 ```
 
-A non-empty `Contradiction` or `Uncovered` cell, a `Killed` cell reading `no`, a non-empty
+A non-empty `Contradiction` or `Uncovered` cell, a `Disposition` other than `killed`,
+`equivalent - <reason>` or `arid - <reason>`, more run survivors than equivalent/arid rows, a non-empty
 `Unproven` cell, a check whose `Result` is not PASS, or an unmet `Test policy` row all mean the
 verdict is FAIL. The gate script reads those columns and refuses a PASS its own rows contradict,
 so do not soften a row to fit a verdict - change the verdict.
@@ -309,11 +283,11 @@ Then run the completion gate and return a compact verdict in chat:
 
 ```bash
 python3 <skill-dir>/scripts/validate_verification.py <feature>
+```
 
 `0` is a report that was read and held up. `1` is a report its own rows contradict. `2` is
 **gated nothing** - the feature or the report could not be resolved - and it is not a pass:
 name the feature explicitly rather than letting it search.
-```
 
 ```markdown
 ## Verification: <feature> - PASS
@@ -330,8 +304,9 @@ name the feature explicitly rather than letting it search.
 
 ## What fails the feature
 
-A FAIL, a surviving mutant, an unmet `Test policy` row, a check contradicting a binding source, an
-element or an **arrangement** a binding source decides that no check covers, a blanket exemption in
+A FAIL, an unresolved surviving mutant, an unmet `Test policy` row, a check contradicting a binding
+source, an element or an **arrangement** a binding source decides that neither a check nor a PASS
+paired capture covers, a blanket exemption in
 place of an enumerated one, a binding source recorded as opened that nobody actually saw, an
 unproven coverage member, or any check without a located `file:line`.
 

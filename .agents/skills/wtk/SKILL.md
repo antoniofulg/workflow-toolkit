@@ -4,16 +4,13 @@ description: Route Workflow Toolkit work to the smallest applicable procedure, i
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '1.4.0'
+  version: '5.0.0'
 ---
 
 # Workflow Toolkit
 
 Use this entrypoint to select the smallest applicable Workflow Toolkit procedure. Keep the
 router loaded and load only the selected skill and its directly relevant references.
-
-For implementation through delivery, start [execution metrics](references/execution-metrics.md)
-before work or delegation; append its receipt to the final response, not a new repository artifact.
 
 ## Route
 
@@ -26,6 +23,7 @@ Load shared references only for the current operation:
 | Security surface or abuse case | [Security boundary](references/security.md) |
 | Screen, interaction, or visual reference | [UI/UX surface map](references/ui-ux.md) and [front-end organization](references/frontend.md) |
 | Domain boundary or dependency direction | [Modeling](references/modeling.md) |
+| Add or change a public surface — route, CLI verb, config key, export | [Public surface contract](references/dx.md) |
 | Choose checks or reuse evidence | [Validation](references/validation.md) |
 | Start, reuse or close an application/test environment | [Runtime lifecycle](references/runtime-lifecycle.md) |
 | Report completion or commit evidence | [Evidence](references/evidence.md) |
@@ -36,7 +34,9 @@ Load shared references only for the current operation:
 | Preserve explicit reuse, construction order or approval requirements | [Construction constraints](references/construction-constraints.md) |
 | Phase checkpoint, resume, compaction, context pressure or session transfer | [Context recovery](references/context-handoff.md) |
 | Edit agent instructions or skill references | [Context budget](references/context-budget.md) |
+| Implementation through delivery, when the project's `AGENTS.md` opts into execution metrics ([settings](references/project-settings.md)) | [Execution metrics](references/execution-metrics.md) |
 | Derive criteria/checks, build, verify, or apply adopted project guidance | [Project requirements](references/project-requirements.md) |
+| Read or record a project-declared WTK command, path or policy | [Project settings](references/project-settings.md) |
 
 - An explicit PRD, RFC or ADR authoring request: follow
   [product and decision artifacts](references/artifacts.md#product-and-decision-artifacts).
@@ -59,10 +59,15 @@ Load shared references only for the current operation:
   which produces the upstream `.tasks/<name>.md` contract.
 - An approved modular `.tasks/<name>.md` or `.checks/<feature>.md`: read and invoke
   `wtk-implement`.
+- A request to review, audit or slim the tests of a module, feature or page: read and invoke
+  `wtk-test-review`. It proposes removals and missing tests; it never deletes a test.
 - A diagnosis with no unresolved product or architecture choice: continue diagnosis directly; do not
   route to discovery merely because the cause is unknown.
 - A user explicitly names a capability (`wtk-deep-review`, `wtk-qa`, `wtk-ship`, or
   another `wtk-*` skill): invoke that capability directly and do not reopen planning.
+- A capability requested in plain words routes the same way: "review in depth" → `wtk-deep-review`,
+  "check reuse" → `wtk-reuse-review`, "walk QA" → `wtk-qa`, "ship it" → `wtk-ship`, "check
+  knowledge" → `wtk-knowledge-check`, "review the tests of X" → `wtk-test-review`.
 
 When `wtk-discover` resolves an idea that entered through this router, continue into the integrated
 Lean route after the discovery decision. Direct invocation of `wtk-discover` retains its upstream
