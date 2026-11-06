@@ -9,7 +9,7 @@ Plan: `.specs/features/billing/plan.md`
 
 ## Checks
 
-### S1 - Suspension on a failed charge · 4 files · 38 KB · ~10k
+### S1 - Suspension on a failed charge
 
 **C1** - A failed charge sets status to `Suspended`, never `Cancelled` (BILL-01, AC 1)
 Proof: `bin/rails test test/billing/dunning_test.rb -n "/failed_charge_suspends/"`
@@ -32,7 +32,7 @@ Proof: `bin/rails test test/billing/transitions_test.rb -n "/suspended_to_active
 **C7** - Two concurrent failed-charge deliveries produce one suspension and the second returns `409` (BILL-01, AC 1)
 Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/concurrent_delivery_conflicts/"`
 
-### S2 - Webhook ingest · 5 files · 61 KB · ~15k
+### S2 - Webhook ingest
 
 **C8** - Retrying the same delivery id returns `200` and changes no records (BILL-02, AC 5)
 Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
@@ -94,7 +94,3 @@ event dispatch are proven only by a path that happens to traverse them.
 - observability: C3
 - deploy compatibility: n/a - the new table is additive and old code ignores it
 - performance budget: n/a - one row per webhook delivery, no hot path
-
-## Handoff
-
-- S1 = 10k, all in Billing; S2 enters Webhooks at 25k total, under the 150k budget - one builder

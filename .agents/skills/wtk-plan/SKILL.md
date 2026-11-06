@@ -108,10 +108,8 @@ Use existing source material to complete the artifact without asking the user to
 Present the task or justified split, followed by unresolved decisions with blockers first. Complete
 the requested planning artifact and its applicable checks; do not begin implementation unless it
 was also authorized. A source with unresolved product intent remains provisional.
-Record observed authorization in the task's native
-[`## Approval` receipt](../wtk/references/construction-constraints.md#native-feature-approval),
-including actual decision/source, reviewed revision and scope. An already authorizing request or
-accepted source may supply this evidence without another human stop. Execution settings are separate.
+Record observed authorization in the task's
+[`## Approval` receipt](../wtk/references/construction-constraints.md#native-feature-approval).
 
 Tasks are verification units; pull requests are review units. Preparation may belong in a commit
 or PR without being its own task. If review needs smaller PRs, propose that separately using the

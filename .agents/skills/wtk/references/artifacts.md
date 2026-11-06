@@ -84,8 +84,7 @@ verdicts. If only an experiment can settle the question, use a bounded spike ins
 
 1. **`.specs/features/` is transient Lean workflow state.** `plan.md`, `checks.md`, `verification.md`,
    and snapshots travel with the feature through worktrees and gates, then the complete feature
-   directory is deleted after verification and required promotion. Adoption removes only the exact
-   legacy managed `.specs/features/` ignore line; it never stages or commits feature files.
+   directory is deleted after verification and required promotion.
 2. **Promote before cleanup.** Anything that must outlive the feature moves to its real home:
    - A project decision → the resolved [decision store](#decision-store)
    - A PRD, RFC or technical design still needed beyond the feature → its project-owned documentation location

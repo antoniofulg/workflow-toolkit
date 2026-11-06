@@ -36,12 +36,8 @@ happens inside the session the separation existed to break.
 For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
 within this verification pass and include its findings and coverage limits in the existing report.
 
-For explicit reuse, construction-order or approval requirements, apply
-[construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
-Check the owning task's native approval against the real user source, reviewed revision and scope
-before completion; reject missing, empty or template-only receipts. Execution settings and local
-Markdown cannot authenticate feature authority. Reuse genuine in-scope authorization without a
-new approval stop; resolve new user-owned product decisions through targeted acceptance.
+Under every profile, apply [construction verification](../../wtk/references/construction-constraints.md#verify):
+confirm the owning task's `## Approval` receipt and any explicit reuse, construction-order or approval requirement.
 
 Under every profile, apply [independent requirement and counterexample verification](../../wtk/references/project-requirements.md#verify-independently).
 Derive concerns and sources from the original request, actual change and authoritative routing;

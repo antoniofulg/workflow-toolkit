@@ -8,9 +8,6 @@ metadata:
 
 # Reuse review
 
-Before work, read [execution metrics](../wtk/references/execution-metrics.md); return the assigned
-stage receipt with session identity, interval and baseline/snapshot counters after its source checks.
-
 Verify [code reuse and ownership](../wtk/references/code-reuse.md). Review read-only: return
 findings and evidence; apply no fixes. When invoked by a feature Verifier, run within that
 existing pass and write into its report, without another agent round or report schema.

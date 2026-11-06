@@ -1,14 +1,10 @@
-"""Structural native approval evidence shared by the pre-build and completion gates."""
+"""Structural helpers shared by the pre-build and completion gates."""
 
 import os
 import re
 
 
-EMPTY_VALUES = {
-    "", "-", "—", "–", "none", "n/a", "na", "nothing", "pending", "unresolved",
-    "user decision", "actual user decision", "reviewed revision", "revision",
-    "scope", "authorized scope", "source", "date",
-}
+EMPTY_VALUES = {"", "-", "—", "–", "none", "n/a", "na", "nothing", "pending", "unresolved"}
 
 
 def unfenced_lines(text):
@@ -38,49 +34,20 @@ def usable_value(value):
     )
 
 
-def approval_errors(checks_path):
-    """The sibling plan owns approval when present; otherwise checks own bounded intent."""
+def intent_errors(checks_path):
+    """Checks-only work (no sibling plan) keeps its bounded intent in checks.md."""
     plan_path = os.path.join(os.path.dirname(os.path.abspath(checks_path)), "plan.md")
-    path = plan_path if os.path.isfile(plan_path) else checks_path
-    label = os.path.basename(path)
-    if not os.path.isfile(path):
-        return [f"{label}: missing native approval contract - recover the actual user decision"]
-    with open(path, encoding="utf-8") as source:
+    if os.path.isfile(plan_path) or not os.path.isfile(checks_path):
+        return []
+    with open(checks_path, encoding="utf-8") as source:
         lines = unfenced_lines(source.read())
-    fields, active = {}, False
-    intent = []
-    in_intent = False
-    illustrative_depth = None
+    intent, in_intent = [], False
     for line in lines:
         heading = re.match(r"^(#{1,6})\s+(.+?)\s*#*\s*$", line)
-        if heading:
-            depth, title = len(heading[1]), heading[2]
-            if depth <= 2:
-                active = title.lower() == "approval"
-                in_intent = title.lower() == "intent"
-                illustrative_depth = None
-            elif active:
-                if illustrative_depth is not None and depth <= illustrative_depth:
-                    illustrative_depth = None
-                if illustrative_depth is None and re.search(r"\b(?:examples?|templates?|samples?)\b", title, re.I):
-                    illustrative_depth = depth
-        elif active and illustrative_depth is None:
-            if re.match(r"^\s*(?:example|template|sample)\s*:", line, re.I):
-                return [f"{label}: approval is a template/example - recover the actual user decision"]
-            match = re.match(r"^\s*[-*]\s+(Decision|Date|Source|Reviewed revision|Scope):\s*(.*?)\s*$", line, re.I)
-            if match:
-                key = match[1].lower()
-                if key in fields:
-                    return [f"{label}: approval has duplicate {match[1]} fields - retain one observed receipt"]
-                fields[key] = match[2]
+        if heading and len(heading[1]) <= 2:
+            in_intent = heading[2].lower() == "intent"
         elif in_intent:
             intent.append(line)
-    errors = []
-    for key in ("decision", "reviewed revision", "scope"):
-        if not usable_value(fields.get(key, "")):
-            errors.append(f"{label}: approval missing usable {key} - record the actual user decision/source, reviewed revision and scope in ## Approval")
-    if not any(usable_value(fields.get(key, "")) for key in ("source", "date")):
-        errors.append(f"{label}: approval missing usable Source or Date - cite the observed user decision, not execution settings or an example")
-    if path == checks_path and not usable_value(" ".join(intent)):
-        errors.append("checks.md: checks-only approval requires usable ## Intent beside its receipt; do not create a synthetic plan")
-    return errors
+    if usable_value(" ".join(intent)):
+        return []
+    return ["checks.md: checks-only work requires usable ## Intent; do not create a synthetic plan"]

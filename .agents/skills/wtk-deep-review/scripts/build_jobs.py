@@ -83,8 +83,6 @@ DEFAULT_LENSES = {
     ),
 }
 
-REMOVED_SWEEPS = {"tests": "test adequacy", "spec-parity": "spec parity"}
-
 PLACEHOLDER_RE = re.compile(r"\{\{([a-z_]+)\}\}")
 
 
@@ -270,9 +268,6 @@ def normalize_sweeps(plan: dict) -> list[dict]:
     sweeps, errors = [], []
     for entry in plan.get("sweeps", []):
         key, lens = (entry, DEFAULT_LENSES.get(entry)) if isinstance(entry, str) else (entry.get("key"), entry.get("lens"))
-        if key in REMOVED_SWEEPS:
-            errors.append(f"sweep {key!r} was removed: the Technical Verifier owns {REMOVED_SWEEPS[key]}")
-            continue
         if isinstance(entry, str) and lens is None:
             errors.append(f"sweep {entry!r} has no built-in lens; use {{key, lens}}")
             continue

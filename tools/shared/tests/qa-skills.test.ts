@@ -200,7 +200,6 @@ describe("QA workflow artifact policy", () => {
     );
     const lifecycle = artifactLifecycle.replace(/\s+/g, " ");
     expect(lifecycle).toContain("`.specs/features/` is transient Lean workflow state");
-    expect(lifecycle).toContain("exact legacy managed `.specs/features/` ignore line");
   });
 
   it("IT-015 treats Lean proof state as the commit precondition", () => {
@@ -317,19 +316,21 @@ describe("canonical QA skills", () => {
   });
 
 
-  it("routes execution receipts and delivery reporting to one bundled metrics reference", () => {
+  it("loads execution metrics only from one opt-in router line", () => {
     const reference = ".agents/skills/wtk/references/execution-metrics.md";
     expect(existsSync(join(repositoryRoot, reference))).toBe(true);
-    for (const owner of [
-      ".agents/skills/wtk/SKILL.md",
-      ".agents/skills/wtk-lean/SKILL.md",
-      ".agents/skills/wtk-implement/SKILL.md",
-      ".agents/skills/wtk-ship/SKILL.md",
-      ".agents/skills/wtk/references/evidence.md",
-    ]) {
-      const links = [...readRepositoryFile(owner).matchAll(/\[[^\]]+\]\(([^)]+)\)/g)]
-        .map((match) => resolve(repositoryRoot, dirname(owner), match[1]!));
-      expect(links).toContain(resolve(repositoryRoot, reference));
+    const linksTo = (owner: string) =>
+      [...readRepositoryFile(owner).matchAll(/\[[^\]]+\]\(([^)]+)\)/g)]
+        .map((match) => resolve(repositoryRoot, dirname(owner), match[1]!))
+        .includes(resolve(repositoryRoot, reference));
+    const routerLine = readRepositoryFile(".agents/skills/wtk/SKILL.md")
+      .split("\n")
+      .filter((line) => line.includes("references/execution-metrics.md"));
+    expect(routerLine).toHaveLength(1);
+    expect(routerLine[0]).toMatch(/opts into execution metrics/);
+    expect(readRepositoryFile(reference)).toMatch(/Without that declaration, collect nothing/);
+    for (const skill of ["wtk-lean", "wtk-implement", "wtk-ship", "wtk-reuse-review", "wtk-qa-execute"]) {
+      expect(linksTo(`.agents/skills/${skill}/SKILL.md`)).toBe(false);
     }
   });
 
@@ -349,12 +350,10 @@ describe("canonical QA skills", () => {
 
     const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
     expect(reviewRounds).toContain("fingerprint = requirement + root cause + failure path");
-    expect(reviewRounds).toContain("independent cumulative failed-remediation counter and append-only generation history");
-    expect(reviewRounds).toContain("fixed default threshold of three attempts");
-    expect(reviewRounds).toContain("every failed post-fix Verifier result, whether or not the build gate is green");
-    expect(reviewRounds).toContain("Rewording or reopening a finding preserves its fingerprint and counter");
-    expect(reviewRounds).toContain("A distinct finding starts at count zero and does not consume another fingerprint's counter");
+    expect(reviewRounds).toContain("Rewording or reopening a finding preserves its fingerprint and its attempt count");
+    expect(reviewRounds).toContain("a distinct finding starts at zero");
     expect(reviewRounds).not.toMatch(/one global (?:remediation|blocker) counter/i);
+    expect(reviewRounds).not.toMatch(/review_convergence|remediation\.py/);
 
     expect(readRepositoryFile(".agents/skills/wtk-ship/SKILL.md")).toContain("Confirmed Critical, Major,");
     // The router no longer restates the loop; it routes to the phase skills that own it.
@@ -364,9 +363,6 @@ describe("canonical QA skills", () => {
     expect(readRepositoryFile(".agents/skills/wtk-lean/SKILL.md")).toContain(
       "validate_verification.py",
     );
-    const convergence = readRepositoryFile(".agents/skills/wtk-ship/scripts/review_convergence.py");
-    expect(convergence).toContain("failed_remediations");
-    expect(convergence).toContain("os.replace");
   });
 
   it("IT-003 dispatches all QA phases through each existing Verifier", () => {
@@ -391,34 +387,11 @@ describe("canonical QA skills", () => {
     expect(remediation).toContain("While a remediation check leaves a Critical/Major open");
     expect(remediation).toContain("run its scoped gate after every attempt");
     expect(remediation).toContain(
-      "stable signature from sorted failing-test identifiers after removing timings, absolute paths, and line numbers",
+      "Halt after three attempts (`stall_attempts`) on the same fingerprint without measurable progress",
     );
-    expect(remediation).toContain(
-      "current failing-test set that is a strict subset of the running minimum failing-test set resets the counter",
-    );
-    expect(remediation).toContain("equal-size set, including one with different members");
-    expect(remediation).toContain("a larger set increments it");
-    expect(remediation).toContain(
-      "when the third stall is reached, halt with the repeated signature, attempt count, and fixes tried",
-    );
-    expect(remediation).toContain(
-      "If the gate is unavailable, halt immediately without another remediation check",
-    );
-    expect(remediation).toContain("An open Critical alone does not halt while attempts establish new minima");
+    expect(remediation).toContain("If the gate is unavailable, halt immediately");
     expect(remediation.indexOf("While a remediation check leaves a Critical/Major open")).toBeLessThan(
       remediation.indexOf("run its scoped gate after every attempt"),
-    );
-    expect(remediation.indexOf("run its scoped gate after every attempt")).toBeLessThan(
-      remediation.indexOf("stable signature from sorted failing-test identifiers"),
-    );
-    expect(remediation.indexOf("stable signature from sorted failing-test identifiers")).toBeLessThan(
-      remediation.indexOf("strict subset of the running minimum"),
-    );
-    expect(remediation.indexOf("strict subset of the running minimum")).toBeLessThan(
-      remediation.indexOf("when the third stall is reached"),
-    );
-    expect(remediation.indexOf("a larger set increments it")).toBeGreaterThan(
-      remediation.indexOf("strict subset of the running minimum"),
     );
     expect(wtkShip).toContain("close_feature.py");
     expect(wtkShip).toContain("feature branch push, one pull request, and merge");
@@ -810,7 +783,6 @@ describe("adoption and public setup", () => {
       ".agents/skills/wtk-lean/scripts/validate_verification.py",
       ".agents/skills/wtk-ship/scripts/close_feature.py",
       ".agents/skills/wtk-deep-review/SKILL.md",
-      ".agents/skills/wtk-ship/remediation.py",
       ".agents/skills/wtk/references/execution-metrics.md",
     ]) {
       expect(packOutput).toContain(requiredPath);
@@ -836,8 +808,6 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_token_metrics.py",
       "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
-      "tools/test_remediation.py",
-      "tools/test_review_convergence.py",
       "tools/test_tlc_validators.py",
       "tools/test_wtk_lifecycle.py",
     ];

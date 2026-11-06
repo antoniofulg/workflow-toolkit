@@ -81,8 +81,7 @@ identity and buys the same independence.
    killed-process shim, a test-of-the-test, or a prefix allowlist the spec did not name is overbuild.
    Filed-issue review uses the same rule; YAGNI is blocking without a companion skill.
 ## Fingerprinted remediation accounting
-`fingerprint = requirement + root cause + failure path` is each finding's immutable identity. Maintain an independent cumulative failed-remediation counter and append-only generation history for each fingerprint; count every failed post-fix Verifier result, whether or not the build gate is green. The current generation's consecutive-stall state is separate and halts at the fixed default threshold of three attempts. The executable state lives in `review-fingerprints.json` through the stdlib convergence script, which delegates the pure transition to `remediation.py`.
-Rewording or reopening a finding preserves its fingerprint and counter. A distinct finding starts at count zero and does not consume another fingerprint's counter; the diagnostic cap is separate.
+`fingerprint = requirement + root cause + failure path` is each finding's identity. Rewording or reopening a finding preserves its fingerprint and its attempt count; a distinct finding starts at zero.
 ## The Review-Signal trailer
 
 The delivery commit for a pull request carries one `Review-Signal:` line recording its review
@@ -144,8 +143,7 @@ Batch aggressively. One commit per remediation batch is already the commit rule,
 
 ## Escalation
 
-While a remediation check leaves a Critical/Major open, finish approved remediation and run its scoped gate after every attempt; the fix needs no new approval. Each attempt derives a stable signature from sorted failing-test identifiers after removing timings, absolute paths, and line numbers; a current failing-test set that is a strict subset of the running minimum failing-test set resets the counter, while an equal-size set, including one with different members, or a larger set increments it. The default bound is three attempts.
-If the gate is unavailable, halt immediately without another remediation check; when the third stall is reached, halt with the repeated signature, attempt count, and fixes tried. An open Critical alone does not halt while attempts establish new minima; wtk-ship uses the same unavailable-gate or reached-threshold halt contract.
+While a remediation check leaves a Critical/Major open, finish approved remediation and run its scoped gate after every attempt; the fix needs no new approval. Halt after three attempts (`stall_attempts`) on the same fingerprint without measurable progress, such as a shrinking failing-test set, and report the attempt count and fixes tried. If the gate is unavailable, halt immediately. wtk-ship uses the same halt contract.
 
 ## Requirement and contract parity
 

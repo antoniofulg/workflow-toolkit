@@ -22,6 +22,19 @@ All notable changes to this project are documented here.
 - The implicit-dimension sweep gains deploy compatibility / rollback and performance budget, and
   `test-contract.md` covers test doubles and consumer-driven contracts. Route snapshots drop the
   constant `deep_review` and `parallelization` fields.
+- Execution metrics are opt-in: one router line in `wtk/SKILL.md` loads them when the project's
+  `AGENTS.md` opts in, replacing the per-skill preambles.
+- The Lean validators no longer judge the `## Approval` receipt; the Verifier confirms it names who
+  approved which revision. Checks-only work still needs `## Intent`.
+- Builds no longer estimate context with `wc -c / 4` or stop at a token budget. One builder runs
+  every slice and asks only when it actually hits a context limit.
+- `memory.md` defers to a project's `knowledge/` or decision docs when they exist.
+
+### Removed
+
+- `wtk-ship/scripts/review_convergence.py` and `wtk-ship/remediation.py`; the stall rule is now
+  prose in `review-rounds.md`. Deep Review drops the `REMOVED_SWEEPS` table, so an unknown sweep
+  fails like any other. Prose tombstones about removed options and earlier ceremony are gone.
 
 ## [4.3.0] - 2026-11-04
 

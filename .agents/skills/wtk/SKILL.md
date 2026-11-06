@@ -12,9 +12,6 @@ metadata:
 Use this entrypoint to select the smallest applicable Workflow Toolkit procedure. Keep the
 router loaded and load only the selected skill and its directly relevant references.
 
-For implementation through delivery, start [execution metrics](references/execution-metrics.md)
-before work or delegation; append its receipt to the final response, not a new repository artifact.
-
 ## Route
 
 Load shared references only for the current operation:
@@ -37,6 +34,7 @@ Load shared references only for the current operation:
 | Preserve explicit reuse, construction order or approval requirements | [Construction constraints](references/construction-constraints.md) |
 | Phase checkpoint, resume, compaction, context pressure or session transfer | [Context recovery](references/context-handoff.md) |
 | Edit agent instructions or skill references | [Context budget](references/context-budget.md) |
+| Implementation through delivery, when the project's `AGENTS.md` opts into execution metrics | [Execution metrics](references/execution-metrics.md) |
 | Derive criteria/checks, build, verify, or apply adopted project guidance | [Project requirements](references/project-requirements.md) |
 
 - An explicit PRD, RFC or ADR authoring request: follow

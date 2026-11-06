@@ -47,7 +47,7 @@ import os
 import re
 import sys
 
-from native_evidence import approval_errors, unfenced_lines, usable_value
+from native_evidence import intent_errors, unfenced_lines, usable_value
 
 EVIDENCE_RE = re.compile(r"[\w./-]+\.[A-Za-z0-9]+:\d+")
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE | re.MULTILINE)
@@ -143,7 +143,7 @@ def _verdict(lines):
 
 
 def _check_feature(fdir, name):
-    errors, warnings = approval_errors(os.path.join(fdir, "checks.md")), []
+    errors, warnings = intent_errors(os.path.join(fdir, "checks.md")), []
     vpath = os.path.join(fdir, "verification.md")
     if not os.path.exists(vpath):
         errors.append(

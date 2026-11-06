@@ -8,9 +8,6 @@ metadata:
 
 # QA Execute
 
-Before work, read [execution metrics](../wtk/references/execution-metrics.md); return the assigned
-stage receipt with session identity, interval and baseline/snapshot counters after its source checks.
-
 Walk the current QA plan through the consuming project's public surfaces. Select the adapter already
 declared by the project, capture evidence, write durable results, and return product defects to an
 Implementer without making the QA observer an author.

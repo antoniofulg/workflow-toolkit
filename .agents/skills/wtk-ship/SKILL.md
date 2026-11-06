@@ -10,9 +10,6 @@ metadata:
 
 Deliver the requested branch using the scope rules in `.agents/skills/wtk/references/validation.md`.
 
-At delivery start, read [execution metrics](../wtk/references/execution-metrics.md). Reuse collected
-stage receipts and append the footer at the authorized stopping point; missing usage is not a gate.
-
 Before delivery closeout or worktree removal, apply
 [runtime lifecycle](../wtk/references/runtime-lifecycle.md) and include cleanup/retention evidence
 in the normal handoff.

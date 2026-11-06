@@ -68,7 +68,7 @@ test('execution selection and current WTK catalog are consistent', () => {
   assert.match(lean, /workflow_route\.py/);
   assert.match(lean, /--selection-file/);
   assert.match(reviewRounds, /Deep Review is on demand by default/);
-  assert.match(reviewRounds, /fixed default threshold of three attempts/);
+  assert.match(reviewRounds, /Halt after three attempts \(`stall_attempts`\)/);
   assert.equal(fs.existsSync(path.join(root, 'docs')), false);
   assert.match(read('.agents/skills/wtk-qa/references/qa-scenarios.md'), /consuming project/);
 

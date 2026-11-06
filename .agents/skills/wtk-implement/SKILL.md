@@ -12,10 +12,6 @@ metadata:
 Implement approved modular work: extract the checks, build, and leave independent verification to
 the coordinator. The checklist fixes obligations; implementation decomposition is yours.
 
-Before execution, read [execution metrics](../wtk/references/execution-metrics.md) and return the
-assigned stage receipt with session identity, interval and baseline/snapshot counters after its
-source checks, using the normal handoff format.
-
 Before delegated work, follow [agent selection](../wtk/references/agent-selection.md); use the
 selected stage settings and skill in the current checkout, without mandatory native roles.
 
@@ -31,8 +27,7 @@ and verification handoff. At phase boundaries or context recovery, use
 
 The project declares `profile: light|standard|ui` and optional `handoff: on|off` in `AGENTS.md` or
 equivalent. Absent a declaration, use `standard` and `handoff: on`; the resolver may set a stronger
-profile. A project budget overrides the 150k-token default. Handoff affects build batching only,
-never independent verification.
+profile. Handoff affects build batching only, never independent verification.
 
 | Profile | Adds |
 | --- | --- |
@@ -64,10 +59,8 @@ before dependent feature build, reusing an upstream review when it covers the co
 Read the approved `.tasks/<name>.md` source completely, then ground its checks in the touched code
 and existing conventions. Refuse a claim without a nameable proof, concrete value, or explicit
 boundary; ask when the source leaves a real decision open rather than guessing.
-Inspect the source's [native feature approval](../wtk/references/construction-constraints.md#native-feature-approval)
-before dependent Build: actual decision/source, reviewed revision and scope, separate from execution
-settings. Record already-granted authority without asking again; missing evidence remains blocked
-until recovered from the real source. Link the owning receipt in the checklist, not a second copy.
+Confirm the source's [approval receipt](../wtk/references/construction-constraints.md#native-feature-approval)
+before dependent Build and link it in the checklist, not a second copy.
 
 Reuse the approved source's Swept dispositions and map them to checklist checks or existing proof.
 Revisit only missing, contradictory, or changed inputs. When no upstream sweep exists, perform it
@@ -106,13 +99,13 @@ is additive and does not stop the build.
 
 ### When one agent is not enough
 
-Use one builder by default. Estimate context and record a split under `## Handoff` only when a
-concrete context limit or planned transfer requires it. Pack **whole slices** under the declared
-budget (150k tokens by default); never split a slice. Before handoff, record closed checks, user decisions, and
-abandoned approaches. Handoff occurs only on green, with every proof in the batch passing; the next
-builder reads the checklist and landed diff, not a narrative. If one slice exceeds the budget, report
-that the upstream task cut it too coarsely. `handoff: off` keeps one builder in one session;
-recover after compaction through the shared context handoff reference above.
+Use one builder and do not estimate size up front. Ask the user only when that builder actually hits
+a context limit: hand off at the next whole-slice boundary, or continue with accepted compaction.
+Hand off whole slices only; never split a slice. Before handoff, record closed checks, user
+decisions, and abandoned approaches under `## Handoff`. Handoff occurs only on green, with every
+proof in the batch passing; the next builder reads the checklist and landed diff, not a narrative.
+`handoff: off` keeps one builder in one session; recover after compaction through the shared context
+handoff reference above.
 
 ## Verify
 

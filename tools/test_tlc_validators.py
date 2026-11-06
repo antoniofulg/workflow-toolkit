@@ -77,100 +77,16 @@ class WorkflowValidatorTests(unittest.TestCase):
         errors, _warnings = validate_verification._check_feature(str(FIXTURES), "fixture")
         self.assertEqual(errors, [])
 
-    def test_approval_receipts_reach_both_cli_gates(self) -> None:
-        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
-        receipt, rest = source.split("## Problem", 1)
-        invalid = {
-            "absent": "# Dunning\n\n## Problem" + rest,
-            "empty": source.replace("## Approval", "## Approval\n\n## Empty", 1),
-            "fenced example": "# Dunning\n\n```markdown\n" + receipt + "```\n\n## Problem" + rest,
-            "tilde fenced example": "# Dunning\n\n~~~markdown\n" + receipt + "~~~\n\n## Problem" + rest,
-            "placeholder": source.replace("User approved the dunning plan in TLC-412 comment 7.", "<actual user decision>"),
-            "bracket placeholder": source.replace("dunning-plan-3 on base a1b2c3d", "[reviewed revision]"),
-            "example": source.replace("User approved the dunning plan in TLC-412 comment 7.", "Example: user approves"),
-            "unfenced template": source.replace("## Approval", "## Approval\n\nTemplate: proposed receipt"),
-            "plain placeholder": source.replace("dunning-plan-3 on base a1b2c3d", "reviewed revision"),
-            "ellipsis decision": source.replace("User approved the dunning plan in TLC-412 comment 7.", "..."),
-            "unicode ellipsis revision": source.replace("dunning-plan-3 on base a1b2c3d", "…"),
-            "punctuation-only scope": source.replace("Both dunning slices and local implementation/commits; no remote delivery.", "._? –"),
-            "duplicate decision": source.replace("## Approval", "## Approval\n\n- Decision: user approved another scope"),
-            "execution settings only": source.replace("## Approval", "## Execution selection approval"),
-            "empty scope": source.replace("Both dunning slices and local implementation/commits; no remote delivery.", ""),
-            "no source or date": "\n".join(line for line in source.splitlines() if not line.startswith(("- Source:", "- Date:"))),
-        }
-        for title, plan in invalid.items():
-            with self.subTest(title=title), tempfile.TemporaryDirectory() as raw:
-                root = Path(raw)
-                feature = scaffold(root)
-                (feature / "plan.md").write_text(plan, encoding="utf-8")
-                for gate in ("validate_checks", "validate_verification"):
-                    result = run_gate(root, gate)
-                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                    self.assertIn("approval", result.stdout.lower())
+    def test_approval_receipt_is_a_verifier_judgment_not_a_gate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
-            scaffold(root)
+            feature = scaffold(root)
+            plan = feature / "plan.md"
+            source = plan.read_text(encoding="utf-8")
+            plan.write_text(source[:source.index("## Approval")] + source[source.index("## Problem"):], encoding="utf-8")
             for gate in ("validate_checks", "validate_verification"):
                 result = run_gate(root, gate)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-
-    def test_approval_illustrative_subsections_do_not_supply_authority(self) -> None:
-        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
-        prefix, remainder = source.split("## Approval\n\n", 1)
-        receipt, remainder = remainder.split("## Problem", 1)
-        for heading in (
-            "### Example", "### Template receipt", "### SAMPLE",
-            "#### Examples", "##### Approval templates", "###### Sample approval",
-            "### Example\n\n#### Templates\n\n##### Supporting context",
-        ):
-            with self.subTest(heading=heading), tempfile.TemporaryDirectory() as raw:
-                root = Path(raw)
-                feature = scaffold(root)
-                (feature / "plan.md").write_text(
-                    prefix + "## Approval\n\n" + heading + "\n\n" + receipt + "## Problem" + remainder,
-                    encoding="utf-8",
-                )
-                for gate in ("validate_checks", "validate_verification"):
-                    result = run_gate(root, gate)
-                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                    self.assertIn("approval missing usable decision", result.stdout)
-
-    def test_approval_genuine_receipt_survives_neighboring_examples(self) -> None:
-        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
-        prefix, remainder = source.split("## Approval\n\n", 1)
-        receipt, remainder = remainder.split("## Problem", 1)
-        example = "### Examples\n\n#### Template\n\n##### Supporting context\n\n" + receipt
-        for body in (receipt + example, example + "### Observed decision\n\n" + receipt):
-            with self.subTest(body=body), tempfile.TemporaryDirectory() as raw:
-                root = Path(raw)
-                feature = scaffold(root)
-                (feature / "plan.md").write_text(
-                    prefix + "## Approval\n\n" + body + "## Problem" + remainder, encoding="utf-8",
-                )
-                for gate in ("validate_checks", "validate_verification"):
-                    result = run_gate(root, gate)
-                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-
-    def test_approval_execution_route_does_not_authorize_feature_shape(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw).resolve()
-            feature = scaffold(root)
-            plan = feature / "plan.md"
-            plan.write_text(plan.read_text(encoding="utf-8").replace("## Approval", "## Awaiting feature review"), encoding="utf-8")
-            stages = {"implementation": {
-                "provider": "codex", "model": "gpt-6.1-sol", "effort": "max",
-                "rationale": "One sequential builder for the fixture.", "limitations": [],
-            }}
-            snapshot = {
-                "version": 3, "feature": "fixture", "checkout": str(root), "stages": stages,
-                "git_head": "a1b2c3d", "profile": None, "verification_profile": "standard",
-            }
-            self.assertEqual(workflow_route.validate_snapshot(root, "fixture", snapshot), snapshot)
-            (feature / "workflow.json").write_text(json.dumps(snapshot), encoding="utf-8")
-            for gate in ("validate_checks", "validate_verification"):
-                result = run_gate(root, gate)
-                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                self.assertIn("approval missing usable decision", result.stdout)
 
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -191,21 +107,6 @@ class WorkflowValidatorTests(unittest.TestCase):
                 result = run_gate(root, gate)
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                 self.assertIn("## Intent", result.stdout)
-
-    def test_approval_plan_cannot_be_bypassed_by_checks_receipt(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw)
-            feature = scaffold(root)
-            plan = feature / "plan.md"
-            source = plan.read_text(encoding="utf-8")
-            receipt = source[source.index("## Approval"):source.index("## Problem")]
-            plan.write_text(source.replace("## Approval", "## Awaiting approval"), encoding="utf-8")
-            checks = feature / "checks.md"
-            checks.write_text(checks.read_text(encoding="utf-8") + receipt, encoding="utf-8")
-            for gate in ("validate_checks", "validate_verification"):
-                result = run_gate(root, gate)
-                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                self.assertIn("plan.md: approval", result.stdout)
 
     def test_approval_is_not_required_before_presenting_plan(self) -> None:
         source = (FIXTURES / "plan.md").read_text(encoding="utf-8")

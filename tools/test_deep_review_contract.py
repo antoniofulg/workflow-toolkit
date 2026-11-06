@@ -884,16 +884,16 @@ class DeepReviewContractTests(unittest.TestCase):
             self.assertEqual([job["lane"] for job in jobs], ["defect"])
             self.assertNotIn("polish", build.stdout)
 
-    def test_removed_sweeps_are_rejected_by_name(self) -> None:
+    def test_unknown_sweeps_are_rejected(self) -> None:
         # IT-012 (P3 AC3)
-        for sweep, owner in (("tests", "test adequacy"), ("spec-parity", "spec parity")):
+        for sweep in ("tests", "spec-parity"):
             with self.subTest(sweep=sweep), tempfile.TemporaryDirectory() as raw:
                 root = init_repo(raw)
                 _, build = full_fixture(root, {"sweeps": [sweep], "cohorts": [
                     {"id": "A", "name": "all", "risk": "normal", "files": ["file0.txt", "file1.txt", "file2.txt"]},
                 ]})
                 self.assertEqual(build.returncode, 1, build.stdout + build.stderr)
-                self.assertIn(f"sweep '{sweep}' was removed: the Technical Verifier owns {owner}", build.stderr)
+                self.assertIn(f"sweep '{sweep}' has no built-in lens", build.stderr)
 
     def test_spec_contract_without_spec_parity_job_ships_with_no_conformance_section(self) -> None:
         # IT-013 (P3 AC4)

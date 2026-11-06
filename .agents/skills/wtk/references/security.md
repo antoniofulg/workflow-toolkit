@@ -147,13 +147,3 @@ Two rules keep a campaign useful: **research broadly, report narrowly** — trac
 actually comes from and what protections already exist before flagging; and **high confidence only**
 — a finding needs a concrete path from attacker-controlled input to a vulnerable sink, never a
 pattern match.
-
-## What this drops from earlier ceremony
-
-The substance is unchanged. What goes is the bookkeeping:
-
-- The eleven-row declaration required a row for **every** surface including inapplicable ones. Absent
-  now means not applicable.
-- A gate that only reads the *shape* of security evidence, and never reads product code looking for a
-  flaw, is not a security gate. Keep it out of the full gate.
-- The separate security review artifact folds into the validation report. One evidence file.

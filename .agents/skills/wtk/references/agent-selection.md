@@ -109,6 +109,6 @@ handoffs and checking; a separate checkout needs a concrete approved exception. 
 fault-injection scratch follows the existing verification proof and is discarded after use.
 Freeze author edits while independent checking evaluates the complete approved revision/range.
 
-Return the existing [execution receipt](execution-metrics.md) with actual provider/model/effort
-when exposed, identity, interval, source/scope, counters and missing coverage. Record inherited or
-unknown settings explicitly. No receipt field, proof obligation or review cadence changes here.
+When the project opts into metrics, return the [execution receipt](execution-metrics.md) with
+actual provider/model/effort when exposed, identity, interval, source/scope, counters and missing
+coverage. Record inherited or unknown settings explicitly. No receipt field, proof obligation or review cadence changes here.

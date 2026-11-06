@@ -68,7 +68,6 @@ Delivery is human-scheduled. Git and the artifacts named below own durable state
 ## wtk-lean
 
 profile: standard
-budget: 200k
 
 ## Load (the heading, not the whole file)
 

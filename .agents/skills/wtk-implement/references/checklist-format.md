@@ -34,7 +34,7 @@ Sources:
 
 ## Checks
 
-### S1 - Suspension on a failed charge · 4 files · 38 KB · ~10k
+### S1 - Suspension on a failed charge
 
 **C1** - A failed charge sets status to Suspended, never Cancelled
 Proof: `pytest tests/billing/test_dunning.py::test_failed_charge_suspends`
@@ -42,7 +42,7 @@ Proof: `pytest tests/billing/test_dunning.py::test_failed_charge_suspends`
 **C2** - Every provider status maps to exactly one local status
 Proof: `pytest tests/billing/test_status_map.py::test_every_provider_status_maps`
 
-### S2 - Webhook ingest · 9 files · 140 KB · ~35k
+### S2 - Webhook ingest
 
 **C3** - Retrying the same webhook delivery id changes nothing
 Proof: `bun test -- -t "retry is idempotent"`
@@ -89,8 +89,6 @@ project decision approval.
 
 **Checks group under the slices they came from.** The upstream task already cuts the work into slices of one observable outcome each; flattening them into `C1..Cn` loses a structure the source had and that `## Handoff` later refers to by name. Keep the slice, keep its name, number the checks straight through.
 
-Each slice heading carries its **size**, and the arithmetic is `wc -c` on the files that slice touches - the ones its checks land in, which `Landing` and your own walk already named - divided by four. That is a floor: it counts what you will read, not the iteration on top, which is the larger and less predictable half. It is still worth writing, because ranking slices by weight is the decision, and a floor ranks correctly even when it under-counts.
-
 A check is **one** observable claim. If you need "and", split it. The proof must name a specific test, not a whole suite - a suite going green says nothing about *this* claim. Repeat `Proof:` when one test cannot settle the whole claim, and every proof listed must be green.
 
 Read the code before choosing the proof, then check the claim against the input space behind it. A claim about nine provider statuses is not proven by a proof that exercises two - that gap needs a second proof, and it is a question about coverage rather than about test style.
@@ -116,8 +114,8 @@ The last two lines close the level gap the same way. List every check whose clai
 Find the real commands first: read the package manifest, the task runner and the CI workflows. Prefer a command that already runs in CI. When nothing exists for what a check needs, ask - never invent a command, because a proof that cannot run is worse than none.
 
 Write the checklist, satisfy the [project-requirements criteria review](../../wtk/references/project-requirements.md#review-criteria-before-dependent-feature-build), then continue into Build. No additional human approval is needed when the source is already decided and the checklist derives from it.
-The source must retain a usable [native approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval);
-inspect its real authority before dependent edits. Record decisions in their receiving turn and
+Confirm the source's [approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+before dependent edits. Record decisions in their receiving turn and
 reconcile actual host status through the shared [Handoff](../../wtk/references/context-handoff.md)
 before dispatch/recovery. These requirements add no approval pause for already authorized work.
 

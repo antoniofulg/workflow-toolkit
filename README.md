@@ -220,12 +220,11 @@ The public hierarchy is `Feature -> Slice -> Check`:
 The feature artifacts are `.specs/features/<feature>/plan.md`, `checks.md`, and `verification.md`.
 The project decides its validation command, provider route, QA adapter, and delivery authority.
 
-Feature approval is separate from execution settings: record the actual user decision/source,
-reviewed revision and scope in the native plan/task `## Approval`, in the receiving turn. Lean's
-pre-build and completion gates reject missing, empty or template-only receipts; checks-only work
-keeps its receipt with `## Intent` without a synthetic plan or redundant approval pause. Unchanged
-in-scope approval is reusable; new user-owned product choices need targeted acceptance. Markdown
-cannot authenticate authority, and local edits/commits do not authorize remote delivery.
+Feature approval is separate from execution settings: record who approved which revision and scope
+in the native plan/task `## Approval`, in the receiving turn, as
+[construction constraints](.agents/skills/wtk/references/construction-constraints.md#native-feature-approval)
+describes. No validator judges the receipt; the Verifier confirms it. Local edits/commits do not
+authorize remote delivery.
 
 Live recovery records decisions immediately, dispatch intent before send, and actual host identity
 after send. Coordinators reconcile host status/reports before waiting, retrying or replacing work;

@@ -58,11 +58,8 @@ in this verification report even when listed proofs pass. This precedes the `ui`
 For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
 within this verification pass and include its findings and coverage limits in the existing report.
 
-For explicit reuse, construction-order or approval requirements, apply
-[construction verification](../../wtk/references/construction-constraints.md#verify) under every profile.
-Independently inspect the native feature approval's actual source, reviewed revision and scope;
-structurally valid Markdown does not authenticate user authority. The completion gate also checks
-the receipt, including checks-only intent, and never substitutes execution settings.
+Under every profile, apply [construction verification](../../wtk/references/construction-constraints.md#verify):
+confirm the `## Approval` receipt and any explicit reuse, construction-order or approval requirement.
 
 `checks.md` carries a `Profile:` line, and `standard` is the default. Step 1 runs under `ui`. The
 `Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and

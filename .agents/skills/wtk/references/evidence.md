@@ -28,8 +28,8 @@ requirement to match the implementation. Use `verification.md` when the feature 
 For bounded edits, report the change and the validation command, exit code, decisive output and any
 limitation. No separate report file or full feature template is needed.
 
-For implementation/delivery summaries, append [execution metrics](execution-metrics.md) from the
-collected stage receipts. Late or unavailable measurements remain explicit gaps, not estimates of usage.
+When the project opts into [execution metrics](execution-metrics.md), append them to
+implementation/delivery summaries from the collected stage receipts. Late or unavailable measurements remain explicit gaps, not estimates of usage.
 
 For slice/feature handoffs or failed gates, record:
 

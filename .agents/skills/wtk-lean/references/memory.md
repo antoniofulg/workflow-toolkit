@@ -2,7 +2,8 @@
 
 Three things outlive a session: decisions that constrain future features, a handoff snapshot for
 picking work back up, and lessons distilled from real verification failures. All three live under
-`.specs/` by default; decisions follow the project's existing store.
+`.specs/` by default; decisions follow the project's existing store. When the project keeps a
+`knowledge/` bundle or decision docs, those win over `.specs/STATE.md` and the lessons layer.
 
 ## `.specs/STATE.md`
 

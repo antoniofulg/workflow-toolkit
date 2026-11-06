@@ -100,4 +100,4 @@ The manifest builder resolves reviewer concurrency once, with precedence `--conc
 `min(concurrency, pending jobs)`, refills a worker slot after completion, and never schedules a
 new job after the first provider block. Active attempts finish; pending and blocked jobs remain in
 the blocker ledger. Results are stored by label and emitted in jobs-file order, regardless of
-completion order. The removed legacy `--workers` option is rejected.
+completion order.

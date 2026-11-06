@@ -13,10 +13,6 @@ Run a decided feature through four moves: `PLAN → CHECKS → BUILD → VERIFY`
 feature shape before checks freeze its obligations; builders choose reversible implementation detail;
 one fresh Verifier proves the complete feature. There is no task breakdown or component catalogue.
 
-At execution or verification start, read [execution metrics](../wtk/references/execution-metrics.md);
-include the assigned stage receipt with session identity, interval and baseline/snapshot counters
-after its source checks, using the normal handoff format.
-
 Before environment setup or handoff, apply [runtime lifecycle](../wtk/references/runtime-lifecycle.md)
 to the checkout's application/test services.
 
@@ -58,7 +54,6 @@ and `checks.md` plus the verification report must name the same value.
 ## wtk-lean
 
 profile: standard
-budget: 150k
 ```
 
 | Profile | Proof obligations |
@@ -108,10 +103,9 @@ be recorded as a `Landing` decision.
 - **Plan:** human review of EARS criteria, boundary, surfaces, eleven implicit dimensions, and the
   five shape sections. Ask only genuine decisions; use `n/a - <reason>` where a dimension does not
   apply. Full procedure and closure gate: [plan.md](references/plan.md).
-- **Checks:** derive proof-backed claims, join every enumerated set member, record swept landings,
-  and close with `## Handoff` arithmetic: [checks.md](references/checks.md).
-- **Build:** after the size gate resolves the execution mechanism, tests come from checks and
-  implementation decomposition is yours. Keep new `Landing`, `Relations`, and `Surface` rows
+- **Checks:** derive proof-backed claims, join every enumerated set member, and record swept
+  landings: [checks.md](references/checks.md).
+- **Build:** tests come from checks and implementation decomposition is yours. Keep new `Landing`, `Relations`, and `Surface` rows
   additive before closing code, then use the scope guardrail and handoff procedure:
   [build.md](references/build.md).
 - **Verify:** in the same turn after the feature's last commit, the coordinator sends one fresh
@@ -135,10 +129,9 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | After editing a validator or template | `selftest.py` |
 
 The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
-`validate_checks.py` catches missing native approval, proofs, coverage, swept rows and profile.
-`validate_verification.py` also requires native approval and, under `ui`, visual provenance and
-existing local captures. Structural acceptance cannot authenticate approval or judge image fidelity;
-the independent Verifier owns those judgments. Run `selftest.py` after validator/template changes.
+`validate_checks.py` catches missing proofs, coverage, swept rows and profile.
+`validate_verification.py` also requires, under `ui`, visual provenance and existing local captures.
+Approval and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
 If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection
@@ -155,19 +148,15 @@ python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
 
 The version 3 route records selected stage/model/effort choices scoped to the
 feature and current checkout. It derives the approved verification profile, keeps Deep Review on
-demand and the Lean builder sequential. It neither reads nor writes `.wtk.toml` or native role files.
+demand and the Lean builder sequential.
 Unchanged retries and resume reuse the selection through the same helper.
 
 ## Sub-agents and handoff
 
-Estimate the files each slice touches from `wc -c / 4`, and record the arithmetic under
-`## Handoff` after checks exist and before Build. When the cumulative estimate fits the declared
-budget (default 150k tokens), one builder owns all whole slices sequentially; do not ask or offer a
-transfer. When it exceeds the budget, stop before code and ask the user to choose the execution
-mechanism: sequential whole-slice handoff at the recorded surface boundary, or one builder with
-accepted compaction/context-loss risk. The coordinator chooses the cut, records the user's mechanism
-choice, and uses the host's supported handoff mechanism with the stage selection in the
-current checkout.
+One builder owns all whole slices sequentially; do not estimate size, ask or offer a transfer. Ask
+the user only when that builder actually hits a context limit: hand off to a fresh builder at the
+next whole-slice boundary, or continue with accepted compaction. The coordinator uses the host's
+supported handoff mechanism with the stage selection in the current checkout.
 
 Handoffs occur only between slices and only after every proof in the batch is green. The outgoing
 builder records closed checks, user decisions, and abandoned approaches. The next builder reads the

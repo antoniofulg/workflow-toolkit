@@ -21,9 +21,9 @@ either dead or unproven, and both are findings.
 Apply [project requirements](../../wtk/references/project-requirements.md) before deriving checks,
 including for checks-only features. Carry source-backed landings and gap dispositions from the
 plan, reconcile omissions, and obtain its fresh criteria review before dependent feature build.
-Carry the plan's [native approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
-within its reviewed scope. With no plan, retain `## Intent` and `## Approval` in this file; an
-already authorizing current request supplies the receipt without a new approval pause.
+With no plan, keep `## Intent` and the
+[`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+in this file.
 
 Read the package manifest, the task runner and the CI workflows. Prefer a command that already
 runs in CI. Where nothing exists for what a check needs, ask - never invent a command, because
@@ -149,7 +149,7 @@ the present tense, then what is different for a user when this ships.>
 
 Grouped by the spec's slices; numbering runs across the whole feature.
 
-### S1 - <slice> · 4 files · 38 KB · ~10k
+### S1 - <slice>
 
 **C1** - A failed charge sets status to Suspended, never Cancelled (FEAT-01, AC 1)
 Proof: `bin/rails test test/billing/dunning_test.rb -n "/failed_charge_suspends/"`
@@ -157,7 +157,7 @@ Proof: `bin/rails test test/billing/dunning_test.rb -n "/failed_charge_suspends/
 **C2** - Every provider status maps to exactly one local status (FEAT-01, AC 4)
 Proof: `bin/rails test test/billing/status_map_test.rb -n "/every_provider_status/"`
 
-### S2 - <slice> · 9 files · 140 KB · ~35k
+### S2 - <slice>
 
 **C3** - Retrying the same webhook delivery id changes nothing (FEAT-02, AC 5)
 Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
@@ -220,20 +220,8 @@ Where each unwritten requirement landed. All eleven, one line each, every time.
 
 ## Handoff
 
-Size, with the arithmetic, written after the checks exist and before any code. The coordinator
-chooses the cut; the user chooses the execution mechanism only when the estimate exceeds the
-declared budget.
-
-Under the budget - one builder, no ask:
-
-- S1 = 10k, all in Billing; S2 enters Webhooks at 25k total, under the 150k budget - one builder
-
-Over the budget - stop, ask (handoff vs one builder), then record the choice:
-
-- S1-S3 = 118k, all in Billing; S4 enters Webhooks at 190k -> proposed cut after S3
-- Mechanism: handoff | one builder (compaction accepted) - <the user's choice>
-
-<Appended by each builder as it finishes, three lines each:>
+<Only when a builder hit its context limit and handed off at a whole-slice boundary, three lines
+each:>
 
 - **Boundary:** C1-C7 closed at `<sha>`
 - **Settled mid-build:** <links to decisions recorded in their receiving turns; do not wait for this checkpoint>
@@ -249,11 +237,10 @@ everything about the requirements and the solution's shape: [plan.md](plan.md).
 python3 <skill-dir>/scripts/validate_checks.py <feature>
 ```
 
-It fails absent/unusable native approval in the sibling plan (or checks-only intent contract), a
-check with no `Proof:`, duplicate ids, incomplete coverage, missing swept dimensions or profile.
-Execution settings do not replace feature approval. It warns on a proof without a test
-selector, vague claims and a plan Surface route absent from checks. The structural gate cannot judge
-approval authenticity/scope or proof adequacy; the independent review retains those obligations.
+It fails a checks-only feature without `## Intent`, a check with no `Proof:`, duplicate ids,
+incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
+selector, vague claims and a plan Surface route absent from checks. It does not judge approval or
+proof adequacy; the independent review retains those obligations.
 
 A non-zero exit means fix before writing code. The script checks structure; the judgment - is the
 proof the right one, does the level match the claim - stays yours.

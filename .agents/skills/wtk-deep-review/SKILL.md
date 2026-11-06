@@ -66,7 +66,7 @@ The manifest builder resolves `path_filters` into manifest.json; the knowledge s
 - Before reviewer dispatch, follow [agent selection](../wtk/references/agent-selection.md) for the
   selected `deep_review` row. Use skill-directed agents in the current checkout; native role files
   are optional. Engine and external runtime choices must honor the selected model/effort.
-- Reviewer concurrency is resolved before dispatch: `--concurrency N` overrides `.wtk-deep-review.yaml`, which overrides the default `3`; valid values are `1` through `6`. The resolved value is frozen in `manifest.json`. The legacy no-op `--workers` option is rejected.
+- Reviewer concurrency is resolved before dispatch: `--concurrency N` overrides `.wtk-deep-review.yaml`, which overrides the default `3`; valid values are `1` through `6`. The resolved value is frozen in `manifest.json`.
 
 ## Procedure
 
