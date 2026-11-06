@@ -54,13 +54,15 @@ a second proof, and it is a question about coverage rather than about test style
 as a response at a boundary is not settled by a test that never crosses it. A claim about a
 decision table is not settled by one path through it. When the claim and the proof sit at
 different levels, either split the claim or name the second proof - never let the level slide to
-whichever is cheaper to write.
+whichever is cheaper to write. A proof at end-to-end states the reason the
+[lowest-layer rule](../../wtk/references/test-contract.md#choosing-the-layer) requires.
 
 **Obligations add up rather than substitute.** A test proves the layer where it *asserts*, not
 the layers it happens to *pass through*. An end-to-end test that traverses a branch exercises one
 path through it and cannot fail when a second branch is wrong. Treating it as proof of the code
 it traversed is level substitution, and it is the most common way a green suite ships a broken
-branch table.
+branch table. Enumerate a decision table once, at its own layer: the boundary proof asserts only
+the contract, the wiring and one representative case per distinct outcome, never the table rows.
 
 ## Coverage - the join
 
@@ -69,8 +71,9 @@ the check that proves it.
 
 A set collapsed into a sentence - "dispatches over paused, updated, deleted and trial_will_end" -
 has no empty cell, so a member can go missing while the sentence still reads perfectly. That is
-how a branch named in your own evidence ships unproven. One proof that is table-driven over the
-whole set may stand for it, with the size stated, because there the enumeration lives in the test.
+how a branch named in your own evidence ships unproven. Prefer one table-driven proof per set,
+with the size stated, because there the enumeration lives in the test. Several checks may cite the
+same test when each check has its own located assertion.
 
 Walk it **from the sets, not from the checks.** Summarising the checks you just wrote can only
 find a check with nothing behind it; it cannot find a name with no check, which is the failure
@@ -184,7 +187,7 @@ section entirely otherwise.>
 
 | Code | Required proofs | Coverage expectation |
 | --- | --- | --- |
-| Decides, reached across a boundary | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
+| Decides, reached across a boundary | one at the boundary **and** one at its own layer | at the boundary: the contract, the wiring and one case per distinct outcome; at its own layer: one asserted case per row of the decision table |
 | Decides, not reached across a boundary | one at its own layer | one asserted case per row of the decision table |
 | Entry point that decides nothing | one at the boundary | accepted input, each rejected input, each error path |
 | Instrumentation, pass-throughs | none of its own | covered by its consumer's proof |

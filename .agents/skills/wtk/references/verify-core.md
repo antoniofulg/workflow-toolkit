@@ -40,18 +40,19 @@ the only step that produces that information, and under `light` it does not run.
    `git stash`**: it records state from *before* the mutation, so popping it does not reverse a
    fault applied afterwards, and on a clean tree it creates no entry at all.
 2. **Baseline.** Record `git status --porcelain` of the real tree first.
-3. **Inject a behaviour-level fault** in the new code: flip a condition, change a returned value or
+3. **Inject.** When the project declares a mutation command, run it in the scratch with the scope
+   the [mutation policy](test-contract.md#mutation) sets, and skip step 4. Otherwise inject a
+   **behaviour-level fault** in the new code: flip a condition, change a returned value or
    status, shift a bound by one, remove a required side effect.
 4. **Run the narrowest covering proof** in the scratch and confirm it FAILS - the mutant is killed.
 5. **Discard** the scratch and confirm the real tree's porcelain matches the baseline. If it
    differs, STOP, restore the tree, and treat the run as invalid.
 
-**One fault per distinct assertion surface, not per risky line.** Three mutations killed by the same
+**Manual faults: one per distinct assertion surface, not per risky line.** Three mutations killed by the same
 two proofs ran the same experiment three times. Choose faults that force *different* proofs to fail,
 stop once every proof carrying a check has been made to fail once, and cap it at five however risky
 the feature looks - a quota that scales with risk costs most exactly where checks cluster in risky
-code. A second covering proof per fault adds a run and no information. Use real mutation tooling
-where the stack has it (Stryker, mutmut, cargo-mutants, pitest): it gets many mutants from one run.
+code. A second covering proof per fault adds a run and no information.
 
 **A surviving mutant is a finding, not a footnote.** It means the assertion would pass under a
-plausible wrong implementation.
+plausible wrong implementation. Resolve it under the [survivor policy](test-contract.md#mutation).

@@ -202,7 +202,7 @@ class WorkflowValidatorTests(unittest.TestCase):
         legacy = (
             "| Source | Screen/state | Viewport | Captures | Comparison | Result |\n"
             "| --- | --- | --- | --- | --- | --- |\n"
-            "| mockup revision 1 | /venues open | 390x844 | missing.png | inspected | PASS |\n"
+            "| mockup revision 1 | /listings open | 390x844 | missing.png | inspected | PASS |\n"
         )
         invalid_tables = {
             "legacy": legacy,
@@ -226,7 +226,7 @@ class WorkflowValidatorTests(unittest.TestCase):
             feature = scaffold(root, ui=True)
             report = feature / "verification.md"
             report.write_text(
-                report.read_text(encoding="utf-8") + "\n" + valid.replace("/venues populated", "/venues filters open"),
+                report.read_text(encoding="utf-8") + "\n" + valid.replace("/listings populated", "/listings filters open"),
                 encoding="utf-8",
             )
             result = run_gate(root, "validate_verification")

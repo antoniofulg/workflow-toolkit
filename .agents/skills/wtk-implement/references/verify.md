@@ -79,17 +79,19 @@ against its source.
 **A check nobody wrote contradicts nothing, so comparing cannot find it.** This step catches a
 check that disagrees with the design and is blind to the element the design draws that no check
 mentions - blind in the direction that matters, because absence is the ordinary failure and it
-leaves no trace to notice. So enumerate instead of comparing: per screen, list what the design decides that a selector
-reaches - which controls and indicators are present, which are absent, their order, their count,
-what they read, and **how they are arranged**: how many regions the screen has and what sits
-inside what - and confirm each has a check. An element with no check is a coverage gap. An
-element the code renders that the design does not draw is the same finding facing the other way.
+leaves no trace to notice. So enumerate instead of comparing: per screen, list what the design decides - which controls and
+indicators are present, which are absent, their order, their count, what they read, and **how they
+are arranged**: how many regions the screen has and what sits inside what - and confirm each is
+covered under [visual acceptance evidence](../../wtk/references/test-contract.md#visual-acceptance-evidence): arrangement, order, count and copy by a PASS
+paired capture; behaviour, contracted copy and the screen's one structural guard by a check. A
+decided element neither covers is a coverage gap. An element the code renders that the design does
+not draw is the same finding facing the other way.
 
 **Arrangement is the one this step keeps missing.** A screen can pass every label, count and
 order check and still be a different composition - a ring where the design draws a bar, a block
-beside the band it belongs inside, one column where there are two. Those are selector-reachable
-and therefore not exempt, so a screen whose checks are all copy and no structure is a finding
-even when each of them is green. Apply the binding-source contract and individual token adaptations in
+beside the band it belongs inside, one column where there are two. Compare the captures for
+composition, not only for labels; a screen whose captures are missing or show another composition
+fails even when every check is green. Apply the binding-source contract and individual token adaptations in
 [UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen), then the core's
 [visual evidence](../../wtk/references/verify-core.md#visual-evidence-ui).
 
@@ -249,8 +251,9 @@ Write `.checks/<feature>.verified.md`. Lead with the verdict.
 Then return a compact verdict in chat: PASS or FAIL, checks proven out of total, fault
 result, and a ranked gap list.
 
-A FAIL, a surviving mutant, an unmet test-policy row, a check contradicting a binding source, an
-element or an **arrangement** a binding source decides that no check covers, a blanket exemption
+A FAIL, an unresolved surviving mutant, an unmet test-policy row, a check contradicting a binding
+source, an element or an **arrangement** a binding source decides that neither a check nor a PASS
+paired capture covers, a blanket exemption
 in place of an enumerated one, a binding source recorded as opened that nobody actually saw, or
 any check without a located `file:line` all mean the work is not done.
 

@@ -13,8 +13,8 @@ authoring source for that artifact: read it for `Profile`, check and proof synta
 `Test policy`, `Swept`, and `Handoff`. This guideline supplies local test-case policy below; it does
 not define a second checks schema.
 
-The native profile owns mutation depth: `standard` and `ui` inject faults; `light` does not. Do not
-infer a local mutation threshold from this guideline.
+The native profile owns mutation depth: `standard` and `ui` inject faults; `light` does not.
+[Mutation](#mutation) sets their scope and survivor policy.
 
 ## Rules
 
@@ -51,6 +51,17 @@ Another layer earns a test only for a distinct failure, such as persistence, ser
 authorization wiring, or browser interaction. Keep real end-to-end journeys; leave input/error
 matrices to their lower-layer owner instead of replaying them through the browser.
 
+**Lowest layer that proves it.** Do not write an end-to-end test for a behaviour a unit or
+integration test can prove. End-to-end is reserved for what lower layers cannot reach: real browser
+or runtime wiring across processes, a user journey crossing several services, and the `@smoke`
+cohort. Plan and Checks state that reason whenever they choose end-to-end as a proof layer.
+
+Before replacing or removing an existing end-to-end test on this ground, prove the coverage: map
+every assertion in it to a unit or integration test asserting the same outcome through the same
+contract, and confirm with a scoped [mutation](#mutation) run, or manual faults, that the lower
+tests kill the mutants the end-to-end test killed. An assertion with no lower-layer proof keeps the
+end-to-end test, or gets its lower test first. Never remove the only proof of cross-component wiring.
+
 Use the real collaborator when it is fast and deterministic in the test, such as an in-process
 value, a local database or a filesystem in a temporary directory. Fake one only when it is slow,
 nondeterministic, costs money or has external side effects, and fake it at a port the code owns, not
@@ -58,9 +69,11 @@ inside a library. A fake proves nothing about the real collaborator. Between sep
 services, a consumer-driven contract test pins what the consumer reads, and the provider's suite
 replays it.
 
-Permanent e2e specs carry `@feature:<slug>` and `@journey:<slug>` tags, unique data with `finally`
-cleanup, and residue-zero assertions. The `@feature:<slug>` tag is the selector the consuming
-project's browser scoped gate uses to run only that feature's scenarios.
+Permanent e2e tests carry a feature and a journey marker in the runner's own mechanism (a tag,
+category, trait or label, such as `@feature:<slug>` and `@journey:<slug>`), unique data with
+guaranteed cleanup, and residue-zero assertions. The feature marker is the selector the consuming
+project's scoped e2e gate uses to run only that feature's scenarios. [Test tiers](validation.md#test-tiers)
+own which cohort runs when.
 
 ## Never add a test just to raise coverage
 
@@ -69,8 +82,8 @@ its canonical suite and layer, and the concrete regression that existing proofs 
 Record that justification in the existing check, task notes, or PR. Extend the owner; reuse its
 proof when no new failure is distinguished. Reviewers reject additions without this justification.
 
-When consolidating cases, map every unique assertion to its retained proof before removing the
-duplicate. Similar test names or shared setup alone do not establish equivalent coverage.
+When consolidating cases, follow [pruning](#pruning). Similar test names or shared setup alone do
+not establish equivalent coverage.
 
 Forbidden by default — allowed only when that artifact is the product contract and no stronger gate
 already owns it:
@@ -84,6 +97,39 @@ For instruction products, assert routing, metadata, resolvable references and sa
 do not freeze line wrapping, incidental wording or historical release prose. Compare release
 identities to the authoritative manifest. Review semantic instruction changes directly: a matching
 string alone does not prove agent behavior.
+
+## Mutation
+
+[Fault injection](verify-core.md#fault-injection-standard-ui) owns the isolated procedure.
+
+- **Declared tool.** When the project declares a mutation command, run it scoped to the changed
+  decision code only: the files or line ranges of the diff against the base, in incremental mode
+  when the tool supports it. Examples only: StrykerJS or Stryker.NET (`--since`), PIT for Java
+  (`scmMutationCoverage`, `targetClasses`), Mull or dextool for C++, mutmut for Python,
+  cargo-mutants for Rust.
+- **No declared tool.** Inject manual faults as that procedure states.
+- **Survivors.** There is no global score target, and this pack sets no number. Every survivor on
+  a changed decision line is a finding: kill it with a test, or record it as equivalent or arid with
+  a one-line reason. A project may declare its own break threshold, scoped to changed files.
+
+## Pruning
+
+Removing a redundant test is its own reviewed change, never part of a fix or a red gate.
+
+1. Scope one module, feature or page.
+2. List its tests per layer and map each to the claim or invariant it proves.
+3. Find candidates:
+   - (a) a higher-layer test whose assertions the lower-layer owner all covers, proven under the
+     [lowest-layer rule](#choosing-the-layer);
+   - (b) a test that kills no mutant, or only mutants another test also kills, found by a
+     [mutation](#mutation) run over the scope that reports every killing test (no bail);
+   - (c) a test over a forbidden subject: copy, snapshots, config or CSS;
+   - (d) a duplicate suite.
+4. For each candidate, map every unique assertion to the proof that is kept.
+5. Delete in its own `test(...)` commit, never inside a fix.
+6. Re-run mutation over the scope. The kill set must not shrink; a new survivor reverts that deletion.
+7. A fresh Verifier checks the mapping.
+8. Never prune a SEC proof without a named replacement at a lower layer.
 
 ## Test execution cost
 
@@ -99,6 +145,11 @@ string alone does not prove agent behavior.
   timings and why a cheaper proof is insufficient beside the coverage justification.
 
 ## Visual acceptance evidence
+
+**Paired captures prove what a screen looks like; e2e proves what it does.** Arrangement, order,
+count and copy are proven by the paired visual captures the Verifier compares, and a mismatch blocks
+completion. Give each screen exactly one structural e2e assertion as a guard. Otherwise e2e asserts
+behaviour, and copy only when copy is the contract.
 
 When a visual acceptance criterion names an approved reference, attach paired-capture evidence to the
 owning check or slice and point to its feature `uiux.md` row when present. Follow the method in

@@ -33,7 +33,7 @@ profile. Handoff affects build batching only, never independent verification.
 | --- | --- |
 | `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
 | `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
-| `ui` | standard plus binding-source comparison and per-screen copy and arrangement enumeration; read [screens.md](references/screens.md) |
+| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, and one structural guard per screen; read [screens.md](references/screens.md) |
 
 Use the `ui` profile for binding interface sources. The profile is a floor and the report names it. Empty inputs are recorded as such, not treated as
 passes. Read `references/test-policy.md` only for `standard` or `ui` checklist rows.

@@ -30,7 +30,9 @@ on-demand Deep Review, project-selected QA capabilities, and `stall_attempts = 3
   non-English messages do not change the artifact language.
 - **Do not preserve backward compatibility.** Remove obsolete paths instead of adding compatibility
   layers, fallbacks, or migrations. A rename updates code, schema, API, tests and docs in one change.
-- **Never weaken, skip or delete a test to make a gate pass.**
+- **Never weaken or skip a test, or delete one, to make a red gate pass.** Removing a redundant test
+  is a separate, reviewed change under the test-pruning procedure in
+  `.agents/skills/wtk/references/test-contract.md`.
 - Derive tests from acceptance criteria or an identified invariant, not implementation details or a
   coverage target. Extend the canonical suite at the owning layer.
 - **Remote delivery follows `wtk-ship`.** Invoking it, or a human go-ahead on proven-ready work,

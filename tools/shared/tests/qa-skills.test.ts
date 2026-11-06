@@ -613,10 +613,10 @@ describe("configurable review policy", () => {
       expect(source).not.toMatch(/public slices?|per-slice QA/i);
     }
     expect(gates).toContain(
-      "| Closing a task with a browser surface | The consuming project's browser scoped gate, filtered by `@feature:<slug>` |",
+      "| Closing a task with an e2e surface | The consuming project's scoped e2e gate, filtered by the feature marker |",
     );
     expect(normalizedTestContract).toContain(
-      "The `@feature:<slug>` tag is the selector the consuming project's browser scoped gate uses",
+      "The feature marker is the selector the consuming project's scoped e2e gate uses",
     );
   });
 });
@@ -961,5 +961,31 @@ describe("selected-design fidelity routing", () => {
     const contract = readRepositoryFile(".agents/skills/wtk/references/ui-ux.md");
     expect(contract).toContain("ui-fidelity-example.md");
     expect(existsSync(join(repositoryRoot, ".agents/skills/wtk/references/ui-fidelity-example.md"))).toBe(true);
+  });
+});
+
+describe("testing policy", () => {
+  it("allows redundant-test removal only through the pruning procedure", () => {
+    const deletionRule = "Never weaken or skip a test, or delete one, to make a red gate pass.";
+    const pruningRule = "Removing a redundant test is a separate, reviewed change under the test-pruning procedure";
+    for (const path of ["AGENTS.md", ".agents/skills/wtk/references/validation.md"]) {
+      const source = readRepositoryFile(path)
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .replace(/\s+/g, " ")
+        .replace(/\*\*/g, "");
+      expect(source).toContain(deletionRule);
+      expect(source).toContain(pruningRule);
+    }
+  });
+
+  it("owns pruning, the lowest-layer rule and mutation scope in the test contract", () => {
+    const testContract = readRepositoryFile(".agents/skills/wtk/references/test-contract.md");
+    const normalized = testContract.replace(/\s+/g, " ");
+    expect(testContract).toMatch(/^## Pruning$/m);
+    expect(testContract).toMatch(/^## Mutation$/m);
+    expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit or integration test can prove.");
+    expect(normalized).toContain("Never remove the only proof of cross-component wiring.");
+    expect(normalized).toContain("Never prune a SEC proof without a named replacement at a lower layer.");
+    expect(readRepositoryFile(".agents/skills/wtk/references/validation.md")).toMatch(/^## Test tiers$/m);
   });
 });

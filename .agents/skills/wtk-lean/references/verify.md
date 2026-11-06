@@ -98,16 +98,18 @@ failing one: a red test says the code disagrees with the checks, this says the c
 with the decision, and the build ships the second faithfully.
 
 **A check nobody wrote contradicts nothing, so comparing cannot find it.** Enumerate instead: per
-screen, list what the design decides that a selector reaches - which controls and indicators are
-present, which absent, their order, their count, what they read, and **how they are arranged**:
-how many regions the screen has and what sits inside what. Confirm each has a check. An element
-with no check is a coverage gap; an element the code renders that the design does not draw is the
+screen, list what the design decides - which controls and indicators are present, which absent,
+their order, their count, what they read, and **how they are arranged**: how many regions the
+screen has and what sits inside what. Confirm each is covered under
+[visual acceptance evidence](../../wtk/references/test-contract.md#visual-acceptance-evidence): arrangement, order, count and copy by a PASS paired capture;
+behaviour, contracted copy and the screen's one structural guard by a check. A decided element
+neither covers is a coverage gap; an element the code renders that the design does not draw is the
 same finding facing the other way.
 
 **Arrangement is the one this step keeps missing.** A screen can pass every label, count and
 order check and still be a different composition - a ring where the design draws a bar, one column
-where there are two. Those are selector-reachable and not exempt, so a screen whose checks are all
-copy and no structure is a finding even when each is green. Apply the binding-source contract and individual token adaptations in
+where there are two. Compare the captures for composition, not only for labels; a screen whose
+captures are missing or show another composition fails even when every check is green. Apply the binding-source contract and individual token adaptations in
 [UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen), then the core's
 [visual evidence](../../wtk/references/verify-core.md#visual-evidence-ui).
 
@@ -291,8 +293,9 @@ name the feature explicitly rather than letting it search.
 
 ## What fails the feature
 
-A FAIL, a surviving mutant, an unmet `Test policy` row, a check contradicting a binding source, an
-element or an **arrangement** a binding source decides that no check covers, a blanket exemption in
+A FAIL, an unresolved surviving mutant, an unmet `Test policy` row, a check contradicting a binding
+source, an element or an **arrangement** a binding source decides that neither a check nor a PASS
+paired capture covers, a blanket exemption in
 place of an enumerated one, a binding source recorded as opened that nobody actually saw, an
 unproven coverage member, or any check without a located `file:line`.
 

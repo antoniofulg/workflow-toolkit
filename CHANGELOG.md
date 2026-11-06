@@ -55,6 +55,22 @@ All notable changes to this project are documented here.
   boundaries or reuse are in play, and `wtk-ship` states its modular `.tasks/`/`.checks/` closeout.
 - The knowledge checker reads `AD-NNN` ids from the decision table, matching `ad-index.py`, and
   the Deep Review execution-metrics pointer applies only when the project opts in.
+- Testing policy limits test growth. An extra test names a regression no existing proof catches; a
+  decision table is enumerated once, at its own layer, and the boundary proof asserts the contract,
+  the wiring and one case per distinct outcome. A Swept line never requires a new test, and one SEC
+  case gets one integration proof by default.
+- `test-contract.md` adds the binding lowest-layer rule (no e2e for what a unit or integration test
+  proves), a `## Mutation` policy scoped to changed decision code with example tools per stack and
+  no global score, and a `## Pruning` procedure. Fault injection runs a declared mutation command
+  and otherwise keeps up to five manual faults.
+- UI arrangement, order, count and copy are proven by paired visual captures; each screen keeps one
+  structural e2e guard, and the modular Screens table follows that split.
+- `validation.md` adds tool-neutral test tiers (T0 every change, T1 every PR or push with a capped
+  `@smoke` cohort, T2 full e2e pre-merge) and a flaky-test quarantine rule. The e2e feature marker
+  is runner-neutral.
+- The critical rule reads "Never weaken or skip a test, or delete one, to make a red gate pass";
+  removing a redundant test is a separate, reviewed change under the pruning procedure.
+- The visual fixtures use the neutral listing sample.
 
 ### Removed
 

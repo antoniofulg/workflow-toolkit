@@ -60,7 +60,7 @@ profile: standard
 | --- | --- |
 | `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
 | `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
-| `ui` | standard plus binding-source comparison and per-screen copy and arrangement enumeration |
+| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, and one structural guard per screen |
 
 An empty input costs a recorded line, not a skipped step. `validate_verification.py` rejects a
 profile mismatch and missing sections required by `standard` or `ui`. If the declared floor is too

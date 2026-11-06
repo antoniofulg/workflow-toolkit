@@ -84,13 +84,14 @@ Examples only — not a `checks.md` schema:
 | SEC-002 | Submission floods the endpoint | 100 requests in 10s from one IP | 429 past the limit, no rows written |
 | SEC-004 | Personal data leaks through a list endpoint | `GET` the list route as an entitled operator | No `email` field in any item |
 
-This is the whole point: **a control becomes countable instead of remembered.** Pick the cheapest
-discriminating layer — most abuse cases are integration tests against the route, not e2e.
+This is the whole point: **a control becomes countable instead of remembered.** One SEC case gets
+one integration proof by default, at the cheapest discriminating layer, not e2e.
 
 Authentication, session, cookie, CSRF, trusted-IP, rate-limit, authorization and tenant-identity
 outcomes are layer-independent. A cheaper layer may discriminate the behaviour, but it never removes
 the permanent security smoke coverage when the changed surface is unknown, transversal, or
-classification-failed.
+classification-failed. Permanent security smoke is one shared tagged suite per product, extended
+only when a new boundary type appears.
 
 Browser fixtures use scenario-owned identities and IPs, in-memory session state, exact `finally`
 cleanup, and secret-free diagnostics. **No test artifact ever contains credentials, cookies, database

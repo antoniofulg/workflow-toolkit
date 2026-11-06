@@ -58,16 +58,18 @@ bug it was supposed to catch.
 **Hard constraints, no exceptions:**
 
 - Do not weaken an assertion to make it pass.
-- Do not delete a test, and do not use the framework's skip / disable / pending mechanism to
-  bypass a failing one.
+- Never weaken or skip a test (the framework's skip / disable / pending mechanism included), or
+  delete one, to make a red gate pass. Removing a redundant test is a separate, reviewed change
+  under the [test-pruning procedure](../../wtk/references/test-contract.md#pruning).
 - Do not modify a check's test afterwards to make the implementation pass.
 
 A red proof is a stop, not a note. If a check turns out to be wrong or impossible, stop and
 renegotiate with the user. The same holds for a `Landing` row the user approved that the build
 proves unbuildable - they approved that shape specifically.
 
-Extra tests beyond the proofs are welcome and there is no quota. A guard clause, a log line, a
-clear error message at an edge the checks did not name: that is the work, not scope creep.
+A guard clause, a log line, a clear error message at an edge the checks did not name: that is the
+work, not scope creep. An extra test must name a regression no existing proof catches, under the
+[test contract](../../wtk/references/test-contract.md#never-add-a-test-just-to-raise-coverage).
 
 ## Landing rows go in before the code
 

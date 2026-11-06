@@ -216,7 +216,8 @@ says nothing about two requests arriving at once. When you catch yourself borrow
 answers are `n/a` with the reason, or a question.
 
 **Where the record lives:** the landing for each dimension is written in `checks.md` under
-`## Swept`, because each one has to cite a check number. Do not duplicate it here.
+`## Swept`, because each one has to cite a check number. Do not duplicate it here. A Swept line
+never requires a new test: it cites a check, an existing constraint, or `n/a`.
 
 # Writing: what is being built
 

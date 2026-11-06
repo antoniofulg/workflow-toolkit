@@ -16,7 +16,7 @@ each proof or suite, not by file count, task label, commit identity or elapsed t
 | Direct fix, correction or refactor of executable code | Narrowest canonical check covering the affected behavior, then [fix verification](#fix-verification) |
 | Mixed documentation and executable change | Canonical tests for the changed executable behavior, then [fix verification](#fix-verification) |
 | Feature slice | Named proofs and the scoped gate |
-| Closing a task with a browser surface | The consuming project's browser scoped gate, filtered by `@feature:<slug>` |
+| Closing a task with an e2e surface | The consuming project's scoped e2e gate, filtered by the feature marker |
 | Feature close | Fresh full-feature Verifier and the selected local/full gates |
 
 Bounded corrections do not start a feature plan, deep review or QA cycle. A missing UI
@@ -45,6 +45,24 @@ For reference-driven UI, validate the contract and builder/independent compariso
 `references/ui-ux.md`, including actual-viewport states and full-page captures. A green behavior
 suite cannot waive missing visual evidence or material fidelity failures. QA flags and journeys follow
 `../../wtk-qa/references/qa-scenarios.md`; scenario tags scope walks, not automated tests.
+
+## Test tiers
+
+The project declares its commands per tier; runner tags, filters and shards (for example Playwright
+tags and `--shard`, JUnit or NUnit categories, xUnit traits, CTest labels, pytest markers) are
+examples, not requirements.
+
+| Tier | When | Runs |
+| --- | --- | --- |
+| T0 | Every change | Static checks, then affected unit and integration tests, fail-fast. Select them with the project's impact tool or the stack's changed/related selection. |
+| T1 | Every PR or push | T0, affected e2e, and a capped `@smoke` cohort (about three minutes or less): auth, the app shell, one core transaction path, and security smoke. |
+| T2 | Pre-merge | The full e2e suite, sharded when the runner supports it. Nothing merges without a green T2. |
+
+T2 is a merge requirement, run where the project's delivery runs it; it does not widen the local
+validation a change selects below. When impact is unknown, run the full suite under the
+[full-gate conditions](#full-gate-conditions-and-failures).
+A quarantined flaky test needs an owner, a cap and an expiry, and the quarantine is reported at
+feature close.
 
 ## Fix verification
 
@@ -115,8 +133,9 @@ At completion, record command, `file -> dependency/boundary -> test`, result, re
 and real limitations in the existing handoff/report. Every affected invariant needs a green proof
 or an explicit unresolved limitation; every selected command needs an impact or coverage justification.
 
-Explicit user skips remain a narrow claim with the limitation recorded. Never weaken, skip or delete
-a test to obtain a pass, or describe a failed/unrun gate as passing. Knowledge checks run with bundle
+Explicit user skips remain a narrow claim with the limitation recorded. Never weaken or skip a test,
+or delete one, to make a red gate pass. Removing a redundant test is a separate, reviewed change
+under the [test-pruning procedure](test-contract.md#pruning). Never describe a failed/unrun gate as passing. Knowledge checks run with bundle
 writes, not as an added feature-delivery gate; dependency inventories are not vulnerability proofs.
 
 ## Credential-free declarative agent-tool configuration
