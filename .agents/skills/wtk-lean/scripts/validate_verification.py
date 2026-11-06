@@ -219,7 +219,7 @@ def _check_feature(fdir, name):
                 visual_lines.append(line)
         visual_tables = find_tables(visual_lines)
         required = (
-            "source/revision", "source scale", "implementation revision", "route/state",
+            "source/revision", "source scale", "implementation revision", "screen/state",
             "viewport/scroll", "environment", "reference capture", "full-page capture",
             "viewport capture", "comparison", "result",
         )

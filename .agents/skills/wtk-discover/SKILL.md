@@ -192,6 +192,8 @@ If the verdict is **not now** or **do not build**, the document is Status `decli
 Read applicable accepted constraints from the
 [project decision store](../wtk/references/artifacts.md#decision-store) before comparing shapes.
 Record newly accepted choices that outlive this feature there and link them from Key decisions.
+When module boundaries or reuse are in play, compare shapes against
+[modeling](../wtk/references/modeling.md) and [code reuse](../wtk/references/code-reuse.md).
 
 Now open the repository, and open it **before** proposing anything and before reading anything outside. An option is not a design, it is a design plus what it costs *here*, and the same choice is obvious in one codebase and absurd in another. Proposing first and checking later means defending a position instead of forming one; reading a benchmark first means reading your own codebase through somebody else's lens.
 

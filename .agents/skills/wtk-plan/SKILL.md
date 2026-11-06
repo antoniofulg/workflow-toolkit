@@ -17,6 +17,8 @@ When implementing a selected image or design, freeze [the UI contract](../wtk/re
 before coding and carry its source and evidence requirements through build and independent verification.
 Use the `ui` profile for binding interface sources. When the work adds or changes a public surface,
 write [the public surface contract](../wtk/references/dx.md) before the criteria that depend on it.
+When module boundaries or reuse are in play, apply [modeling](../wtk/references/modeling.md) and
+[code reuse](../wtk/references/code-reuse.md) before recording `Decided` choices.
 
 ## Source and scope
 

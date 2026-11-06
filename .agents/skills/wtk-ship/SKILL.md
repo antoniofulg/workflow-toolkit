@@ -44,6 +44,11 @@ when a feature snapshot is required. Delegation follows
    `python3 .agents/skills/wtk-ship/scripts/close_feature.py <feature> --promoted`. The helper refuses
    cleanup without a passing verification receipt and explicit promotion confirmation.
 
+**Modular closeout.** Modular work carries `.tasks/<name>.md`, `.checks/<feature>.md` and the
+Verifier's `.checks/<feature>.verified.md`. Confirm that report's verdict passes with every check
+proven, then apply steps 2 and 3 to its scope. Keep or delete those working files under the
+project's tracking convention; `close_feature.py` applies only to Lean feature directories.
+
 ## Delivery authority
 
 Invoke this skill only when a human asks in this session to ship the work; finishing work never

@@ -329,6 +329,9 @@ describe("canonical QA skills", () => {
     expect(routerLine).toHaveLength(1);
     expect(routerLine[0]).toMatch(/opts into execution metrics/);
     expect(readRepositoryFile(reference)).toMatch(/Without that declaration, collect nothing/);
+    expect(normalizePacket(readRepositoryFile(".agents/skills/wtk-deep-review/SKILL.md"))).toContain(
+      "When the project's AGENTS.md opts into execution metrics, follow [execution metrics]",
+    );
     for (const skill of ["wtk-lean", "wtk-implement", "wtk-ship", "wtk-reuse-review", "wtk-qa-execute"]) {
       expect(linksTo(`.agents/skills/${skill}/SKILL.md`)).toBe(false);
     }
@@ -531,7 +534,7 @@ describe("configurable review policy", () => {
     expect(reviewRounds).toContain("wtk-deep-review** (resolved implementation groups)");
     expect(reviewRounds).not.toContain("wtk-deep-review** (every slice)");
     const finalGroupInstruction =
-      "Before final QA, complete the final pending implementation wtk-deep-review group; cadence `skip` resolves no groups, so nothing waits for wtk-deep-review.";
+      "Before final QA, complete any pending wtk-deep-review group; Deep Review runs on demand, so nothing waits for it unless one was requested.";
     const qaHeading = "## The feature closing step";
     const remediationInstruction =
       "For QA code remediation, review only `reviewed_head..HEAD`, then re-walk affected scenario rows.";

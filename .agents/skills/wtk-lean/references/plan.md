@@ -294,6 +294,8 @@ Each row shows the **literal shape** the next person will copy and what you reje
 the property that disqualified it: "cleaner" cannot be argued with, "cannot express the next
 state" can. Where the choice was forced rather than compared, name the constraint that forced
 it. Keep the row short - `Relations` and `Surface` carry the diagram and the signature.
+When module boundaries or reuse are in play, judge the rows against
+[modeling](../../wtk/references/modeling.md) and [code reuse](../../wtk/references/code-reuse.md).
 
 `None - <why nothing here is one-way>` is a complete answer, and stating it is what makes the
 omission contestable.

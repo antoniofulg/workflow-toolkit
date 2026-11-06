@@ -39,7 +39,7 @@ Technical Verifier. A clean remediation check or the stall bound ends the loop; 
 approval for local remediation already in progress. The post-fix gate and escalation rule below
 decide whether the feature's selected review route is done.
 
-Before final QA, complete the final pending implementation wtk-deep-review group; cadence `skip` resolves no groups, so nothing waits for wtk-deep-review. For QA code remediation, review only `reviewed_head..HEAD`, then re-walk affected scenario rows.
+Before final QA, complete any pending wtk-deep-review group; Deep Review runs on demand, so nothing waits for it unless one was requested. For QA code remediation, review only `reviewed_head..HEAD`, then re-walk affected scenario rows.
 
 ## The feature closing step
 

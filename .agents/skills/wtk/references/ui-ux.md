@@ -71,7 +71,7 @@ Screens and components this feature deliberately does not touch.
    for a material redesign. “Use project tokens” is not an exception: map matching tokens or add a
    scoped variant through the canonical system. Preserve unaffected source requirements. Never render
    unsupported controls or metrics. Use clearly identified placeholder media when real photos are
-   missing; stock/generated imagery must not imply it depicts a real venue.
+   missing; stock/generated imagery must not imply it depicts the real subject.
 5. **Freeze the surface before internals.** Reopen this document explicitly when the surface changes.
 6. Its existence marks the feature UI-bearing for QA when the proportional classifier selects QA.
 7. **Trace the common completion path.** Walk from user intent to completion for each changed
@@ -132,11 +132,11 @@ For a binding source, use the following acceptance procedure even when behavior 
    remain reachable; exercise them in the actual viewport.
 2. Compare hierarchy, spacing, typography, palette, controls, media and responsive layout against the
    recorded requirements and individual differences. Check inherited dark-theme leakage against the
-   selected theme, and check placeholder imagery/labels cannot imply a photographed real venue.
+   selected theme, and check placeholder imagery/labels cannot imply a photograph of the real subject.
 3. **Independent Verifier:** open the source and captures, check freshness against the implementation
    revision and environment, and judge every contracted pair independently of the builder's verdict.
    Reproduce selected interaction states in actual viewports when captures cannot prove reachability.
-   A materially different theme, header, filter layout, card composition or footer is a visual FAIL
+   A materially different theme, region, layout or composition is a visual FAIL
    even with green functional tests and QA. Missing source/captures or uninspected pairs are unverified
    and cannot PASS. Put these failures in the existing binding-source findings as well as the verdict.
 4. Record evidence in the existing task, verifier or QA report using the literal columns below.
@@ -146,9 +146,9 @@ For a binding source, use the following acceptance procedure even when behavior 
    [validation](validation.md). An old PASS or matching filename alone is not equivalence.
    Keep captures disposable but available through independent review.
 
-| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| Source/revision | Source scale | Implementation revision | Screen/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source and revision / contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
+| frozen source and revision / contract row | 1x | tested revision | screen and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
 
 `Source scale` is positive source pixels per viewport unit; mark inferred raster calibration in the
 source/contract, not a fabricated precise value. `Viewport/scroll` uses width×height and scroll x,y

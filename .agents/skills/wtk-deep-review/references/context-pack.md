@@ -45,8 +45,8 @@ Extract only rules that can bind a review result (error handling, testing shape,
       "reason": "root rules govern every selected path" }
   ],
   "rules": [
-    { "id": "R07", "scope": ["**/*_test.go"], "source": "AGENTS.md",
-      "guideline": "MUST use t.Run(\"Should...\") pattern for ALL test cases" }
+    { "id": "R07", "scope": ["<test-file-glob>"], "source": "AGENTS.md",
+      "guideline": "<verbatim rule text from the source>" }
   ]
 }
 ```

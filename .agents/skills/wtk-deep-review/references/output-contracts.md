@@ -23,16 +23,12 @@ Exact templates for every artifact. Placeholders in `<angle brackets>`; keep sec
 
 | Cohort / File(s) | Summary |
 | --- | --- |
-| **<cohort name>** <br> `<path>`, `<path>`, `<dir>/{a,b}.go` | <what changed there, 1–2 sentences> |
+| **<cohort name>** <br> `<path>`, `<path>`, `<dir>/{a,b}.<ext>` | <what changed there, 1–2 sentences> |
 
 ## Sequence Diagram(s)
 
 <only when the change alters a multi-actor flow (request path, event flow, lifecycle);
 one mermaid sequenceDiagram per flow, actors = real components>
-
-## Estimated code review effort
-
-🎯 <1-5> (<label>) | ⏱️ ~<minutes> minutes
 
 ## Review details
 
@@ -42,16 +38,6 @@ one mermaid sequenceDiagram per flow, actors = real components>
 - **Rubric**: <sources consulted, comma-separated paths>
 - **Linters**: <lane: ran/unavailable, ...>
 ```
-
-Effort scale (calibrate on *reviewable surface* — selected source, not raw file count):
-
-| 🎯 | Label | ⏱️ | When |
-| --- | --- | --- | --- |
-| 1 | Trivial | ~5 min | mechanical or config-only |
-| 2 | Simple | ~12 min | small localized change |
-| 3 | Moderate | ~25 min | one subsystem, some cross-file reasoning |
-| 4 | Complex | ~60 min | multiple subsystems or a contract change |
-| 5 | Critical | ~120 min | core invariants, storage, security, or wide blast radius |
 
 ## Finding block (used in review.md and PR comments)
 

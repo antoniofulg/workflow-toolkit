@@ -11,7 +11,7 @@ fp = first 16 hex of sha256("<result-kind>|<file>|<category>|<normalized title>"
 `normalized title` = lowercase, alphanumerics and single spaces only. Line numbers are deliberately excluded — anchors drift between pushes; identity must survive that. The single implementation is `fingerprint()` in `scripts/_common.py` (applied by merge_findings.py); compute one by hand only when recovering fingerprints from a PR thread:
 
 ```bash
-printf '%s' "defect|internal/store/queue.go|potential-issue|dont hard fail preferredmodel when config options are unrelated" \
+printf '%s' "defect|<src>/store/queue.<ext>|potential-issue|<normalized title>" \
   | shasum -a 256 | cut -c1-16
 ```
 
@@ -46,13 +46,13 @@ Append-only entries, one per correction:
 
 ```markdown
 ## <fp-or-slug> — <one-line rule>
-- Scope: <glob> (e.g. internal/store/**)
+- Scope: <glob> (e.g. <src>/store/**)
 - Rule: <the distilled instruction a future reviewer must follow, imperative>
 - Why: <the rationale the user gave — the invariant, the design intent>
 - Origin: <pr:312 | session, date>
 ```
 
-**Capture triggers:** the user (or a PR reply from the author) rebuts a finding with a reason; the user says a class of findings is unwanted; a dismissal reveals a repo convention the rubric missed. Distill the *rule*, not the anecdote — "ReserveQueuedRun is the authoritative one-open-run enforcer; do not flag missing pre-checks in enqueue paths" beats a story about one PR.
+**Capture triggers:** the user (or a PR reply from the author) rebuts a finding with a reason; the user says a class of findings is unwanted; a dismissal reveals a repo convention the rubric missed. Distill the *rule*, not the anecdote — "<the named function> is the authoritative enforcer of <invariant>; do not flag missing pre-checks in its callers" beats a story about one PR.
 
 **Application:** learnings are rubric input (context-pack.md §2) for every later round, scoped by their glob. Path instructions outrank learnings on conflict; a learning that contradicts project instructions or a selected skill signals that doctrine needs editing — surface the conflict.
 

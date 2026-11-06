@@ -44,6 +44,17 @@ All notable changes to this project are documented here.
   lens reviews dependency direction, boundary leaks, cohesion and representable invalid states.
 - The reviewer must be a fresh agent without the author's transcript; a different model alone is
   not sufficient. Same-turn Verifier dispatch is stated once, in the `wtk-lean` core contract.
+- Both verify procedures link one shared `wtk/references/verify-core.md` for approval, evidence or
+  zero, visual evidence, the swept re-read and scratch-worktree fault injection. Level gaps name
+  an outcome, interface or response shape, and the visual table's `Route/state` column is now
+  `Screen/state`.
+- Examples are stack- and product-neutral: English UI sample strings, a generic binding mockup
+  regression, placeholder paths in Deep Review, and no walkthrough effort or minutes estimate.
+  `usageLimitExceeded` and the SQLite telemetry reader are documented as one host's adapter.
+- Plan, modular planning and discovery link `modeling.md` and `code-reuse.md` when module
+  boundaries or reuse are in play, and `wtk-ship` states its modular `.tasks/`/`.checks/` closeout.
+- The knowledge checker reads `AD-NNN` ids from the decision table, matching `ad-index.py`, and
+  the Deep Review execution-metrics pointer applies only when the project opts in.
 
 ### Removed
 

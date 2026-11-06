@@ -13,11 +13,11 @@ sources:
   - id: review-rounds
     resource: ../../../.agents/skills/wtk/references/review-rounds.md
     title: Review Rounds — stage table
-    last_modified: 2026-09-23
+    last_modified: 2026-11-06
   - id: qa-execution
     resource: ../../../.agents/skills/wtk-qa-execute/references/qa-execution.md
     title: QA Execution — when QA runs
-    last_modified: 2026-09-23
+    last_modified: 2026-11-06
   - id: state-ad-002
     resource: git:8ef07ba74cb1eb3c80e0d1678911d86bad9bd7a7:.specs/STATE.md
     title: STATE.md — AD-002
@@ -67,7 +67,7 @@ independent full-feature Verifier.[^state-ad-036]
 ## Related
 
 [Deep review cadence](/decisions/deep-review-cadence.md): the same session moved deep review off the
-merge path with `cadence = "skip"`. The two decisions together are what makes delivery constant.
+merge path with `cadence = "skip"`; it now runs on demand. The two decisions together are what makes delivery constant.
 
 [^skip-review]: Origin trace, session count and the maintainer's statements in the raw observation.
 [^review-rounds]: Stage table after PR #98: Technical Verifier, deep-review, QA session.

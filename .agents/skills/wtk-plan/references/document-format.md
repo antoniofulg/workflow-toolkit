@@ -221,7 +221,7 @@ When it genuinely fails, say what you tried and what came back. "I could not acc
 
 Transcribing is not a substitute for the link and not a bet that the link will fail. It is there because what a check asserts is text, and because the readers downstream differ: a sub-agent may have no vision and a CI job certainly has none. The link stays for the person; the values travel in the criterion for each screen - what the heading says, which controls are present, what the step counter reads, which states are one screen rather than a band on another.
 
-That is also what makes this work on a picture at all, where "quote the deciding lines" has nothing to quote. Describing is still forbidden and transcribing is required, and the two are easy to tell apart: "a clean screen with cards" gives nobody anything to check, while "heading is the question, options as full-width cards, a `1 de 3` counter, Voltar and Continuar" is four things a check can assert.
+That is also what makes this work on a picture at all, where "quote the deciding lines" has nothing to quote. Describing is still forbidden and transcribing is required, and the two are easy to tell apart: "a clean screen with cards" gives nobody anything to check, while "heading is the question, options as full-width cards, a `1 of 3` counter, Back and Continue" is four things a check can assert.
 
 When a source has no address - a conversation, a document pasted into a chat - say so and quote the deciding lines instead of describing them. Nothing downstream can re-read a chat, so a description is where the decision quietly stops existing.
 

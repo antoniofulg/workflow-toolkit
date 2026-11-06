@@ -1,4 +1,4 @@
-# Selected venue mockup regression
+# Binding mockup regression
 
 **Read when:** deriving or reviewing acceptance for a supplied image, especially a conceptual raster.
 
@@ -8,9 +8,9 @@ they are not claims about dimensions in the unavailable original image.
 
 ## Contract before coding
 
-- Source: user-selected `venue-search.png`, frozen revision/hash recorded in the feature UI map.
+- Source: user-selected `listing-search.png`, frozen revision/hash recorded in the feature UI map.
 - Intent: implement the image; binding composition. The user did not call it inspiration.
-- Route/states: `/venues`, populated and filters open at 390×844 and 1440×900; scrolled filters at
+- Screen/states: `/listings`, populated and filters open at 390×844 and 1440×900; scrolled filters at
   390×844. The raster shows desktop only; record mobile stacking as an inferred adaptation.
 - Hierarchy: compact brand/navigation header, title, horizontal desktop filter band, result grid,
   footer. Mobile keeps that order and stacks filter controls without hiding choices.
@@ -23,9 +23,9 @@ they are not claims about dimensions in the unavailable original image.
 
 | Region/property | Source requirement | Implementation difference | Necessity and authority | Preserved requirement / verification |
 | --- | --- | --- | --- | --- |
-| Results | sample venues/count | live data/count | runtime truth | card shape, metadata hierarchy and count placement |
+| Results | sample listings/count | live data/count | runtime truth | card shape, metadata hierarchy and count placement |
 | Filter labels | compact low-contrast text | accessible contrast and explicit labels | accessibility | control order and filter-band composition |
-| Cards/media | venue photos | neutral placeholder with visible “Photo unavailable” | no verified venue photos | media geometry; no stock/generated photo presented as the venue |
+| Cards/media | listing photos | neutral placeholder with visible “Photo unavailable” | no verified listing photos | media geometry; no stock/generated photo presented as the listing |
 | Mobile filters | desktop row only | stacked controls | inferred responsive rule | same choices, no sticky overlay blocking options |
 
 “Directional; use project tokens” cannot replace these rows or excuse a dark page, different header,
@@ -41,7 +41,7 @@ to the user; a raster's uncertain exact pixels do not erase its visible composit
    sticky controls activate; verify every choice and focused action remains visible and reachable.
    Capture the viewport in those states. A tall full-page screenshot can hide this occlusion.
 3. Check the selected light palette under inherited dark preference, and inspect placeholder labels
-   beside card names so media cannot be mistaken for a real venue photograph.
+   beside card names so media cannot be mistaken for a real listing photograph.
 4. Independent Verifier opens the source and paired captures, verifies every declared pair and
    reproduces interactions when needed. Record comparison findings and a visual verdict.
 
@@ -49,11 +49,11 @@ to the user; a raster's uncertain exact pixels do not erase its visible composit
 | --- | --- |
 | Dark theme, replaced header, sidebar filters, redesigned cards or missing footer | FAIL: material visual contradiction |
 | Sticky filter bar obscures an option or focused action | FAIL: viewport interaction defect |
-| Stock/generated photo implies it shows the named real venue | FAIL: misleading media |
+| Stock/generated photo implies it shows the named real listing | FAIL: misleading media |
 | Only full-page evidence; filters-open viewport uninspected | Unverified; cannot PASS |
 | Raster antialiasing differs; recorded composition and permitted adaptations match | PASS after independent inspection |
 
 Put contradictions or missing pairs in the existing binding-source table; retain behavioral results
-separately. The `Visual fidelity` report table records Source, Route/state, Viewport, Captures,
+separately. The `Visual fidelity` report table records Source, Screen/state, Viewport, Captures,
 Comparison and Result. The validator rejects missing/blank evidence or non-PASS rows; it cannot judge
 pixels or establish that an agent actually inspected an image.

@@ -36,8 +36,9 @@ happens inside the session the separation existed to break.
 For code changes under every profile, apply [reuse review](../../wtk-reuse-review/SKILL.md)
 within this verification pass and include its findings and coverage limits in the existing report.
 
-Under every profile, apply [construction verification](../../wtk/references/construction-constraints.md#verify):
-confirm the owning task's `## Approval` receipt and any explicit reuse, construction-order or approval requirement.
+Under every profile, apply the shared [verify core](../../wtk/references/verify-core.md): approval (the owning task's
+receipt), evidence or zero, visual evidence, the swept re-read and fault injection. The steps below
+link each where it runs.
 
 Under every profile, apply [independent requirement and counterexample verification](../../wtk/references/project-requirements.md#verify-independently).
 Derive concerns and sources from the original request, actual change and authoritative routing;
@@ -89,9 +90,8 @@ order check and still be a different composition - a ring where the design draws
 beside the band it belongs inside, one column where there are two. Those are selector-reachable
 and therefore not exempt, so a screen whose checks are all copy and no structure is a finding
 even when each of them is green. Apply the binding-source contract and individual token adaptations in
-[UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen). Independently inspect the source
-and implementation captures; record missing evidence or material visual mismatches in `Binding sources`
-as `Uncovered` or `Contradiction`, so a functional PASS cannot conceal a visual FAIL.
+[UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen), then the core's
+[visual evidence](../../wtk/references/verify-core.md#visual-evidence-ui).
 
 Compare the contracted visual properties as well as function and state. Record one finding per
 affected screen/property with source and capture pointers; minor raster rendering differences use
@@ -103,10 +103,6 @@ colour and type weight out of reach, named against the screen they belong to. It
 have reached, and it arrives at you looking like a limitation properly declared, which is how a
 real gap gets waved through by the one step that exists to catch it. Treat a blanket clause as a
 finding, then enumerate what it was covering.
-
-Under `ui`, include one `Visual fidelity` row per contracted viewport/state pair using the report
-template below and the shared UI evidence fields. A missing or non-PASS pair blocks completion.
-The gate checks evidence structure; the Verifier checks actual images, freshness and matrix coverage.
 
 ## 2. Account for every proof
 
@@ -132,12 +128,6 @@ several runners - `passWithNoTests` and its equivalents - which would be a green
 test behind it. Show the hit; a name that appears nowhere in the tree is a finding, not a
 detail.
 
-Do that lookup with `rg -n` and enough context to carry the test body, rather than by reading
-the file. The same hit that proves the test exists also yields the line numbers step 3 has to
-cite, so it is one search instead of two, and reading a 400-line spec to quote six lines of it
-is where this step's cost actually goes. One pass per file, not per check - checks cluster in a
-few files.
-
 Existing tests may prove a corrected behavior without being edited themselves. Confirm their
 assertions cover the affected invariant. An earlier result remains valid only after checking its
 causal inputs; neither an unchanged test file nor a new commit alone settles validity.
@@ -155,9 +145,7 @@ repository exploration.
 Cite the one or two assertions that **settle** the claim, not every assertion in the test.
 Setup lines earn a citation only when the claim itself names the precondition.
 
-**Evidence or zero.** A check with no located `file:line` counts as not proven - per check,
-never one citation standing in for twenty. Search before concluding something is absent, and
-show the search.
+Apply [evidence or zero](../../wtk/references/verify-core.md#evidence-or-zero) to every check.
 
 Judge the checklist's own choices too (`standard`, `ui`). **Recompute the `Coverage` join rather than reading it** -
 a join you only read is the author's self-report with a table around it. For each row, take the
@@ -179,7 +167,7 @@ and show the line. A suite that boots its own assembly structurally cannot fail 
 so a green proof here is evidence about the test's assembly and nothing else.
 
 Two more, mechanically: a claim about nine cases proven on two is a coverage gap; and a claim
-naming a status code, route or response shape whose proofs all sit below that boundary is a
+naming an outcome, interface or response shape whose proofs all sit below that boundary is a
 **level gap**, no matter how many assertions it carries.
 
 Judge the *level* against the artifact's own `## Test policy` rows whenever it carries them
@@ -200,34 +188,11 @@ Where the checklist left a value imprecise, record a **precision gap** rather th
 vague assertion - that is a finding about the checklist, and the most useful thing this step
 produces.
 
-Read the `Swept` rows that resolve to **existing** against the code: is the constraint they
-cite actually there? A cited constraint that is not there is a finding. Rows that say *not in
-scope* are policy the user approved - there is nothing in the code for them to be wrong about.
+Apply the [swept re-read](../../wtk/references/verify-core.md#swept-re-read).
 
 ## 4. Inject faults (`standard`, `ui`)
 
-A green suite proves the tests run. Fault injection proves they can catch a regression.
-
-1. **Isolate.** `git worktree add <scratch> HEAD`. Never mutate the real tree, and **never
-   use `git stash`** - it records state from *before* the mutation, so popping it does not
-   reverse a fault applied afterwards.
-2. **Baseline.** Record `git status --porcelain` of the real tree first.
-3. **Inject a behaviour-level fault** in the new code: flip a condition, change a returned
-   value or status, shift a bound by one, remove a required side effect.
-4. **Run the covering proof** in the scratch and confirm it FAILS - the mutant is killed.
-5. **Discard** the scratch and confirm the real tree's porcelain matches the baseline.
-
-**One fault per distinct assertion surface, not per risky line.** Three mutations killed by the
-same two proofs ran the same experiment three times: the first showed those assertions
-discriminate and the rest confirmed it. Choose faults that force *different* proofs to fail,
-stop once every proof carrying a check has been made to fail once, and cap it at five however
-risky the feature looks - a quota that scales with risk costs most exactly where checks cluster
-in risky code. Run only the narrowest proof covering each fault; a second covering proof adds a
-run and no information. Use real mutation tooling when the stack has it (Stryker, mutmut,
-cargo-mutants, pitest) - it gets many mutants from one run.
-
-**A surviving mutant is a finding, not a footnote.** It means the assertion would pass under
-a plausible wrong implementation.
+Run [fault injection](../../wtk/references/verify-core.md#fault-injection-standard-ui) in a scratch worktree.
 
 ## 5. Report
 
@@ -247,14 +212,14 @@ Write `.checks/<feature>.verified.md`. Lead with the verdict.
 | Source | Opened | Contradiction | Uncovered |
 |---|---|---|---|
 | design `03` overview | yes - artifact URL | none | progress bar, radio indicator; breadcrumb rendered but not drawn |
-| design `05` montando | yes | is a band on `03`; C20 renders it as its own screen | - |
+| design `05` assembling | yes | is a band on `03`; C20 renders it as its own screen | - |
 | contract `billing.yaml` | yes | none | - |
 
 ## Visual fidelity
 
-| Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
+| Source/revision | Source scale | Implementation revision | Screen/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source revision / UI contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
+| frozen source revision / UI contract row | 1x | tested revision | screen and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
 
 ## Checks
 

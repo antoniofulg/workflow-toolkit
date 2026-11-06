@@ -337,6 +337,27 @@ function checkDrift(
   return findings;
 }
 
+/** `AD-NNN` ids from every table row whose header names ID, Decision and Status (the `memory.md` ledger). */
+function decisionIds(state: string): string[] {
+  const ids: string[] = [];
+  let idColumn: number | undefined;
+  for (const line of state.split(/\r?\n/)) {
+    if (!line.trimStart().startsWith("|")) {
+      idColumn = undefined;
+      continue;
+    }
+    const cells = line.trim().split(/(?<!\\)\|/).slice(1, -1).map((cell) => cell.trim().toLowerCase());
+    if (["id", "decision", "status"].every((name) => cells.includes(name))) {
+      idColumn = cells.indexOf("id");
+      continue;
+    }
+    if (idColumn === undefined) continue;
+    const id = cells[idColumn]?.replaceAll("`", "").toUpperCase();
+    if (id !== undefined && /^AD-\d+$/.test(id)) ids.push(id);
+  }
+  return ids;
+}
+
 /** Decisions and verified features that accumulated in `.specs/` without a concept harvesting them. */
 function checkGaps(
   rootDirectory: string,
@@ -349,9 +370,7 @@ function checkGaps(
   if (existsSync(statePath)) {
     const state = readFileSync(statePath, "utf8");
     const seenStateLabels = new Set<string>();
-    for (const match of state.matchAll(/^### (AD-\d+)\s*$/gm)) {
-      const label = match[1];
-      if (label === undefined) continue;
+    for (const label of decisionIds(state)) {
       if (seenStateLabels.has(label)) {
         findings.push({
           kind: "conformance",

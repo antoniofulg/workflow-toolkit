@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Content-safe observational token metrics for compatible providers."""
+"""Content-safe observational token metrics for compatible providers.
+
+`read_telemetry` is a host-specific, optional adapter: it reads one host's thread-state
+SQLite database (Codex's `threads` table). Other hosts skip it or supply their own adapter;
+see references/subagent-runtimes.md.
+"""
 
 from __future__ import annotations
 

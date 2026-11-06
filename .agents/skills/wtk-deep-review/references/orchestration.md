@@ -28,10 +28,10 @@ Both job kinds (`cohort`, `sweep`) return the same schema: defects, advisories, 
 ```json
 { "cohorts": [
     { "id": "c01", "name": "store: task queue", "risk": "high",
-      "files": ["internal/store/queue.go", "internal/store/queue_test.go"] },
-    { "id": "c02a", "name": "loop/action.go — hunks 1-14", "risk": "high",
-      "files": ["internal/loop/action.go"],
-      "hunk_scope": { "internal/loop/action.go": [{"start": 12, "lines": 40, "side": "new"}] } }
+      "files": ["<src>/store/queue.<ext>", "<test>/store/queue.<ext>"] },
+    { "id": "c02a", "name": "<src>/loop/action.<ext> — hunks 1-14", "risk": "high",
+      "files": ["<src>/loop/action.<ext>"],
+      "hunk_scope": { "<src>/loop/action.<ext>": [{"start": 12, "lines": 40, "side": "new"}] } }
   ],
   "sweeps": ["contracts", {"key": "layering", "lens": "custom lens text"}] }
 ```

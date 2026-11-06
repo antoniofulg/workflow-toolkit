@@ -143,7 +143,7 @@ class WorkflowValidatorTests(unittest.TestCase):
             self.assertEqual(errors, [])
 
     def test_visual_provenance_and_results_reach_completion_cli(self) -> None:
-        fields = ("Source/revision", "Source scale", "Implementation revision", "Route/state",
+        fields = ("Source/revision", "Source scale", "Implementation revision", "Screen/state",
                   "Viewport/scroll", "Environment", "Reference capture", "Full-page capture",
                   "Viewport capture", "Comparison", "Result")
         with tempfile.TemporaryDirectory() as raw:
@@ -200,7 +200,7 @@ class WorkflowValidatorTests(unittest.TestCase):
         fragment = (FIXTURES / "visual.md").read_text(encoding="utf-8")
         valid = fragment.split("## Visual fidelity\n\n", 1)[1]
         legacy = (
-            "| Source | Route/state | Viewport | Captures | Comparison | Result |\n"
+            "| Source | Screen/state | Viewport | Captures | Comparison | Result |\n"
             "| --- | --- | --- | --- | --- | --- |\n"
             "| mockup revision 1 | /venues open | 390x844 | missing.png | inspected | PASS |\n"
         )

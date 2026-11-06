@@ -71,7 +71,7 @@ Proof: `bun test -- -t "retry is idempotent"`
 | `Suspended` transitions (3) | into it C1 · out to `Active` C6 · out to `Cancelled` C7 | - |
 | startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3 | - |
 
-- Claims naming a status code, route or response shape: C7, C12, C16 - each has a proof
+- Claims naming an outcome, interface or response shape: C7, C12, C16 - each has a proof
   that crosses the boundary
 - No other check claims more than the single case its proof exercises
 ```

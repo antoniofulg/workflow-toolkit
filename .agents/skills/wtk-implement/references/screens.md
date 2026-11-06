@@ -6,7 +6,7 @@ scope for the checks, and loading this file costs a run that will not use it.
 ## The design decides, the check records
 
 **On a screen the concrete values live in the design, so open it before writing the check.**
-"Renders the intake" and "the body includes montando" pass under any interface at all - that is
+"Renders the intake" and "the body includes assembling" pass under any interface at all - that is
 "gracefully" wearing a string literal. Not fidelity, which no exit code settles, but the values
 that are assertable and only the design carries: which elements exist, what the labels say, what
 the step counter reads, whether a state is its own screen or a band on one that already exists.
@@ -69,7 +69,7 @@ this skill installs nothing.
 What the ceiling leaves out is far narrower than it sounds, and overstating it turns this into an
 amnesty. A selector reaches presence, absence, order, count, text **and containment**: that a
 progress bar is in the markup, that no breadcrumb is, that the primary button comes before the
-secondary, that the counter reads `1 de 3`, that `AGORA` sits inside the week band rather than
+secondary, that the counter reads `1 of 3`, that `NOW` sits inside the week band rather than
 beside it. All of that is an ordinary check and none of it is exempt. What no selector reaches is
 spacing, colour and type weight.
 
@@ -96,7 +96,7 @@ the omission shows up as an empty cell rather than as a shorter sentence:
 ```markdown
 | Screen | Copy and elements (selector) | Arrangement (selector) | Visual unproven |
 | --- | --- | --- | --- |
-| 01 mid-cycle | kicker `CICLO DE {N} DIAS`, `dia K de N`, `ESTA SEMANA`, `AGORA`, Continuar, Deixar para depois, Regenerar | progress is a **bar**, not a ring · `AGORA` nested **inside** the week band, between last-opened and next · community in **two** columns · stages as numbered circles on a rail · footer: feedback left, Regenerar right | spacing, colour, type weight |
+| 01 mid-cycle | kicker `{N}-DAY CYCLE`, `day K of N`, `THIS WEEK`, `NOW`, Continue, Later, Regenerate | progress is a **bar**, not a ring · `NOW` nested **inside** the week band, between last-opened and next · community in **two** columns · stages as numbered circles on a rail · footer: feedback left, Regenerate right | spacing, colour, type weight |
 ```
 
 The middle column is the one this whole file exists for. Without it a row reads as complete with
@@ -113,7 +113,7 @@ invisible while every check is green. Map each screen to the check that renders 
 rest in `Unproven`.
 
 ```markdown
-| designed screens (6) | `01` intake C1 · `02` montando C5 · `03` overview C19 · `04` player C26 · `05` conclusão C20 | `06` |
+| designed screens (6) | `01` intake C1 · `02` assembling C5 · `03` overview C19 · `04` player C26 · `05` completion C20 | `06` |
 ```
 
 Where the design draws a state as a band on an existing screen and a check turned it into a

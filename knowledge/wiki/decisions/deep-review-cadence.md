@@ -1,10 +1,10 @@
 ---
 type: Decision
 title: Deep review cadence
-description: Deep Review runs on demand through `wtk-deep-review` and does not block the default delivery path.
+description: Deep Review runs on demand through `wtk-deep-review` and does not block the default delivery path; when it runs, a violated project-declared invariant blocks.
 tags: [deep-review, cadence, cost, delivery-speed]
 status: stable
-generated: { by: codex/gpt-6, at: 2026-09-23T22:36:59Z }
+generated: { by: claude/opus-5.5, at: 2026-11-06T12:00:00Z }
 sources:
   - id: delivery-cost
     resource: ../../raw/2026-09-10-deep-review-delivery-cost.md
@@ -16,8 +16,16 @@ sources:
     last_modified: 2026-09-10
   - id: review-rounds
     resource: ../../../.agents/skills/wtk/references/review-rounds.md
-    title: Review Rounds — stages, remediation check, severity
-    last_modified: 2026-09-23
+    title: Review Rounds — stages, remediation check, finding shape
+    last_modified: 2026-11-06
+  - id: taxonomy
+    resource: ../../../.agents/skills/wtk-deep-review/references/taxonomy.md
+    title: Review Taxonomy — severity and volume
+    last_modified: 2026-11-06
+  - id: generalization
+    resource: ../../raw/2026-11-06-skill-pack-generalization.md
+    title: Maintainer-approved skill-pack generalization
+    last_modified: 2026-11-06
   - id: state-ad-031
     resource: git:8ef07ba74cb1eb3c80e0d1678911d86bad9bd7a7:.specs/STATE.md
     title: STATE.md — AD-031
@@ -53,6 +61,14 @@ shaped it; whether it runs before merge is a cadence choice the product phase ow
 AD-036 replaces the old capability name with `wtk-deep-review` and removes the task-granular,
 parallel slice pipeline. AD-042 removes WTK configuration and keeps Deep Review on demand, so no
 review group blocks feature delivery unless the operator invokes the skill.[^state-ad-034][^state-ad-036][^state-ad-042]
+Route snapshots no longer record a `deep_review` cadence or `parallelization` field: both were
+constant, so on-demand review and the sequential builder are fixed route behaviour rather than
+recorded choices.[^generalization]
+
+On demand governs *whether* Deep Review runs, not what it may block. When it runs, a violation of
+an architecture invariant or module boundary the project declares is a Major defect, so the
+verdict is `FIX_BEFORE_SHIP`; an undeclared structural preference stays an advisory. Severity
+and volume have one owner, the taxonomy, with no numeric finding cap.[^taxonomy][^generalization]
 
 Resolved review groups organize review scope; they do not make the sequential builder parallel.
 The name `wreview` below belongs to the 2026-09-10 record, while `wtk-deep-review` is the current
@@ -64,7 +80,8 @@ entrypoint.[^state-ad-036]
 | --- | --- | --- |
 | One discovery review, then one-job remediation checks until clean | `review-rounds.md` rule 2; AD-031 | decided[^review-rounds][^state-ad-031] |
 | No automatic groups; invoke `wtk-deep-review` when needed | WTK route; AD-034 and AD-042 | current default[^state-ad-034][^state-ad-042] |
-| Skip deep review for `Small` features by tier | `.agents/skills/wtk/references/validation.md` classifier | open; `skip` makes it moot for the current phase |
+| Declared invariants and module boundaries block as Major; optional `boundaries` sweep | taxonomy; `build_jobs.py` lens | current[^taxonomy][^generalization] |
+| Skip deep review for `Small` features by tier | `.agents/skills/wtk/references/validation.md` classifier | open; on-demand review makes it moot for the current phase |
 
 ## What the morning arguments still say
 
@@ -83,7 +100,9 @@ optional.[^skip-review][^state-ad-036]
 
 [^delivery-cost]: Maintainer statement and the three-build benchmark table in the morning observation.
 [^skip-review]: Session count, the maintainer's risk statement, and the two merged commits in the evening observation.
-[^review-rounds]: Stage table and rule 2 (remediation check); the `skip` clause before final QA.
+[^review-rounds]: Stage table and rule 2 (remediation check); Deep Review runs on demand before final QA.
+[^taxonomy]: Severity table, the declared-invariant rule, and volume discipline.
+[^generalization]: Decisions 1-3: constant route fields removed, declared invariants block, single severity owner.
 [^state-ad-031]: One discovery round plus remediation checks; polish lane removed; round cap deleted.
 [^state-ad-034]: Deep Review defaults to on demand.
 [^state-ad-036]: Workflow Toolkit names the current capability `wtk-deep-review` and uses sequential whole-slice builders.

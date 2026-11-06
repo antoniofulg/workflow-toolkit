@@ -232,7 +232,7 @@ uncertain ownership blocks duplicate dispatch. Builders report and stop; the coo
 the independent Verifier.
 
 For `ui` verification, visual-fidelity rows explicitly name source/revision and scale, implementation
-revision, route/state, viewport/scroll, environment including runtime and scale, separate local
+revision, screen/state, viewport/scroll, environment including runtime and scale, separate local
 reference, full-page and viewport paths, comparison and result. Relative capture paths resolve beside the report.
 The completion gate rejects missing provenance/files; non-UI profiles need no captures. Render at
 the contracted viewport: resizing/cropping another viewport's image is not proof. Structural

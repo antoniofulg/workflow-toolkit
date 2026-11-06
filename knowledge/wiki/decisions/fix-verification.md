@@ -13,15 +13,15 @@ sources:
   - id: validation
     resource: ../../../.agents/skills/wtk/references/validation.md
     title: Gates — Fix verification
-    last_modified: 2026-11-04
+    last_modified: 2026-11-06
   - id: review-rounds
     resource: ../../../.agents/skills/wtk/references/review-rounds.md
     title: Review Rounds — filed issues and Minor batches
-    last_modified: 2026-11-04
+    last_modified: 2026-11-06
   - id: agent-selection
     resource: ../../../.agents/skills/wtk/references/agent-selection.md
     title: Agent selection — dispatch without asking
-    last_modified: 2026-11-04
+    last_modified: 2026-11-06
 ---
 
 # Fix verification
