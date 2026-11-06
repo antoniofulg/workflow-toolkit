@@ -15,7 +15,8 @@ This skill plans modular work and does not implement it.
 
 When implementing a selected image or design, freeze [the UI contract](../wtk/references/ui-ux.md)
 before coding and carry its source and evidence requirements through build and independent verification.
-Use the `ui` profile for binding interface sources.
+Use the `ui` profile for binding interface sources. When the work adds or changes a public surface,
+write [the public surface contract](../wtk/references/dx.md) before the criteria that depend on it.
 
 ## Source and scope
 
@@ -75,10 +76,11 @@ walk never creates a criterion just to fill a row.
 | Document/copy | Structure, tone, depth and the reader's next action |
 | Organized collection | Grouping, naming, ordering, duplicates and exceptions |
 
-Record the landing for each of the nine implicit dimensions in `Swept`: validation, failure modes,
+Record the landing for each of the eleven implicit dimensions in `Swept`: validation, failure modes,
 idempotency and retry, authorization, concurrency and ordering, data lifecycle, external-dependency
-failure, state transitions, and observability. Each lands on an existing criterion, existing behavior,
-`n/a` with a reason, or `Unresolved`; these dimensions do not authorize extra scope.
+failure, state transitions, observability, deploy compatibility / rollback, and performance budget.
+Each lands on an existing criterion, existing behavior, `n/a` with a reason, or `Unresolved`; these
+dimensions do not authorize extra scope.
 
 A cited criterion must observe that dimension. For example, rejecting an existing duplicate does
 not prove concurrent writes are safe, and event deduplication does not prove ordering. Keep the

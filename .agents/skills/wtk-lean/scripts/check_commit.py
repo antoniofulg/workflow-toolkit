@@ -16,9 +16,8 @@ coupling the skill to any AI agent:
 
 What it checks:
   ERROR  - header does not match  type(scope)!: description
-  ERROR  - type is not one of the allowed Conventional Commits types
+  ERROR  - type is not one of the allowed Conventional Commits types (`chore` is not one)
   ERROR  - description is empty, starts uppercase, or ends with a period
-  ERROR  - `!` breaking marker present but no `BREAKING CHANGE:` footer
   WARN   - header longer than 72 characters
 
 Usage:
@@ -34,7 +33,8 @@ import os
 import re
 import sys
 
-TYPES = ["feat", "fix", "refactor", "docs", "test", "style", "perf", "build", "ci", "chore"]
+# Keep in step with the Types table in wtk/references/git.md.
+TYPES = ["feat", "fix", "refactor", "perf", "docs", "test", "build", "ci"]
 HEADER_RE = re.compile(r"^(?P<type>\w+)(?:\((?P<scope>[^)]+)\))?(?P<bang>!)?: (?P<desc>.+)$")
 
 
@@ -74,7 +74,6 @@ def check(message):
 
     ctype = m.group("type")
     desc = m.group("desc")
-    bang = m.group("bang")
 
     if ctype not in TYPES:
         errors.append(f"type '{ctype}' is not one of: {', '.join(TYPES)}")
@@ -85,11 +84,6 @@ def check(message):
             errors.append(f"description should start lowercase: '{desc[:30]}'")
         if desc.rstrip().endswith("."):
             errors.append("description should not end with a period")
-
-    body = "\n".join(lines[1:])
-    breaking_footer = bool(re.search(r"^BREAKING CHANGE:", body, re.MULTILINE))
-    if bang and not breaking_footer:
-        errors.append("'!' breaking marker present but no 'BREAKING CHANGE:' footer")
 
     return (errors, warnings)
 

@@ -29,6 +29,10 @@ docs/qa/
 
 `docs/qa/evidence/` and any generated table view are gitignored. Everything else is committed.
 
+`docs/qa/` is the default QA root. A project that keeps its QA records elsewhere declares the root
+in its `AGENTS.md` or in `docs/qa/README.md`; every `docs/qa/` path in the QA skills then resolves
+under the declared root.
+
 ## Scenario file
 
 ```markdown

@@ -18,3 +18,5 @@ product change returns dispatch responsibility to the coordinator before walking
 Run exactly one phase over journeys tagged with the flow: [wtk-qa-plan](../wtk-qa-plan/SKILL.md)
 when the first argument is `plan`, else [wtk-qa-execute](../wtk-qa-execute/SKILL.md).
 Read only that phase skill in full. If no journey carries the tag, report and stop.
+Resolve the [QA root](references/qa-scenarios.md#layout) first; `docs/qa/` in the QA skills means
+that root.

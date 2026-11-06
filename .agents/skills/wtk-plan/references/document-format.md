@@ -82,7 +82,7 @@ Every item of every surface this task exposes. A landing is a criterion already 
 
 ## Swept
 
-Where each unwritten requirement landed. All nine, one line each, every time.
+Where each unwritten requirement landed. All eleven, one line each, every time.
 
 - validation: <criterion number>
 - failure modes: <criterion number>
@@ -93,6 +93,8 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 - external-dependency failure: <criterion number>
 - state transitions: <criterion number>
 - observability: Unresolved <number>
+- deploy compatibility / rollback: n/a - <why no mixed-version window or rollback concern exists>
+- performance budget: <criterion number>
 
 ## Impact
 

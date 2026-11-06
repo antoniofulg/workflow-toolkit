@@ -58,7 +58,7 @@ Ask, in order:
 - History or rationale, except the one sentence needed to stop a rule being undone
 - Anything the repository already states: file structure, available commands, code conventions the
   linter enforces
-- Speculative rules for problems that have not happened
 
 A rule earns its lines by preventing a defect that occurred, or by resolving an ambiguity an agent
-actually hit.
+actually hit. State the rule without the incident's names or stack; a rule that cannot be stated
+generally belongs in the consuming project, or in a regression test there.

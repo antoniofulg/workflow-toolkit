@@ -95,6 +95,10 @@ DIMENSIONS = {
     ),
     "state transitions": ("state transitions", "transitions", "state-transition integrity"),
     "observability": ("observability", "logging and metrics", "telemetry"),
+    "deploy compatibility": (
+        "deploy compatibility", "deploy compatibility / rollback", "deploy compatibility and rollback", "rollback",
+    ),
+    "performance budget": ("performance budget", "performance"),
 }
 
 
@@ -340,7 +344,7 @@ def check_file(path):
                     break
         for canon in DIMENSIONS:
             if canon not in found:
-                errors.append(f"Swept: dimension '{canon}' has no line - all nine, every time")
+                errors.append(f"Swept: dimension '{canon}' has no line - all eleven, every time")
                 continue
             landing, line_no = found[canon]
             if not landing or PLACEHOLDER_RE.match(landing):

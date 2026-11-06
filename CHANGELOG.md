@@ -14,6 +14,14 @@ All notable changes to this project are documented here.
 - Skill references fix broken cross-skill paths, a duplicated rule number, the `light` default
   profile claim (`standard` is the default), false `Review-Signal` validation claims and a commit
   hook path that failed in linked worktrees. A test fails on any unresolved relative `.md` path.
+- Project policy is now an overridable default: the QA root, branch naming, commit types and
+  validator, compatibility and language rules in the public surface contract (moved to
+  `wtk/references/dx.md` and routed from Plan), and tactical DDD layout rules. `check_commit.py`
+  accepts a `!` marker without a footer and no longer accepts `style` or `chore`; the pack drops
+  its attribution-trailer ban.
+- The implicit-dimension sweep gains deploy compatibility / rollback and performance budget, and
+  `test-contract.md` covers test doubles and consumer-driven contracts. Route snapshots drop the
+  constant `deep_review` and `parallelization` fields.
 
 ## [4.3.0] - 2026-11-04
 

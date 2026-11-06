@@ -58,6 +58,8 @@ Proof: `bun test -- -t "retry is idempotent"`
 - dependency failure: C6
 - state transitions: C1, C2
 - observability: not in scope - no log requirement in V1
+- deploy compatibility: n/a - additive change, old code ignores it
+- performance budget: n/a - one request per user action
 
 ## Coverage
 

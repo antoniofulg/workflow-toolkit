@@ -51,6 +51,13 @@ Another layer earns a test only for a distinct failure, such as persistence, ser
 authorization wiring, or browser interaction. Keep real end-to-end journeys; leave input/error
 matrices to their lower-layer owner instead of replaying them through the browser.
 
+Use the real collaborator when it is fast and deterministic in the test, such as an in-process
+value, a local database or a filesystem in a temporary directory. Fake one only when it is slow,
+nondeterministic, costs money or has external side effects, and fake it at a port the code owns, not
+inside a library. A fake proves nothing about the real collaborator. Between separately deployed
+services, a consumer-driven contract test pins what the consumer reads, and the provider's suite
+replays it.
+
 Permanent e2e specs carry `@feature:<slug>` and `@journey:<slug>` tags, unique data with `finally`
 cleanup, and residue-zero assertions. The `@feature:<slug>` tag is the selector the consuming
 project's browser scoped gate uses to run only that feature's scenarios.

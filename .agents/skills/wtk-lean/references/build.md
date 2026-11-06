@@ -96,12 +96,12 @@ A new door that contradicts nothing already approved never stops the build.
 
 ## Commit
 
-One coherent piece per commit, [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
-`<type>(<scope>): <description>`, types `feat` `fix` `refactor` `docs` `test` `style` `perf`
-`build` `ci` `chore`. Imperative mood, lowercase, no trailing period. A `!` marker requires a
-`BREAKING CHANGE:` footer.
+One coherent piece per commit. Follow the project's own commit convention and validator when it has
+one. Otherwise use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
+`<type>(<scope>): <description>` with the [default types](../../wtk/references/git.md#types).
+Imperative mood, lowercase, no trailing period. A `!` marker needs no `BREAKING CHANGE:` footer.
 
-Validate before committing:
+Without a project validator, validate before committing:
 
 ```bash
 python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on failed charge"
@@ -119,8 +119,6 @@ its checks complete in `checks.md` and commit that with the slice. The slice is 
 checkpoint: marking check by check adds bookkeeping the build does not need, and a resume reads
 the marks plus the diff to see which slices landed. A check whose proof spans several slices stays
 unmarked until the last one lands.
-
-Never add Co-Authored-By, Made-with, or any agent attribution trailer.
 
 ## How to write the code
 

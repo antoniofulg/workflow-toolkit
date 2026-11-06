@@ -38,14 +38,14 @@ For an auto-sized change without `design.md`, keep the same result in the inline
 These rules fix how the model is written. A rule needing a concrete entity name to be understood
 belongs in `docs/product/` instead.
 
-### One aggregate, one module
+### If the project adopts tactical DDD
 
-An aggregate owns one folder, named for the aggregate. The folder holds the aggregate's behaviour,
-its repository port and every adapter implementing that port, plus whatever else is specific to it.
-Two aggregates in one folder is a folder that must split; one aggregate spread across two folders is
-a boundary error.
+These conventions apply only when the project adopts them:
 
-Folders carrying no aggregate keep their own names: the HTTP surface, shared technical modules.
+- An aggregate owns one folder, named for the aggregate, holding its behaviour, its repository port
+  and every adapter implementing that port. Two aggregates in one folder must split; one aggregate
+  spread across two folders is a boundary error. Folders carrying no aggregate keep their own names.
+- Identifiers stay opaque strings unless the project has decided otherwise.
 
 ### One repository per aggregate root
 
@@ -62,8 +62,6 @@ The discriminator is where the value can enter from. A value that reaches the do
 validated request needs no second guard. A value the domain derives itself, reads back from storage,
 or receives from a job or a provider callback bypasses that boundary, so its rule has to travel with
 it.
-
-Identifiers stay opaque strings unless the project has decided otherwise.
 
 ### Where invariants are enforced
 
@@ -102,9 +100,7 @@ or the public wire-contract package.** Each is a boundary the domain is meant to
 type matching a DTO field for field is still declared separately, because a wire contract and an
 internal model change for different reasons.
 
-The consuming project's boundary gate, if it has one, enumerates those module names. Moving business
-rules out of persistence adapters is done as part of the next feature that touches a repository, not
-as a migration of its own.
+The consuming project's boundary gate, if it has one, enumerates those module names.
 
 ### Ports and adapters
 

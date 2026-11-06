@@ -92,6 +92,8 @@ event dispatch are proven only by a path that happens to traverse them.
 - dependency failure: C11
 - state transitions: C5, C6
 - observability: C3
+- deploy compatibility: n/a - the new table is additive and old code ignores it
+- performance budget: n/a - one row per webhook delivery, no hot path
 
 ## Handoff
 

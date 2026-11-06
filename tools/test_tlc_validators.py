@@ -164,8 +164,6 @@ class WorkflowValidatorTests(unittest.TestCase):
             snapshot = {
                 "version": 3, "feature": "fixture", "checkout": str(root), "stages": stages,
                 "git_head": "a1b2c3d", "profile": None, "verification_profile": "standard",
-                "deep_review": {"cadence": "skip", "groups": []},
-                "parallelization": {"mode": "disabled"},
             }
             self.assertEqual(workflow_route.validate_snapshot(root, "fixture", snapshot), snapshot)
             (feature / "workflow.json").write_text(json.dumps(snapshot), encoding="utf-8")
@@ -352,9 +350,10 @@ class CommitContractTests(unittest.TestCase):
 
     def test_invalid_type_is_rejected(self) -> None:
         self.assertEqual(self._exit_code("release(wtk): publish package"), 1)
+        self.assertEqual(self._exit_code("chore(wtk): tidy files"), 1)
 
-    def test_breaking_marker_requires_footer(self) -> None:
-        self.assertEqual(self._exit_code("feat(wtk)!: rename public command"), 1)
+    def test_breaking_marker_needs_no_footer(self) -> None:
+        self.assertEqual(self._exit_code("feat(wtk)!: rename public command"), 0)
         self.assertEqual(
             self._exit_code("feat(wtk)!: rename public command\n\nBREAKING CHANGE: old command removed"),
             0,

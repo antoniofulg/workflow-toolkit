@@ -26,6 +26,7 @@ Load shared references only for the current operation:
 | Security surface or abuse case | [Security boundary](references/security.md) |
 | Screen, interaction, or visual reference | [UI/UX surface map](references/ui-ux.md) and [front-end organization](references/frontend.md) |
 | Domain boundary or dependency direction | [Modeling](references/modeling.md) |
+| Add or change a public surface — route, CLI verb, config key, export | [Public surface contract](references/dx.md) |
 | Choose checks or reuse evidence | [Validation](references/validation.md) |
 | Start, reuse or close an application/test environment | [Runtime lifecycle](references/runtime-lifecycle.md) |
 | Report completion or commit evidence | [Evidence](references/evidence.md) |

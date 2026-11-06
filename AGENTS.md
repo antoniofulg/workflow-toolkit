@@ -82,7 +82,7 @@ budget: 200k
 | Adds or changes a screen | `.agents/skills/wtk/references/ui-ux.md` |
 | Front-end code or a mockup | `.agents/skills/wtk/references/frontend.md` — only the heading in dispute |
 | Module boundary, port, or domain type | `.agents/skills/wtk/references/modeling.md` |
-| Public surface — route, CLI verb, config key | `.agents/skills/wtk-plan/references/dx.md` |
+| Public surface — route, CLI verb, config key | `.agents/skills/wtk/references/dx.md` |
 | Diff changes user-visible behaviour | `.agents/skills/wtk-qa/references/qa-scenarios.md` |
 | QA pass at the end of a feature | `.agents/skills/wtk-qa-execute/references/qa-execution.md` |
 | Reviewing, or acting on findings | `.agents/skills/wtk/references/review-rounds.md` |

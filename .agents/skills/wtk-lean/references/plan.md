@@ -87,7 +87,7 @@ manufactures questions the same way a checklist with no `n/a` escape manufacture
 
 **What you do not know is findable, and the next two sections are the two lists that find it.**
 `## Observable` walks the surfaces this feature exposes, because every surface carries the
-same decisions every time; the nine dimensions after it walk the system properties. Neither is a
+same decisions every time; the eleven dimensions after it walk the system properties. Neither is a
 prompt to think harder - both are enumerations, for the same reason: "consider the edge cases"
 finds nothing, and a fixed list with a mandatory `n/a` escape finds the item nobody mentioned.
 
@@ -130,7 +130,7 @@ do not ask "what did I forget about this screen", you walk the row.
 | a document or copy someone reads | structure, tone, depth, and what the reader is meant to do next |
 | a collection being organised | the grouping criterion, naming, ordering, what happens to duplicates, and the exception that does not fit |
 
-Nothing about state, persistence or contracts is here - that is the nine dimensions below, and
+Nothing about state, persistence or contracts is here - that is the eleven dimensions below, and
 duplicating it in both places produces two answers that disagree.
 
 **Each item resolves to a criterion, to something that already behaves that way, or to an explicit
@@ -183,7 +183,7 @@ below. Walk the failure that would produce the forbidden thing - the remote call
 the local write did not - because that is the path nobody pictures. Where no mechanism exists it
 is a door or a question, never a criterion standing alone.
 
-## Sweep the nine dimensions
+## Sweep the eleven dimensions
 
 The source covers what somebody thought of. This is the list of what nobody writes down, and
 it is fixed so a blank cannot look like nothing to answer:
@@ -199,13 +199,15 @@ it is fixed so a blank cannot look like nothing to answer:
 | External-dependency failure | circuit breakers, fallbacks |
 | State transitions | valid transitions, guards |
 | Observability | logging, metrics, tracing |
+| Deploy compatibility / rollback | mixed-version window, expand/contract, rollout flag, how it reverses |
+| Performance budget | load, hot paths, N+1 queries, payload size |
 
-Walk all nine. Each resolves to a criterion, to something the code already handles, or to an
+Walk all eleven. Each resolves to a criterion, to something the code already handles, or to an
 explicit `n/a because [reason]`. The `n/a` escape is mandatory - it is what stops the list from
 manufacturing requirements. Where a dimension needs a product answer it becomes an open
 question, never a criterion you invented.
 
-Concurrency and observability hide better than the other seven, because neither is visible to
+Concurrency and observability hide better than the other nine, because neither is visible to
 a user until it fails. Those two are why this list exists.
 
 A landing must observe **that** dimension. Reaching for a number already used on another line
@@ -277,7 +279,8 @@ documentation.
 Do **not** put check numbers here - checks do not exist yet. Each route's statuses become a set
 row in the `Coverage` join in `checks.md`, which is what proves none of them went unclaimed.
 
-`None - nothing consumed outside` is complete.
+`None - nothing consumed outside` is complete. When a public surface changes, write
+[the public surface contract](../../wtk/references/dx.md) before internal design.
 
 ## Landing - the one-way doors
 
@@ -344,7 +347,7 @@ Before presenting the plan, five checks. Nothing proceeds unresolved **and** unm
    nobody populated, a credential nobody issued. Three kinds: `blocks`, `blocks go-live`,
    `open`.
 4. **Both enumerations are walked, not skimmed.** Every item of every surface present has a
-   landing in `## Observable`, and all nine dimensions have one in `checks.md`. A blank in either
+   landing in `## Observable`, and all eleven dimensions have one in `checks.md`. A blank in either
    is the failure both lists exist to make visible.
 5. **Every criterion has somewhere to land in the shape.** A criterion whose behaviour crosses
    no hop in `Flow`, touches nothing in `Relations` and appears on no route in `Surface` is

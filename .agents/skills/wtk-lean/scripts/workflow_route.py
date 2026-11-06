@@ -20,7 +20,7 @@ STAGES = (
 SNAPSHOT_VERSION = 3
 SELECTION_KEYS = {"version", "feature", "checkout", "stages"}
 SNAPSHOT_KEYS = SELECTION_KEYS | {
-    "git_head", "profile", "verification_profile", "deep_review", "parallelization",
+    "git_head", "profile", "verification_profile",
 }
 SLUG_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
 PROFILE_RE = re.compile(
@@ -153,10 +153,6 @@ def _validate_snapshot(root: Path, feature: str, snapshot: Any) -> dict[str, Any
         raise _error("existing snapshot profile must be a string or null")
     if not isinstance(snapshot["verification_profile"], str) or snapshot["verification_profile"] not in {"light", "standard", "ui"}:
         raise _error("existing snapshot verification_profile is invalid")
-    if snapshot.get("deep_review") != {"cadence": "skip", "groups": []}:
-        raise _error("existing snapshot deep_review must remain on demand")
-    if snapshot.get("parallelization") != {"mode": "disabled"}:
-        raise _error("existing snapshot parallelization must remain sequential")
     return snapshot
 
 
@@ -228,8 +224,6 @@ def resolve(
         "git_head": _git_head(root),
         "profile": profile if profile is not None else existing["profile"] if existing else None,
         "verification_profile": selected_profile,
-        "deep_review": {"cadence": "skip", "groups": []},
-        "parallelization": {"mode": "disabled"},
     }
     _write_snapshot(snapshot_path, snapshot)
     return snapshot

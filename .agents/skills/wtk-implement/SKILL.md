@@ -72,8 +72,9 @@ until recovered from the real source. Link the owning receipt in the checklist, 
 Reuse the approved source's Swept dispositions and map them to checklist checks or existing proof.
 Revisit only missing, contradictory, or changed inputs. When no upstream sweep exists, perform it
 once across validation, failure modes, idempotency/retry, authorization, concurrency/ordering, data
-lifecycle, external-dependency failure, state transitions, and observability. Record each landing
-as a check, existing behaviour, `n/a - <reason>`, or unresolved question. Under `ui`, a
+lifecycle, external-dependency failure, state transitions, observability, deploy compatibility /
+rollback, and performance budget. Record each landing as a check, existing behaviour,
+`n/a - <reason>`, or unresolved question. Under `ui`, a
 design marked binding supplies concrete screen values; read [screens.md](references/screens.md).
 Under `light` or `standard`, skip that reference.
 

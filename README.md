@@ -2,8 +2,8 @@
 
 Workflow Toolkit is a stack-agnostic set of Agent Skills for turning an idea into a reviewed,
 verified change. The `wtk` router selects the smallest phase skill and loads its references on
-demand. Projects keep ownership of their own instructions, execution choices,
-tools, and QA records.
+demand. Projects own their instructions, execution choices, tools, and QA content; WTK supplies a
+default QA layout that a project can relocate.
 
 ## Install the skills
 

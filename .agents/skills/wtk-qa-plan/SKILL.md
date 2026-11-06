@@ -23,6 +23,7 @@ This is an original project-owned adaptation for this workflow, inspired by Pedr
 Use the selected `qa` stage and non-author session through
 [agent selection](../wtk/references/agent-selection.md) before delegated planning.
 
+Resolve the [QA root](../wtk-qa/references/qa-scenarios.md#layout); `docs/qa/` below means that root.
 Read the feature contract or Verifier packet, the current diff, `docs/qa/README.md`, and the
 affected QA records. Read [`../wtk-qa/references/qa-scenarios.md`](../wtk-qa/references/qa-scenarios.md) in full before creating or changing a
 scenario. It owns the scenario tree, fields, ids, statuses, and flag/reset rules.

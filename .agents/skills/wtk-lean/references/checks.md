@@ -200,7 +200,7 @@ proven only by a path that happens to traverse them.
 
 ## Swept
 
-Where each unwritten requirement landed. All nine, one line each, every time.
+Where each unwritten requirement landed. All eleven, one line each, every time.
 
 - validation: C5
 - failure modes: C1
@@ -211,6 +211,8 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 - dependency failure: C6
 - state transitions: C1, C2
 - observability: n/a - no logging requirement in this slice
+- deploy compatibility: n/a - <why no mixed-version window or rollback concern exists>
+- performance budget: n/a - <why no load or hot-path concern exists>
 
 ## Out of scope
 

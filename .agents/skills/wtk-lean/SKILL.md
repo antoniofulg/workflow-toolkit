@@ -105,7 +105,7 @@ be recorded as a `Landing` decision.
 
 ## Phase references
 
-- **Plan:** human review of EARS criteria, boundary, surfaces, nine implicit dimensions, and the
+- **Plan:** human review of EARS criteria, boundary, surfaces, eleven implicit dimensions, and the
   five shape sections. Ask only genuine decisions; use `n/a - <reason>` where a dimension does not
   apply. Full procedure and closure gate: [plan.md](references/plan.md).
 - **Checks:** derive proof-backed claims, join every enumerated set member, record swept landings,
@@ -129,7 +129,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | --- | --- |
 | Before presenting the plan | `validate_plan.py <feature>` |
 | Before starting to build | `validate_checks.py <feature>` |
-| Before each commit | `check_commit.py --message "<msg>"` |
+| Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"` |
 | Before declaring done | `validate_verification.py <feature>` |
 | At distillation | `lessons.py add ...` |
 | After editing a validator or template | `selftest.py` |
