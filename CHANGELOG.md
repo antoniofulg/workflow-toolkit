@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- `wtk-deep-review` no longer sets `disable-model-invocation`, so agents can invoke it through the
+  Skill tool. A test fails if any skill sets that flag.
+
 ## [4.3.0] - 2026-11-04
 
 ### Changed

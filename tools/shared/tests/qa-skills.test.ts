@@ -796,6 +796,10 @@ describe("adoption and public setup", () => {
     ]);
     expect(skillVersions.length).toBe(13);
     expect(skillVersions).toEqual(skillVersions.map(([skill]) => [skill, manifest.version]));
+    const agentBlockedSkills = readdirSync(skillsRoot).filter((skill) =>
+      readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").includes("disable-model-invocation"),
+    );
+    expect(agentBlockedSkills).toEqual([]);
     const pack = spawnSync(process.execPath, ["pm", "pack", "--dry-run", "--ignore-scripts"], {
       cwd: repositoryRoot,
       encoding: "utf8",
