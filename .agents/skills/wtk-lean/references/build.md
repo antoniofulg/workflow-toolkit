@@ -165,11 +165,5 @@ continuing. Keep the batch handoff boundary above; recovery alone does not requi
 ## Then stop
 
 When the last check of **your batch** is committed, report and stop: checks closed, commit
-hashes, proof results, deviations. Do not dispatch the Verifier - that is the orchestrator's
-step, after the last batch of the whole feature, over the full check set. A Verifier briefed by
-the builder that just closed the final batch inherits that builder's scope even though it
-inherits none of its tokens, and reports a pass over four checks that reads exactly like a pass
-over forty. See [verify.md](verify.md).
-
-The builder always stops here. When the final batch returns green, the coordinator dispatches the
-fresh Verifier in that same turn. Do not ask or wait for a separate "verify work" prompt.
+hashes, proof results, deviations. Do not dispatch the Verifier; the coordinator owns it under
+[core contract 4](../SKILL.md#core-contract), and [verify.md](verify.md) says why.

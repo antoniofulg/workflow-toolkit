@@ -66,20 +66,18 @@ same non-author session reuse; packet phases remain distinct.
    or a test validating the behaviour. Unconventional is not the same as wrong.
 5. **Never report what a linter already catches.** Run the consuming project's linter first and drop
    every overlapping candidate.
-6. **Signal over volume.** Above 20 findings, keep all blocking ones and prune the rest to the most
-   impactful. Eight precise findings are worth more than thirty that include marginal concerns.
-7. **The reviewer is not the author.** A different actor, or at minimum a different model — the model
-that implemented the change never solely reviews it. This is cheaper than recruiting a fresh agent
-identity and buys the same independence.
+6. **The reviewer is not the author.** The reviewer is a fresh agent without the author's
+   transcript; a different model is preferred, not sufficient.
    Verifier and Deep Reviewer receive fresh role packets. They do not inherit the Implementer's
    transcript or operator handoff. Their conclusions must come from the spec, diff, tests, and
    assigned evidence.
-8. **Documentation and instruction changes follow the proportional classifier in `.agents/skills/wtk/references/validation.md`.** Pure maintenance and bounded instruction changes do not start wtk-deep-review or QA by default; mixed changes run canonical checks for changed executable behavior. Named concrete risk or changed public promise can select stronger review; file count and the word "feature" do not escalate them.
-9. **A passing verdict requires valid evidence for its scope.** Apply `.agents/skills/wtk/references/validation.md` to the finding's causal path and retain unaffected results.
+7. **Documentation and instruction changes follow the proportional classifier in `.agents/skills/wtk/references/validation.md`.** Pure maintenance and bounded instruction changes do not start wtk-deep-review or QA by default; mixed changes run canonical checks for changed executable behavior. Named concrete risk or changed public promise can select stronger review; file count and the word "feature" do not escalate them.
+8. **A passing verdict requires valid evidence for its scope.** Apply `.agents/skills/wtk/references/validation.md` to the finding's causal path and retain unaffected results.
    A failed full run stays failed even when focused correction proofs pass.
-10. **A new control for an unobserved failure is Major (YAGNI) unless the spec named it.** A
+9. **A new control for an unobserved failure is Major (YAGNI) unless the spec named it.** A
    killed-process shim, a test-of-the-test, or a prefix allowlist the spec did not name is overbuild.
    Filed-issue review uses the same rule; YAGNI is blocking without a companion skill.
+
 ## Fingerprinted remediation accounting
 `fingerprint = requirement + root cause + failure path` is each finding's identity. Rewording or reopening a finding preserves its fingerprint and its attempt count; a distinct finding starts at zero.
 ## The Review-Signal trailer
@@ -93,24 +91,13 @@ Every finding states, in this order:
 
 - **Premise** — the fact in the code that starts the argument, with `file:line`
 - **Path** — the concrete sequence from that fact to a wrong outcome
-- **Verdict** — severity from the taxonomy below, never inflated
+- **Verdict** — severity from the [review taxonomy](../../wtk-deep-review/references/taxonomy.md#severity), never inflated
 A finding without a failure path is an advisory, not a defect. Advisories state
 **Premise → Improvement → Fix** and never block.
 
-The Verifier and wtk-deep-review share one severity vocabulary:
-
-| Severity | Meaning | Action | Remediation check | Blocks delivery |
-| --- | --- | --- | --- | --- |
-| `Critical` | Data loss, security hole, or the feature does not work | Fix now | yes | yes |
-| `Major` | Behaviour deviates from the spec, or a likely crash under real input | Fix now | yes | yes |
-| `Minor` | A spec edge case is unhandled, or a real maintenance hazard | Fix in the active feature batch; file an issue when no realistic trigger exists | no | until fixed, unless filed |
-| `Trivial` | Style, naming, structure — a nitpick by definition | File an issue | no | no |
-
-An unfixed `Critical` or `Major` means the verdict is `FIX_BEFORE_SHIP`, and only those severities
-trigger a remediation check. A realistic trigger is an input or state the feature's normal use can
-reach. Every `Minor` with one closes in the current remediation batch; a Minor-only batch closes through
-the scoped gate, one commit and fix verification. A `Minor` without one, Trivials and advisories become follow-ups
-and never hold a pull request.
+The Verifier and wtk-deep-review share that one severity vocabulary. An unfixed `Critical` or
+`Major` means the verdict is `FIX_BEFORE_SHIP`, and only those severities trigger a remediation
+check. A realistic trigger is an input or state the feature's normal use can reach.
 
 Filed issues are real work, not a disposal bin. They enter the backlog like any other item.
 

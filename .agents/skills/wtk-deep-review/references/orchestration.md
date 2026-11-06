@@ -53,6 +53,7 @@ Defect cohorts are the only default review lane. Sweeps remain **opt-in and rare
 | `migrations` | schema/migration files in diff | destructive ops, missing migration for model change, ordering/identity hazards |
 | `consistency` | renames or repeated patterns in diff | incomplete renames, sibling paths not mirroring a fix, duplicated logic |
 | `config` | config keys/flags/env vars changed | unwired or undocumented keys, dead flags, default mismatches |
+| `boundaries` | the project declares architecture invariants or module boundaries and the diff crosses modules | dependency direction, boundary leaks, cohesion, representable invalid states; rubric: `wtk/references/modeling.md` and `code-reuse.md` |
 
 ## Engines
 

@@ -38,6 +38,12 @@ All notable changes to this project are documented here.
   Schema and Flow templates are labelled as HTTP/SQL examples with non-HTTP alternatives.
 - Deep Review's built-in excludes no longer skip `fixtures`, `testdata`, `*.d.ts` or `build`, and a
   project can drop a built-in exclude with `!!pat` in `path_filters`.
+- Review severity and volume live only in the Deep Review taxonomy; `review-rounds.md` drops its
+  copy of the severity table and the prune-above-20 rule. A violation of a project-declared
+  architecture invariant or module boundary is a Major defect, and the optional `boundaries` sweep
+  lens reviews dependency direction, boundary leaks, cohesion and representable invalid states.
+- The reviewer must be a fresh agent without the author's transcript; a different model alone is
+  not sufficient. Same-turn Verifier dispatch is stated once, in the `wtk-lean` core contract.
 
 ### Removed
 

@@ -563,11 +563,28 @@ describe("configurable review policy", () => {
     expect(reviewOutput).toContain("Minor defects without one, Trivials and advisories become follow-ups");
     expect(wtkShip).toContain("realistically triggered Minor");
     expect(reviewRounds).toContain("a Minor-only batch starts no full-feature Technical Verifier, QA phase, or remediation check, and gets [fix verification]");
-    expect(reviewRounds).toContain("Trivials and advisories become follow-ups");
+    expect(reviewRounds).toContain("Trivials and advisories go to the pull request follow-up list");
     expect(reviewOutput).toContain("mandatory current-feature closeout batch");
     expect(wtkShip).toContain("Confirmed Critical, Major,");
     expect(implement).toContain("coherent pieces");
     expect(implement).toContain("fresh sub-agent");
+  });
+
+  it("keeps severity and volume in the taxonomy and blocks on declared invariants", () => {
+    const reviewRounds = readRepositoryFile(".agents/skills/wtk/references/review-rounds.md");
+    const taxonomy = normalizePacket(readRepositoryFile(".agents/skills/wtk-deep-review/references/taxonomy.md"));
+    const verdict = normalizePacket(readRepositoryFile(".agents/skills/wtk-deep-review/references/output-contracts.md"));
+    expect(reviewRounds).toContain("taxonomy.md#severity");
+    expect(reviewRounds).not.toContain("| Severity | Meaning |");
+    expect(reviewRounds).not.toMatch(/Above 20 findings/);
+    expect(taxonomy).toContain("There is no numeric cap");
+    expect(taxonomy).toContain(
+      "A violation of an architecture invariant or module boundary that the project declares is a 🟠 Major defect, never an advisory",
+    );
+    expect(verdict).toContain("including a violated project-declared architecture invariant or module boundary");
+    expect(normalizePacket(reviewRounds)).toContain(
+      "The reviewer is a fresh agent without the author's transcript; a different model is preferred, not sufficient.",
+    );
   });
 
   it("bridges workflow resolution and feature-closing QA ordering", () => {

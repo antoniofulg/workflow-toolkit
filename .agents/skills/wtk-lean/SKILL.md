@@ -108,8 +108,7 @@ be recorded as a `Landing` decision.
 - **Build:** tests come from checks and implementation decomposition is yours. Keep new `Landing`, `Relations`, and `Surface` rows
   additive before closing code, then use the scope guardrail and handoff procedure:
   [build.md](references/build.md).
-- **Verify:** in the same turn after the feature's last commit, the coordinator sends one fresh
-  Verifier over the full range with every check; procedure and report schema:
+- **Verify:** dispatch per core contract 4; procedure and report schema:
   [verify.md](references/verify.md).
 - **Memory:** decisions, handoff, and lessons live in [memory.md](references/memory.md).
 
@@ -161,8 +160,7 @@ supported handoff mechanism with the stage selection in the current checkout.
 Handoffs occur only between slices and only after every proof in the batch is green. The outgoing
 builder records closed checks, user decisions, and abandoned approaches. The next builder reads the
 artifact and landed diff, not a narrative. Never split a slice or create a task DAG. The coordinator
-owns checkpoint synchronization and dispatches the final full-range Verifier in the same turn after
-the last batch returns green; builders report and stop.
+owns checkpoint synchronization and the Verifier dispatch in core contract 4.
 
 ## Knowledge chain
 

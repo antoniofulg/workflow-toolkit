@@ -81,6 +81,13 @@ DEFAULT_LENSES = {
         "dead flags, undocumented public settings, and default mismatches. REPORT GATE: name the runtime path "
         "where the configured value is ignored or misread."
     ),
+    "boundaries": (
+        "MISSION: prove the change keeps the project's declared architecture. RUBRIC: the `wtk` skill's "
+        "references/modeling.md and references/code-reuse.md. FOCUS: dependency direction, boundary leaks, "
+        "cohesion, and invalid states the types can represent. REPORT GATE: name the declared invariant or "
+        "boundary, the changed import or call that crosses it, and the reachable consequence; a violated "
+        "declared invariant is Major."
+    ),
 }
 
 PLACEHOLDER_RE = re.compile(r"\{\{([a-z_]+)\}\}")

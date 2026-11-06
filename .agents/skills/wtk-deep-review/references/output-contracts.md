@@ -145,8 +145,8 @@ reporting interface is selected.
 
 Derive after Step 4's merge from open **defects only**; advisories never change the verdict:
 
-- **SHIP** — no Critical or Major defect is open; Minor defects with a realistic trigger enter the mandatory current-feature closeout batch without a remediation check, and a Minor-only batch gets fix verification; Minor defects without one, Trivials and advisories become follow-ups.
-- **FIX_BEFORE_SHIP** — at least one Critical/Major defect is open, and remediation is local: the change's shape is right and each defect names a bounded fix.
+- **SHIP** — no Critical or Major defect is open; Minor defects with a realistic trigger enter the mandatory current-feature closeout batch under the [review rounds](../../wtk/references/review-rounds.md) Minor batch rule; Minor defects without one, Trivials and advisories become follow-ups.
+- **FIX_BEFORE_SHIP** — at least one Critical/Major defect is open, including a violated project-declared architecture invariant or module boundary ([taxonomy](taxonomy.md#severity)), and remediation is local: the change's shape is right and each defect names a bounded fix.
 - **REWORK** — defects show structural failure needing redesign: one root cause across ≥3 cohorts or a Critical whose fix rewrites the change's core. REWORK always carries a named rationale; otherwise FIX_BEFORE_SHIP is the ceiling.
 
 The verdict lands in review.md, state.json, and the final message. render_review.py derives SHIP / FIX_BEFORE_SHIP from defects with round status new or duplicate plus prior `open` ledger entries without a `prior_findings` disposition, and accepts REWORK only through `--rework "<rationale>"` backed by structural defects.

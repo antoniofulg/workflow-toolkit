@@ -964,6 +964,17 @@ class DeepReviewContractTests(unittest.TestCase):
             cohort_prompt = (out / "prompts/cohort-c0.md").read_text(encoding="utf-8")
             self.assertIn("concrete, actionable maintainability or project-rule improvements", cohort_prompt)
 
+    def test_boundaries_sweep_is_a_built_in_lens(self) -> None:
+        # F31: the optional boundaries lens uses the REPORT GATE shape and cites the wtk modeling rubric
+        with tempfile.TemporaryDirectory() as raw:
+            root = init_repo(raw)
+            out, build = full_fixture(root, {"sweeps": ["boundaries"], "cohorts": self.one_cohort_per_file()}, lines=300)
+            self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
+            prompt = (out / "prompts/sweep-boundaries.md").read_text(encoding="utf-8")
+            for anchor in ("REPORT GATE:", "references/modeling.md", "references/code-reuse.md",
+                           "dependency direction", "declared invariant is Major"):
+                self.assertIn(anchor, prompt)
+
     def test_sweep_may_not_re_report_a_single_cohort_result(self) -> None:
         # C9: a sweep result inside cohort-owned hunks needs also_applies across two other files
         with tempfile.TemporaryDirectory() as raw:
