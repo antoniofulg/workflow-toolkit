@@ -58,7 +58,6 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const URI_SCHEME = /^[a-z][a-z0-9+.-]*:/i;
 const STATE_PATH = join(".specs", "STATE.md");
 const FEATURES_PATH = join(".specs", "features");
-const SPINE_PATH = join("docs", "architecture", "ARCHITECTURE-SPINE.md");
 
 type SourceEntry = {
   id: string | null;
@@ -373,25 +372,6 @@ function checkGaps(
     }
   }
 
-  const spinePath = join(rootDirectory, SPINE_PATH);
-  if (existsSync(spinePath)) {
-    const seenSpineLabels = new Set<string>();
-    for (const match of readFileSync(spinePath, "utf8").matchAll(/^### (AD-\d+)\b/gm)) {
-      const label = match[1];
-      if (label === undefined) continue;
-      if (seenSpineLabels.has(label)) {
-        findings.push({
-          kind: "conformance",
-          severity: "error",
-          file: toPosix(SPINE_PATH),
-          message: `${label} appears more than once`,
-        });
-        continue;
-      }
-      seenSpineLabels.add(label);
-    }
-  }
-
   const featuresPath = join(rootDirectory, FEATURES_PATH);
   let features: Dirent[];
   try {
@@ -401,14 +381,14 @@ function checkGaps(
   }
   for (const feature of features) {
     if (!feature.isDirectory()) continue;
-    const validation = join(FEATURES_PATH, feature.name, "validation.md");
-    if (!existsSync(join(rootDirectory, validation))) continue;
-    if (harvestedPaths.has(toPosix(validation))) continue;
+    const verification = join(FEATURES_PATH, feature.name, "verification.md");
+    if (!existsSync(join(rootDirectory, verification))) continue;
+    if (harvestedPaths.has(toPosix(verification))) continue;
     findings.push({
       kind: "gap",
       severity: "warning",
-      file: toPosix(validation),
-      message: `feature "${feature.name}" is verified but no concept cites its validation`,
+      file: toPosix(verification),
+      message: `feature "${feature.name}" is verified but no concept cites its verification`,
     });
   }
   return findings;

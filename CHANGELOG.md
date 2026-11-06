@@ -8,6 +8,12 @@ All notable changes to this project are documented here.
 
 - `wtk-deep-review` no longer sets `disable-model-invocation`, so agents can invoke it through the
   Skill tool. A test fails if any skill sets that flag.
+- `ad-index.py` reads the `| AD-NNN | ... |` decision table that `memory.md` documents, instead of
+  `### AD-NNN` headings, and accepts `--root`. The knowledge checker scans each feature's
+  `verification.md` and no longer checks a hardcoded architecture spine file.
+- Skill references fix broken cross-skill paths, a duplicated rule number, the `light` default
+  profile claim (`standard` is the default), false `Review-Signal` validation claims and a commit
+  hook path that failed in linked worktrees. A test fails on any unresolved relative `.md` path.
 
 ## [4.3.0] - 2026-11-04
 

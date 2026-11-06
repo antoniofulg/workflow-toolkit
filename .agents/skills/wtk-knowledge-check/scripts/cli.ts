@@ -3,7 +3,7 @@ import { checkKnowledge, type KnowledgeFinding } from "./check.js";
 const HEADINGS: Record<KnowledgeFinding["kind"], string> = {
   conformance: "conformance — OKF v0.2 requires a parseable frontmatter with a non-empty `type`",
   drift:
-    "drift — the source moved on after the concept recorded it; re-read it and bump last_modified.\n  This compares committer dates, which a rebase moves, so an uncommitted edit does not show here\n  and a green run is not final. A source and the concept citing it are exempt while their last\n  change is the same commit; set last_modified to the day you commit rather than leaning on that.",
+    "drift — the source moved on after the concept recorded it; re-read it and bump last_modified.\n  This compares author dates, which a rebase preserves; an uncommitted edit does not show here,\n  so a green run is not final. A source and the concept citing it are exempt while their last\n  change is the same commit; set last_modified to the day you commit rather than leaning on that.",
   naming: "naming — raw sources are named YYYY-MM-DD-<slug> so the directory sorts chronologically",
   gap: "gap — durable knowledge in .specs/ that no concept has harvested yet",
 };

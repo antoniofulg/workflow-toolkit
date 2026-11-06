@@ -135,7 +135,7 @@ build under them and leave the files alone.
 ````markdown
 # <Feature> checks
 
-Profile: light
+Profile: standard
 Plan: `.specs/features/<feature>/plan.md`
 
 ## Intent

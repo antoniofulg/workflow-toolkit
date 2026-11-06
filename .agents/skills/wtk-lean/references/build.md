@@ -110,7 +110,8 @@ python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on
 Optional git-level guard, independent of any agent:
 
 ```bash
-ln -sf <skill-dir>/scripts/check_commit.py .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+hook="$(git rev-parse --git-path hooks)/commit-msg"
+ln -sf "$(pwd)/<skill-dir>/scripts/check_commit.py" "$hook" && chmod +x "$hook"
 ```
 
 Skip the hook if the project manages hooks its own way. When a slice's proofs are all green, mark

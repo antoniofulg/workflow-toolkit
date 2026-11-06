@@ -17,7 +17,7 @@ The selected `verification` or `qa` stage executes exactly one phase per packet:
 The orchestrator dispatches one technical packet over the complete feature range after
 the last code-changing slice and QA packets once, at feature close, when the feature changes public,
 UI, API, CLI, or adoption behaviour; no slice runs QA. Deep-review is a separate orchestrator stage, not a Verifier phase.
-The QA session reads `../wtk-qa/references/qa-scenarios.md` for scenario fields and statuses.
+The QA session reads `../../wtk-qa/references/qa-scenarios.md` for scenario fields and statuses.
 
 Intent vocabulary is routing input, not a keyword bypass. `wtk` selects discovery, integrated Lean,
 modular planning/implementation, diagnosis, or an explicitly named capability from the request and
@@ -48,7 +48,7 @@ requires a user walk, after the final implementation review group. It needs the 
 cannot run on part of one. The `wtk-qa-plan` and `wtk-qa-execute` skills own it.
 
 It writes no product code and does not replace the feature's technical Verifier or wtk-deep-review.
-It walks every scenario the feature flagged. `../wtk-qa-execute/references/qa-execution.md` owns conditional Plan dispatch and
+It walks every scenario the feature flagged. `../../wtk-qa-execute/references/qa-execution.md` owns conditional Plan dispatch and
 same non-author session reuse; packet phases remain distinct.
 
 ## Hard rules
@@ -75,9 +75,9 @@ identity and buys the same independence.
    transcript or operator handoff. Their conclusions must come from the spec, diff, tests, and
    assigned evidence.
 8. **Documentation and instruction changes follow the proportional classifier in `.agents/skills/wtk/references/validation.md`.** Pure maintenance and bounded instruction changes do not start wtk-deep-review or QA by default; mixed changes run canonical checks for changed executable behavior. Named concrete risk or changed public promise can select stronger review; file count and the word "feature" do not escalate them.
-8. **A passing verdict requires valid evidence for its scope.** Apply `.agents/skills/wtk/references/validation.md` to the finding's causal path and retain unaffected results.
+9. **A passing verdict requires valid evidence for its scope.** Apply `.agents/skills/wtk/references/validation.md` to the finding's causal path and retain unaffected results.
    A failed full run stays failed even when focused correction proofs pass.
-9. **A new control for an unobserved failure is Major (YAGNI) unless the spec named it.** A
+10. **A new control for an unobserved failure is Major (YAGNI) unless the spec named it.** A
    killed-process shim, a test-of-the-test, or a prefix allowlist the spec did not name is overbuild.
    Filed-issue review uses the same rule; YAGNI is blocking without a companion skill.
 ## Fingerprinted remediation accounting
@@ -86,9 +86,8 @@ Rewording or reopening a finding preserves its fingerprint and counter. A distin
 ## The Review-Signal trailer
 
 The delivery commit for a pull request carries one `Review-Signal:` line recording its review
-outcome, so the record survives the pruning of `.specs/features/` (AD-025). `check_commit.py`
-validates the line when present and never requires one (AD-026); that validator's docstring owns
-the field-by-field grammar.
+outcome, so the record survives the pruning of `.specs/features/`. The line is optional, and no
+bundled validator checks it.
 
 ## Finding shape
 Every finding states, in this order:
@@ -99,8 +98,7 @@ Every finding states, in this order:
 A finding without a failure path is an advisory, not a defect. Advisories state
 **Premise → Improvement → Fix** and never block.
 
-Severity uses the scheme tlc's validation report already ships, so the Verifier and wtk-deep-review speak
-one vocabulary:
+The Verifier and wtk-deep-review share one severity vocabulary:
 
 | Severity | Meaning | Action | Remediation check | Blocks delivery |
 | --- | --- | --- | --- | --- |
@@ -134,7 +132,7 @@ a change of a few files with an obvious outcome skips planning entirely.
 
 Three things still apply, because they are about the change and not about the review:
 
-- **If the fix changes user-visible behaviour**, flag its scenario per `../wtk-qa/references/qa-scenarios.md` and walk it.
+- **If the fix changes user-visible behaviour**, flag its scenario per `../../wtk-qa/references/qa-scenarios.md` and walk it.
   A `Trivial` finding on a screen is still a change a user can see.
 - **If the fix touches a security surface**, `security.md` fires as it would for any diff.
 - **If the fix turns out to be large** — it needs a schema change, it spreads across a boundary, the

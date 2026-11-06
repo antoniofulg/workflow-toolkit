@@ -48,7 +48,7 @@ Derive concerns and sources from the original request, actual change and authori
 the planner's list is not the discovery boundary. Record omitted requirements and unproven outcomes
 in this verification report even when listed proofs pass. This precedes the `ui`-specific comparison.
 
-**Read the profile first** - the project declares it in `AGENTS.md`, and `light` is the default.
+**Read the profile first** - the project declares it in `AGENTS.md`, and `standard` is the default.
 Step 1 runs under `ui`; the `Coverage` join, the `Test policy` verdicts and fault injection run
 under `standard` and `ui`; everything else runs always. The report names the profile, so a step
 that did not run is distinguishable from a step that was forgotten.

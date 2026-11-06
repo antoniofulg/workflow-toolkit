@@ -70,7 +70,7 @@ For a PR, read its title, description, linked issues and base/head through the p
 
 ## 5. Spec contract (`--spec`)
 
-Resolve the conformance baseline: a file path is itself the artifact; a directory contributes its contract-bearing documents — `_prd.md`, `_techspec.md`, `_tests.md`, `_examples.md`, `_qa.md`, `_user_stories.md`, parity maps, requirement/UX docs, plus any document the spec's own files name as canonical. List every resolved artifact as `path → one-line role` for Technical Verifier context. Deep Review does not dispatch a separate spec-parity proof job; do NOT extract rubric rules from these artifacts: §1 sources are review law, the spec is the contract under test.
+Resolve the conformance baseline: a file path is itself the artifact; a directory contributes the contract-bearing documents the spec names as canonical. List every resolved artifact as `path → one-line role` for Technical Verifier context. Deep Review does not dispatch a separate spec-parity proof job; do NOT extract rubric rules from these artifacts: §1 sources are review law, the spec is the contract under test.
 
 ## 6. context-pack.md layout
 
@@ -87,5 +87,5 @@ Resolve the conformance baseline: a file path is itself the artifact; a director
 <lane → ran(findings digest) | unavailable(reason)>
 
 ## Spec contract
-<only with --spec: one `- `path`` line per artifact — render_review.py parses these lines for the conformance table>
+<only with --spec: one `- `path`` line per artifact>
 ```

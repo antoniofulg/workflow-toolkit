@@ -131,5 +131,5 @@ no name comes, the module has shape rules and the first row applies.
 ## Vendored skill scope
 
 Vendored modeling skills are advisory. Their defaults do not become project rules merely because the
-skill is installed. Do not edit a vendored skill to record a project exception. Record conventions
-here after they are adopted.
+skill is installed. Do not edit a vendored skill to record a project exception. Record adopted
+conventions in the project's own architecture docs.

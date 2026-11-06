@@ -34,8 +34,8 @@ imports it; Cursor does not expand `@`, so a symlink that duplicates the contrac
 | All conditional references together | Under 1,500 lines, of which a typical task reads two or three |
 
 A rule guideline states what must be true and can nearly always be shortened. A reference guideline
-carries content that is irreducible — `SECURITY.md` owns the surface list, `QA-SCENARIOS.md` owns a
-field schema, `KNOWLEDGE-WIKI.md` owns four operations. Cutting those does not save context, it just
+carries content that is irreducible — `security.md` owns the surface list, `qa-scenarios.md` owns a
+field schema, `knowledge-wiki.md` owns four operations. Cutting those does not save context, it just
 moves the lookup somewhere else and costs a round trip.
 
 These are targets, not gates. A file at its limit because nobody pruned it is the problem this

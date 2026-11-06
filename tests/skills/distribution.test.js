@@ -98,6 +98,9 @@ function assertSkillReferences(sourceRoot, skill) {
         if (!target || target.includes('[') || target.includes('*') || target.includes('?') || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('mailto:')) continue;
         assert.equal(fs.existsSync(path.resolve(path.dirname(path.join(skillRoot, relative)), target)), true, `${skill}/${relative}: ${target}`);
       }
+      for (const match of source.matchAll(/`(\.\.?\/[A-Za-z0-9_.()/-]+\.md)(?:#[^`]*)?`/g)) {
+        assert.equal(fs.existsSync(path.resolve(path.dirname(path.join(skillRoot, relative)), match[1])), true, `${skill}/${relative}: ${match[1]}`);
+      }
       for (const match of source.matchAll(/(?:^|[ `(])((?:references|scripts)\/[A-Za-z0-9_.()/-]+\.(?:md|py|mjs|ts))(?=$|[` )])/gm)) {
         if (match[1].includes('[') || match[1].includes('*') || match[1].includes('?')) continue;
         assert.equal(fs.existsSync(path.join(skillRoot, match[1])), true, `${skill}/${relative}: ${match[1]}`);

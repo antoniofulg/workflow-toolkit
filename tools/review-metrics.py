@@ -11,9 +11,8 @@ Read the default branch's history, where every first-parent commit arrived throu
 a pull request. Over a feature branch each task commit reads as its own unsigned
 delivery, which is true but not what the report is for.
 
-The trailer grammar lives in the docstring of `check_commit.py`, which enforces it
-at commit time; this reader only aggregates what is already there,
-so a range with no trailers reports zeros and exits 0.
+No commit validator enforces the trailer; this reader only aggregates what is
+already there, so a range with no trailers reports zeros and exits 0.
 """
 
 from __future__ import annotations

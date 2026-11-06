@@ -11,7 +11,8 @@ or stdin. The file-path form matches how git passes the message file to a
 `commit-msg` hook, so this doubles as an optional git-level guard WITHOUT
 coupling the skill to any AI agent:
 
-    ln -s <skill-dir>/scripts/check_commit.py .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+    hook="$(git rev-parse --git-path hooks)/commit-msg"
+    ln -sf "$(pwd)/<skill-dir>/scripts/check_commit.py" "$hook" && chmod +x "$hook"
 
 What it checks:
   ERROR  - header does not match  type(scope)!: description

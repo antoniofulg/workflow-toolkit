@@ -64,7 +64,7 @@ Independently inspect the native feature approval's actual source, reviewed revi
 structurally valid Markdown does not authenticate user authority. The completion gate also checks
 the receipt, including checks-only intent, and never substitutes execution settings.
 
-`checks.md` carries a `Profile:` line, and `light` is the default. Step 1 runs under `ui`. The
+`checks.md` carries a `Profile:` line, and `standard` is the default. Step 1 runs under `ui`. The
 `Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and
 `ui`. Everything else runs always: the proofs at `HEAD`, each named test shown to exist and have
 run, one located assertion per check, the level and sampling judgment, and the `Swept existing`

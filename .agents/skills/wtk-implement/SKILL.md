@@ -30,7 +30,7 @@ and verification handoff. At phase boundaries or context recovery, use
 ## Profile and handoff
 
 The project declares `profile: light|standard|ui` and optional `handoff: on|off` in `AGENTS.md` or
-equivalent. Absent a declaration, use `light` and `handoff: on`; the resolver may set a stronger
+equivalent. Absent a declaration, use `standard` and `handoff: on`; the resolver may set a stronger
 profile. A project budget overrides the 150k-token default. Handoff affects build batching only,
 never independent verification.
 

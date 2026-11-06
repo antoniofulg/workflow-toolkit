@@ -517,24 +517,6 @@ describe("gaps in what has been harvested", () => {
     ]);
   });
 
-  it("fails when two spine headings share an AD-N label", () => {
-    const root = makeBundle({
-      "knowledge/wiki/index.md": ROOT_INDEX,
-      "docs/architecture/ARCHITECTURE-SPINE.md": "### AD-3 — one\n\n### AD-3 — two\n",
-    });
-
-    const findings = checkKnowledge(root);
-
-    expect(findings).toEqual([
-      expect.objectContaining({
-        kind: "conformance",
-        severity: "error",
-        file: "docs/architecture/ARCHITECTURE-SPINE.md",
-        message: "AD-3 appears more than once",
-      }),
-    ]);
-  });
-
   it("ignores a matching id that labels a source other than the ledger", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
@@ -560,29 +542,29 @@ describe("gaps in what has been harvested", () => {
   it("reports a verified feature that no concept cites", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
-      ".specs/features/sample-feature/validation.md": "# Validation\n",
+      ".specs/features/sample-feature/verification.md": "# Verification\n",
     });
 
     const findings = checkKnowledge(root);
 
     expect(kinds(findings)).toEqual(["gap"]);
-    expect(findings[0]?.file).toBe(".specs/features/sample-feature/validation.md");
+    expect(findings[0]?.file).toBe(".specs/features/sample-feature/verification.md");
   });
 
-  it("stays quiet once a concept cites the feature validation", () => {
+  it("stays quiet once a concept cites the feature verification", () => {
     const root = makeBundle({
       "knowledge/wiki/index.md": ROOT_INDEX,
       "knowledge/wiki/product/sample-requirement.md": [
         "---",
         "type: Requirement",
         "sources:",
-        "  - id: landing-validation",
-        "    resource: ../../../.specs/features/sample-feature/validation.md",
+        "  - id: landing-verification",
+        "    resource: ../../../.specs/features/sample-feature/verification.md",
         "    last_modified: 2026-08-08",
         "---",
         "",
       ].join("\n"),
-      ".specs/features/sample-feature/validation.md": "# Validation\n",
+      ".specs/features/sample-feature/verification.md": "# Verification\n",
     });
 
     expect(checkKnowledge(root, { sourceLastChanged: frozenClock("2026-08-08") })).toEqual([]);
