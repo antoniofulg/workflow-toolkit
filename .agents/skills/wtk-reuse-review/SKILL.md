@@ -3,7 +3,7 @@ name: wtk-reuse-review
 description: Verify implementation reuse and UI consistency across a diff or named scope. Use for reuse verification or explicitly requested whole-codebase audits; not fixes or general simplification reviews.
 license: CC-BY-4.0
 metadata:
-  version: '4.3.0'
+  version: '5.0.0'
 ---
 
 # Reuse review

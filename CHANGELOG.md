@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-11-06
+
 ### Added
 
 - `wtk-test-review`, an agent-invocable skill that reviews one scope's tests with scoped mutation,
@@ -98,6 +100,11 @@ All notable changes to this project are documented here.
 - `wtk` routes plain-language capability requests; `wtk-qa` reads the flow from the request when
   no argument expands; examples, tiers and the README runtime requirements are stack-neutral.
 
+- A Minor-only remediation batch in a feature run gets a fresh Verifier over its diff. It still
+  starts no full-feature Verifier, QA phase or remediation check.
+- Every skill now carries the toolkit version in `metadata.version`, replacing independent
+  skill versions. A test fails if any skill differs from `package.json`.
+
 ### Removed
 
 - `wtk-ship/scripts/review_convergence.py` and `wtk-ship/remediation.py`; the stall rule is now
@@ -105,15 +112,6 @@ All notable changes to this project are documented here.
   fails like any other. Prose tombstones about removed options and earlier ceremony are gone.
 - The optional `Review-Signal:` trailer section and `tools/review-metrics.py`, which only read it;
   the agent-tool configuration and browser-queue routes in `validation.md` shrink to two rules.
-
-## [4.3.0] - 2026-11-04
-
-### Changed
-
-- A Minor-only remediation batch in a feature run gets a fresh Verifier over its diff. It still
-  starts no full-feature Verifier, QA phase or remediation check.
-- All 13 skills now carry the toolkit version in `metadata.version`, replacing independent skill
-  versions. A test fails if any skill differs from `package.json`.
 
 ## [4.2.0] - 2026-11-04
 
