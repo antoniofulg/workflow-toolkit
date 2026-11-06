@@ -40,7 +40,7 @@ Optional repo-root file for review configuration. Top-level keys, all optional:
 | Key | Meaning |
 | --- | --- |
 | `concurrency` | Maximum simultaneous reviewer jobs, an integer from `1` through `6`; defaults to `3` and is pinned in `manifest.json` |
-| `path_filters` | Globs over repo-relative paths: `!pat` excludes; bare patterns, when present, restrict review to their matches and beat any exclude; built-in excludes (locks, vendor, generated, testdata, snapshots) always append |
+| `path_filters` | Globs over repo-relative paths: `!pat` excludes; bare patterns, when present, restrict review to their matches and beat any exclude; built-in excludes (locks, vendor, generated, snapshots) append unless negated with `!!pat`, for example `!!**/generated/**` |
 | `path_instructions` | `path` glob + verbatim `instructions` entries — the highest-precedence rubric source (Step 2) |
 | `request_changes_workflow` | publish-mode review-event gate |
 

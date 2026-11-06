@@ -28,9 +28,9 @@ selected source; record and resolve each conflict before coding.
 - **Approved source/frame:** tool and frame, or checked-in export path
 - **Revision/frozen export:** revision, or frozen export path plus commit/hash
 - **Intent:** binding implementation (default), or inspiration with the user instruction cited
-- **Route and mapping:** route; selected state ↔ exact mobile and desktop CSS viewport width×height pairs
+- **Route and mapping:** route or screen; selected state ↔ exact viewport width×height pairs (CSS px or device points)
 - **Captures:** local original/reference, full-page and actual viewport capture paths
-- **Scale/environment:** source pixels per CSS pixel (source scale), browser, OS, DPR, fixtures/content, loaded fonts/assets and theme
+- **Scale/environment:** source pixels per viewport unit (source scale), runtime (browser or device/OS), scale (DPR or device scale), fixtures/content, loaded fonts/assets and theme
 - **Tokens:** source provenance; mapped tokens; aliases/themes; inferred or missing values
 - **Composition:** header/navigation, content hierarchy, filter/control placement, cards, footer; order and containment
 - **Visual requirements:** spacing/density, typography/scale/weight, palette/theme, borders/radii, media crop/aspect ratio
@@ -123,8 +123,8 @@ No new showcase, preview deployment, design integration, or split frontend/backe
 
 For a binding source, use the following acceptance procedure even when behavior tests or QA pass.
 
-1. **Builder:** render at every contracted mobile and desktop **CSS viewport** and state, recording
-   source scale, browser/OS, DPR, fixtures, fonts/assets and theme. Capture that genuine render;
+1. **Builder:** render at every contracted **viewport** and state, recording source scale, runtime,
+   scale, fixtures, fonts/assets and theme. Capture that genuine render;
    resizing or cropping an image rendered at another viewport does not prove the contracted render.
    Inspect beside the source, fix material mismatches and recapture affected evidence before handoff.
    Capture the full page for composition and the actual viewport for interaction states, including
@@ -148,12 +148,12 @@ For a binding source, use the following acceptance procedure even when behavior 
 
 | Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source and revision / contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
+| frozen source and revision / contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | inspected requirements, individual differences and interactions; independent result and any input-equivalence reason | PASS |
 
-`Source scale` is positive source pixels per CSS pixel; mark inferred raster calibration in the
-source/contract, not a fabricated precise value. `Viewport/scroll` uses CSS width×height and CSS
-scroll x,y. Record browser, OS and positive `DPR:` explicitly in Environment along with content,
-fonts/assets and theme. Each capture cell is one literal local file path, optionally backtick-wrapped;
+`Source scale` is positive source pixels per viewport unit; mark inferred raster calibration in the
+source/contract, not a fabricated precise value. `Viewport/scroll` uses width×height and scroll x,y
+in CSS px or device points. Record `runtime:` (browser or device/OS) and a positive `scale:` (DPR
+or device scale) explicitly in Environment along with content, fonts/assets and theme. Each capture cell is one literal local file path, optionally backtick-wrapped;
 relative paths resolve beside the report, absolute local paths are allowed. Paths are data, never
 commands, shell substitutions or URLs. The Lean completion gate requires these columns, usable
 values and existing files under `ui`; non-UI profiles acquire no screenshot obligation. It cannot

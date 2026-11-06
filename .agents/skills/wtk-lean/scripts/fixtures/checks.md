@@ -53,10 +53,10 @@ Proof: `bin/rails test test/billing/dunning_test.rb -n "/provider_timeout_is_ine
 | provider status -> local (9) | C2, table-driven over all 9 | - |
 | webhook event types (5) | `charge_failed` C1 · `charge_succeeded` C6 · `updated` C10 · `deleted` C10 · `trial_will_end` C10 | - |
 | `Suspended` transitions (3) | into it C1 · out to `Active` C6 · rejected to `Trialing` C5 | - |
-| `POST /webhooks/provider` statuses (3) | 200 C8 · 409 C7 · 422 C9 | - |
+| `POST /webhooks/provider` outcomes (3) | 200 C8 · 409 C7 · 422 C9 | - |
 | startup config: raw request body (2 assemblies) | app entry point C9 · test harness C8 | - |
 
-- Claims naming a status code, route or response shape: C7, C8, C9 - each has a proof that crosses the boundary
+- Claims naming an outcome, interface or response shape: C7, C8, C9 - each has a proof that crosses the boundary
 - No other check claims more than the single case its proof exercises
 
 ## Test policy

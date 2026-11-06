@@ -12,7 +12,7 @@ how to work.
 built; this turns both into obligations with proofs.
 So the shape - the path, the entities, the interface, the doors - is not written here and not
 re-argued here. What *is* this file's job is the derivation, and it is where omissions surface:
-every route's statuses in `Surface`, every door in `Landing`, every entity in `Relations` owes a
+every interface's outcomes in `Surface`, every door in `Landing`, every entity in `Relations` owes a
 set row in `Coverage` or a check. A shape section with nothing pointing back at it from here is
 either dead or unproven, and both are findings.
 
@@ -78,8 +78,8 @@ that costs. The rows are not a new inventory - they are the enumerations already
 a door in the plan's `Landing`, a decision table in the level evidence, the input space behind
 a claim. Anything enumerated in prose owes a row here.
 
-**Every route in the plan's `Surface` owes a row, and its members are the statuses.** That row
-is the only thing that turns the signature you reviewed into an obligation; without it a status
+**Every interface in the plan's `Surface` owes a row, and its members are the outcomes.** That row
+is the only thing that turns the signature you reviewed into an obligation; without it an outcome
 listed in the plan can ship with nothing behind it, and the artifact that named it looks like
 evidence that it was covered.
 
@@ -170,10 +170,10 @@ Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
 | webhook event types (5) | `paused` C12 · `updated` C13 · `deleted` C14 · `trial_will_end` C15 · other C16 | - |
 | `trial_days` bound (4 edges) | 0 C5 · 1 C5 · 30 C5 · 31 C5 | - |
 | `Suspended` transitions (3) | into it C1 · out to `Active` C6 · out to `Cancelled` C7 | - |
-| `POST /webhooks/provider` statuses (3) | 200 C3 · 409 C7 · 422 C16 | - |
+| `POST /webhooks/provider` outcomes (3) | 200 C3 · 409 C7 · 422 C16 | - |
 | startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3 | - |
 
-- Claims naming a status code, route or response shape: C7, C12, C16 - each has a proof that
+- Claims naming an outcome, interface or response shape: C7, C12, C16 - each has a proof that
   crosses the boundary
 - No other check claims more than the single case its proof exercises
 
@@ -239,7 +239,7 @@ python3 <skill-dir>/scripts/validate_checks.py <feature>
 
 It fails a checks-only feature without `## Intent`, a check with no `Proof:`, duplicate ids,
 incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
-selector, vague claims and a plan Surface route absent from checks. It does not judge approval or
+selector, vague claims and a plan Surface interface absent from checks. It does not judge approval or
 proof adequacy; the independent review retains those obligations.
 
 A non-zero exit means fix before writing code. The script checks structure; the judgment - is the

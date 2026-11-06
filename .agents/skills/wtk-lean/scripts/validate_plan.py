@@ -91,14 +91,13 @@ ADVISORY_SECTIONS = ["Sources"]
 SHAPE_HINTS = (
     ("Flow", "state the hops in order, or `single module - <name>`"),
     ("Relations", "state the entities and cardinality, or `None - no stored-data shape change`"),
-    ("Surface", "state the route signature, or `None - nothing consumed outside`"),
+    ("Surface", "state the interface signature, or `None - nothing consumed outside`"),
     ("Impact", "state what changes underneath, or `nothing` - a missing row is not an answer"),
 )
 
 ID_RE = re.compile(r"^[A-Z][A-Z0-9]*-\d+$")
 PLACEHOLDER_RE = re.compile(r"^\s*[\[<].+[\]>]\s*$")
 CID_RE = re.compile(r"\bC\d+\b")
-STATUS_RE = re.compile(r"\b[1-5]\d\d\b")
 NONE_RE = re.compile(r"\b(none|nothing|n/?a|single module)\b", re.IGNORECASE)
 VAGUE_RE = re.compile(
     r"\b(gracefully|properly|correctly|quickly|fast|slow|efficiently|reasonably|"
@@ -470,7 +469,8 @@ def check_file(path):
                 )
                 break
 
-    # Surface: statuses are what becomes a Coverage set in checks.md.
+    # Surface: outcomes are what becomes a Coverage set in checks.md. An outcome is any
+    # enumerated token - an HTTP status, an exit code, an error type or an event name.
     surf = present.get("Surface")
     if surf:
         body = [lines[i].strip() for i in range(*surf) if lines[i].strip()]
@@ -480,21 +480,22 @@ def check_file(path):
             cells = split_row(r)
             if not cells or not cells[0] or PLACEHOLDER_RE.match(cells[0]):
                 continue
-            status_cell = cells[3] if len(cells) > 3 else ""
-            if not STATUS_RE.search(status_cell):
+            outcome_cell = cells[3] if len(cells) > 3 else ""
+            outcomes = [o.strip(" `") for o in re.split(r"[,·;]", outcome_cell)]
+            if not any(o and not PLACEHOLDER_RE.match(o) for o in outcomes):
                 errors.append(
-                    f"Surface '{cells[0][:48]}': Status names no status code - those statuses are the "
+                    f"Surface '{cells[0][:48]}': Outcomes names no outcome - those outcomes are the "
                     "set that owes a Coverage row in checks.md"
                 )
         for i in range(*surf):
             if CID_RE.search(lines[i]):
                 errors.append(
-                    f"L{i + 1}: Surface names a check id, but checks.md does not exist yet - each route's "
-                    "statuses become a Coverage set there instead"
+                    f"L{i + 1}: Surface names a check id, but checks.md does not exist yet - each interface's "
+                    "outcomes become a Coverage set there instead"
                 )
                 break
         if not rows and not declares_none:
-            errors.append("Surface has no route rows and does not state `None - nothing consumed outside`")
+            errors.append("Surface has no interface rows and does not state `None - nothing consumed outside`")
 
     # Landing: the doors.
     land = present.get("Landing")

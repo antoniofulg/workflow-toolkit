@@ -77,6 +77,32 @@ class WorkflowValidatorTests(unittest.TestCase):
         errors, _warnings = validate_verification._check_feature(str(FIXTURES), "fixture")
         self.assertEqual(errors, [])
 
+    def test_surface_accepts_non_http_interfaces_and_outcomes(self) -> None:
+        source = (FIXTURES / "plan.md").read_text(encoding="utf-8")
+        http_row = "| `POST /webhooks/provider` | the provider envelope as sent | `{}` · `{error}` | `200`, `409`, `422` |"
+        self.assertIn(http_row, source)
+        rows = {
+            "billing suspend <account>": "| `billing suspend <account>` | account id | summary line | exit `0`, exit `2`, `AccountNotFound` |",
+            "billing.subscription_suspended": "| `billing.subscription_suspended` | charge result | event payload | `emitted`, `skipped` |",
+        }
+        for interface, row in rows.items():
+            with self.subTest(interface=interface), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                (feature / "plan.md").write_text(source.replace(http_row, row), encoding="utf-8")
+                errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
+                self.assertEqual(errors, [])
+                _errors, warnings, _profile = validate_checks.check_file(str(feature / "checks.md"))
+                self.assertTrue(any(f"`{interface}`" in warning for warning in warnings), warnings)
+                checks = feature / "checks.md"
+                checks.write_text(checks.read_text(encoding="utf-8") + f"\nCovers `{interface}`.\n", encoding="utf-8")
+                _errors, warnings, _profile = validate_checks.check_file(str(checks))
+                self.assertFalse(any(f"`{interface}`" in warning for warning in warnings), warnings)
+                empty = source.replace(http_row, row.rsplit("|", 2)[0] + "|  |")
+                (feature / "plan.md").write_text(empty, encoding="utf-8")
+                errors, _warnings = validate_plan.check_file(str(feature / "plan.md"))
+                self.assertTrue(any("Outcomes names no outcome" in error for error in errors), errors)
+
     def test_approval_receipt_is_a_verifier_judgment_not_a_gate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -142,10 +168,10 @@ class WorkflowValidatorTests(unittest.TestCase):
                 "fenced table": original.replace("## Visual fidelity", "```markdown\n## Visual fidelity") + "\n```\n",
                 "invalid second row": original + original.splitlines()[-1].replace("| viewport.png |", "| missing.png |") + "\n",
                 "old schema": original.replace("Source/revision", "Source").replace("Viewport/scroll", "Viewport"),
-                "no DPR": original.replace("DPR: 1;", ""),
-                "zero DPR": original.replace("DPR: 1;", "DPR: 0;"),
-                "empty browser": original.replace("browser: Chromium 130;", "browser: -;"),
-                "empty OS": original.replace("OS: Linux;", "OS: n/a;"),
+                "no scale": original.replace("scale: 1;", ""),
+                "zero scale": original.replace("scale: 1;", "scale: 0;"),
+                "empty runtime": original.replace("runtime: Chromium 130 on Linux;", "runtime: -;"),
+                "no runtime": original.replace("runtime: Chromium 130 on Linux;", ""),
                 "no scroll": original.replace("390x844; scroll: 0,0", "390x844"),
                 "bad viewport": original.replace("390x844", "0x844"),
                 "bad source scale": original.replace("| 1x |", "| 0x |"),

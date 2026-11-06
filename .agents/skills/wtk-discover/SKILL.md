@@ -240,7 +240,7 @@ When the second shape is not genuinely live, do not build it a section. One sent
 The document holds the **fundamental decisions - product, API, schema, direction - and nothing the plan can derive from them.** Three rules keep it that size, and they are checked before the document is written, not after:
 
 1. **Each decision is stated once, at the highest level that owns it.** Key decisions is the home of everything hard to reverse; a slice says "Key decision 2" and moves on. The same fact in Shape, in Key decisions, in a slice's table and in its diagram is not four views - it is one decision the reader meets four times and the maintainer updates in three. A design that enunciates ten decisions eighty times reads as bloated even when every section, alone, looks justified.
-2. **Identifier ceiling: route, table, column, class, glossary term.** Nothing below - method, container token, file path, CSS selector - appears as design content. Evidence citations may name a source file and line; they support a fact and do not prescribe the implementation. If the plan cannot name the method from the route and the class, that is the plan's problem, and a design that names it has started planning and will drift from the plan the moment the plan does its job.
+2. **Identifier ceiling: route, command, event, exported symbol, table, column, class, glossary term.** Nothing below - method, container token, file path, CSS selector - appears as design content. Evidence citations may name a source file and line; they support a fact and do not prescribe the implementation. If the plan cannot name the method from the route and the class, that is the plan's problem, and a design that names it has started planning and will drift from the plan the moment the plan does its job.
 3. **The document says what will exist, not what will be done.** State tables, contracts and schemas define a slice. A list of files to add and methods to change is the plan's output, and a design that carries one is a task list wearing a design's headings.
 
 ### Slices
@@ -375,7 +375,7 @@ Solution: each decision once, at the highest level that owns it. Key decisions h
 
 ### The plan written inside the design
 Cause: each slice lists files to touch, container tokens, method names, the order of `DELETE FROM` in the test suite, the union type on the screen.
-Solution: identifier ceiling - route, table, column, class, glossary term. Below that is the plan's. The design says what will exist; the plan says what will be done.
+Solution: identifier ceiling - route, command, event, exported symbol, table, column, class, glossary term. Below that is the plan's. The design says what will exist; the plan says what will be done.
 
 ### A diagram nobody checked
 Cause: the entity diagram says every ledger entry has an Invoice; the code says Refund and Adjustment entries have none.

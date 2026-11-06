@@ -29,6 +29,15 @@ All notable changes to this project are documented here.
 - Builds no longer estimate context with `wc -c / 4` or stop at a token budget. One builder runs
   every slice and asks only when it actually hits a context limit.
 - `memory.md` defers to a project's `knowledge/` or decision docs when they exist.
+- The Lean `Surface` table is stack-neutral: an `Interface` column takes `METHOD /path`, a CLI verb,
+  an exported symbol or an event topic, and an `Outcomes` column takes any enumerated token (HTTP
+  status, exit code, error type or event name). The Coverage linkage is unchanged.
+- `ui` visual evidence records `runtime:` (browser or device/OS) and `scale:` (DPR or device scale),
+  with the viewport in CSS px or device points.
+- Discover's identifier ceiling includes commands, events and exported symbols, and its Contract,
+  Schema and Flow templates are labelled as HTTP/SQL examples with non-HTTP alternatives.
+- Deep Review's built-in excludes no longer skip `fixtures`, `testdata`, `*.d.ts` or `build`, and a
+  project can drop a built-in exclude with `!!pat` in `path_filters`.
 
 ### Removed
 

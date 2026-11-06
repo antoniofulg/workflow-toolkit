@@ -242,16 +242,16 @@ def _check_feature(fdir, name):
                     errors.append(f"{name}: visual fidelity source scale must be positive (for example 1x)")
                 viewport = cells["viewport/scroll"].strip("` ")
                 if not re.fullmatch(r"[1-9]\d*\s*[x×]\s*[1-9]\d*;\s*scroll:\s*\d+(?:\.\d+)?,\s*\d+(?:\.\d+)?", viewport, re.I):
-                    errors.append(f"{name}: visual fidelity viewport/scroll must name CSS widthxheight; scroll: x,y")
+                    errors.append(f"{name}: visual fidelity viewport/scroll must name widthxheight (CSS px or device points); scroll: x,y")
                 environment = dict(
                     (key.strip().lower(), value.strip())
                     for part in cells["environment"].split(";") if ":" in part
                     for key, value in [part.split(":", 1)]
                 )
-                if not all(usable_value(environment.get(key, "")) for key in ("browser", "os")) or not re.fullmatch(
-                    r"(?:[1-9]\d*(?:\.\d+)?|0\.\d*[1-9]\d*)", environment.get("dpr", "")
+                if not usable_value(environment.get("runtime", "")) or not re.fullmatch(
+                    r"(?:[1-9]\d*(?:\.\d+)?|0\.\d*[1-9]\d*)", environment.get("scale", "")
                 ):
-                    errors.append(f"{name}: visual fidelity environment requires browser, OS and positive DPR")
+                    errors.append(f"{name}: visual fidelity environment requires runtime (browser or device/OS) and positive scale (DPR or device scale)")
                 for field in ("reference capture", "full-page capture", "viewport capture"):
                     capture = cells[field].strip().strip("`")
                     local = capture if os.path.isabs(capture) else os.path.join(fdir, capture)

@@ -129,11 +129,12 @@ erDiagram
 ## Surface
 
 Only when the task adds or changes an interface consumed outside it. The signature, not a
-specification.
+specification. An interface is `METHOD /path`, a CLI verb, an exported symbol or an event topic;
+outcomes are HTTP statuses, exit codes, error types or event names.
 
-| Route | In | Out | Status | Criteria |
+| Interface | In | Out | Outcomes | Criteria |
 |---|---|---|---|---|
-| `<METHOD> /<path>` | `<field>`, `<field>` | `<field>`, `<field>` | `<code>`, `<code>` | <numbers> |
+| `<interface>` | `<field>`, `<field>` | `<field>`, `<field>` | `<outcome>`, `<outcome>` | <numbers> |
 
 ## Sources
 

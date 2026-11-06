@@ -48,7 +48,7 @@ are settled in the diff.
 
 ## Surface
 
-| Route | In | Out | Status |
+| Interface | In | Out | Outcomes |
 | --- | --- | --- | --- |
 | `POST /webhooks/provider` | the provider envelope as sent | `{}` · `{error}` | `200`, `409`, `422` |
 

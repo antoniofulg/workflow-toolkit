@@ -35,7 +35,7 @@ to the user; a raster's uncertain exact pixels do not erase its visible composit
 ## Regression walk and verdict
 
 1. Builder captures the full page at both sizes, compares each region beside the source, corrects
-   mismatches, and recaptures. Record the source, implementation revision, browser/DPR, fixtures,
+   mismatches, and recaptures. Record the source, implementation revision, runtime/scale, fixtures,
    loaded fonts/assets and theme in the existing report.
 2. In actual 390×844 and 1440×900 viewports, open filters and exercise choices. Scroll mobile until
    sticky controls activate; verify every choice and focused action remains visible and reachable.

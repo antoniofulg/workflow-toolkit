@@ -270,13 +270,15 @@ that disagrees with the schema in three months.
 
 ## Surface - the signature
 
-Only a route this feature adds or whose signature changes. An existing route that still works
-is a criterion or an `Impact` row, not a Surface line. The **signature, not a specification**:
-route, what goes in, what comes out, which statuses. A payload key stops being yours to rename
+Only an interface this feature adds or whose signature changes: an HTTP route (`METHOD /path`), a
+CLI verb, an exported symbol or an event topic. An existing interface that still works is a
+criterion or an `Impact` row, not a Surface line. The **signature, not a specification**: the
+interface, what goes in, what comes out, which outcomes - HTTP statuses, exit codes, error types
+or event names. A payload key stops being yours to rename
 the moment something outside this codebase reads it, which is why this is a review and not
 documentation.
 
-Do **not** put check numbers here - checks do not exist yet. Each route's statuses become a set
+Do **not** put check numbers here - checks do not exist yet. Each interface's outcomes become a set
 row in the `Coverage` join in `checks.md`, which is what proves none of them went unclaimed.
 
 `None - nothing consumed outside` is complete. When a public surface changes, write
@@ -350,7 +352,7 @@ Before presenting the plan, five checks. Nothing proceeds unresolved **and** unm
    landing in `## Observable`, and all eleven dimensions have one in `checks.md`. A blank in either
    is the failure both lists exist to make visible.
 5. **Every criterion has somewhere to land in the shape.** A criterion whose behaviour crosses
-   no hop in `Flow`, touches nothing in `Relations` and appears on no route in `Surface` is
+   no hop in `Flow`, touches nothing in `Relations` and appears on no interface in `Surface` is
    either out of scope or a gap in the shape. This is the check the two halves being one file
    buys, and it is the reason to write them in one sitting.
 
@@ -366,7 +368,7 @@ python3 <skill-dir>/scripts/validate_plan.py <feature>
 It fails a missing or empty section, a criterion that is not EARS-shaped, an assumption row with
 an empty default or rationale, a malformed requirement ID, an `Observable` row whose landing is blank or whose `n/a` carries
 no reason, a `Landing` row with no literal shape or no rejected alternative, a `Relations` block
-that names columns or types, a `Surface` row missing its statuses, and check numbers written
+that names columns or types, a `Surface` row missing its outcomes, and check numbers written
 into `Surface` before checks exist. It warns on a `Flow` hop naming a module marked neither as
 existing nor as a door. Judgment calls stay yours.
 
@@ -431,11 +433,13 @@ One-way constraints: <field> unique (door <n>), <field> not null with <value> in
 
 ## Surface
 
-Only routes this adds or whose signature changes.
+Only interfaces this adds or whose signature changes: `METHOD /path`, a CLI verb, an exported
+symbol or an event topic. Outcomes are the enumerated results: HTTP statuses, exit codes, error
+types or event names.
 
-| Route | In | Out | Status |
+| Interface | In | Out | Outcomes |
 | --- | --- | --- | --- |
-| `<METHOD> /<path>` | `<field>`, `<field>` | `<field>` · `<field>` | `<code>`, `<code>`, `<code>` |
+| `<interface>` | `<field>`, `<field>` | `<field>` · `<field>` | `<outcome>`, `<outcome>`, `<outcome>` |
 
 <Or:> `None - nothing consumed outside`
 
@@ -539,7 +543,7 @@ Point at `Flow`, at `Impact`, and at any `Landing` door that still has a live al
 those are the three a reviewer would want named, not buried. Where `Relations` changes data
 that already exists or `Surface` changes something already consumed, say that too.
 
-Then continue into [checks.md](checks.md). Every route's statuses, every door, and every entity
+Then continue into [checks.md](checks.md). Every interface's outcomes, every door, and every entity
 here owes a set row or a check there - that derivation is the next step's job, and it is the one
 that catches what this file left implicit.
 

@@ -266,7 +266,7 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 | Source/revision | Source scale | Implementation revision | Route/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| frozen source revision / UI contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | browser: Chromium 130; OS: Linux; DPR: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
+| frozen source revision / UI contract row | 1x | tested revision | route and selected state | 390x844; scroll: 0,0 | runtime: Chromium 130 on Linux; scale: 1; fixtures: seeded; fonts/assets: loaded; theme: light | reference.png | full.png | viewport.png | independently inspected requirements, differences and interactions; explicit input-equivalence reason if reused | PASS |
 
 ## Checks
 

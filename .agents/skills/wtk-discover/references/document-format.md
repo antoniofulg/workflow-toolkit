@@ -90,9 +90,13 @@ Derivable from the repository, left to the plan: <convention>, <convention> - <"
 <Third column omitted for a slice with no caller. A slice whose states are all one kind - parent deletes - collapses to two columns.>
 
 `<METHOD> <path>` `<request>` → `<code>` `<response>`
-<One line per endpoint this slice adds. Failure codes are in the state table, not here.>
+<One line per endpoint this slice adds. Failure codes are in the state table, not here. This HTTP
+line is an example; for another interface write `<command> <args>` → exit `<code>` `<output>`,
+`<symbol>(<params>)` → `<return>` | `<error type>`, or `<event topic>` `<payload>`.>
 
-<Schema - only where this slice creates or alters a table.>
+<Schema - only where this slice creates or alters a table. The SQL table below is an example; for
+another store list the record, document or file layout with the same fields: name, type, required,
+reference, note.>
 
 Table `<name>`; <no existing table changes | <table>: <before → after>>.
 
@@ -102,7 +106,7 @@ Table `<name>`; <no existing table changes | <table>: <before → after>>.
 
 <Entity diagram when the slice relates more than one record, checked against the code.>
 
-<Flow - only where this slice holds a one-way door. Participants are layers, not files; steps are the refusal, the read, the transaction, the race - not validation details.>
+<Flow - only where this slice holds a one-way door. Participants are layers, not files; steps are the refusal, the read, the transaction, the race - not validation details. The client/database example below is HTTP and SQL; for a CLI, library or event consumer, use the caller, the component and its store as participants and exit codes, errors or emitted events as replies.>
 
 ```mermaid
 sequenceDiagram

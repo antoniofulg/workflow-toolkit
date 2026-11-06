@@ -511,6 +511,37 @@ class DeepReviewContractTests(unittest.TestCase):
                 result = run_script(BUILD_MANIFEST, root, "--out", str(root / ".wtk-deep-review/out"), "--base", "HEAD", "--head", "HEAD")
                 self.assertNotEqual(result.returncode, 0)
 
+    def test_default_filters_keep_test_assets_and_allow_negation(self) -> None:
+        paths = ("tests/fixtures/input.txt", "pkg/testdata/case.txt", "types/api.d.ts", "build/rules.txt",
+                 "src/generated/client.txt")
+
+        def dispositions(root: Path, base: str) -> dict[str, str]:
+            result = run_script(BUILD_MANIFEST, root, "--out", str(root / ".wtk-deep-review/out"), "--base", base, "--full")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            manifest = json.loads((root / ".wtk-deep-review/out/manifest.json").read_text(encoding="utf-8"))
+            return {item["path"]: item["disposition"] for item in manifest["files"]}
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = init_repo(raw)
+            base = git(root, "rev-parse", "HEAD")
+            for path in paths:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text("content\n", encoding="utf-8")
+            git(root, "add", ".")
+            git(root, "commit", "-qm", "add assets")
+            found = dispositions(root, base)
+            for path in paths[:4]:
+                self.assertEqual(found[path], "selected", path)
+            self.assertEqual(found["src/generated/client.txt"], "ignored")
+
+            (root / ".wtk-deep-review.yaml").write_text("path_filters:\n  - \"!!**/generated/**\"\n", encoding="utf-8")
+            self.assertEqual(dispositions(root, base)["src/generated/client.txt"], "selected")
+
+            (root / ".wtk-deep-review.yaml").write_text("path_filters:\n  - \"!!**/nothing/**\"\n", encoding="utf-8")
+            result = run_script(BUILD_MANIFEST, root, "--out", str(root / ".wtk-deep-review/out"), "--base", base, "--full")
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+            self.assertIn("no built-in exclude to negate: !!**/nothing/**", result.stderr)
+
     def test_runner_rejects_removed_workers_option(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

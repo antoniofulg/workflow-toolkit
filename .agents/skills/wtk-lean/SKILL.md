@@ -35,7 +35,7 @@ features. The phase references carry its entry points; profiles never waive inhe
 2. Tests come from the approved checks, never from the implementation. Do not weaken, skip, or
    delete a test to pass a gate; a wrong or impossible check stops for user renegotiation.
 3. Approved `checks.md` and `Test policy` rows are fixed. New `Landing`, `Relations`, and `Surface`
-   rows may be added when building discovers a door, entity, or route; approved rows are never
+   rows may be added when building discovers a door, entity, or interface; approved rows are never
    rewritten. Keep `Flow` and `Impact` current when the path changes.
 4. The coordinator dispatches one fresh Verifier over `<feature base>..HEAD` with every check in
    the same turn after the feature's last commit. The builder reports and stops; verification is
@@ -88,12 +88,12 @@ The plan is the human review boundary. Write the problem, walk the surfaces, wri
 record the shape that implements them. File order serves the reviewer: `Problem`, `Flow`, `Impact`,
 `Relations`, `Surface`, `Landing`, `Criteria`, `Traceability`, `Out of scope`, `Assumptions`,
 `Observable`, and `Sources`. `Flow` is the path, `Relations` the entities and one-way constraints,
-`Surface` the route/signature/statuses, `Landing` the literal irreversible choices and rejected
+`Surface` the interface/signature/outcomes, `Landing` the literal irreversible choices and rejected
 alternatives, and `Impact` what existing terms or data change. Placement and reversible
 implementation detail stay in the diff.
 
-`checks.md` derives proof-backed checks from the plan and joins every enumerated route, entity,
-status, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
+`checks.md` derives proof-backed checks from the plan and joins every enumerated interface, entity,
+outcome, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
 distinct: the first freezes reviewed shape, the second freezes obligations, and the third is the
 independent evidence. An unresolved architecture choice needs its own ADR/RFC/spike before it can
 be recorded as a `Landing` decision.
