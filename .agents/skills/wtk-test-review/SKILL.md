@@ -4,7 +4,7 @@ description: Review the tests of one module, feature or page with scoped mutatio
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '5.0.0'
+  version: '6.0.0'
 ---
 
 # Test review
