@@ -10,6 +10,9 @@ All notable changes to this project are documented here.
   batch of fixes, and any change touching security, auth, production/deploy/release paths, CI/CD,
   data or migrations. A small local fix outside those areas, covered by a focused test or hosted CI,
   skips it. Review remediation gets one Verifier over the whole remediation range, not one per commit.
+- Mockups copy the component variant the product already uses in the same context and cite its
+  source file, and list every difference from the product before review so each becomes a removal
+  or a human decision.
 
 ## [5.0.0] - 2026-11-06
 

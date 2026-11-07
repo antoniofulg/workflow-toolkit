@@ -49,8 +49,11 @@ Follow this order before writing any application UI:
 ## Mockups
 
 Standalone mockups are implementation references when the project treats them that way, not
-disposable sketches. Reuse the same shell family, component treatment and state vocabulary the
-implementation will use. If the existing pattern cannot express the surface, change the shared
+disposable sketches. Reuse the same shell family and state vocabulary the implementation will use.
+For each product component, copy the variant the product already uses in the same context (props,
+trigger, option order, size) and cite that source file. Before a mockup goes to review, list each
+component it shows with its product source and every difference; remove the difference or present
+it to the human as a decision. If the existing pattern cannot express the surface, change the shared
 reference deliberately and extend its conformity test in the same task.
 
 ## Browser permanence
