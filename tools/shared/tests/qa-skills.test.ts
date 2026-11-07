@@ -501,6 +501,20 @@ describe("canonical QA skills", () => {
     expect(filedIssueRule).not.toMatch(/no verifier/i);
   });
 
+  it("scales fix verification by risk and batches remediation", () => {
+    const gates = readRepositoryFile(".agents/skills/wtk/references/validation.md");
+    const rule = gates
+      .slice(gates.indexOf("## Fix verification"), gates.indexOf("## Run and reuse evidence"))
+      .replace(/\s+/g, " ");
+    expect(rule).toContain("every batch of fixes");
+    expect(rule).toContain("CI/CD workflows, data or migrations, regardless of size");
+    expect(rule).toContain("A small local fix skips the Verifier when all hold");
+    expect(rule).toContain("hosted CI is the independent check");
+    expect(rule).toContain("when the class is unclear, verify");
+    expect(rule).toContain("one fresh Verifier checks the whole remediation range, not each commit");
+    expect(rule).not.toContain("Every fix, correction or refactor");
+  });
+
   it("IT-013 records the selected QA adapter and checkout-local evidence", () => {
     const qaExecute = readRepositoryFile(".agents/skills/wtk-qa-execute/SKILL.md");
 

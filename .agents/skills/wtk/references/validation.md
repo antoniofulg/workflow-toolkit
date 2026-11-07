@@ -67,20 +67,30 @@ verification report's `Quarantined tests` line names it at feature close.
 
 ## Fix verification
 
-Every fix, correction or refactor of executable code or tests gets a fresh Verifier before push or
-pull request, including a mixed change. A builder never certifies its own fix. Only a documentation or
-instruction-only diff and the declarative [configuration](#configuration-and-shared-locks) change skip it. An active Lean feature
-keeps its own Verifier and review loop; only its Minor-only remediation batch gets this check.
+A fresh Verifier checks every refactor, every batch of fixes, and any change touching security,
+authentication or authorization, production, deploy or release paths, CI/CD workflows, data or
+migrations, regardless of size. An active Lean feature keeps its own Verifier and review loop; only
+its Minor-only remediation batch gets this check.
+
+A small local fix skips the Verifier when all hold: it spans one file or a few lines, an existing or
+new focused test or the pull request's hosted CI covers it, and it touches none of those areas. Its
+author runs the focused tests, lint, typecheck and formatter; hosted CI is the independent check.
+A documentation or instruction-only diff and the declarative [configuration](#configuration-and-shared-locks)
+change also skip it. Outside these exceptions a builder never certifies its own fix; when the class
+is unclear, verify.
 
 The Verifier is a fresh agent that did not build the change. It receives the diff, the defect or
 preserved behavior, and the checks, not the builder's conclusions. It reruns the proofs itself,
 confirms they fail without the fix where practical, and reads the code connected to the diff. Its
 scope matches the diff, so it needs no spec, `verification.md`, full-feature pass, deep review or
 QA. A batch gets one Verifier over its whole range; a fix on top of verified work gets one over the
-subsequent diff.
+subsequent diff. Under [agent selection](agent-selection.md), a risk-area Verifier gets the strongest
+available model at high effort; others a mid-tier model at medium effort.
 
-Findings use the [review severities](review-rounds.md#finding-shape). Blocking ones go to a
-remediation commit, and a non-author agent rechecks that delta, halting at three stalled attempts.
+Findings use the [review severities](review-rounds.md#finding-shape). Blocking ones go to remediation
+commits, and one fresh Verifier checks the whole remediation range, not each commit, halting at three
+stalled attempts. A trivial follow-up the Verifier proposed rides with the next batch or qualifies as
+a small local fix.
 
 ## Run and reuse evidence
 

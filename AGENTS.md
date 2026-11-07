@@ -16,7 +16,7 @@ For features, Specify + Design + Tasks here. After approval, dispatch **implemen
 **new** session — never the implementer's chat, never this one if it wrote the code.
 
 For bounded maintenance under `.agents/skills/wtk/references/validation.md`, the active agent edits and validates directly; delegation
-is optional, except the fresh Verifier that reference requires for a fix.
+is optional, except a Verifier that reference's fix verification requires.
 Before delegated work, use [agent selection](.agents/skills/wtk/references/agent-selection.md) to
 choose and state task-specific provider/model/effort settings. Skills supply responsibilities;
 native role files are optional and remain untouched. `wtk-lean/scripts/workflow_route.py` freezes
