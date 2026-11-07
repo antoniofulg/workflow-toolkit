@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-11-07
+
 ### Changed
 
 - Agent roles own model and effort. WTK picks each stage's role from the user's routing table and
