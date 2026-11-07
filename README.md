@@ -109,18 +109,18 @@ owns inheritance, one fresh non-author criteria review before dependent feature 
 independent source/applicability discovery during final verification under every profile.
 Additional specialists require a concrete coverage gap; bounded maintenance keeps its direct route, and a code fix follows fix verification.
 
-Before delegated work, WTK chooses and states task-specific provider/model/effort settings using the
-host's current capabilities, without asking. A choice you name overrides them.
+Before delegated work, WTK picks each stage's role from your routing table and states it, without
+asking; model and effort come from that role's agent file. A role you name overrides the choice.
 [Agent selection](.agents/skills/wtk/references/agent-selection.md) owns overrides,
-inherited controls and unsupported-host handling. Skills supply responsibilities; native role files
-are optional and remain untouched. Fresh checking sessions and handoffs use the current checkout.
+inherited settings and missing-role handling. Skills supply responsibilities; WTK never edits role
+files. Fresh checking sessions and handoffs use the current checkout.
 
 Feature workflow state follows the [artifact lifecycle](.agents/skills/wtk/references/artifacts.md)
 and remains project-owned. The Lean builder runs sequentially, Deep Review is on demand with no
 automatic groups unless a feature requests it. QA uses the project's selected adapter or a capable
 available interface when none is selected. Remediation uses the fixed default `stall_attempts = 3`. When a route
-snapshot is needed, `.specs/features/<feature>/workflow.json` stores selected stage/model/effort
-choices, rationale and host limitations scoped to the feature and checkout.
+snapshot is needed, `.specs/features/<feature>/workflow.json` stores each stage's role and resolved model/effort,
+rationale and host limitations scoped to the feature and checkout.
 Unchanged retries and resume reuse those choices.
 
 ## Recommended companion skills and tools

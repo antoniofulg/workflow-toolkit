@@ -4,7 +4,7 @@ title: Workflow Toolkit contract
 description: Workflow Toolkit replaces the task pipeline with upstream-shaped Lean and modular routes, sequential whole-slice builds, one full-feature Verifier over a shared verify core, and transient feature artifacts.
 tags: [workflow-toolkit, lean, verification, lifecycle]
 status: stable
-generated: { by: claude/opus-5.5, at: 2026-11-06T12:00:00Z }
+generated: { by: claude/opus-5.5, at: 2026-11-07T18:00:00Z }
 sources:
   - id: maintainer-contract
     resource: ../../raw/2026-09-12-workflow-toolkit-contract.md
@@ -42,6 +42,10 @@ sources:
     resource: ../../raw/2026-11-04-fix-verification-and-execution-settings.md
     title: Maintainer decision removing model approval
     last_modified: 2026-11-04
+  - id: role-models
+    resource: ../../raw/2026-11-07-role-owned-models.md
+    title: Maintainer decision moving model and effort to agent roles
+    last_modified: 2026-11-07
   - id: upstream-pin
     resource: ../../../.agents/skills/wtk-lean/.skill-meta.json
     title: Lean skill upstream source metadata
@@ -84,7 +88,7 @@ existed; current runtime and documentation do not preserve those paths.[^state-a
 | Approval | `## Approval` is a written convention; no validator judges it, and the Verifier confirms it names who approved which revision | Markdown cannot authenticate authority, so judgment sits with the independent Verifier.[^generalization] |
 | Public surfaces | Both planning routes load `wtk/references/dx.md` when a public surface changes; compatibility and language follow the project's declared policy | One contract serves Lean and modular planning.[^dx][^generalization] |
 | Profiles and capabilities | Lean profiles are `light`, `standard`, and `ui`, with `standard` as default; security, UI, QA, review, and delivery load when their owning trigger applies | Conditional dispatch is not permission to skip a mandatory check. Deep Review runs on demand.[^state-ad-036][^state-ad-042] |
-| Agent settings | Each project owns native agent files. The coordinator chooses and states provider, model, and effort without human approval, a choice the human names wins, and the feature snapshot records the selected stage settings | WTK does not write project agent files or require a TOML configuration.[^state-ad-042] Feature approval stays separate.[^maintainer-settings] |
+| Agent settings | The coordinator picks each stage's role from the user's routing table and states it without human approval; model and effort come from the role's agent file, a role the human names wins, and the feature snapshot records each role with its resolved settings | WTK does not write agent files, copy the routing table or choose a model.[^state-ad-042][^role-models] Feature approval stays separate.[^maintainer-settings] |
 | Lifecycle | Keep an exact feature directory through independent verification, selected gates, and required promotion; then delete that directory | Foreign pending work, unrequested legacy-plan adaptation, decisions, tests, product docs, QA evidence, and knowledge are outside cleanup.[^artifact-lifecycle][^state-ad-037] |
 
 The Lean source metadata remains part of the drift boundary, not merely attribution: local
@@ -120,6 +124,7 @@ and modular contracts.[^upstream-pin][^maintainer-contract]
 [^state-ad-042]: Native agent metadata owns model and effort; WTK records route identity only.
 [^artifact-lifecycle]: Durable facts move to their owning stores before exact-feature cleanup.
 [^maintainer-settings]: The maintainer removed human approval of provider, model and effort on 2026-11-04.
+[^role-models]: Model and effort belong to agent roles; WTK dispatches by role and records the result.
 [^upstream-pin]: The Lean skill records its upstream source, revision, content hash, and license in `.skill-meta.json`.
 [^generalization]: Decisions 5, 7 and 8: approval judged by the Verifier, `dx.md` location, shared verify core.
 [^verify-core]: The shared obligations and the links from both verify procedures.

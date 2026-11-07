@@ -65,7 +65,7 @@ def _fixture_root(*, native: bool = False) -> Path:
 
 def _stage(**changes) -> dict:
     return {
-        "provider": "codex", "model": "gpt-6.1-sol", "effort": "max",
+        "role": "implementer", "provider": "codex", "model": "gpt-6.1-sol", "effort": "max",
         "rationale": "One coding worker owns the route and canonical tests.",
         "limitations": [], **changes,
     }
@@ -73,7 +73,7 @@ def _stage(**changes) -> dict:
 
 def _selection(root: Path, feature: str = "fixture", *, stages=None) -> dict:
     stages = copy.deepcopy(stages if stages is not None else {"implementation": _stage()})
-    return {"version": 3, "feature": feature, "checkout": str(root), "stages": stages}
+    return {"version": 4, "feature": feature, "checkout": str(root), "stages": stages}
 
 
 def _selection_file(root: Path, selection: dict) -> Path:
@@ -155,7 +155,7 @@ def test_stage_selection_without_native_files() -> None:
         )
         assert result.returncode == 0, result.stderr
         snapshot = json.loads(result.stdout)
-        assert snapshot["version"] == 3
+        assert snapshot["version"] == 4
         assert snapshot["feature"] == "fixture" and snapshot["checkout"] == str(root)
         assert snapshot["stages"] == stages
         assert "approval" not in snapshot
@@ -262,7 +262,7 @@ def test_selection_validation_matrix() -> None:
             assert _resolve(root, selection=_selection(root, stages=selected))["stages"] == selected
         before = _snapshot_path(root).read_bytes()
         invalid_rows = [
-            {"provider": " "}, {"provider": ["codex"]}, {"provider": ""},
+            {"role": ""}, {"role": None}, {"provider": " "}, {"provider": ["codex"]}, {"provider": ""},
             {"model": ""}, {"model": 3}, {"effort": " "}, {"effort": None},
             {"rationale": ""}, {"limitations": "none"}, {"limitations": [""]},
             {"limitations": [False]}, {"model": "inherited"}, {"effort": "inherited"},
@@ -278,7 +278,7 @@ def test_selection_validation_matrix() -> None:
             _reject(root, _selection(root, stages=stages))
             assert _snapshot_path(root).read_bytes() == before
         candidate = _selection(root)
-        candidate["version"] = 3.0
+        candidate["version"] = 4.0
         _reject(root, candidate, error="version")
         assert _snapshot_path(root).read_bytes() == before
     finally:

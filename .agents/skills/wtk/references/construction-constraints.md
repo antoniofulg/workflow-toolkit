@@ -37,7 +37,7 @@ Otherwise use the existing review boundary, not an extra mandatory stop.
 
 Reuse genuine approval on unchanged resume within its scope. Ask targeted acceptance for a new
 user-owned product decision outside that scope; reversible detail and additive noncontradictory
-discoveries do not require blanket reapproval. Provider/model/effort choices in the execution
+discoveries do not require blanket reapproval. Role choices in the execution
 route do not approve feature shape. Local edits/commits do not authorize push, deploy or
 production mutations. Silence, Git history and passing tests supply no approval.
 

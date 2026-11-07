@@ -6,6 +6,10 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Agent roles own model and effort. WTK picks each stage's role from the user's routing table and
+  never chooses or upgrades a model per task; a host without the role stops that dispatch. A risk-area
+  fix and risk Deep Review cohorts go to `verifier-risk`, others to `verifier`. Selection snapshots
+  are version 4 and require a `role` per stage; replace a version 3 selection.
 - Fix verification is proportional to risk. A fresh Verifier still checks every refactor, every
   batch of fixes, and any change touching security, auth, production/deploy/release paths, CI/CD,
   data or migrations. A small local fix outside those areas, covered by a focused test or hosted CI,

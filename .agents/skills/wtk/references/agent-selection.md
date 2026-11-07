@@ -6,24 +6,22 @@
 
 First resolve the task and its proof obligations through `wtk`. Bounded maintenance may stay in the
 current session. Before delegating, assess complexity, risk, affected surfaces, required
-verification profile and the host's actual provider/model/effort controls. Bounded discovery in the
-current session may establish these inputs.
+verification profile and the host's available agent roles. Bounded discovery in the current
+session may establish these inputs.
 
-Use currently advertised host capabilities. If availability or a model's properties need checking,
-consult current official documentation through the project's documentation lookup policy. Record
-the capability source and date in the existing handoff. Select a capable model and effort for each
-task; do not keep a permanent model ranking, price registry or named-role preset as the authority.
-When generic dispatch supports the requested settings, use it instead of an obsolete role preset.
+Dispatch by role. Pick each stage's role from the routing table in the user's or project's agent
+instructions (for example `implementer`, `implementer-risk`, `verifier`, `verifier-risk`); risk areas
+are those of [fix verification](validation.md#fix-verification). Model and effort come from that
+role's host agent file. Never choose, override or upgrade them per task. WTK keeps no copy of the
+routing table or model names.
 
 State one consolidated table at dispatch:
 
-| Stage | Provider | Model | Effort | Task rationale | Host limitations |
-| --- | --- | --- | --- | --- | --- |
-| Each needed stage | Advertised provider | Exact available model or `inherited` | Supported effort or `inherited` | One sentence tied to this task | Named limits, or none |
+| Stage | Role | Provider | Model | Effort | Task rationale | Host limitations |
+| --- | --- | --- | --- | --- | --- | --- |
+| Each needed stage | Role from the routing table | Host | Resolved from the role's agent file or `inherited` | Resolved from the role's agent file or `inherited` | One sentence tied to this task | Named limits, or none |
 
-Explain the tradeoff using the task: bounded tracing can use less effort; cross-surface changes,
-security boundaries and independent verification may need more. Selection never reduces the
-approved profile, checks, QA scope or independence. Omit inapplicable stages, or mark them not run;
+Selection never reduces the approved profile, checks, QA scope or independence. Omit inapplicable stages, or mark them not run;
 do not create an agent or load every skill merely to fill the table.
 
 | Stage key | Responsibility supplied by the selected skill |
@@ -38,20 +36,16 @@ do not create an agent or load every skill merely to fill the table.
 | `remediation` | Authorized fixes under the active workflow and review policy |
 | `delivery` | `wtk-ship` within the user's delivery authority |
 
-The current coordinator's model/effort may be fixed by its host session. State the actual settings
-when exposed and that limitation in the selection table. Requested settings apply only to supported
-subsequent dispatches. If a control is unavailable, use explicit `inherited` configuration and name
-the uncontrolled field.
+Record the model and effort each role resolved to, read from its agent file or the host's badge.
+When the host exposes neither, record `inherited` and name the unknown field.
 
 ## Dispatch without asking
 
-Do not ask the human to approve provider, model or effort. State the selection and dispatch. A
-choice the human names wins: preserve it exactly and check its current host support.
+Do not ask the human to approve roles. State the selection and dispatch. A role the human names
+wins.
 
-Reuse a selection for unchanged retries, resume and handoff. If a selected setting is unsupported,
-choose a supported one and state the change; if the human named it, stop that dispatch, name the
-missing control or model, and ask for a supported choice. Never silently substitute another
-provider, model, effort, runtime or role preset.
+Reuse a selection for unchanged retries, resume and handoff. If a host lacks the selected role,
+stop that dispatch and name the missing role. Never substitute another role, model or effort.
 
 ## Freeze a feature selection
 
@@ -59,14 +53,15 @@ For a feature needing a snapshot, write a local selection JSON:
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "feature": "feature-slug",
   "checkout": "/absolute/path/to/current/checkout",
   "stages": {
     "implementation": {
+      "role": "implementer",
       "provider": "host-provider",
-      "model": "host-advertised-model",
-      "effort": "host-supported-effort",
+      "model": "model-from-role-file",
+      "effort": "effort-from-role-file",
       "rationale": "This task needs one sequential coding worker.",
       "limitations": [],
       "scope": "The approved feature checks"
@@ -75,9 +70,9 @@ For a feature needing a snapshot, write a local selection JSON:
 }
 ```
 
-Replace the example values with the actual choices; they are not model recommendations.
+Replace the example values with the actual role and the settings it resolved to.
 `checkout` is the resolved current checkout path. Include only selected stage keys from the table.
-Each stage requires nonempty provider, model, effort and rationale plus a list of nonempty named
+Each stage requires nonempty role, provider, model, effort and rationale plus a list of nonempty named
 limitations; `scope` is an optional nonempty string. The provider names the actual project-selected
 host mechanism; the snapshot does not impose a vendor list. For `model: inherited` or
 `effort: inherited`, include a limitation starting with `model:` or `effort:` respectively,
@@ -88,7 +83,7 @@ python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
   --root . --feature feature-slug --selection-file /path/to/selection.json
 ```
 
-Exit 0 returns a version 3 `workflow.json` with the exact stages, feature/checkout scope, Git
+Exit 0 returns a version 4 `workflow.json` with the exact stages, feature/checkout scope, Git
 revision, approved verification profile, sequential builder and on-demand Deep Review.
 Exit 2 rejects malformed, stale, foreign or unsafe input without replacing prior state.
 Resume with the same command or omit `--selection-file` to validate and reuse the frozen snapshot.
@@ -100,9 +95,7 @@ there is no migration or native-file routing mode. Existing native files stay un
 
 Before each dispatch, revalidate feature/checkout scope and current support for its selected row.
 Pass the selected stage's skill, approved artifacts, bounded responsibility and current checkout to
-the existing host mechanism, using its real model/effort controls. A named role is optional only
-when it can honor the exact selected settings; its preset cannot override the selection. If the
-host cannot honor the row, apply the unsupported-setting rule above.
+the selected role. If the host lacks the role, apply the missing-role rule above.
 
 A fresh session supplies independent context in the current checkout. Keep that checkout for
 handoffs and checking; a separate checkout needs a concrete approved exception. Controlled
