@@ -3,9 +3,9 @@
 **Read when:** executing accepted Deep Review jobs through a project-selected external command.
 
 Use the runtime and invocation adopted in project guidelines or explicitly selected for this task.
-Verify its advertised model/effort controls against the selected `deep_review` row from
-[agent selection](../../wtk/references/agent-selection.md). A command that cannot represent that
-row blocks the affected dispatch until agent selection resolves it. No vendor or transport
+It runs the selected `deep_review` role from
+[agent selection](../../wtk/references/agent-selection.md); a command that cannot run that role
+blocks the affected dispatch. No vendor or transport
 is required by this skill.
 
 Before starting supporting application/test services, apply
@@ -42,5 +42,5 @@ host, omit `--metrics` or supply an equivalent adapter. Review execution never d
   provider's documented signals.
 - Exit 1: inspect `runs/<label>.attempt-*.err` and invalid output artifacts before retrying.
   Repair the failure without dropping unfinished coverage.
-- Missing runtime or unsupported model/control: name the gap and follow agent selection's
-  unsupported-setting rule. Never substitute a provider, model, effort or transport silently.
+- Missing runtime or role: name the gap and stop that dispatch. Never substitute a provider, role,
+  model, effort or transport.

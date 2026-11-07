@@ -2,6 +2,7 @@
 
 ## 2026-11-07
 
+* **Ingestion**: Added the maintainer's role-owned model decision to `raw/` and updated [Fix verification](/decisions/fix-verification.md) and [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md): WTK dispatches by role, risk Verifiers use `verifier-risk`, and model and effort come from the role's agent file.
 * **Ingestion**: Added consuming-project Verifier cost and yield evidence to `raw/` and updated [Fix verification](/decisions/fix-verification.md) for the proportional rule: small covered local fixes rely on hosted CI, and remediation gets one Verifier per range.
 * **Lint**: Re-read the reworded README and `wtk` SKILL lines and bumped `last_modified` in [Artifact ownership](/design/artifact-ownership.md) and [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md); their claims still hold.
 

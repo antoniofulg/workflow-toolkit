@@ -147,7 +147,7 @@ python3 .agents/skills/wtk-lean/scripts/workflow_route.py \
   --root . --feature <feature-slug> --selection-file <selection.json>
 ```
 
-The version 3 route records selected stage/model/effort choices scoped to the
+The version 4 route records each stage's role and resolved model/effort, scoped to the
 feature and current checkout. It derives the approved verification profile, keeps Deep Review on
 demand and the Lean builder sequential.
 Unchanged retries and resume reuse the selection through the same helper.

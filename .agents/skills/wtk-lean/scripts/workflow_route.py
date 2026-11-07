@@ -17,7 +17,7 @@ STAGES = (
     "planning", "exploration", "design", "implementation", "verification", "qa",
     "deep_review", "remediation", "delivery",
 )
-SNAPSHOT_VERSION = 3
+SNAPSHOT_VERSION = 4
 SELECTION_KEYS = {"version", "feature", "checkout", "stages"}
 SNAPSHOT_KEYS = SELECTION_KEYS | {
     "git_head", "profile", "verification_profile",
@@ -112,7 +112,7 @@ def _validate_selection(root: Path, feature: str, selection: Any) -> dict[str, A
     if not isinstance(selection, dict) or set(selection) != SELECTION_KEYS:
         raise _error("selection has an incomplete schema")
     if type(selection["version"]) is not int or selection["version"] != SNAPSHOT_VERSION:
-        raise _error("selection version is stale; supply a version 3 selection")
+        raise _error("selection version is stale; supply a version 4 selection")
     if selection["feature"] != feature:
         raise _error("selection feature does not match the requested feature")
     if selection["checkout"] != str(root):
@@ -121,10 +121,10 @@ def _validate_selection(root: Path, feature: str, selection: Any) -> dict[str, A
     if not isinstance(stages, dict) or not stages or not set(stages) <= set(STAGES):
         raise _error("selection stages must be a nonempty object of supported stage keys")
     for stage, row in stages.items():
-        required = {"provider", "model", "effort", "rationale", "limitations"}
+        required = {"role", "provider", "model", "effort", "rationale", "limitations"}
         if not isinstance(row, dict) or not required <= set(row) <= required | {"scope"}:
             raise _error(f"selection stage {stage!r} has an incomplete schema")
-        for field in ("provider", "model", "effort", "rationale"):
+        for field in ("role", "provider", "model", "effort", "rationale"):
             if not _nonempty(row[field]):
                 raise _error(f"selection stage {stage!r} requires a nonempty {field}")
         if "scope" in row and not _nonempty(row["scope"]):

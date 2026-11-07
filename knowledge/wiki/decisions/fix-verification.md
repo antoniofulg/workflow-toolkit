@@ -1,14 +1,18 @@
 ---
 type: Decision
 title: Fix verification
-description: Refactors, fix batches and risk-area changes get a fresh diff-scoped Verifier while a small covered local fix relies on hosted CI, and choosing that agent's model needs no human approval.
+description: Refactors, fix batches and risk-area changes get a fresh diff-scoped Verifier while a small covered local fix relies on hosted CI, and the Verifier's role, not a per-task choice, sets its model.
 tags: [verification, independence, remediation, execution-settings]
 status: stable
-generated: { by: claude/opus-5.5, at: 2026-11-05T01:46:47Z }
+generated: { by: claude/opus-5.5, at: 2026-11-07T18:00:00Z }
 sources:
   - id: proportional-evidence
     resource: ../../raw/2026-11-07-proportional-fix-verification.md
     title: Consuming-project evidence for proportional fix verification
+    last_modified: 2026-11-07
+  - id: role-models
+    resource: ../../raw/2026-11-07-role-owned-models.md
+    title: Maintainer decision moving model and effort to agent roles
     last_modified: 2026-11-07
   - id: maintainer-decisions
     resource: ../../raw/2026-11-04-fix-verification-and-execution-settings.md
@@ -25,7 +29,7 @@ sources:
   - id: agent-selection
     resource: ../../../.agents/skills/wtk/references/agent-selection.md
     title: Agent selection — dispatch without asking
-    last_modified: 2026-11-06
+    last_modified: 2026-11-07
 ---
 
 # Fix verification
@@ -62,7 +66,9 @@ passed 18 focused repeats and then failed in a wider lane.[^maintainer-decisions
 
 A rule that adds a Verifier to many fixes would also add a model question to each. The maintainer
 removed the human approval of provider, model and effort instead of adding a timeout or a standing
-approval.[^maintainer-decisions][^agent-selection]
+approval.[^maintainer-decisions] A later decision moved model and effort into agent roles: a
+risk-area Verifier is `verifier-risk`, any other `verifier`, and no WTK run picks a model per
+task.[^role-models][^agent-selection]
 
 This does not touch feature approval: `## Approval` receipts still record the user's decision on
 feature shape. [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md) records the
@@ -71,6 +77,7 @@ because a Verifier here checks one diff and does not make Deep Review a default 
 
 [^proportional-evidence]: Reported Verifier cost and yield, and the proportional rule the maintainer approved.
 [^maintainer-decisions]: The original every-fix rule, its reach, and the removal of model approval.
+[^role-models]: Model and effort come from the role's agent file; risk Verifiers use `verifier-risk`.
 [^validation]: `## Fix verification` owns the Verifier's scope and exceptions.
 [^review-rounds]: Owns the filed-issue flow, Minor-only batches and remediation checks.
-[^agent-selection]: `## Dispatch without asking` owns selection, human overrides and unsupported settings.
+[^agent-selection]: `## Dispatch without asking` owns role selection, human overrides and missing roles.

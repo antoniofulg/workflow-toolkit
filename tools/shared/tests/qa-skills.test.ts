@@ -544,7 +544,7 @@ describe("configurable review policy", () => {
     expect(readme).toMatch(/Agent selection.*agent-selection\.md/);
     expect(readme).toContain("fixed default `stall_attempts = 3`");
     expect(readme).toContain(".specs/features/<feature>/workflow.json");
-    expect(readme).toMatch(/selected stage\/model\/effort/);
+    expect(readme).toMatch(/stage's role and resolved model\/effort/);
     expect(reviewRounds).toContain("wtk-deep-review** (resolved implementation groups)");
     expect(reviewRounds).not.toContain("wtk-deep-review** (every slice)");
     const finalGroupInstruction =

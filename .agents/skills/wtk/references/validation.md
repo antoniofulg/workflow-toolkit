@@ -84,8 +84,8 @@ preserved behavior, and the checks, not the builder's conclusions. It reruns the
 confirms they fail without the fix where practical, and reads the code connected to the diff. Its
 scope matches the diff, so it needs no spec, `verification.md`, full-feature pass, deep review or
 QA. A batch gets one Verifier over its whole range; a fix on top of verified work gets one over the
-subsequent diff. Under [agent selection](agent-selection.md), a risk-area Verifier gets the strongest
-available model at high effort; others a mid-tier model at medium effort.
+subsequent diff. Under [agent selection](agent-selection.md), a risk-area fix goes to `verifier-risk`; any other to
+`verifier`.
 
 Findings use the [review severities](review-rounds.md#finding-shape). Blocking ones go to remediation
 commits, and one fresh Verifier checks the whole remediation range, not each commit, halting at three
