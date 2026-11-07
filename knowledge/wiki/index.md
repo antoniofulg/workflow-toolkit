@@ -27,7 +27,7 @@ Add a concept when a source earns one.
 # Concepts
 
 * [Workflow Toolkit contract](decisions/workflow-toolkit-contract.md) - Workflow Toolkit replaces the task pipeline with upstream-shaped Lean and modular routes, sequential whole-slice builds, one full-feature Verifier over a shared verify core, and transient feature artifacts.
-* [Fix verification](decisions/fix-verification.md) - Every fix, correction or refactor of executable code gets a fresh diff-scoped Verifier, and choosing that agent's model needs no human approval.
+* [Fix verification](decisions/fix-verification.md) - Refactors, fix batches and risk-area changes get a fresh diff-scoped Verifier while a small covered local fix relies on hosted CI, and choosing that agent's model needs no human approval.
 * [Deep review cadence](decisions/deep-review-cadence.md) - Deep Review runs on demand through `wtk-deep-review` and does not block the default delivery path; when it runs, a violated project-declared invariant blocks.
 * [QA at feature close](decisions/qa-at-feature-close.md) - Qualifying public changes receive one QA cycle over the integrated feature; no slice runs QA, and one independent Verifier proves the complete feature first.
 * [Workflow runtime ownership](architecture/workflow-runtime-ownership.md) - Keep WTK runtime inside its owning skills and preserve project-owned instructions, agent settings, and product context.

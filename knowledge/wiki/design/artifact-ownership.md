@@ -14,7 +14,7 @@ sources:
   - id: readme
     resource: ../../../README.md
     title: Public artifact and companion guidance
-    last_modified: 2026-11-06
+    last_modified: 2026-11-07
   - id: memory
     resource: ../../../.agents/skills/wtk-lean/references/memory.md
     title: Lean memory — project decision-store ownership
