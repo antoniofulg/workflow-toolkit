@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Fix verification is proportional to risk. A fresh Verifier still checks every refactor, every
+  batch of fixes, and any change touching security, auth, production/deploy/release paths, CI/CD,
+  data or migrations. A small local fix outside those areas, covered by a focused test or hosted CI,
+  skips it. Review remediation gets one Verifier over the whole remediation range, not one per commit.
+
 ## [5.0.0] - 2026-11-06
 
 ### Added

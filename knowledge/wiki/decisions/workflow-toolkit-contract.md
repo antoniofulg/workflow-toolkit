@@ -33,7 +33,7 @@ sources:
   - id: toolkit-router
     resource: ../../../.agents/skills/wtk/SKILL.md
     title: Workflow Toolkit route contract
-    last_modified: 2026-11-06
+    last_modified: 2026-11-07
   - id: artifact-lifecycle
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact Lifecycle

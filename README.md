@@ -107,7 +107,7 @@ Both feature paths read applicable project guidance and required driver instruct
 deriving criteria. [Project requirements](.agents/skills/wtk/references/project-requirements.md)
 owns inheritance, one fresh non-author criteria review before dependent feature build, and
 independent source/applicability discovery during final verification under every profile.
-Additional specialists require a concrete coverage gap; bounded maintenance keeps its direct route, and a code fix gets a fresh Verifier.
+Additional specialists require a concrete coverage gap; bounded maintenance keeps its direct route, and a code fix follows fix verification.
 
 Before delegated work, WTK chooses and states task-specific provider/model/effort settings using the
 host's current capabilities, without asking. A choice you name overrides them.
