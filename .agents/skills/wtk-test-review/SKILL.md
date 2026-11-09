@@ -33,8 +33,8 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
 
 1. **Scope.** Resolve the named module, feature or page to its source files and its tests at every
    layer. If the scope cannot be resolved, ask for it; do not widen to the repository.
-2. **Inventory.** List each test per layer with the claim or invariant it proves, using the
-   [test contract](../wtk/references/test-contract.md). A test with no claim is a finding. Record
+2. **Inventory.** List each test per layer (unit, component, integration, e2e) with the claim or
+   invariant it proves, using the [test contract](../wtk/references/test-contract.md). A test with no claim is a finding. Record
    each e2e test's median duration and retry-pass count from recent CI where available, and review
    in order of cost × flakiness.
 3. **Mutate.** Run the [mutation](../wtk/references/test-contract.md#mutation) step over the scope's
@@ -45,11 +45,13 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
    - **killing** - kills at least one mutant no other test kills;
    - **redundant** - kills no mutant, or only mutants another test also kills; propose at most one
      removal per equal-kill set, keeping its lowest-layer member, and none without a mutation tool;
-   - **e2e replaceable by lower layer** - under the
-     [lowest-layer rule](../wtk/references/test-contract.md#choosing-the-layer), with each e2e
-     assertion mapped to the unit or integration test that asserts the same outcome through the
-     same contract, or marked as having none; never a `@smoke` cohort member or the sole proof of a
-     journey or of wiring;
+   - **e2e replaceable by component** - every assertion is a UI state under the
+     [lowest-layer rule](../wtk/references/test-contract.md#choosing-the-layer), each mapped to
+     the component test that asserts it with the server stubbed, or marked as having none;
+   - **e2e replaceable by lower layer** - under the same rule, with each e2e assertion mapped to
+     the unit or integration test that asserts the same outcome through the same contract, or
+     marked as having none; never a `@smoke` cohort member or the sole proof of a journey or of
+     wiring;
    - **forbidden subject** - copy, snapshots, config or CSS, unless that artifact is the contract;
    - **artifact-only** - its only effect is producing artifacts no assertion or gate reads; a
      removal candidate without a mutation run, since it kills nothing by construction;

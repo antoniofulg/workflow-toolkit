@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- The layer table names a component layer. A UI-state assertion defaults to a component test, each
+  end-to-end proof states its browser-only reason in Plan and Checks, a missing component harness
+  is recorded as a Plan gap instead of falling back to end-to-end, and the removal mapping accepts
+  component tests as lower-layer proof. `wtk-test-review` classifies **e2e replaceable by
+  component** and confirms title-based audit classes from the assertions.
+
 ## [6.1.0] - 2026-11-09
 
 ### Changed

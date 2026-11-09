@@ -999,7 +999,9 @@ describe("testing policy", () => {
     const normalized = testContract.replace(/\s+/g, " ");
     expect(testContract).toMatch(/^## Pruning$/m);
     expect(testContract).toMatch(/^## Mutation$/m);
-    expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit or integration test can prove.");
+    expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit, component or integration test can prove.");
+    expect(normalized).toContain("A UI-state assertion defaults to a component test.");
+    expect(testContract).toMatch(/^\| Component \| UI states in a simulated DOM/m);
     expect(normalized).toContain("Never remove the only proof of cross-component wiring.");
     expect(normalized).toContain(
       "Never prune a member of the permanent security smoke suite; any other SEC proof needs a named lower-layer replacement.",
@@ -1067,8 +1069,10 @@ describe("test review skill", () => {
     expect(source).not.toContain("disable-model-invocation");
     expect(source).toContain("../wtk/references/test-contract.md#pruning");
     expect(source).toContain("../wtk/references/validation.md#test-tiers");
+    expect(source).toContain("e2e replaceable by component");
     expect(source).toContain("e2e replaceable by lower layer");
     expect(readRepositoryFile(".agents/skills/wtk/SKILL.md")).toContain("`wtk-test-review`");
     expect(readRepositoryFile("README.md")).toContain("`wtk-test-review`");
   });
 });
+
