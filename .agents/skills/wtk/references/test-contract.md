@@ -132,7 +132,7 @@ Removing a redundant test is its own reviewed change, never part of a fix or a r
    - (c) a test over a forbidden subject: copy, snapshots, config or CSS, or whose only effect is
      producing artifacts no assertion or gate reads;
    - (d) a duplicate suite.
-4. For each candidate, map every unique assertion to the proof that is kept.
+4. Map every candidate assertion, in every parameterised case, to the kept proof's own assertion.
 5. Delete in its own `test(...)` commit, never inside a fix.
 6. Re-run mutation over the scope, or without a tool the manual faults the removed test used to
    kill. The kill set must not shrink; a new survivor reverts that deletion.

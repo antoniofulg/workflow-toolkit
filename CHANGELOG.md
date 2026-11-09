@@ -9,8 +9,10 @@ All notable changes to this project are documented here.
 - `wtk-test-audit`, an agent-invocable skill that ranks a whole suite by CI cost and flakiness,
   classifies every expensive test (REMOVE, ARTIFACT-ONLY, TO-COMPONENT, TO-INTEGRATION, TRIM, KEEP)
   by the cheapest layer that proves it, and plans execution batches. It proposes only; execution
-  follows pruning. The `test-audit` project setting names its CI log source, runner summary format,
-  test roots and lane layout. The full set is now 15 skills.
+  follows pruning, with per-class estimate accuracy, parameterised-case proof maps, ratchet
+  baseline lifecycle and runner parity recorded from field use. The `test-audit` project setting
+  names its CI log source, runner summary format, test roots and lane layout. The full set is now
+  15 skills.
 
 ### Changed
 

@@ -8,6 +8,8 @@
   attempt hides the retry-passes that define a flake.
 - Strip CI timestamps first, then parse the runner's final summary blocks: failed, flaky or passed
   on retry, did not run. Test the parser against a real log excerpt before trusting its counts.
+  When the CI step summary can carry the runner's failed and flaky list, write it there and read
+  that instead of scraping logs.
 
 ## Aggregation
 
