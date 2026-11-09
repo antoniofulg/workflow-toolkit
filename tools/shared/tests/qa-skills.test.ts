@@ -803,7 +803,7 @@ describe("adoption and public setup", () => {
       skill,
       readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").match(/^  version: '(.+)'$/m)?.[1],
     ]);
-    expect(skillVersions.length).toBe(14);
+    expect(skillVersions.length).toBe(15);
     expect(skillVersions).toEqual(skillVersions.map(([skill]) => [skill, manifest.version]));
     const agentBlockedSkills = readdirSync(skillsRoot).filter((skill) =>
       readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").includes("disable-model-invocation"),
@@ -999,7 +999,9 @@ describe("testing policy", () => {
     const normalized = testContract.replace(/\s+/g, " ");
     expect(testContract).toMatch(/^## Pruning$/m);
     expect(testContract).toMatch(/^## Mutation$/m);
-    expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit or integration test can prove.");
+    expect(normalized).toContain("Do not write an end-to-end test for a behaviour a unit, component or integration test can prove.");
+    expect(normalized).toContain("A UI-state assertion defaults to a component test.");
+    expect(testContract).toMatch(/^\| Component \| UI states in a simulated DOM/m);
     expect(normalized).toContain("Never remove the only proof of cross-component wiring.");
     expect(normalized).toContain(
       "Never prune a member of the permanent security smoke suite; any other SEC proof needs a named lower-layer replacement.",
@@ -1024,7 +1026,7 @@ describe("testing policy", () => {
     const settings = readRepositoryFile(owner);
     expect(settings).toMatch(/^## wtk-settings$/m);
     for (const key of ["tiers", "mutation", "quarantine", "qa root", "compatibility", "language",
-      "commit validator", "execution metrics", "merge", "test-review scopes"]) {
+      "commit validator", "execution metrics", "merge", "test-review scopes", "test-audit"]) {
       expect(settings).toContain(`\`${key}\``);
     }
     const linksTo = (path: string) =>
@@ -1038,6 +1040,7 @@ describe("testing policy", () => {
       ".agents/skills/wtk-lean/references/build.md",
       ".agents/skills/wtk-ship/SKILL.md",
       ".agents/skills/wtk-test-review/SKILL.md",
+      ".agents/skills/wtk-test-audit/SKILL.md",
       ".agents/skills/wtk-setup/references/interview.md",
     ]) {
       expect([path, linksTo(path)]).toEqual([path, true]);
@@ -1067,8 +1070,33 @@ describe("test review skill", () => {
     expect(source).not.toContain("disable-model-invocation");
     expect(source).toContain("../wtk/references/test-contract.md#pruning");
     expect(source).toContain("../wtk/references/validation.md#test-tiers");
+    expect(source).toContain("e2e replaceable by component");
     expect(source).toContain("e2e replaceable by lower layer");
     expect(readRepositoryFile(".agents/skills/wtk/SKILL.md")).toContain("`wtk-test-review`");
     expect(readRepositoryFile("README.md")).toContain("`wtk-test-review`");
+  });
+});
+
+describe("test audit skill", () => {
+  it("is a suite-wide, proposal-only audit routed from wtk that feeds the scoped review", () => {
+    const path = ".agents/skills/wtk-test-audit/SKILL.md";
+    const source = readRepositoryFile(path);
+    const { name, description } = skillMetadata(path);
+    expect(name).toBe("wtk-test-audit");
+    expect(description).toContain("Use when");
+    expect(description).toContain("not reviewing one scope with mutation");
+    expect(source).not.toContain("disable-model-invocation");
+    expect(source).toContain("**Propose only.**");
+    expect(source).toContain("../wtk/references/test-contract.md#choosing-the-layer");
+    expect(source).toContain("../wtk/references/test-contract.md#pruning");
+    expect(source).toContain("references/cost-ranking.md");
+    for (const cls of ["REMOVE", "ARTIFACT-ONLY", "TO-COMPONENT", "TO-INTEGRATION", "TRIM", "KEEP"]) {
+      expect(source).toContain(`**${cls}**`);
+    }
+    expect(source.split("\n").length).toBeLessThanOrEqual(160);
+    expect(existsSync(join(repositoryRoot, ".agents/skills/wtk-test-audit/references/cost-ranking.md"))).toBe(true);
+    expect(readRepositoryFile(".agents/skills/wtk/SKILL.md")).toContain("`wtk-test-audit`");
+    expect(readRepositoryFile("README.md")).toContain("`wtk-test-audit`");
+    expect(readRepositoryFile(".agents/skills/wtk-test-review/SKILL.md")).toContain("../wtk-test-audit/SKILL.md");
   });
 });

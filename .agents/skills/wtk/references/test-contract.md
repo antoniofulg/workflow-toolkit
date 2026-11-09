@@ -44,26 +44,26 @@ The native profile owns mutation depth: `standard` and `ui` inject faults; `ligh
 
 | Layer | Use for | Cost |
 | --- | --- | --- |
-| Unit | Domain rules, validation, pure transformation, every error path | Cheapest |
-| Integration | Anything crossing a boundary: repository, HTTP handler, queue | Moderate |
-| End-to-end | A complete user journey through the real stack | Most expensive — deliberately scarce |
+| Unit | Pure rules, validation, transformation, every error path | Cheapest |
+| Component | UI states in a simulated DOM with the server stubbed: copy, enabled/disabled, empty/loading/error, validation messages, a click changing state, dialogs, ARIA, conditional rendering by role or plan | Cheap |
+| Integration | Crossing a boundary: repository, handler, queue; rules, atomicity, permissions, tenancy, rows written or refused | Moderate |
+| End-to-end | Only what needs the real browser and stack: real layout (viewport, overflow, scroll, geometry), hydration, focus across navigation, drag and drop, service workers, cross-tab, OAuth redirects, real network failure, and one main journey per feature | Most expensive, deliberately scarce |
 
-Another layer earns a test only for a distinct failure, such as persistence, serialization,
-authorization wiring, or browser interaction. Keep real end-to-end journeys. A browser test asserts
-what the user perceives: visible state, focus, navigation and the message shown. Assert data effects
-(rows written, refused or unchanged) and input/error matrices at their lower-layer owner; never
-replay them through the browser.
-
-**Lowest layer that proves it.** Do not write an end-to-end test for a behaviour a unit or
-integration test can prove. End-to-end is reserved for what lower layers cannot reach: real browser
-or runtime wiring across processes, a user journey crossing several services, and the `@smoke`
-cohort. Plan and Checks state that reason whenever they choose end-to-end as a proof layer.
+**Lowest layer that proves it.** Do not write an end-to-end test for a behaviour a unit, component
+or integration test can prove. A UI-state assertion defaults to a component test. Data effects
+(rows written, refused or unchanged) and input/error matrices belong to their lower-layer owner and
+are never replayed through the browser. A second layer earns a test only for a distinct failure it
+alone shows, such as persistence, serialization or authorization wiring. Per feature, end-to-end
+holds one main journey, the `@smoke` cohort and the claims with a browser-only reason from the
+table; Plan and Checks state that reason for every end-to-end proof. A project without a
+component-test harness records that gap in Plan instead of falling back to end-to-end.
 
 Before replacing or removing an existing end-to-end test on this ground, prove the coverage: map
-every assertion in it to a unit or integration test asserting the same outcome through the same
-contract, and confirm with a scoped [mutation](#mutation) run, or manual faults, that the lower
-tests kill the mutants the end-to-end test killed. An assertion with no lower-layer proof keeps the
-end-to-end test, or gets its lower test first. Never remove the only proof of cross-component wiring.
+every assertion in it to a unit, component or integration test asserting the same outcome through
+the same contract, and confirm with a scoped [mutation](#mutation) run, or manual faults, that the
+lower tests kill the mutants the end-to-end test killed. An assertion with no lower-layer proof
+keeps the end-to-end test, or gets its lower test first. Never remove the only proof of
+cross-component wiring.
 
 Use the real collaborator when it is fast and deterministic in the test, such as an in-process
 value, a local database or a filesystem in a temporary directory. Fake one only when it is slow,

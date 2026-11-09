@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- `wtk-test-audit`, an agent-invocable skill that ranks a whole suite by CI cost and flakiness,
+  classifies every expensive test (REMOVE, ARTIFACT-ONLY, TO-COMPONENT, TO-INTEGRATION, TRIM, KEEP)
+  by the cheapest layer that proves it, and plans execution batches. It proposes only; execution
+  follows pruning. The `test-audit` project setting names its CI log source, runner summary format,
+  test roots and lane layout. The full set is now 15 skills.
+
+### Changed
+
+- The layer table names a component layer. A UI-state assertion defaults to a component test, each
+  end-to-end proof states its browser-only reason in Plan and Checks, a missing component harness
+  is recorded as a Plan gap instead of falling back to end-to-end, and the removal mapping accepts
+  component tests as lower-layer proof. `wtk-test-review` classifies **e2e replaceable by
+  component** and confirms title-based audit classes from the assertions.
+
 ## [6.1.0] - 2026-11-09
 
 ### Changed

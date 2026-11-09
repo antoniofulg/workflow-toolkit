@@ -20,11 +20,12 @@ optional; an absent key takes the default shown. The Lean `profile` stays under 
 - execution metrics: on
 - merge: stop at the pull request; two approving reviews
 - test-review scopes: billing page = `src/billing/`, `tests/billing/`
+- test-audit: logs `<CI run log source>`; summary `<runner summary format>`; component `<path>` · integration `<path>` · e2e `<path>`; lanes `<shard layout, workers>`
 ```
 
 | Key | Used by | Default when absent |
 | --- | --- | --- |
-| `tiers` | [Test tiers](validation.md#test-tiers), `wtk-ship`, `wtk-test-review` | The stack's own test commands; T2 is the full e2e suite wherever delivery runs it |
+| `tiers` | [Test tiers](validation.md#test-tiers), `wtk-ship`, `wtk-test-review`, `wtk-test-audit` | The stack's own test commands; T2 is the full e2e suite wherever delivery runs it |
 | `mutation` | [Mutation](test-contract.md#mutation), `wtk-test-review` | Manual faults; no numeric threshold |
 | `quarantine` | [Test tiers](validation.md#test-tiers), the verification report | No quarantine; a flaky test is a failure |
 | `qa root` | [QA scenarios](../../wtk-qa/references/qa-scenarios.md) | `docs/qa/` |
@@ -32,4 +33,5 @@ optional; an absent key takes the default shown. The Lean `profile` stays under 
 | `commit validator` | Lean [build](../../wtk-lean/references/build.md) | `check_commit.py` |
 | `execution metrics` | [Execution metrics](execution-metrics.md) | Off |
 | `merge` | `wtk-ship` | Ship authorizes push, one pull request and merge; branch protection and required checks still apply |
-| `test-review scopes` | `wtk-test-review` | Scope paths found by tracing the code |
+| `test-review scopes` | `wtk-test-review`, `wtk-test-audit` | Scope paths found by tracing the code |
+| `test-audit` | `wtk-test-audit` | The hosting provider's run logs, the runner's own summary, test roots traced from the code, one lane |

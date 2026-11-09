@@ -54,8 +54,10 @@ a second proof, and it is a question about coverage rather than about test style
 as a response at a boundary is not settled by a test that never crosses it. A claim about a
 decision table is not settled by one path through it. When the claim and the proof sit at
 different levels, either split the claim or name the second proof - never let the level slide to
-whichever is cheaper to write. A proof at end-to-end states the reason the
-[lowest-layer rule](../../wtk/references/test-contract.md#choosing-the-layer) requires.
+whichever is cheaper to write. A UI-state claim is proven at the component layer; a proof at
+end-to-end names the browser-only reason the
+[lowest-layer rule](../../wtk/references/test-contract.md#choosing-the-layer) requires, and the
+review rejects one without it.
 
 **Obligations add up rather than substitute.** A test proves the layer where it *asserts*, not
 the layers it happens to *pass through*. An end-to-end test that traverses a branch exercises one
