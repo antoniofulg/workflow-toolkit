@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [6.1.0] - 2026-11-09
+
 ### Changed
 
 - Paired design captures are produced once into ignored scratch, never by a gate test or a helper

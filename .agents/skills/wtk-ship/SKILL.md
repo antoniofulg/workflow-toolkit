@@ -3,7 +3,7 @@ name: wtk-ship
 description: Ship a proven feature through verification, local gates, lifecycle closeout, and authorized branch delivery. Use when asked to ship a proven feature; not unverified work, deploys or releases.
 argument-hint: "[the work, in your own words]"
 metadata:
-  version: '6.0.0'
+  version: '6.1.0'
 ---
 
 # Workflow Toolkit Ship
