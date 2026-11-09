@@ -32,7 +32,9 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
 ## Review
 
 1. **Scope.** Resolve the named module, feature or page to its source files and its tests at every
-   layer. If the scope cannot be resolved, ask for it; do not widen to the repository.
+   layer. If the scope cannot be resolved, ask for it; do not widen to the repository. A suite-wide
+   [test audit](../wtk-test-audit/SKILL.md) may hand over the scope with title-based classes;
+   this review confirms or overturns them from the assertions.
 2. **Inventory.** List each test per layer (unit, component, integration, e2e) with the claim or
    invariant it proves, using the [test contract](../wtk/references/test-contract.md). A test with no claim is a finding. Record
    each e2e test's median duration and retry-pass count from recent CI where available, and review

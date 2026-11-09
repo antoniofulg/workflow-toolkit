@@ -20,6 +20,7 @@ unit; phase skills are listed for discoverability and are not a supported subset
 | `wtk-implement` | Implement an approved modular task. |
 | `wtk-reuse-review` | Check implementation ownership and reuse. |
 | `wtk-test-review` | Review a scope's tests with scoped mutation and propose removals and missing tests. |
+| `wtk-test-audit` | Rank a suite by CI cost and flakiness and classify each test by its cheapest proving layer. |
 | `wtk-knowledge-check` | Check a project's optional `knowledge/` bundle. |
 | `wtk-qa`, `wtk-qa-plan`, `wtk-qa-execute` | Plan and execute user-visible QA. |
 | `wtk-deep-review` | Run an independent implementation review. |
@@ -33,14 +34,15 @@ Choose an installer supported by your agent host. For example, the
 npx skills@latest add antoniofulg/workflow-toolkit \
   --skill wtk wtk-deep-review wtk-discover wtk-implement \
   wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute \
-  wtk-qa-plan wtk-reuse-review wtk-setup wtk-ship wtk-test-review \
+  wtk-qa-plan wtk-reuse-review wtk-setup wtk-ship wtk-test-audit \
+  wtk-test-review \
   --agent '*' --copy --yes
 ```
 
 Use `npx skills@latest list` to inspect the project installation. The full WTK set carries the
 shared phase dependencies. WTK does not provide a package installer executable.
 
-The full 14-skill WTK set is self-contained: its scripts, assets, and conditional references live
+The full 15-skill WTK set is self-contained: its scripts, assets, and conditional references live
 below the distributed skill directories.
 
 **Runtime requirements.** The bundled validators need Python 3, and `wtk-knowledge-check` needs Bun.
@@ -67,7 +69,7 @@ reinstall from the unpinned source to advance beyond that revision.
 If WTK remains on 2.0.x, inspect the `wtk*` entries in the project's `skills-lock.json`. To leave
 a pinned revision, rerun the [complete install command above](#install-the-skills) with the bare
 `antoniofulg/workflow-toolkit` source, without a tag, commit or `/tree/<ref>` suffix. This replaces
-the recorded WTK source/ref and refreshes all 14 skills. Review the installed files and lockfile
+the recorded WTK source/ref and refreshes all 15 skills. Review the installed files and lockfile
 diff, then commit them in the consuming project. Future updates follow the default branch.
 
 For a global installation, use `npx skills@latest update --global`; its tracking file is
