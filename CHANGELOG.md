@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Paired design captures are produced once into ignored scratch, never by a gate test or a helper
+  gate tests import, and the capture code is deleted once the Verifier accepts the comparison.
+- Browser tests assert what the user perceives; data effects stay with their lower-layer owner. One
+  viewport proves a behaviour, tests over about 60 s or serial groups need a reason, and each test
+  owns its browser context and tenant-scoped data.
+- `wtk-test-review` classifies artifact-only tests and orders review by CI duration and retry-pass
+  count. Fix verification locates the slow step after a timeout and tests output parsers against
+  real output excerpts.
+
 ## [6.0.0] - 2026-11-07
 
 ### Changed

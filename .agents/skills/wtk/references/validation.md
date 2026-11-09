@@ -87,6 +87,10 @@ QA. A batch gets one Verifier over its whole range; a fix on top of verified wor
 subsequent diff. Under [agent selection](agent-selection.md), a risk-area fix goes to `verifier-risk`; any other to
 `verifier`.
 
+After a timeout, the reported line is where the clock ran out, not the cause; find the slow step
+from the trace or step timings before proposing a fix. Test a parser of CI or tool output against an
+excerpt copied from real output, never a hand-written sample.
+
 Findings use the [review severities](review-rounds.md#finding-shape). Blocking ones go to remediation
 commits, and one fresh Verifier checks the whole remediation range, not each commit, halting at three
 stalled attempts. A trivial follow-up the Verifier proposed rides with the next batch or qualifies as
