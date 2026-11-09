@@ -144,7 +144,9 @@ For a binding source, use the following acceptance procedure even when behavior 
    Unrelated HEAD changes do not automatically invalidate all captures: independently record the
    original evidence/revision and an explicit input-equivalence reason for reuse, following
    [validation](validation.md). An old PASS or matching filename alone is not equivalence.
-   Keep captures disposable but available through independent review.
+   Produce captures once, through a one-off command or the project's evidence command, into ignored
+   scratch; never from a gate test or a helper gate tests import. Once the Verifier accepts the
+   comparison, delete the capture code; it never becomes a test.
 
 | Source/revision | Source scale | Implementation revision | Screen/state | Viewport/scroll | Environment | Reference capture | Full-page capture | Viewport capture | Comparison | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

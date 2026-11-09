@@ -49,8 +49,10 @@ The native profile owns mutation depth: `standard` and `ui` inject faults; `ligh
 | End-to-end | A complete user journey through the real stack | Most expensive — deliberately scarce |
 
 Another layer earns a test only for a distinct failure, such as persistence, serialization,
-authorization wiring, or browser interaction. Keep real end-to-end journeys; leave input/error
-matrices to their lower-layer owner instead of replaying them through the browser.
+authorization wiring, or browser interaction. Keep real end-to-end journeys. A browser test asserts
+what the user perceives: visible state, focus, navigation and the message shown. Assert data effects
+(rows written, refused or unchanged) and input/error matrices at their lower-layer owner; never
+replay them through the browser.
 
 **Lowest layer that proves it.** Do not write an end-to-end test for a behaviour a unit or
 integration test can prove. End-to-end is reserved for what lower layers cannot reach: real browser
@@ -127,7 +129,8 @@ Removing a redundant test is its own reviewed change, never part of a fix or a r
      [mutation](#mutation) tool run over the scope that reports every killing test (no bail).
      Propose at most one removal per equal-kill set, keeping its lowest-layer member. Without a
      mutation tool, class (b) is not proposed;
-   - (c) a test over a forbidden subject: copy, snapshots, config or CSS;
+   - (c) a test over a forbidden subject: copy, snapshots, config or CSS, or whose only effect is
+     producing artifacts no assertion or gate reads;
    - (d) a duplicate suite.
 4. For each candidate, map every unique assertion to the proof that is kept.
 5. Delete in its own `test(...)` commit, never inside a fix.
@@ -143,10 +146,13 @@ Removing a redundant test is its own reviewed change, never part of a fix or a r
   leave full application builds and catalogs to their canonical gates unless the test proves a
   distinct product integration. Keep scratch outputs and caches separate from the checkout's.
 - Combine assertions sharing the same scenario when their failure conditions remain distinguishable.
-  Reuse immutable fixture preparation; keep mutable state and cleanup isolated per case.
+  Reuse immutable fixture preparation; keep mutable state and cleanup isolated per case. Each test
+  owns its browser context and data and scopes fixture queries to its own tenant, so a retry is safe.
+- A single test over about 60 s, or a serial group, needs a stated reason; otherwise split it so it shards.
 - When changing CI lanes or selectors, verify that their union covers the required cases without
   duplicate execution in the same runtime. A full suite already includes its smoke subset. Distinct
-  runtime matrices and bounded reliability probes need an explicit purpose for repetition.
+  runtime matrices and bounded reliability probes need an explicit purpose for repetition. One
+  viewport proves a behaviour; a second needs a layout-specific claim with different assertions.
 - Measure affected-suite time before and after adding expensive setup or recurring execution; record
   timings and why a cheaper proof is insufficient beside the coverage justification.
 
@@ -159,6 +165,7 @@ behaviour, and copy only when copy is the contract.
 
 When a visual acceptance criterion names an approved reference, attach paired-capture evidence to the
 owning check or slice and point to its feature `uiux.md` row when present. Follow the method in
-`ui-ux.md#verifying-the-built-screen` and record its output fields. A manual paired
-comparison is evidence, not an automated test, and never replaces behavioral cases. Add automated
+`ui-ux.md#verifying-the-built-screen`, which owns how captures are produced, and record its output
+fields. A manual paired comparison is evidence, not an automated test, and never replaces behavioral
+cases. A gate test never writes a screenshot or artifact it does not assert on. Add automated
 screenshot regression only when an actual visual invariant has an owning canonical suite.

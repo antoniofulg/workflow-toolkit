@@ -34,7 +34,9 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
 1. **Scope.** Resolve the named module, feature or page to its source files and its tests at every
    layer. If the scope cannot be resolved, ask for it; do not widen to the repository.
 2. **Inventory.** List each test per layer with the claim or invariant it proves, using the
-   [test contract](../wtk/references/test-contract.md). A test with no claim is a finding.
+   [test contract](../wtk/references/test-contract.md). A test with no claim is a finding. Record
+   each e2e test's median duration and retry-pass count from recent CI where available, and review
+   in order of cost × flakiness.
 3. **Mutate.** Run the [mutation](../wtk/references/test-contract.md#mutation) step over the scope's
    decision code in a scratch worktree, never the real tree, reporting every killing test per
    mutant (no bail). Without a tool, run the manual faults and say how far they reach.
@@ -49,6 +51,8 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
      same contract, or marked as having none; never a `@smoke` cohort member or the sole proof of a
      journey or of wiring;
    - **forbidden subject** - copy, snapshots, config or CSS, unless that artifact is the contract;
+   - **artifact-only** - its only effect is producing artifacts no assertion or gate reads; a
+     removal candidate without a mutation run, since it kills nothing by construction;
    - **duplicate suite**.
 5. **Gaps.** Report each surviving mutant on decision code and each claim with no proof as a
    missing test, naming the layer that should own it.
