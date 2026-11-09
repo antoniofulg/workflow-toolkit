@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [6.2.0] - 2026-11-09
+
 ### Added
 
 - `wtk-test-audit`, an agent-invocable skill that ranks a whole suite by CI cost and flakiness,
