@@ -3,7 +3,7 @@ name: wtk-qa-plan
 description: Plan user-visible QA journeys, scenarios, and charters. Use when a Verifier prepares QA; Don't use for live walks, product fixes, or framework setup.
 metadata:
   author: Antonio Fulgêncio
-  version: '6.1.0'
+  version: '6.2.0'
 ---
 
 # QA Plan

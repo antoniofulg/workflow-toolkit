@@ -4,7 +4,7 @@ description: Set up, assess, or update a project's WTK guidance through source d
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '6.1.0'
+  version: '6.2.0'
 ---
 
 # Project harness setup
