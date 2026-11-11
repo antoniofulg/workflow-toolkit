@@ -184,7 +184,7 @@ the pictures.
 - **Inventory:** per picture, one row for each region, control, label and sentence, state mark, line
   and arrangement the capture draws, marked `same` or `differs` with what the picture draws
   instead. Listed departures count as `same`. A thing no row names is never checked.
-- **`differs` categories:** `controls` (one the capture shows is missing, or one it does not show),
+- **`differs` categories:** a `differs` row names its category as `differs - <category>`: `controls` (one the capture shows is missing, or one it does not show),
   `arrangement` (other regions, places or nesting), `copy` (visible text the capture fixes, wrong),
   `drawing` (an element drawn differently), `render` (overlapping, cut off, unreadable, or a
   component the app does not use).
@@ -217,5 +217,5 @@ the pictures.
 | Element | Result | Picture draws |
 | --- | --- | --- |
 | header: title `Billing`, close `×` on the right | same | |
-| card form: number, expiry and CVC on one row | differs | expiry and CVC on a second row |
+| card form: number, expiry and CVC on one row | differs - arrangement | expiry and CVC on a second row |
 ```

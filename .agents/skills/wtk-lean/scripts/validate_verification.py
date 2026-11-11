@@ -228,8 +228,23 @@ def _screens_errors(fdir, name):
     return errors
 
 
-def _proofs_errors(fdir, name):
-    """proofs.md is check_proofs.py's record: every row `pass`, written at the HEAD being gated."""
+def _proof_counts(checks_lines):
+    """{check id: number of `Proof:` lines} outside fenced blocks."""
+    counts, current = {}, None
+    for ln in checks_lines:
+        if re.match(r"^#{1,2}\s+\S", ln):
+            current = None
+        m = CHECK_LINE_RE.match(ln.strip())
+        if m:
+            current = m[1]
+            counts[current] = 0
+        elif current and re.match(r"^\**\s*Proof\s*\**\s*:", ln.strip(), re.IGNORECASE):
+            counts[current] += 1
+    return counts
+
+
+def _proofs_errors(fdir, name, checks_lines):
+    """proofs.md is check_proofs.py's record: a row per `Proof:` line, each `pass`, written at the HEAD being gated."""
     path = os.path.join(fdir, "proofs.md")
     if not os.path.isfile(path):
         return [f"{name}: no proofs.md - run check_proofs.py {name} at a clean HEAD"]
@@ -241,17 +256,26 @@ def _proofs_errors(fdir, name):
         errors.append(f"{name}: proofs.md names no `**HEAD**` - run check_proofs.py {name} again")
     elif _stale(fdir, recorded[1]):
         errors.append(f"{name}: proofs.md was written at {recorded[1]} and HEAD is {_git_head(fdir)} - run check_proofs.py {name} again")
-    rows = 0
+    rows, per_check = 0, {}
     for header, table in find_tables(lines):
         result = column(header, "result")
         if result is None or column(header, "proof") is None:
             continue
         for row in table:
             rows += 1
+            owner = re.match(r"(C\d+):", row[0])
+            if owner:
+                per_check[owner[1]] = per_check.get(owner[1], 0) + 1
             if result >= len(row) or row[result] != "pass":
                 errors.append(f"{name}: proofs.md - {row[0][:60]} reads {row[result][:20] if result < len(row) else ''!r}")
     if not rows:
         errors.append(f"{name}: proofs.md has no proof rows - run check_proofs.py {name} again")
+    for cid, expected in sorted(_proof_counts(checks_lines).items(), key=lambda kv: int(kv[0][1:])):
+        if per_check.get(cid, 0) < expected:
+            errors.append(
+                f"{name}: proofs.md has {per_check.get(cid, 0)} row(s) for {cid} but checks.md names {expected} "
+                f"proof(s) - run check_proofs.py {name} again"
+            )
     return errors
 
 
@@ -316,7 +340,7 @@ def _check_feature(fdir, name):
             f"since a self-check reproduces the author's own blind spot"
         )
 
-    errors += _proofs_errors(fdir, name)
+    errors += _proofs_errors(fdir, name, _checks_context(fdir)[2])
 
     if verdict != "pass":
         return errors, warnings

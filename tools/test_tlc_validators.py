@@ -519,6 +519,31 @@ class WorkflowValidatorTests(unittest.TestCase):
                 result = run_gate(root, "validate_verification")
                 self.assertEqual(result.returncode == 0, accepted, result.stdout + result.stderr)
 
+    def test_proofs_run_group_nonzero_exit_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            checks = PROOF_CHECKS.replace("echo gamma", "echo gamma; exit 3")
+            feature = proof_feature(root, checks)
+            commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn("| C1: run g / PASS alpha | pass |", report)  # its pass line printed
+            self.assertIn("| Run g: ", report)
+            self.assertRegex(report, r"\| Run g: [^\n]*\| fail \| exit 3 \|")
+
+    def test_verification_rejects_proofs_missing_a_check(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            proofs = feature / "proofs.md"
+            original = proofs.read_text(encoding="utf-8")
+            row = next(ln for ln in original.splitlines() if ln.startswith("| C7:"))
+            proofs.write_text(original.replace(row + "\n", "", 1), encoding="utf-8")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("proofs.md has 0 row(s) for C7 but checks.md names 1 proof(s)", result.stdout)
+
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

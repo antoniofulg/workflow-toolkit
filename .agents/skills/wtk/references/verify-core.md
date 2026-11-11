@@ -36,7 +36,9 @@ scope* are policy the user approved; there is nothing in the code for them to be
 A green suite proves the tests run. Fault injection proves they can catch a regression, and it
 costs a suite run per fault, so it runs where a weak test costs most: the checks named on
 `checks.md`'s `Risk:` line and every check the Verifier marked `unsure`. With `Risk: none` and no
-`unsure` row it does not run, and under `light` it never runs.
+`unsure` row it does not run, and under `light` it never runs. A modular checklist has no `Risk:`
+line: the Verifier selects the risk checks by the same triggers - a returned value, a bound, a
+guard, money, access, or any `security.md` surface - and records them in `Faults injected`.
 
 1. **Isolate.** `git worktree add <scratch> HEAD`, and prepare it with the project's restore/build
    command, or use the mutation tool's own sandbox when it never writes the real tree. Never mutate the real tree, and **never use

@@ -7,7 +7,7 @@ Risk: C9, C10, C14 - the gates that would turn a missing or stale proof into a f
 
 ## Intent
 
-33 checks in 7 slices · 8 one-way doors · 0 open
+34 checks in 7 slices · 8 one-way doors · 0 open
 
 ## Checks
 
@@ -62,9 +62,13 @@ Proof: `python3 tools/test_tlc_validators.py -k test_checks_rejects_run_proof_wi
 
 **C14** - `validate_verification.py` exits 1 when `proofs.md` is missing, has a non-`pass` row, or records another `HEAD` (LEAN-03, AC 13)
 Proof: `python3 tools/test_tlc_validators.py -k test_verification_requires_green_proofs_at_head`
+Proof: `python3 tools/test_tlc_validators.py -k test_verification_rejects_proofs_missing_a_check`
 
 **C15** - An unresolved feature exits `check_proofs.py` with 2 (LEAN-03, AC 7)
 Proof: `python3 tools/test_tlc_validators.py -k test_proofs_unresolved_feature_exits_2`
+
+**C34** - A `Run` group that exits non-zero fails its proofs even when their pass lines printed (LEAN-03, AC 10)
+Proof: `python3 tools/test_tlc_validators.py -k test_proofs_run_group_nonzero_exit_fails`
 
 ### S4 - A red build stops before the first change
 
@@ -133,7 +137,7 @@ Proof: `python3 tools/test_phase_skills.py -k test_lean_provenance_pins_upstream
 | Set (size) | Member -> proof | Unproven |
 | --- | --- | --- |
 | `check_proofs.py` exit codes (3) | 0 C9 · 1 C10 C11 C12 · 2 C15 | - |
-| proof row results (3) | `pass` C10 · `no test ran` C10 · `fail` C11 | - |
+| proof row results (3) | `pass` C10 · `no test ran` C10 · `fail` C11 C34 | - |
 | `validate_checks.py` new rejections (6) | missing receipt C1 C2 · empty decision C4 · run without group C13 · red build C17 · missing build C18 · missing risk C28 | - |
 | `check_commit.py` outcomes (3) | owed line C5 C6 · nothing owed C7 · invalid C8 | - |
 | `Holds` values (3) | `yes` C27 C30 · `no` C27 · `unsure` C27 C29 | - |

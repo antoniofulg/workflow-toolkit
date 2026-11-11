@@ -137,6 +137,8 @@ def test_screens_report_schema_is_defined() -> None:
     assert owns(UIUX, "**HEAD**: <short sha")
     assert owns(UIUX, "| Screen | Compared with | Verdict | Finding |")
     assert owns(UIUX, "| Element | Result | Picture draws |")
+    assert owns(UIUX, "a `differs` row names its category as `differs - <category>`")
+    assert owns(UIUX, "| differs - arrangement | expiry and CVC on a second row |")
     assert owns(UIUX, "`differs` categories", "`controls`", "`arrangement`", "`copy`", "`drawing`", "`render`")
     assert owns(UIUX, "**Verdict:**", "`diverges`", "`matches`")
 
