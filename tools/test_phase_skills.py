@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -165,6 +166,16 @@ def test_pruning_keeps_mandatory_mutation() -> None:
     assert owns(contract, "Outside the `Risk:` checks a survivor is recorded `accepted - <reason>`")
     review = (SKILLS / "wtk-test-review/SKILL.md").read_text(encoding="utf-8")
     assert "**Mutate.**" in review and "test-contract.md#mutation" in review
+
+
+def test_lean_provenance_pins_upstream() -> None:
+    meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
+    assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"
+    # the registry hash of the upstream skill directory at that commit
+    assert meta["contentHash"] == "65cf4acff0a88093eafc9d34a36ca3a03a74c78301b1b4025e517ecc18e66a44"
+    notice = (SKILLS / "wtk-lean/NOTICE.md").read_text(encoding="utf-8")
+    for adapted in ("proof runner", "build preflight", "compaction gates", "screens judge"):
+        assert adapted in notice, adapted
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:

@@ -1,5 +1,10 @@
 # Update log
 
+## 2026-11-11
+
+* **Ingestion**: Added the maintainer-approved TLC spec-lean 2.2 adoption to `raw/` and updated [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md): the approval receipt is now gated on presence (reversing the 2026-11-06 convention-only decision), fault injection is scoped to `Risk:` checks, and the Lean upstream pin moved to `e74dc8a`.
+* **Lint**: Re-read the changed UI/UX contract and README lines and bumped `last_modified` in [Design reference fidelity](/design/design-reference-fidelity.md) and [Artifact ownership](/design/artifact-ownership.md); their claims still hold.
+
 ## 2026-11-07
 
 * **Ingestion**: Added the maintainer's role-owned model decision to `raw/` and updated [Fix verification](/decisions/fix-verification.md) and [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md): WTK dispatches by role, risk Verifiers use `verifier-risk`, and model and effort come from the role's agent file.

@@ -4,6 +4,27 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- `check_proofs.py` runs every proof once at a clean `HEAD` and writes `proofs.md`; the Verifier reads
+  it instead of rerunning proofs, and the completion gate requires it green at `HEAD`. Checks gain
+  `Run <name>:` groups and `Proof: run <name> | <pass line>`, so a renamed test or an empty filter
+  reads `no test ran` instead of a green exit code.
+- `validate_checks.py --execute` runs the checks' `Build:` line once before the first change.
+- `check_commit.py` prints what each open feature still owes after a passing message.
+- The screens judge: a fresh sub-agent that sees captures and pictures, never code, writes
+  `screens.md`; under `ui` the completion gate requires it to match at `HEAD` within two rounds.
+
+### Changed
+
+- The `## Approval` receipt is now gated: `validate_checks.py` fails a feature with no non-empty
+  `- Decision:` line, so a resumed builder cannot build without a recorded approval.
+- The Verifier writes a `Test` and `Holds` judgment per check. Fault injection runs only for the
+  checks named on the new `Risk:` line and for `unsure` rows; a survivor outside a `Risk:` check is
+  recorded `accepted - <reason>` instead of becoming a test. Pruning and `wtk-test-review` keep
+  mutation mandatory.
+- The Lean source metadata is re-pinned to upstream `e74dc8a`.
+
 ## [6.2.0] - 2026-11-09
 
 ### Added
