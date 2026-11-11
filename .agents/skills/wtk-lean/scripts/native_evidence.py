@@ -4,6 +4,8 @@ import os
 import re
 
 
+RUN_RE = re.compile(r"^\**\s*Run\s+([\w-]+)\s*\**\s*:\s*(.+)$", re.IGNORECASE)
+RUN_PROOF_RE = re.compile(r"^run\s+([\w-]+)\s*\|\s*(.*)$", re.IGNORECASE)
 EMPTY_VALUES = {"", "-", "—", "–", "none", "n/a", "na", "nothing", "pending", "unresolved"}
 
 
@@ -85,3 +87,17 @@ def approval_errors(checks_path):
         f"{os.path.basename(owner)}: no `## Approval` receipt with a non-empty `- Decision:` line - "
         "record the user's actual decision before checks or code; never write the approval yourself"
     ]
+
+
+def unquote(text):
+    return text.strip().strip("`").strip()
+
+
+def read_runs(lines):
+    """{name: command} for every `Run <name>: <command>` line outside fenced blocks."""
+    runs = {}
+    for line in lines:
+        match = RUN_RE.match(line.strip())
+        if match:
+            runs[match[1]] = unquote(match[2])
+    return runs

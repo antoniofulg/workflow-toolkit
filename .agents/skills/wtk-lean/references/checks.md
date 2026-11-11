@@ -33,6 +33,25 @@ A proof must name a **specific test**, not a whole suite. A suite going green se
 individual claim. Repeat `Proof:` when one test cannot settle the whole claim; every proof
 listed must be green.
 
+When several checks' tests run in one command, name the command once as a `Run` group and point
+each check at the line its test prints:
+
+```markdown
+Run unit: `npx vitest run src/billing --reporter=verbose`
+
+**C1** - A failed charge sets status to Suspended, never Cancelled (AC 1)
+Proof: run unit | ✓ billing > suspends on a failed charge
+```
+
+`check_proofs.py` runs each group once and passes the proof when every word after `|` appears, in
+that order, on one line of the group's output with ANSI codes stripped. Copy the line from a real
+run and keep the pass marker (`✓`, `PASSED`, `ok`, `= .`): a renamed test, or a filter that selects
+nothing, then reads `no test ran` instead of passing on a green exit code. Where the default
+reporter prints only a summary, put the verbose flag in the `Run` line. A test that cannot share a
+run is a lone ``Proof: `<command>` ``, judged by its exit code; a runner that exits 0 when its filter
+selects nothing gets a `Run` line even for a single test. Groups and lone proofs run one at a time,
+so tests sharing a database or a port stay safe.
+
 ## What makes a check writable
 
 Four things must be true before you write one:
@@ -141,6 +160,7 @@ build under them and leave the files alone.
 # <Feature> checks
 
 Profile: standard
+Run unit: `<test command that prints a line per test>`
 Plan: `.specs/features/<feature>/plan.md`
 
 ## Intent
@@ -157,7 +177,7 @@ Grouped by the spec's slices; numbering runs across the whole feature.
 ### S1 - <slice>
 
 **C1** - A failed charge sets status to Suspended, never Cancelled (FEAT-01, AC 1)
-Proof: `<test command> <dunning test file> <name filter: failed_charge_suspends>`
+Proof: run unit | <the line C1's test prints when it passes, pass marker included>
 
 **C2** - Every provider status maps to exactly one local status (FEAT-01, AC 4)
 Proof: `<test command> <status map test file> <name filter: every_provider_status>`
@@ -242,7 +262,8 @@ everything about the requirements and the solution's shape: [plan.md](plan.md).
 python3 <skill-dir>/scripts/validate_checks.py <feature>
 ```
 
-It fails a checks-only feature without `## Intent`, a check with no `Proof:`, duplicate ids,
+It fails a checks-only feature without `## Intent`, a check with no `Proof:`, a `run` proof with
+no `Run` line or pass line, duplicate ids,
 incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
 selector, vague claims and a plan Surface interface absent from checks. It refuses a missing
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval) or

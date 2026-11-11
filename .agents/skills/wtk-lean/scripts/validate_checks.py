@@ -23,6 +23,7 @@ What it checks:
   ERROR  - no `Profile:` line, or an unknown profile
   ERROR  - a required section is missing (Checks, Coverage, Swept)
   ERROR  - a check with no `Proof:` line
+  ERROR  - a `run <name>` proof with no `Run <name>:` line, or with no pass line after `|`
   ERROR  - a duplicate check id
   ERROR  - no checks parsed at all
   ERROR  - a Coverage row with an empty member cell
@@ -32,7 +33,8 @@ What it checks:
   ERROR  - an `n/a` swept landing with no reason after it
   ERROR  - a check id referenced in Coverage or Swept that is not defined
   WARN   - a route in plan.md's Surface that nothing here mentions
-  WARN   - a proof that names no test selector (a whole suite settles no single claim)
+  WARN   - a proof that names no test selector (a whole suite settles no single claim; a `run`
+           proof is exempt - its pass line is its selector)
   WARN   - a claim carrying a vague word instead of a concrete value
   WARN   - a Coverage row that declares no set size
   WARN   - a swept landing that is neither a check, `existing`, `n/a`, nor `Unresolved`
@@ -56,7 +58,7 @@ import os
 import re
 import sys
 
-from native_evidence import approval_errors, intent_errors
+from native_evidence import RUN_PROOF_RE, approval_errors, intent_errors, read_runs, unquote
 
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
@@ -279,11 +281,20 @@ def check_file(path):
         errors.append("no checks parsed - expected lines shaped `**C1** - <claim>` followed by `Proof: <command>`")
         return errors, warnings, profile
 
+    runs = read_runs(lines)
     for cid, c in sorted(checks.items(), key=lambda kv: int(kv[0][1:])):
         if not c["proofs"]:
             errors.append(f"{cid} has no `Proof:` line - no proof, no check (L{c['line']})")
         for pr in c["proofs"]:
             low = pr.lower()
+            text = unquote(pr)
+            run = RUN_PROOF_RE.match(text) or re.match(r"^run\s+([\w-]+)\s*$", text, re.IGNORECASE)
+            if run and (run.re is RUN_PROOF_RE or run[1] in runs):
+                if run[1] not in runs:
+                    errors.append(f"{cid}: proof reads `run {run[1]}` and no `Run {run[1]}: <command>` line defines it (L{c['line']})")
+                if run.re is not RUN_PROOF_RE or not run[2].strip():
+                    errors.append(f"{cid}: `run {run[1]}` names no pass line after `|` - copy the line the run prints when this test passes (L{c['line']})")
+                continue
             if not any(tok in low for tok in SELECTOR_TOKENS):
                 warnings.append(
                     f"{cid}: proof names no test selector, so it may be a whole suite - "

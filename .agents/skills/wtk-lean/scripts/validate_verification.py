@@ -17,6 +17,7 @@ artifacts, so it stays stack-agnostic.
 
 What it checks:
   ERROR  - no verification.md (Verify is the closing step of the flow, not an option)
+  ERROR  - no proofs.md, a proofs.md row that does not read `pass`, or one written at another HEAD
   ERROR  - the verdict is FAIL, missing, or still the '[PASS | FAIL]' placeholder
   ERROR  - PASS with no file:line evidence anywhere (evidence-or-zero)
   ERROR  - profile standard/ui with no fault rows, or with no recomputed Coverage section
@@ -46,6 +47,7 @@ Exit codes: 0 ok, 1 the feature is not done, 2 usage error.
 import argparse
 import os
 import re
+import subprocess
 import sys
 
 from native_evidence import intent_errors, unfenced_lines, usable_value
@@ -124,6 +126,48 @@ def _checks_context(fdir):
     return _profile("\n".join(lines)), has_heading(lines, "Test policy")
 
 
+def _git_head(fdir):
+    """Short HEAD of the project holding `.specs/features/<name>`; None when git cannot say."""
+    features = os.path.dirname(os.path.abspath(fdir))
+    specs = os.path.dirname(features)
+    if os.path.basename(features) != "features" or os.path.basename(specs) != ".specs":
+        return None
+    try:
+        proc = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=os.path.dirname(specs),
+                              capture_output=True, text=True)
+    except OSError:
+        return None
+    return proc.stdout.strip() if proc.returncode == 0 else None
+
+
+def _proofs_errors(fdir, name):
+    """proofs.md is check_proofs.py's record: every row `pass`, written at the HEAD being gated."""
+    path = os.path.join(fdir, "proofs.md")
+    if not os.path.isfile(path):
+        return [f"{name}: no proofs.md - run check_proofs.py {name} at a clean HEAD"]
+    with open(path, encoding="utf-8", errors="replace") as source:
+        lines = strip_fences(source.read())
+    errors = []
+    recorded = re.search(r"\*\*HEAD\*\*\s*:\s*`?([0-9a-f]{4,40})", "\n".join(lines))
+    head = _git_head(fdir)
+    if not recorded:
+        errors.append(f"{name}: proofs.md names no `**HEAD**` - run check_proofs.py {name} again")
+    elif head and not (head.startswith(recorded[1]) or recorded[1].startswith(head)):
+        errors.append(f"{name}: proofs.md was written at {recorded[1]} and HEAD is {head} - run check_proofs.py {name} again")
+    rows = 0
+    for header, table in find_tables(lines):
+        result = column(header, "result")
+        if result is None or column(header, "proof") is None:
+            continue
+        for row in table:
+            rows += 1
+            if result >= len(row) or row[result] != "pass":
+                errors.append(f"{name}: proofs.md - {row[0][:60]} reads {row[result][:20] if result < len(row) else ''!r}")
+    if not rows:
+        errors.append(f"{name}: proofs.md has no proof rows - run check_proofs.py {name} again")
+    return errors
+
+
 def _verdict(lines):
     """Return 'pass', 'fail', 'unfilled', or None."""
     candidates = [
@@ -184,6 +228,8 @@ def _check_feature(fdir, name):
             f"{name}: report is self-verified (author == verifier) - a degraded gate, "
             f"since a self-check reproduces the author's own blind spot"
         )
+
+    errors += _proofs_errors(fdir, name)
 
     if verdict != "pass":
         return errors, warnings

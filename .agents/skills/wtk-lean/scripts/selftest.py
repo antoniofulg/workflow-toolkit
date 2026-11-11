@@ -74,6 +74,13 @@ CASES = [
      lambda s: re.sub(r"- Decision:[^\n]*", "- Decision:", s, count=1),
      1, "non-empty `- Decision:`"),
 
+    ("validate_checks", "checks.md", "a run proof naming a group nobody defines",
+     lambda s: s.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run ghost | test_failed_charge_suspends = ."),
+     1, "no `Run ghost: <command>` line defines it"),
+    ("validate_checks", "checks.md", "a run proof with no pass line",
+     lambda s: s.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run billing |"),
+     1, "names no pass line after `|`"),
+
     ("validate_plan", "plan.md", "missing Observable section",
      lambda s: s.replace("## Observable", "## User-facing notes"),
      1, "missing required section: ## Observable"),
@@ -205,6 +212,18 @@ CASES = [
     ("validate_verification", "verification.md", "PASS with no file:line evidence",
      lambda s: re.sub(r"`[\w./-]+\.rb:\d+`", "`the test file`", s),
      1, "cites no file:line evidence"),
+    ("validate_verification", "proofs.md", "a proof row that is not pass",
+     lambda s: s.replace("| pass | exit 0 |", "| fail | exit 1 |", 1),
+     1, "proofs.md - C4"),
+    ("validate_verification", "proofs.md", "a proof row that no test ran",
+     lambda s: s.replace("| pass | BillingDunningTest#test_failed", "| no test ran | BillingDunningTest#test_failed", 1),
+     1, "proofs.md - C1"),
+    ("validate_verification", "proofs.md", "proofs.md with no HEAD",
+     lambda s: s.replace("**HEAD**: e4f5a6b\n", ""),
+     1, "names no `**HEAD**`"),
+    ("validate_verification", "proofs.md", "proofs.md with no proof rows",
+     lambda s: re.sub(r"\| C\d+:[^\n]*\n", "", s),
+     1, "no proof rows"),
     ("validate_verification", "verification.md", "FAIL verdict",
      lambda s: s.replace("**Verdict**: PASS", "**Verdict**: FAIL"),
      1, "verdict is FAIL"),
@@ -280,7 +299,7 @@ def scaffold(ui=False):
     root = tempfile.mkdtemp(prefix="tlc-spec-lean-selftest-")
     fdir = os.path.join(root, ".specs", "features", FEATURE)
     os.makedirs(fdir)
-    for name in ("plan.md", "checks.md", "verification.md"):
+    for name in ("plan.md", "checks.md", "verification.md", "proofs.md"):
         target = os.path.join(fdir, name)
         shutil.copyfile(os.path.join(FIXTURES, name), target)
         if ui and name in ("checks.md", "verification.md"):
@@ -327,6 +346,8 @@ TOOLING = [
      ["feat: Suspend the subscription"], 1, "start lowercase"),
     ("check_commit.py", "an unknown type fails",
      ["wip: suspend the subscription"], 1, "is not one of"),
+    ("check_proofs.py", "an unresolved feature exits 2",
+     ["nope", "--root", tempfile.gettempdir()], 2, "no checks.md"),
     ("lessons.py", "normalization regressions pass", ["selftest"], 0, "ok"),
     ("lessons.py", "--root before the subcommand is the documented form",
      ["--root", tempfile.gettempdir(), "list", "--status", "confirmed"], 0, ""),

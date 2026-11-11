@@ -101,8 +101,8 @@ python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on
 
 A passing message also prints one `OWED` line per feature with checks and no `verification.md`:
 `check_proofs.py`, the fresh Verifier and, when a criterion cites a capture, the screens judge. The
-builder reports and stops there; the coordinator acts on it. Optional git-level guard,
-independent of any agent:
+builder runs `check_proofs.py` (see [Then stop](#then-stop)); the coordinator dispatches the rest.
+Optional git-level guard, independent of any agent:
 
 ```bash
 hook="$(git rev-parse --git-path hooks)/commit-msg"
@@ -170,6 +170,9 @@ continuing. Keep the batch handoff boundary above; recovery alone does not requi
 
 ## Then stop
 
-When the last check of **your batch** is committed, report and stop: checks closed, commit
-hashes, proof results, deviations. Do not dispatch the Verifier; the coordinator owns it under
-[core contract 4](../SKILL.md#core-contract), and [verify.md](verify.md) says why.
+When the last check of **your batch** is committed, run `check_proofs.py <feature>` on the clean
+tree: it runs every proof once at `HEAD` and writes `proofs.md`, the record the Verifier reads
+instead of rerunning proofs. A red row is yours to fix before anything else. Then report and stop:
+checks closed, commit hashes, the `proofs.md` result, deviations. Do not dispatch the Verifier;
+the coordinator owns it under [core contract 4](../SKILL.md#core-contract), and
+[verify.md](verify.md) says why.

@@ -28,7 +28,7 @@ PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4
 def scaffold(root: Path, *, ui: bool = False) -> Path:
     feature = root / ".specs/features/fixture"
     feature.mkdir(parents=True)
-    for name in ("plan.md", "checks.md", "verification.md"):
+    for name in ("plan.md", "checks.md", "verification.md", "proofs.md"):
         body = (FIXTURES / name).read_text(encoding="utf-8")
         if ui:
             body = body.replace("Profile: standard", "Profile: ui").replace("**Profile**: standard", "**Profile**: ui")
@@ -46,6 +46,48 @@ def run_gate(root: Path, gate: str) -> subprocess.CompletedProcess:
         [sys.executable, str(SCRIPTS / f"{gate}.py"), "fixture", "--root", str(root), "--strict"],
         capture_output=True, text=True,
     )
+
+
+def run_script(root: Path, script: str, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [sys.executable, str(SCRIPTS / f"{script}.py"), *args, "--root", str(root)],
+        capture_output=True, text=True,
+    )
+
+
+def commit_all(root: Path) -> str:
+    """Make `root` a git repository with everything committed; return its short HEAD."""
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@example.test", "-c", "commit.gpgsign=false"]
+    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+    subprocess.run([*git, "commit", "-q", "-m", "chore: fixture"], cwd=root, check=True)
+    return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+
+
+PROOF_CHECKS = """# Proof fixture checks
+
+Profile: standard
+Run g: printf 'x\\n' >> .specs/count-g.log; printf '\\033[32mPASS\\033[0m alpha\\n'; echo PASS beta; echo PASS; echo gamma
+Plan: n/a
+
+## Checks
+
+**C1** - alpha passes (AC 1)
+Proof: run g | PASS alpha
+
+**C2** - beta passes (AC 2)
+Proof: run g | PASS beta
+
+**C3** - a lone command passes (AC 3)
+Proof: `printf 'x\\n' >> .specs/count-lone.log`
+"""
+
+
+def proof_feature(root: Path, checks: str = PROOF_CHECKS) -> Path:
+    feature = root / ".specs/features/fixture"
+    feature.mkdir(parents=True)
+    (feature / "checks.md").write_text(checks, encoding="utf-8")
+    return feature
 
 
 class WorkflowValidatorTests(unittest.TestCase):
@@ -175,6 +217,111 @@ class WorkflowValidatorTests(unittest.TestCase):
                 result = run_gate(root, "validate_checks")
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                 self.assertIn("non-empty `- Decision:` line", result.stdout)
+
+    def test_proofs_run_each_group_once_and_record_head(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = proof_feature(root)
+            head = commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual((root / ".specs/count-g.log").read_text().count("x"), 1)
+            self.assertEqual((root / ".specs/count-lone.log").read_text().count("x"), 1)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn(f"**HEAD**: {head}", report)
+            self.assertEqual(report.count("| pass |"), 3, report)
+
+    def test_proofs_match_pass_line_in_order(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = proof_feature(root)
+            commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn("| C1: run g / PASS alpha | pass | PASS alpha |", report)  # the ANSI codes are gone
+
+    def test_proofs_unmatched_line_is_no_test_ran(self) -> None:
+        for words in ("beta PASS", "PASS gamma", "PASS alphx"):  # out of order, split across lines, renamed
+            with self.subTest(words=words), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = proof_feature(root, PROOF_CHECKS.replace("run g | PASS beta", f"run g | {words}"))
+                commit_all(root)
+                result = run_script(root, "check_proofs", "fixture")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                report = (feature / "proofs.md").read_text(encoding="utf-8")
+                self.assertIn(f"| C2: run g / {words} | no test ran |", report)
+                self.assertIn("| C1: run g / PASS alpha | pass |", report)
+
+    def test_proofs_failing_lone_proof_fails_and_writes_all_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            checks = PROOF_CHECKS + "\n**C4** - a failing command (AC 4)\nProof: `false`\n\n**C5** - a later command (AC 5)\nProof: `true`\n"
+            feature = proof_feature(root, checks)
+            commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn("| C4: false | fail | exit 1 |", report)
+            self.assertIn("| C5: true | pass | exit 0 |", report)
+            self.assertIn("`false` - exit 1", report)  # the output section keeps each run's tail
+
+    def test_proofs_refuse_dirty_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = proof_feature(root)
+            commit_all(root)
+            (root / "stray.txt").write_text("uncommitted", encoding="utf-8")
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("dirty", result.stderr)
+            self.assertFalse((root / ".specs/count-g.log").exists())
+            self.assertFalse((feature / "proofs.md").exists())
+
+    def test_proofs_unresolved_feature_exits_2(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            result = run_script(Path(raw), "check_proofs", "missing")
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+
+    def test_checks_rejects_run_proof_without_group(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            checks = feature / "checks.md"
+            source = checks.read_text(encoding="utf-8")
+            checks.write_text(source.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run ghost | test_failed_charge_suspends = ."), encoding="utf-8")
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no `Run ghost: <command>` line defines it", result.stdout)
+            checks.write_text(source.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run billing"), encoding="utf-8")
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("names no pass line after `|`", result.stdout)
+
+    def test_verification_requires_green_proofs_at_head(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            proofs = feature / "proofs.md"
+            head = commit_all(root)
+            original = proofs.read_text(encoding="utf-8").replace("**HEAD**: e4f5a6b", f"**HEAD**: {head}")
+            proofs.write_text(original, encoding="utf-8")
+            accepted = run_gate(root, "validate_verification")
+            self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
+            proofs.unlink()
+            missing = run_gate(root, "validate_verification")
+            self.assertEqual(missing.returncode, 1, missing.stdout + missing.stderr)
+            self.assertIn("no proofs.md", missing.stdout)
+            for title, (body, fragment) in {
+                "non-pass row": (original.replace("| pass | exit 0 |", "| no test ran | |", 1), "proofs.md - C4"),
+                "failing row": (original.replace("| pass | exit 0 |", "| fail | exit 1 |", 1), "proofs.md - C4"),
+                "other HEAD": (original.replace(f"**HEAD**: {head}", "**HEAD**: deadbee"), "was written at deadbee"),
+            }.items():
+                with self.subTest(title=title):
+                    proofs.write_text(body, encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn(fragment, result.stdout)
 
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
