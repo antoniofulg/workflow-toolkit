@@ -67,6 +67,13 @@ CASES = [
      lambda s: s.replace("denies access to paid access groups", "handles access gracefully"),
      0, "instead of a concrete value"),
 
+    ("validate_checks", "plan.md", "remove the approval receipt",
+     lambda s: re.sub(r"## Approval\n.*?\n## Problem", "## Problem", s, flags=re.S),
+     1, "no `## Approval` receipt"),
+    ("validate_checks", "plan.md", "empty approval decision",
+     lambda s: re.sub(r"- Decision:[^\n]*", "- Decision:", s, count=1),
+     1, "non-empty `- Decision:`"),
+
     ("validate_plan", "plan.md", "missing Observable section",
      lambda s: s.replace("## Observable", "## User-facing notes"),
      1, "missing required section: ## Observable"),

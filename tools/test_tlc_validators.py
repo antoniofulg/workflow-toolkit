@@ -135,16 +135,46 @@ class WorkflowValidatorTests(unittest.TestCase):
                 errors, _warnings = validate_verification._check_feature(str(feature), "fixture")
                 self.assertEqual(errors == [], accepted, errors)
 
-    def test_approval_receipt_is_a_verifier_judgment_not_a_gate(self) -> None:
+    def test_checks_rejects_plan_without_approval(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             feature = scaffold(root)
             plan = feature / "plan.md"
             source = plan.read_text(encoding="utf-8")
             plan.write_text(source[:source.index("## Approval")] + source[source.index("## Problem"):], encoding="utf-8")
-            for gate in ("validate_checks", "validate_verification"):
-                result = run_gate(root, gate)
-                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("plan.md: no `## Approval` receipt with a non-empty `- Decision:` line", result.stdout)
+
+    def test_checks_only_rejects_missing_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            (feature / "plan.md").unlink()
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("checks.md: no `## Approval` receipt with a non-empty `- Decision:` line", result.stdout)
+
+    def test_checks_accepts_recorded_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("Approval", result.stdout)
+
+    def test_checks_rejects_empty_decision(self) -> None:
+        for decision in ("- Decision:", "- Decision:   ", "- Decision: <actual user words>", "- Decision: -"):
+            with self.subTest(decision=decision), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                plan = feature / "plan.md"
+                source = plan.read_text(encoding="utf-8")
+                line = next(ln for ln in source.splitlines() if ln.startswith("- Decision:"))
+                plan.write_text(source.replace(line, decision), encoding="utf-8")
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("non-empty `- Decision:` line", result.stdout)
 
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

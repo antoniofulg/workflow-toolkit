@@ -244,8 +244,10 @@ python3 <skill-dir>/scripts/validate_checks.py <feature>
 
 It fails a checks-only feature without `## Intent`, a check with no `Proof:`, duplicate ids,
 incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
-selector, vague claims and a plan Surface interface absent from checks. It does not judge approval or
-proof adequacy; the independent review retains those obligations.
+selector, vague claims and a plan Surface interface absent from checks. It refuses a missing
+[`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval) or
+an empty `Decision`. It does not judge who approved or proof adequacy; the independent review
+retains those obligations.
 
 A non-zero exit means fix before writing code. The script checks structure; the judgment - is the
 proof the right one, does the level match the claim - stays yours.

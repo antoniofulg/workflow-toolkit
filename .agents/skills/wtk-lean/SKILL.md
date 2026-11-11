@@ -132,7 +132,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
 `validate_checks.py` catches missing proofs, coverage, swept rows and profile.
 `validate_verification.py` also requires, under `ui`, visual provenance and existing local captures.
-Approval and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
+`validate_checks.py` refuses a missing approval receipt; who approved which revision and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
 If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection

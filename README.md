@@ -226,8 +226,8 @@ The project decides its validation command, provider route, QA adapter, and deli
 Feature approval is separate from execution settings: record who approved which revision and scope
 in the native plan/task `## Approval`, in the receiving turn, as
 [construction constraints](.agents/skills/wtk/references/construction-constraints.md#native-feature-approval)
-describes. No validator judges the receipt; the Verifier confirms it. Local edits/commits do not
-authorize remote delivery.
+describes. Lean's `validate_checks.py` refuses a feature whose receipt has no non-empty `Decision`; the
+Verifier confirms who approved which revision. Local edits/commits do not authorize remote delivery.
 
 Live recovery records decisions immediately, dispatch intent before send, and actual host identity
 after send. Coordinators reconcile host status/reports before waiting, retrying or replacing work;

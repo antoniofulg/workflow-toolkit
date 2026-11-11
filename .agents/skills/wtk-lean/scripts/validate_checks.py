@@ -19,6 +19,7 @@ reviewed in plan.md and are gated by validate_plan.py. What this script owns is 
 derivation from them, which is where omissions surface.
 
 What it checks:
+  ERROR  - no `## Approval` receipt with a non-empty `- Decision:` line (plan.md, else checks.md)
   ERROR  - no `Profile:` line, or an unknown profile
   ERROR  - a required section is missing (Checks, Coverage, Swept)
   ERROR  - a check with no `Proof:` line
@@ -55,7 +56,7 @@ import os
 import re
 import sys
 
-from native_evidence import intent_errors
+from native_evidence import approval_errors, intent_errors
 
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
@@ -246,7 +247,7 @@ def check_file(path):
     with open(path, "r", encoding="utf-8") as f:
         raw = f.read().splitlines()
     lines = strip_fences(raw)
-    errors, warnings = intent_errors(path), []
+    errors, warnings = intent_errors(path) + approval_errors(path), []
 
     # Profile.
     profile = None
