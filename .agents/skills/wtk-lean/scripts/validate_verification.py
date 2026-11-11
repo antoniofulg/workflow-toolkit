@@ -56,12 +56,12 @@ import subprocess
 import sys
 
 from native_evidence import intent_errors, read_risk, unfenced_lines, usable_value
-from validate_checks import parse_checks
 
 EVIDENCE_RE = re.compile(r"[\w./-]+\.[A-Za-z0-9]+:\d+")
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE | re.MULTILINE)
 EMPTY_CELL = {"", "-", "—", "–", "none", "n/a", "na", "nothing"}
 CID_RE = re.compile(r"\bC\d+\b")
+CHECK_LINE_RE = re.compile(r"^\**\s*(C\d+)\s*\**\s*[-–—:]")
 HOLDS_RE = re.compile(r"^(yes|no|unsure)\b", re.IGNORECASE)
 SHA_RE = re.compile(r"\b(?=[0-9a-f]*\d)[0-9a-f]{7,40}\b")
 MAX_FAULTS = 5
@@ -395,7 +395,7 @@ def _check_feature(fdir, name):
         if not evidence_rows:
             errors.append(f"{name}: ui requires a visual fidelity evidence table with {', '.join(required)}")
 
-    check_ids = set(parse_checks(checks_lines)[0])
+    check_ids = {m[1] for m in (CHECK_LINE_RE.match(ln.strip()) for ln in checks_lines) if m}
     judgment_errors, unsure = _judgments(name, tables, check_ids)
     errors += judgment_errors
     risk = read_risk(checks_lines) if effective in ("standard", "ui") else None

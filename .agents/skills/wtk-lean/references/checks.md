@@ -37,10 +37,10 @@ When several checks' tests run in one command, name the command once as a `Run` 
 each check at the line its test prints:
 
 ```markdown
-Run unit: `npx vitest run src/billing --reporter=verbose`
+Run unit: `python3 -m pytest tests/billing -v`
 
 **C1** - A failed charge sets status to Suspended, never Cancelled (AC 1)
-Proof: run unit | ✓ billing > suspends on a failed charge
+Proof: run unit | test_failed_charge_suspends PASSED
 ```
 
 Under the title, a `Build:` line names the repo's own build, type check and lint command - the one

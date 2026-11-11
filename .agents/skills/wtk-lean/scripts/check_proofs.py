@@ -8,8 +8,8 @@ Verifier reads proofs.md and spends its time judging what each test asserts.
 
 It knows no test runner. A proof is the project's own command, run as written:
 
-  Run unit: `npx vitest run src/billing --reporter=verbose`   one command, run once
-  Proof: run unit | ✓ failed charge suspends                  the line the run must print
+  Run unit: `python3 -m pytest tests/billing -v`   one command, run once
+  Proof: run unit | test_failed_charge_suspends PASSED                 the line the run must print
   Proof: `bin/rails test test/billing/dunning_test.rb`         run alone, judged by its exit code
 
 A `run` proof passes when every word after `|` appears, in that order, on one ANSI-stripped line of
