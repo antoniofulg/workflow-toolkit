@@ -81,6 +81,13 @@ CASES = [
      lambda s: s.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run billing |"),
      1, "names no pass line after `|`"),
 
+    ("validate_checks", "checks.md", "remove the Build line",
+     lambda s: s.replace("Build: `bin/rubocop app/billing`\n", ""),
+     1, "no `Build:` line"),
+    ("validate_checks", "checks.md", "Build: none with no reason",
+     lambda s: s.replace("Build: `bin/rubocop app/billing`", "Build: none"),
+     1, "`Build: none` with no reason"),
+
     ("validate_plan", "plan.md", "missing Observable section",
      lambda s: s.replace("## Observable", "## User-facing notes"),
      1, "missing required section: ## Observable"),

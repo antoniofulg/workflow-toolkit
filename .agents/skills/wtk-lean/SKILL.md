@@ -123,7 +123,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | When | Command |
 | --- | --- |
 | Before presenting the plan | `validate_plan.py <feature>` |
-| Before starting to build | `validate_checks.py <feature>` |
+| Before starting to build | `validate_checks.py <feature> --execute` (runs the `Build:` line once) |
 | Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"`; a pass prints what each open feature still owes |
 | After the last commit, on a clean tree | `check_proofs.py <feature>` |
 | Before declaring done | `validate_verification.py <feature>` |

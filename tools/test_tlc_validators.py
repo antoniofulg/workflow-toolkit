@@ -41,9 +41,9 @@ def scaffold(root: Path, *, ui: bool = False) -> Path:
     return feature
 
 
-def run_gate(root: Path, gate: str) -> subprocess.CompletedProcess:
+def run_gate(root: Path, gate: str, *extra: str) -> subprocess.CompletedProcess:
     return subprocess.run(
-        [sys.executable, str(SCRIPTS / f"{gate}.py"), "fixture", "--root", str(root), "--strict"],
+        [sys.executable, str(SCRIPTS / f"{gate}.py"), "fixture", "--root", str(root), "--strict", *extra],
         capture_output=True, text=True,
     )
 
@@ -297,6 +297,46 @@ class WorkflowValidatorTests(unittest.TestCase):
             result = run_gate(root, "validate_checks")
             self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
             self.assertIn("names no pass line after `|`", result.stdout)
+
+    def _with_build(self, root: Path, build: str) -> None:
+        checks = scaffold(root) / "checks.md"
+        source = checks.read_text(encoding="utf-8")
+        line = next(ln for ln in source.splitlines() if ln.startswith("Build:"))
+        checks.write_text(source.replace(line, build), encoding="utf-8")
+
+    def test_checks_execute_runs_build_once(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._with_build(root, "Build: `printf 'x\\n' >> build.log`")
+            result = run_gate(root, "validate_checks", "--execute")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual((root / "build.log").read_text().count("x"), 1)
+            skipped = run_gate(root, "validate_checks")  # off by default
+            self.assertEqual(skipped.returncode, 0, skipped.stdout + skipped.stderr)
+            self.assertEqual((root / "build.log").read_text().count("x"), 1)
+
+    def test_checks_execute_red_build_stops(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._with_build(root, "Build: `echo compile error; false`")
+            result = run_gate(root, "validate_checks", "--execute")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("the build was red before any change", result.stdout)
+            self.assertIn("compile error", result.stdout)
+
+    def test_checks_rejects_missing_build_line(self) -> None:
+        for build in ("", "Build: none"):
+            with self.subTest(build=build), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                self._with_build(root, build)
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("Build", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._with_build(root, "Build: none - the repo has no build step")
+            result = run_gate(root, "validate_checks", "--execute")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_verification_requires_green_proofs_at_head(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

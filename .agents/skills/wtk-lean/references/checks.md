@@ -43,6 +43,11 @@ Run unit: `npx vitest run src/billing --reporter=verbose`
 Proof: run unit | ✓ billing > suspends on a failed charge
 ```
 
+Under the title, a `Build:` line names the repo's own build, type check and lint command - the one
+CI or the package manifest runs over the code this feature touches; `Build: none - <why>` when the
+repo has none. `validate_checks.py <feature> --execute` runs it once before the first change, so a
+red baseline is not mistaken for the feature's fault.
+
 `check_proofs.py` runs each group once and passes the proof when every word after `|` appears, in
 that order, on one line of the group's output with ANSI codes stripped. Copy the line from a real
 run and keep the pass marker (`✓`, `PASSED`, `ok`, `= .`): a renamed test, or a filter that selects
@@ -160,6 +165,7 @@ build under them and leave the files alone.
 # <Feature> checks
 
 Profile: standard
+Build: `<the repo's build, type check and lint command>`
 Run unit: `<test command that prints a line per test>`
 Plan: `.specs/features/<feature>/plan.md`
 
@@ -262,8 +268,8 @@ everything about the requirements and the solution's shape: [plan.md](plan.md).
 python3 <skill-dir>/scripts/validate_checks.py <feature>
 ```
 
-It fails a checks-only feature without `## Intent`, a check with no `Proof:`, a `run` proof with
-no `Run` line or pass line, duplicate ids,
+Add `--execute` before the first change of the build (see [build.md](build.md)). It fails a checks-only feature without `## Intent`, a check with no `Proof:`, a `run` proof with
+no `Run` line or pass line, a missing `Build:` line, duplicate ids,
 incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
 selector, vague claims and a plan Surface interface absent from checks. It refuses a missing
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval) or

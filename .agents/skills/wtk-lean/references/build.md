@@ -11,7 +11,8 @@ for the model to obey, you are rebuilding the thing this skill removed.
 Apply [project requirements](../../wtk/references/project-requirements.md#build-and-recover): read
 inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
 before dependent edits. This applies under every profile, including checks-only features.
-Run `validate_checks.py <feature>` before dependent edits; it refuses a feature whose
+Run `validate_checks.py <feature> --execute` before the first change: it runs the `Build:` line once,
+and a red baseline stops the build for the user. The same run refuses a feature whose
 [approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval) has no
 `Decision`, so a resumed builder with none stops and asks.
 Record new user decisions in their receiving turn via
