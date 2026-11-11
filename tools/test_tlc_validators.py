@@ -28,7 +28,7 @@ PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4
 def scaffold(root: Path, *, ui: bool = False) -> Path:
     feature = root / ".specs/features/fixture"
     feature.mkdir(parents=True)
-    for name in ("plan.md", "checks.md", "verification.md"):
+    for name in ("plan.md", "checks.md", "verification.md", "proofs.md"):
         body = (FIXTURES / name).read_text(encoding="utf-8")
         if ui:
             body = body.replace("Profile: standard", "Profile: ui").replace("**Profile**: standard", "**Profile**: ui")
@@ -36,16 +36,59 @@ def scaffold(root: Path, *, ui: bool = False) -> Path:
                 body += "\n" + (FIXTURES / "visual.md").read_text(encoding="utf-8")
         (feature / name).write_text(body, encoding="utf-8")
     if ui:
+        (feature / "screens.md").write_text((FIXTURES / "screens.md").read_text(encoding="utf-8"), encoding="utf-8")
         for name in ("reference.png", "full.png", "viewport.png"):
             (feature / name).write_bytes(PNG)
     return feature
 
 
-def run_gate(root: Path, gate: str) -> subprocess.CompletedProcess:
+def run_gate(root: Path, gate: str, *extra: str) -> subprocess.CompletedProcess:
     return subprocess.run(
-        [sys.executable, str(SCRIPTS / f"{gate}.py"), "fixture", "--root", str(root), "--strict"],
+        [sys.executable, str(SCRIPTS / f"{gate}.py"), "fixture", "--root", str(root), "--strict", *extra],
         capture_output=True, text=True,
     )
+
+
+def run_script(root: Path, script: str, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [sys.executable, str(SCRIPTS / f"{script}.py"), *args, "--root", str(root)],
+        capture_output=True, text=True,
+    )
+
+
+def commit_all(root: Path) -> str:
+    """Make `root` a git repository with everything committed; return its short HEAD."""
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@example.test", "-c", "commit.gpgsign=false"]
+    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+    subprocess.run([*git, "commit", "-q", "-m", "chore: fixture"], cwd=root, check=True)
+    return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+
+
+PROOF_CHECKS = """# Proof fixture checks
+
+Profile: standard
+Run g: printf 'x\\n' >> .specs/count-g.log; printf '\\033[32mPASS\\033[0m alpha\\n'; echo PASS beta; echo PASS; echo gamma
+Plan: n/a
+
+## Checks
+
+**C1** - alpha passes (AC 1)
+Proof: run g | PASS alpha
+
+**C2** - beta passes (AC 2)
+Proof: run g | PASS beta
+
+**C3** - a lone command passes (AC 3)
+Proof: `printf 'x\\n' >> .specs/count-lone.log`
+"""
+
+
+def proof_feature(root: Path, checks: str = PROOF_CHECKS) -> Path:
+    feature = root / ".specs/features/fixture"
+    feature.mkdir(parents=True)
+    (feature / "checks.md").write_text(checks, encoding="utf-8")
+    return feature
 
 
 class WorkflowValidatorTests(unittest.TestCase):
@@ -135,16 +178,371 @@ class WorkflowValidatorTests(unittest.TestCase):
                 errors, _warnings = validate_verification._check_feature(str(feature), "fixture")
                 self.assertEqual(errors == [], accepted, errors)
 
-    def test_approval_receipt_is_a_verifier_judgment_not_a_gate(self) -> None:
+    def test_checks_rejects_plan_without_approval(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             feature = scaffold(root)
             plan = feature / "plan.md"
             source = plan.read_text(encoding="utf-8")
             plan.write_text(source[:source.index("## Approval")] + source[source.index("## Problem"):], encoding="utf-8")
-            for gate in ("validate_checks", "validate_verification"):
-                result = run_gate(root, gate)
-                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("plan.md: no `## Approval` receipt with a non-empty `- Decision:` line", result.stdout)
+
+    def test_checks_only_rejects_missing_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            (feature / "plan.md").unlink()
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("checks.md: no `## Approval` receipt with a non-empty `- Decision:` line", result.stdout)
+
+    def test_checks_accepts_recorded_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("Approval", result.stdout)
+
+    def test_checks_rejects_empty_decision(self) -> None:
+        for decision in ("- Decision:", "- Decision:   ", "- Decision: <actual user words>", "- Decision: -"):
+            with self.subTest(decision=decision), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                plan = feature / "plan.md"
+                source = plan.read_text(encoding="utf-8")
+                line = next(ln for ln in source.splitlines() if ln.startswith("- Decision:"))
+                plan.write_text(source.replace(line, decision), encoding="utf-8")
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("non-empty `- Decision:` line", result.stdout)
+
+    def test_proofs_run_each_group_once_and_record_head(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = proof_feature(root)
+            head = commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual((root / ".specs/count-g.log").read_text().count("x"), 1)
+            self.assertEqual((root / ".specs/count-lone.log").read_text().count("x"), 1)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn(f"**HEAD**: {head}", report)
+            self.assertEqual(report.count("| pass |"), 3, report)
+
+    def test_proofs_match_pass_line_in_order(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = proof_feature(root)
+            commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn("| C1: run g / PASS alpha | pass | PASS alpha |", report)  # the ANSI codes are gone
+
+    def test_proofs_unmatched_line_is_no_test_ran(self) -> None:
+        for words in ("beta PASS", "PASS gamma", "PASS alphx"):  # out of order, split across lines, renamed
+            with self.subTest(words=words), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = proof_feature(root, PROOF_CHECKS.replace("run g | PASS beta", f"run g | {words}"))
+                commit_all(root)
+                result = run_script(root, "check_proofs", "fixture")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                report = (feature / "proofs.md").read_text(encoding="utf-8")
+                self.assertIn(f"| C2: run g / {words} | no test ran |", report)
+                self.assertIn("| C1: run g / PASS alpha | pass |", report)
+
+    def test_proofs_failing_lone_proof_fails_and_writes_all_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            checks = PROOF_CHECKS + "\n**C4** - a failing command (AC 4)\nProof: `false`\n\n**C5** - a later command (AC 5)\nProof: `true`\n"
+            feature = proof_feature(root, checks)
+            commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn("| C4: false | fail | exit 1 |", report)
+            self.assertIn("| C5: true | pass | exit 0 |", report)
+            self.assertIn("`false` - exit 1", report)  # the output section keeps each run's tail
+
+    def test_proofs_refuse_dirty_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = proof_feature(root)
+            commit_all(root)
+            (root / "stray.txt").write_text("uncommitted", encoding="utf-8")
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("dirty", result.stderr)
+            self.assertFalse((root / ".specs/count-g.log").exists())
+            self.assertFalse((feature / "proofs.md").exists())
+
+    def test_proofs_unresolved_feature_exits_2(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            result = run_script(Path(raw), "check_proofs", "missing")
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+
+    def test_checks_rejects_run_proof_without_group(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            checks = feature / "checks.md"
+            source = checks.read_text(encoding="utf-8")
+            checks.write_text(source.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run ghost | test_failed_charge_suspends = ."), encoding="utf-8")
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no `Run ghost: <command>` line defines it", result.stdout)
+            checks.write_text(source.replace("Proof: run billing | test_failed_charge_suspends = .", "Proof: run billing"), encoding="utf-8")
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("names no pass line after `|`", result.stdout)
+
+    def _with_build(self, root: Path, build: str) -> None:
+        checks = scaffold(root) / "checks.md"
+        source = checks.read_text(encoding="utf-8")
+        line = next(ln for ln in source.splitlines() if ln.startswith("Build:"))
+        checks.write_text(source.replace(line, build), encoding="utf-8")
+
+    def test_checks_execute_runs_build_once(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._with_build(root, "Build: `printf 'x\\n' >> build.log`")
+            result = run_gate(root, "validate_checks", "--execute")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual((root / "build.log").read_text().count("x"), 1)
+            skipped = run_gate(root, "validate_checks")  # off by default
+            self.assertEqual(skipped.returncode, 0, skipped.stdout + skipped.stderr)
+            self.assertEqual((root / "build.log").read_text().count("x"), 1)
+
+    def test_checks_execute_red_build_stops(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._with_build(root, "Build: `echo compile error; false`")
+            result = run_gate(root, "validate_checks", "--execute")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("the build was red before any change", result.stdout)
+            self.assertIn("compile error", result.stdout)
+
+    def test_checks_rejects_missing_build_line(self) -> None:
+        for build in ("", "Build: none"):
+            with self.subTest(build=build), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                self._with_build(root, build)
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("Build", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._with_build(root, "Build: none - the repo has no build step")
+            result = run_gate(root, "validate_checks", "--execute")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_verification_requires_green_proofs_at_head(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            proofs = feature / "proofs.md"
+            head = commit_all(root)
+            original = proofs.read_text(encoding="utf-8").replace("**HEAD**: e4f5a6b", f"**HEAD**: {head}")
+            proofs.write_text(original, encoding="utf-8")
+            accepted = run_gate(root, "validate_verification")
+            self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
+            proofs.unlink()
+            missing = run_gate(root, "validate_verification")
+            self.assertEqual(missing.returncode, 1, missing.stdout + missing.stderr)
+            self.assertIn("no proofs.md", missing.stdout)
+            for title, (body, fragment) in {
+                "non-pass row": (original.replace("| pass | exit 0 |", "| no test ran | |", 1), "proofs.md - C4"),
+                "failing row": (original.replace("| pass | exit 0 |", "| fail | exit 1 |", 1), "proofs.md - C4"),
+                "other HEAD": (original.replace(f"**HEAD**: {head}", "**HEAD**: deadbee"), "was written at deadbee"),
+            }.items():
+                with self.subTest(title=title):
+                    proofs.write_text(body, encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn(fragment, result.stdout)
+
+    def _stamp_head(self, feature: Path, head: str) -> None:
+        for name in ("proofs.md", "screens.md"):
+            path = feature / name
+            if path.exists():
+                path.write_text(path.read_text(encoding="utf-8").replace("e4f5a6b", head), encoding="utf-8")
+
+    def test_verification_ui_requires_matching_screens_at_head(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root, ui=True)
+            head = commit_all(root)
+            self._stamp_head(feature, head)
+            screens = feature / "screens.md"
+            original = screens.read_text(encoding="utf-8")
+            accepted = run_gate(root, "validate_verification")
+            self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
+            screens.unlink()
+            missing = run_gate(root, "validate_verification")
+            self.assertEqual(missing.returncode, 1, missing.stdout + missing.stderr)
+            self.assertIn("no screens.md", missing.stdout)
+            for title, (body, fragment) in {
+                "diverges": (original.replace("| matches |", "| diverges |"), "not matches"),
+                "stale HEAD": (original.replace(f"**HEAD**: {head}", "**HEAD**: deadbee"), "screens.md judged deadbee"),
+                "no HEAD": (original.replace(f"**HEAD**: {head}\n", ""), "names no `**HEAD**`"),
+                "no verdict table": (original.split("| Screen |")[0], "no verdict table"),
+            }.items():
+                with self.subTest(title=title):
+                    screens.write_text(body, encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn(fragment, result.stdout)
+
+    def test_verification_rejects_third_screens_round(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root, ui=True)
+            screens = feature / "screens.md"
+            original = screens.read_text(encoding="utf-8")
+            for round_number, accepted in ((1, True), (2, True), (3, False)):
+                with self.subTest(round=round_number):
+                    screens.write_text(original.replace("**Round**: 1", f"**Round**: {round_number}"), encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 0 if accepted else 1, result.stdout + result.stderr)
+                    if not accepted:
+                        self.assertIn("there is no round 3", result.stdout)
+
+    def _edit(self, feature: Path, name: str, old: str, new: str) -> None:
+        path = feature / name
+        source = path.read_text(encoding="utf-8")
+        self.assertIn(old, source)
+        path.write_text(source.replace(old, new), encoding="utf-8")
+
+    def test_checks_rejects_missing_risk_line(self) -> None:
+        for profile, accepted in (("standard", False), ("ui", False), ("light", True)):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                checks = (feature / "checks.md").read_text(encoding="utf-8")
+                risk = next(ln for ln in checks.splitlines() if ln.startswith("Risk:"))
+                self._edit(feature, "checks.md", risk + "\n", "")
+                self._edit(feature, "checks.md", "Profile: standard", f"Profile: {profile}")
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 0 if accepted else 1, result.stdout + result.stderr)
+                if not accepted:
+                    self.assertIn("no `Risk:` line", result.stdout)
+
+    def test_verification_requires_holds_yes_per_check(self) -> None:
+        row5 = next(ln for ln in (FIXTURES / "verification.md").read_text(encoding="utf-8").splitlines() if ln.startswith("| C5 |"))
+        c4 = "`suspended_denies_paid_groups` | yes |"
+        cases = {
+            "no row for a check": (row5 + "\n", "", "has no row for C5"),
+            "no without a closing commit": (c4, "`suspended_denies_paid_groups` | no - asserts the status only |", "no closing commit"),
+            "unsure without a closing commit": (c4, "`suspended_denies_paid_groups` | unsure - looser than the claim |", "no closing commit"),
+            "a Holds outside the three values": (c4, "`suspended_denies_paid_groups` | maybe |", "expected yes, no or unsure"),
+            "no test named": ("| C4 | `test/billing/access_test.rb` `suspended_denies_paid_groups` |", "| C4 | - |", "row C4 names no test"),
+        }
+        for title, (old, new, fragment) in cases.items():
+            with self.subTest(title=title), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                self._edit(feature, "verification.md", old, new)
+                result = run_gate(root, "validate_verification")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn(fragment, result.stdout)
+        with tempfile.TemporaryDirectory() as raw:  # a non-yes row stands once its closing commit is written
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "verification.md", c4, "`suspended_denies_paid_groups` | no - asserted the status only; closed by a1b2c3d4 |")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_verification_requires_faults_for_risk_and_unsure(self) -> None:
+        c9 = "`missing_subscription_id_is_422` | yes |"
+        unsure = "`missing_subscription_id_is_422` | unsure - asserts the status only; closed by a1b2c3d4 |"
+        c7_row = "| C7 | removed the `409` on a concurrent delivery | `app/webhooks/ingest.rb:44` | killed |"
+        with tempfile.TemporaryDirectory() as raw:  # a listed Risk check with no fault row
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "verification.md", c7_row + "\n", "")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no fault row names C7", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:  # no fault rows at all
+            root = Path(raw)
+            feature = scaffold(root)
+            report = (feature / "verification.md").read_text(encoding="utf-8")
+            (feature / "verification.md").write_text(report[:report.index("## Faults injected")] + report[report.index("## Gate"):], encoding="utf-8")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no fault row names C7, C8", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:  # an unsure row owes a fault even under Risk: none
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "checks.md", "Risk: C7, C8 - the concurrency and idempotency guards would pass silently with a weak test", "Risk: none - covered by the type system")
+            self._edit(feature, "verification.md", c9, unsure)
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no fault row names C9", result.stdout)
+            self._edit(feature, "verification.md", "| C11 | bound", "| C9 | bound")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_verification_accepts_no_faults_without_risk(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "checks.md", "Risk: C7, C8 - the concurrency and idempotency guards would pass silently with a weak test", "Risk: none - covered by the type system")
+            report = (feature / "verification.md").read_text(encoding="utf-8")
+            (feature / "verification.md").write_text(report[:report.index("## Faults injected")] + report[report.index("## Gate"):], encoding="utf-8")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_fault_disposition_accepted_only_outside_risk(self) -> None:
+        source = (FIXTURES / "verification.md").read_text(encoding="utf-8")
+        inside = "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | killed |"
+        outside = "| C11 | log level `info` -> `debug` on the retry trace | `app/models/billing/dunning.rb:40` | arid - logging only, no decision reads it |"
+        self.assertIn(inside, source)
+        self.assertIn(outside, source)
+        cases = [
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | killed |", True),
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | equivalent - same result on every input |", True),
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | arid - never read |", True),
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | accepted - rare path |", False),
+            (outside, outside.replace("arid - logging only, no decision reads it", "accepted - logging only"), True),
+            (outside, outside.replace("arid - logging only, no decision reads it", "accepted"), False),
+            (outside, outside.replace("| C11 |", "| - |").replace("arid - logging only, no decision reads it", "accepted - logging only"), False),
+        ]
+        for old, new, accepted in cases:
+            with self.subTest(row=new), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                self._edit(feature, "verification.md", old, new)
+                result = run_gate(root, "validate_verification")
+                self.assertEqual(result.returncode == 0, accepted, result.stdout + result.stderr)
+
+    def test_proofs_run_group_nonzero_exit_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            checks = PROOF_CHECKS.replace("echo gamma", "echo gamma; exit 3")
+            feature = proof_feature(root, checks)
+            commit_all(root)
+            result = run_script(root, "check_proofs", "fixture")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            report = (feature / "proofs.md").read_text(encoding="utf-8")
+            self.assertIn("| C1: run g / PASS alpha | pass |", report)  # its pass line printed
+            self.assertIn("| Run g: ", report)
+            self.assertRegex(report, r"\| Run g: [^\n]*\| fail \| exit 3 \|")
+
+    def test_verification_rejects_proofs_missing_a_check(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            proofs = feature / "proofs.md"
+            original = proofs.read_text(encoding="utf-8")
+            row = next(ln for ln in original.splitlines() if ln.startswith("| C7:"))
+            proofs.write_text(original.replace(row + "\n", "", 1), encoding="utf-8")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("proofs.md has 0 row(s) for C7 but checks.md names 1 proof(s)", result.stdout)
 
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -317,6 +715,62 @@ class CommitContractTests(unittest.TestCase):
             self._exit_code("feat(wtk)!: rename public command\n\nBREAKING CHANGE: old command removed"),
             0,
         )
+
+    def _commit(self, root: Path, message: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(SCRIPTS / "check_commit.py"), "--message", message, "--root", str(root)],
+            capture_output=True, text=True,
+        )
+
+    def _open_feature(self, root: Path) -> Path:
+        feature = scaffold(root)
+        (feature / "verification.md").unlink()
+        return feature
+
+    def test_commit_names_owed_steps_for_open_feature(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._open_feature(root)
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            owed = [line for line in result.stdout.splitlines() if "OWED" in line]
+            self.assertEqual(len(owed), 1, result.stdout)
+            self.assertIn("fixture", owed[0])
+            self.assertIn("check_proofs.py", owed[0])
+            self.assertIn("Verifier", owed[0])
+            self.assertNotIn("screens judge", owed[0])
+
+    def test_commit_names_screens_judge_when_capture_cited(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = self._open_feature(root)
+            plan = feature / "plan.md"
+            source = plan.read_text(encoding="utf-8")
+            criterion = next(ln for ln in source.splitlines() if ln.lstrip().startswith("1. WHEN"))
+            plan.write_text(source.replace(criterion, criterion + " as drawn in `captures/billing.png`"), encoding="utf-8")
+            result = self._commit(root, "feat(wtk): add lean router")
+            owed = [line for line in result.stdout.splitlines() if "OWED" in line]
+            self.assertEqual(len(owed), 1, result.stdout)
+            self.assertIn("screens judge", owed[0])
+
+    def test_commit_prints_nothing_owed_without_open_feature(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("OWED", result.stdout)
+            scaffold(root)  # a feature with its verification.md owes nothing
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("OWED", result.stdout)
+
+    def test_commit_invalid_message_prints_no_owed_line(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._open_feature(root)
+            result = self._commit(root, "Updated stuff.")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertNotIn("OWED", result.stdout)
 
 
 if __name__ == "__main__":

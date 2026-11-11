@@ -168,3 +168,54 @@ mark inferred values and responsive adaptations, tolerate minor rendering differ
 structure or styling drift. For source states/viewports not drawn, explicitly record the inferred rule;
 never fabricate a matching reference capture. Do not add a screenshot framework or exhaustive state
 matrix solely for this process. See [the regression example](ui-fidelity-example.md).
+
+### Screens judge (`ui`)
+
+Screens are judged by a sub-agent that never sees the code: source read beforehand explains a
+difference away instead of reporting it. The Verifier records the verdict, not its own opinion of
+the pictures.
+
+- **Dispatch:** the coordinator sends a fresh screens judge in the same turn as the Verifier, over
+  the same `HEAD`. A builder never judges its own screens.
+- **Inputs:** the binding captures, the `<capture>.running.png` pictures the builder saved beside
+  them and the plan's listed departures; never source, diff or handoff.
+- **Pictures:** one genuine render per binding capture, taken at the capture's size. The judge
+  starts no app, walks nothing and takes no screenshot.
+- **Inventory:** per picture, one row for each region, control, label and sentence, state mark, line
+  and arrangement the capture draws, marked `same` or `differs` with what the picture draws
+  instead. Listed departures count as `same`. A thing no row names is never checked.
+- **`differs` categories:** a `differs` row names its category as `differs - <category>`: `controls` (one the capture shows is missing, or one it does not show),
+  `arrangement` (other regions, places or nesting), `copy` (visible text the capture fixes, wrong),
+  `drawing` (an element drawn differently), `render` (overlapping, cut off, unreadable, or a
+  component the app does not use).
+- **Resized:** a label the capture also draws that reads smaller in the picture is
+  `differs - resized`; a wider window scaled to the capture's size looks like a match while the page
+  at that size is another layout, and the builder retakes it.
+- **Verdict:** exact spacing, shade and type weight are a note on a `same` row. One `differs` row
+  makes the picture `diverges`; otherwise it `matches`. The builder fixes the rows named and nothing
+  else.
+- **Round 2:** the builder re-saves every picture at the new `HEAD`; the judge reopens only the
+  `differs` rows, marks a `same` row the new picture breaks `differs - regression`, adds nothing
+  else, and sets `**Round**: 2` and the new `**HEAD**`. There is no round 3: what still differs
+  goes to the user.
+- **Gate:** under `ui`, `validate_verification.py` fails without `screens.md`, with any `diverges`
+  verdict, with `**Round**` above 2, or with a `**HEAD**` other than the current one.
+
+```markdown
+# <Feature> screens
+
+**Verifier**: independent sub-agent (author != verifier)
+**Round**: 1
+**HEAD**: <short sha the pictures were taken at>
+
+| Screen | Compared with | Verdict | Finding |
+| --- | --- | --- | --- |
+| `captures/billing--card-form.running.png` | `captures/billing--card-form.png` | diverges | 1 row differs |
+
+### `captures/billing--card-form.running.png`
+
+| Element | Result | Picture draws |
+| --- | --- | --- |
+| header: title `Billing`, close `×` on the right | same | |
+| card form: number, expiry and CVC on one row | differs - arrangement | expiry and CVC on a second row |
+```

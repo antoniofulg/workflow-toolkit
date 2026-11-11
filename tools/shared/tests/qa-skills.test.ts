@@ -480,7 +480,8 @@ describe("canonical QA skills", () => {
     expect(testContract).toContain("Never create a case solely because a");
     expect(testContract).toContain("[Lean checks reference](../../wtk-lean/references/checks.md)");
     expect(testContract).toContain("only schema and");
-    expect(testContract).toContain("standard` and `ui` inject faults; `light` does not");
+    expect(testContract).toContain("standard` and `ui` inject faults only for the checks the");
+    expect(testContract).toContain("`light` injects none");
     expect(testContract).toContain("owning check or slice");
     expect(testContract).not.toContain("## Unit");
     expect(testContract).not.toContain("Every ID is assigned to exactly one check");

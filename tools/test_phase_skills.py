@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -20,6 +21,28 @@ def frontmatter(path: Path) -> dict[str, str]:
     assert lines and lines[0] == "---", f"{path} has no frontmatter"
     end = lines.index("---", 1)
     return {key.strip(): value.strip() for key, _, value in (line.partition(":") for line in lines[1:end])}
+
+
+def blocks(relative: str) -> list[str]:
+    """Logical lines of a skill file: a list item or paragraph joined with its continuation lines."""
+    out: list[str] = []
+    start_new = True
+    for line in (SKILLS / relative).read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            start_new = True
+        elif start_new or line.startswith(("- ", "|", "#", "```")):
+            out.append(line.strip())
+            start_new = line.startswith(("|", "#", "```"))
+        else:
+            out[-1] += " " + line.strip()
+    return out
+
+
+def owns(relative: str, *fragments: str) -> bool:
+    """True when one logical line of the file carries every fragment: the rule sits where it is owned."""
+    return any(all(fragment in block for fragment in fragments) for block in blocks(relative))
+
+UIUX = "wtk/references/ui-ux.md"
 
 
 def test_public_skill_contracts() -> None:
@@ -97,6 +120,64 @@ def test_router_references_resolve() -> None:
         assert (router / target).is_file(), f"missing router reference: {target}"
     for token in re.findall(r"(?:\.agents/skills/)?[\w./-]+/scripts/[\w-]+\.py", text):
         assert (ROOT / token.lstrip("./")).is_file(), f"{router}: missing {token}"
+
+
+def test_screens_judge_inputs_exclude_code() -> None:
+    assert owns(UIUX, "**Dispatch:**", "fresh screens judge", "same turn as the Verifier")
+    assert owns(UIUX, "**Inputs:**", "binding captures", "<capture>.running.png", "listed departures",
+                "never source, diff or handoff")
+    for relative in ("wtk-lean/references/verify.md", "wtk-implement/references/screens.md"):
+        path = SKILLS / relative
+        links = re.findall(r"\]\(([^)#]*ui-ux\.md)#screens-judge-ui\)", path.read_text(encoding="utf-8"))
+        assert links and all((path.parent / target).resolve() == (SKILLS / UIUX).resolve() for target in links), relative
+
+
+def test_screens_report_schema_is_defined() -> None:
+    assert owns(UIUX, "**Round**: 1")
+    assert owns(UIUX, "**HEAD**: <short sha")
+    assert owns(UIUX, "| Screen | Compared with | Verdict | Finding |")
+    assert owns(UIUX, "| Element | Result | Picture draws |")
+    assert owns(UIUX, "a `differs` row names its category as `differs - <category>`")
+    assert owns(UIUX, "| differs - arrangement | expiry and CVC on a second row |")
+    assert owns(UIUX, "`differs` categories", "`controls`", "`arrangement`", "`copy`", "`drawing`", "`render`")
+    assert owns(UIUX, "**Verdict:**", "`diverges`", "`matches`")
+
+
+def test_screens_resized_tell_is_defined() -> None:
+    assert owns(UIUX, "**Resized:**", "reads smaller in the picture", "`differs - resized`")
+
+
+def test_screens_second_round_is_bounded() -> None:
+    assert owns(UIUX, "**Round 2:**", "reopens only the `differs` rows", "`differs - regression`",
+                "There is no round 3")
+
+
+def test_verifier_judges_each_check_test() -> None:
+    verify = "wtk-lean/references/verify.md"
+    assert owns(verify, "write one `## Checks` row", "the test", "`Holds`", "`yes`", "`no`", "`unsure`")
+    assert owns(verify, "read `proofs.md`") or owns(verify, "## 2. Read `proofs.md`")
+    assert owns(verify, "| Check | Test | Holds | Evidence |")
+    assert owns(verify, "for each check on `checks.md`'s `Risk:` line and each `unsure` row", "five faults at most")
+    assert owns("wtk/references/verify-core.md", "`Risk:` line", "`unsure`", "does not run")
+
+
+def test_pruning_keeps_mandatory_mutation() -> None:
+    contract = "wtk/references/test-contract.md"
+    assert owns(contract, "Pruning and test review", "keep a mutation or manual-fault run over their whole scope mandatory")
+    assert owns(contract, "Re-run mutation over the scope")
+    assert owns(contract, "Outside the `Risk:` checks a survivor is recorded `accepted - <reason>`")
+    review = (SKILLS / "wtk-test-review/SKILL.md").read_text(encoding="utf-8")
+    assert "**Mutate.**" in review and "test-contract.md#mutation" in review
+
+
+def test_lean_provenance_pins_upstream() -> None:
+    meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
+    assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"
+    # the registry hash of the upstream skill directory at that commit
+    assert meta["contentHash"] == "65cf4acff0a88093eafc9d34a36ca3a03a74c78301b1b4025e517ecc18e66a44"
+    notice = (SKILLS / "wtk-lean/NOTICE.md").read_text(encoding="utf-8")
+    for adapted in ("proof runner", "build preflight", "compaction gates", "screens judge"):
+        assert adapted in notice, adapted
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:

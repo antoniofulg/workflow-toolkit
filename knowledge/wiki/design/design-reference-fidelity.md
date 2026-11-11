@@ -10,7 +10,7 @@ sources:
   - id: ui-contract
     resource: ../../../.agents/skills/wtk/references/ui-ux.md
     title: UI/UX Surface Map
-    last_modified: 2026-11-06
+    last_modified: 2026-11-11
   - id: frontend-ownership
     resource: ../../../.agents/skills/wtk/references/frontend.md
     title: Front-End Engineering

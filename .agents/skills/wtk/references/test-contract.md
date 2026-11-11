@@ -13,8 +13,9 @@ authoring source for that artifact: read it for `Profile`, check and proof synta
 `Test policy`, `Swept`, and `Handoff`. This guideline supplies local test-case policy below; it does
 not define a second checks schema.
 
-The native profile owns mutation depth: `standard` and `ui` inject faults; `light` does not.
-[Mutation](#mutation) sets their scope and survivor policy.
+The native profile owns mutation depth: `standard` and `ui` inject faults only for the checks the
+`Risk:` line names and for `unsure` rows; `light` injects none. [Mutation](#mutation) sets their
+scope and survivor policy.
 
 ## Rules
 
@@ -112,8 +113,13 @@ string alone does not prove agent behavior.
   cargo-mutants for Rust.
 - **No declared tool.** Inject manual faults as that procedure states.
 - **Survivors.** There is no global score target, and this pack sets no number. Every survivor on
-  a changed decision line is a finding: kill it with a test, or record it as equivalent or arid with
-  a one-line reason. A project may declare its own break threshold, scoped to changed files.
+  a changed decision line of a `Risk:` check is a finding: kill it with a test, or record it as
+  equivalent or arid with a one-line reason. Outside the `Risk:` checks a survivor is recorded
+  `accepted - <reason>` and earns no new test, because a test for every survivor grows a suite the
+  project is trying to shrink. A project may declare its own break threshold, scoped to changed files.
+- **Pruning and test review.** The `Risk:` scope and `accepted` belong to Lean verification only.
+  [Pruning](#pruning) and `wtk-test-review` keep a mutation or manual-fault run over their whole
+  scope mandatory, and a removal never rests on an `accepted` survivor.
 
 ## Pruning
 

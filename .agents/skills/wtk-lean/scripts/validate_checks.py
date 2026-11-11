@@ -12,16 +12,21 @@ the check that proves it - and this script makes the join checkable: a row decla
 set of 5 with 4 members assigned fails, loudly, before a line of code is written.
 
 Pure standard library, zero dependencies. Operates only on the checks.md markdown
-artifact - never on the target codebase - so it stays stack-agnostic.
+artifact - never on the target codebase - so it stays stack-agnostic - except with --execute,
+which runs the `Build:` line once before any code is written.
 
 The requirements and the solution's shape are not this file's business: both were
 reviewed in plan.md and are gated by validate_plan.py. What this script owns is the
 derivation from them, which is where omissions surface.
 
 What it checks:
+  ERROR  - no `## Approval` receipt with a non-empty `- Decision:` line (plan.md, else checks.md)
+  ERROR  - no `Build:` line naming the repo's build, type check and lint command (or `none - <why>`)
+  ERROR  - profile standard/ui with no `Risk:` line (`none - <why>` or the check ids where a weak test costs most)
   ERROR  - no `Profile:` line, or an unknown profile
   ERROR  - a required section is missing (Checks, Coverage, Swept)
   ERROR  - a check with no `Proof:` line
+  ERROR  - a `run <name>` proof with no `Run <name>:` line, or with no pass line after `|`
   ERROR  - a duplicate check id
   ERROR  - no checks parsed at all
   ERROR  - a Coverage row with an empty member cell
@@ -29,23 +34,26 @@ What it checks:
   ERROR  - a Coverage row with a non-empty `Unproven` cell
   ERROR  - a swept dimension missing, or its landing left blank
   ERROR  - an `n/a` swept landing with no reason after it
-  ERROR  - a check id referenced in Coverage or Swept that is not defined
+  ERROR  - a check id referenced in Coverage, Swept or Risk that is not defined
   WARN   - a route in plan.md's Surface that nothing here mentions
-  WARN   - a proof that names no test selector (a whole suite settles no single claim)
+  WARN   - a proof that names no test selector (a whole suite settles no single claim; a `run`
+           proof is exempt - its pass line is its selector)
   WARN   - a claim carrying a vague word instead of a concrete value
   WARN   - a Coverage row that declares no set size
   WARN   - a swept landing that is neither a check, `existing`, `n/a`, nor `Unresolved`
   WARN   - a blocking unresolved question still open
   WARN   - a `Test policy` section is absent under profile standard/ui
+  ERROR  - with --execute, when nothing else failed: the `Build:` command is red before any change
 
 Usage:
-  python3 <skill-dir>/scripts/validate_checks.py [target] [--root DIR] [--strict]
+  python3 <skill-dir>/scripts/validate_checks.py [target] [--root DIR] [--strict] [--execute]
 
   Invoke from the skill directory that ships this script (not the project root).
   target    Path to a checks.md, a feature directory, a feature name, or a project root.
             Omitted -> auto-detect the single feature under <root>/.specs/features/.
   --root    Project root that contains .specs/ (default: current dir).
   --strict  Treat warnings as errors.
+  --execute Before starting to build: also run the `Build:` line once, from --root.
 
 Exit codes: 0 pass, 1 errors found (or warnings under --strict), 2 usage error.
 """
@@ -53,14 +61,16 @@ Exit codes: 0 pass, 1 errors found (or warnings under --strict), 2 usage error.
 import argparse
 import os
 import re
+import subprocess
 import sys
 
-from native_evidence import intent_errors
+from native_evidence import RUN_PROOF_RE, approval_errors, intent_errors, read_risk, read_runs, unquote
 
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
 
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE)
+BUILD_RE = re.compile(r"^\**\s*Build\s*\**\s*:\s*(.+)$", re.IGNORECASE)
 CHECK_RE = re.compile(r"^\**\s*(C\d+)\s*\**\s*[-–—:]\s*(.+)$")
 PROOF_RE = re.compile(r"^\**\s*Proof\s*\**\s*:\s*(.+)$", re.IGNORECASE)
 CID_RE = re.compile(r"\bC\d+\b")
@@ -135,6 +145,15 @@ def _autodetect(root):
         "validate_checks: multiple features found; pass one explicitly:\n  "
         + "\n  ".join(os.path.join(base, f, "checks.md") for f in features)
     )
+
+
+def read_build(lines):
+    """The first `Build:` line's command text outside fenced blocks, else None."""
+    for ln in lines:
+        m = BUILD_RE.match(ln.strip())
+        if m:
+            return unquote(m.group(1))
+    return None
 
 
 def split_row(line):
@@ -246,7 +265,7 @@ def check_file(path):
     with open(path, "r", encoding="utf-8") as f:
         raw = f.read().splitlines()
     lines = strip_fences(raw)
-    errors, warnings = intent_errors(path), []
+    errors, warnings = intent_errors(path) + approval_errors(path), []
 
     # Profile.
     profile = None
@@ -259,6 +278,26 @@ def check_file(path):
         errors.append("no `Profile:` line - the verification report has to name the profile in force")
     elif profile not in PROFILES:
         errors.append(f"unknown profile '{profile}' (expected one of: {', '.join(PROFILES)})")
+
+    # Build preflight.
+    build = read_build(lines)
+    if build is None:
+        errors.append(
+            "no `Build:` line - name the repo's build, type check and lint command (or `Build: none - <why>`); "
+            "a green test suite does not show the code compiles"
+        )
+    elif build.lower().startswith("none") and len(build[4:].strip(" -–—:")) < 3:
+        errors.append("`Build: none` with no reason - say why the repo has no build, type check or lint")
+
+    # Risk: faults run where a weak test costs most, so the line is required wherever they run.
+    risk = read_risk(lines)
+    if profile in ("standard", "ui") and risk is None:
+        errors.append(
+            f"profile is {profile} but there is no `Risk:` line - name the checks where a weak test costs most "
+            f"(`Risk: C3, C7 - <why>`) or `Risk: none - <why>`; the Verifier injects faults only there"
+        )
+    elif risk is not None and not risk[2]:
+        errors.append("`Risk:` line is malformed - write `Risk: none - <reason>` or `Risk: C3, C7 - <reason>`")
 
     # Sections.
     for name in REQUIRED_SECTIONS:
@@ -278,11 +317,20 @@ def check_file(path):
         errors.append("no checks parsed - expected lines shaped `**C1** - <claim>` followed by `Proof: <command>`")
         return errors, warnings, profile
 
+    runs = read_runs(lines)
     for cid, c in sorted(checks.items(), key=lambda kv: int(kv[0][1:])):
         if not c["proofs"]:
             errors.append(f"{cid} has no `Proof:` line - no proof, no check (L{c['line']})")
         for pr in c["proofs"]:
             low = pr.lower()
+            text = unquote(pr)
+            run = RUN_PROOF_RE.match(text) or re.match(r"^run\s+([\w-]+)\s*$", text, re.IGNORECASE)
+            if run and (run.re is RUN_PROOF_RE or run[1] in runs):
+                if run[1] not in runs:
+                    errors.append(f"{cid}: proof reads `run {run[1]}` and no `Run {run[1]}: <command>` line defines it (L{c['line']})")
+                if run.re is not RUN_PROOF_RE or not run[2].strip():
+                    errors.append(f"{cid}: `run {run[1]}` names no pass line after `|` - copy the line the run prints when this test passes (L{c['line']})")
+                continue
             if not any(tok in low for tok in SELECTOR_TOKENS):
                 warnings.append(
                     f"{cid}: proof names no test selector, so it may be a whole suite - "
@@ -371,8 +419,10 @@ def check_file(path):
                 )
 
     # Dangling references.
+    if risk is not None:
+        referenced |= set(risk[0])
     for cid in sorted(referenced - set(checks), key=lambda c: int(c[1:])):
-        errors.append(f"{cid} is referenced in Coverage or Swept but is not defined in ## Checks")
+        errors.append(f"{cid} is referenced in Coverage, Swept or Risk but is not defined in ## Checks")
 
     # The derivation. checks.md is derived from plan.md, so an interface reviewed there with
     # nothing pointing back at it here is either dead or unproven - and the plan naming it
@@ -392,6 +442,23 @@ def check_file(path):
     return errors, warnings, profile
 
 
+def red_build(path, root):
+    """The `Build:` command run once from `root`; an error message when it exits non-zero."""
+    with open(path, "r", encoding="utf-8") as f:
+        build = read_build(strip_fences(f.read().splitlines()))
+    if not build or build.lower().startswith("none"):
+        return []
+    proc = subprocess.run(build, shell=True, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                          text=True, errors="replace")
+    if proc.returncode == 0:
+        return []
+    last = next(iter(reversed(proc.stdout.strip().splitlines())), "")
+    return [
+        f"the build was red before any change: `{build}` exit {proc.returncode} - {last.strip()[:100]}. "
+        f"Tell the user and stop; the feature must not inherit a failing baseline"
+    ]
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(
         prog="validate_checks.py",
@@ -400,6 +467,7 @@ def main(argv=None):
     p.add_argument("target", nargs="?", default=None)
     p.add_argument("--root", default=".")
     p.add_argument("--strict", action="store_true")
+    p.add_argument("--execute", action="store_true", help="Before starting to build: also run the Build line once")
     args = p.parse_args(argv)
 
     path = resolve_checks(args.target, args.root)
@@ -411,6 +479,8 @@ def main(argv=None):
         return 2
 
     errors, warnings, profile = check_file(path)
+    if args.execute and not errors:
+        errors += red_build(path, os.path.abspath(args.root))
     for w in warnings:
         print(f"  WARN  {w}")
     for e in errors:

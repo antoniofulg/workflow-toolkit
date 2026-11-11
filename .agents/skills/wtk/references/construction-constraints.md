@@ -31,8 +31,10 @@ beside `## Intent` in `checks.md`; create no synthetic plan. Use these literal f
 ```
 
 Fill the fields only from observed evidence and cite the actual source whenever available. No
-validator judges the receipt; the Verifier does. If the current request already authorizes bounded
-checks-only or decided modular work, record that request: do not add a redundant approval pause.
+validator judges the receipt beyond its presence: Lean's `validate_checks.py` refuses a feature whose
+receipt lacks a non-empty `Decision`, and the Verifier judges who approved which revision. If the
+current request already authorizes bounded checks-only or decided modular work, record that
+request: do not add a redundant approval pause.
 Otherwise use the existing review boundary, not an extra mandatory stop.
 
 Reuse genuine approval on unchanged resume within its scope. Ask targeted acceptance for a new

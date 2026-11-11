@@ -71,6 +71,9 @@ this skill installs nothing.
 - **Paired captures** prove arrangement, order, count and copy: that a progress bar is drawn and
   no breadcrumb is, that the primary button comes before the secondary, that the counter reads
   `1 of 3`, that `NOW` sits inside the week band rather than beside it, one column or two.
+- **The screens judge** compares each picture with its capture and never sees the code: the
+  [protocol and `screens.md` schema](../../wtk/references/ui-ux.md#screens-judge-ui) live with the
+  UI contract, and a builder never judges its own screens.
 - **One structural guard per screen** is the only selector check on its form: the assertion that
   would break first if the composition changed, such as the regions the screen has.
 - **Checks** assert behaviour, and copy only where copy is the contract.

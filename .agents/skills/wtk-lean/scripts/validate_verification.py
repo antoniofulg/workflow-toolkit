@@ -17,15 +17,21 @@ artifacts, so it stays stack-agnostic.
 
 What it checks:
   ERROR  - no verification.md (Verify is the closing step of the flow, not an option)
+  ERROR  - no proofs.md, a proofs.md row that does not read `pass`, or one written at another HEAD
   ERROR  - the verdict is FAIL, missing, or still the '[PASS | FAIL]' placeholder
   ERROR  - PASS with no file:line evidence anywhere (evidence-or-zero)
-  ERROR  - profile standard/ui with no fault rows, or with no recomputed Coverage section
-  ERROR  - PASS while a fault row's Disposition is not killed, equivalent - <reason> or arid - <reason>
+  ERROR  - profile standard/ui with no recomputed Coverage section
+  ERROR  - a `Risk:` check or an `unsure` check with no fault row naming it (up to five)
+  ERROR  - PASS while a fault row's Disposition is not killed, equivalent - <reason>, arid - <reason>
+           or accepted - <reason>, or is accepted on a `Risk:` check
+  ERROR  - PASS while a check has no `## Checks` row, names no test, or reads `Holds` other than
+           `yes` without a closing commit
   ERROR  - PASS while a mutation-run row reports more survivors than equivalent/arid rows record
   ERROR  - PASS while a Coverage row leaves a member Unproven
   ERROR  - PASS while a binding source records a Contradiction or leaves an element Uncovered
   ERROR  - profile ui with missing, incomplete or non-PASS visual fidelity evidence
-  ERROR  - PASS while a check row's Result is not PASS
+  ERROR  - profile ui with no screens.md, a verdict other than `matches`, a `**Round**` above 2, or a
+           `**HEAD**` other than the current one
   ERROR  - PASS while a Test policy row's expectation is not met
   ERROR  - the report's profile does not match the one checks.md was approved under
   ERROR  - profile ui, but the report carries no binding-sources section (step 1 vanished)
@@ -46,14 +52,23 @@ Exit codes: 0 ok, 1 the feature is not done, 2 usage error.
 import argparse
 import os
 import re
+import subprocess
 import sys
 
-from native_evidence import intent_errors, unfenced_lines, usable_value
+from native_evidence import intent_errors, read_risk, unfenced_lines, usable_value
 
 EVIDENCE_RE = re.compile(r"[\w./-]+\.[A-Za-z0-9]+:\d+")
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE | re.MULTILINE)
 EMPTY_CELL = {"", "-", "—", "–", "none", "n/a", "na", "nothing"}
-DISPOSITION_RE = re.compile(r"^(killed|equivalent|arid)\b\s*(?:[-–—:]\s*(.*))?$", re.IGNORECASE)
+CID_RE = re.compile(r"\bC\d+\b")
+CHECK_LINE_RE = re.compile(r"^\**\s*(C\d+)\s*\**\s*[-–—:]")
+HOLDS_RE = re.compile(r"^(yes|no|unsure)\b", re.IGNORECASE)
+SHA_RE = re.compile(r"\b(?=[0-9a-f]*\d)[0-9a-f]{7,40}\b")
+MAX_FAULTS = 5
+DISPOSITION_RE = re.compile(r"^(killed|equivalent|arid|accepted)\b\s*(?:[-–—:]\s*(.*))?$", re.IGNORECASE)
+ROUND_RE = re.compile(r"^\**\s*Round\s*\**\s*:\s*\**\s*(\d+)", re.IGNORECASE)
+JUDGED_HEAD_RE = re.compile(r"^\**\s*HEAD\s*\**\s*:\s*\**\s*`?([0-9a-f]{4,40})", re.IGNORECASE)
+MAX_ROUNDS = 2
 UNMET_RE = re.compile(r"\b(no|not met|unmet|fail|failed|gap)\b", re.IGNORECASE)
 
 
@@ -115,13 +130,153 @@ def _profile(text):
 
 
 def _checks_context(fdir):
-    """What checks.md was approved under: (profile, has a Test policy section)."""
+    """What checks.md was approved under: (profile, has a Test policy section, its unfenced lines)."""
     path = os.path.join(fdir, "checks.md")
     if not os.path.exists(path):
-        return None, False
+        return None, False, []
     body = open(path, encoding="utf-8", errors="replace").read()
     lines = strip_fences(body)
-    return _profile("\n".join(lines)), has_heading(lines, "Test policy")
+    return _profile("\n".join(lines)), has_heading(lines, "Test policy"), lines
+
+
+def _judgments(name, tables, check_ids):
+    """The Verifier's `## Checks` table: a row per check with the test it read and whether it holds.
+
+    Returns (errors, ids judged `unsure`). A `Holds` other than `yes` stands only with the commit that
+    closed it, so a PASS cannot sit beside an open judgment.
+    """
+    errors, unsure, judged = [], set(), set()
+    for header, rows in tables:
+        check, test, holds = column(header, "check"), column(header, "test"), column(header, "holds")
+        if check is None or test is None or holds is None:
+            continue
+        for r in rows:
+            cid = r[check].strip("*` ") if check < len(r) else ""
+            judged.add(cid)
+            if test >= len(r) or not usable_value(r[test]):
+                errors.append(f"{name}: `## Checks` row {cid} names no test - write the test its proof selects, file and name")
+            cell = r[holds] if holds < len(r) else ""
+            m = HOLDS_RE.match(cell.strip("` "))
+            if not m:
+                errors.append(f"{name}: `## Checks` row {cid} reads Holds {cell[:30]!r} - expected yes, no or unsure")
+                continue
+            if m[1].lower() == "unsure":
+                unsure.add(cid)
+            if m[1].lower() != "yes" and not SHA_RE.search(cell):
+                errors.append(
+                    f"{name}: PASS but check {cid} reads Holds {cell[:40]!r} with no closing commit - fix it "
+                    f"and write the commit in the cell"
+                )
+    if not judged and check_ids:
+        errors.append(f"{name}: verification.md has no `## Checks` table with Check, Test and Holds columns")
+    else:
+        for cid in sorted(check_ids - judged, key=lambda c: int(c[1:])):
+            errors.append(f"{name}: verification.md `## Checks` has no row for {cid} - judge its test against the criterion")
+    return errors, unsure
+
+
+def _git_head(fdir):
+    """Short HEAD of the project holding `.specs/features/<name>`; None when git cannot say."""
+    features = os.path.dirname(os.path.abspath(fdir))
+    specs = os.path.dirname(features)
+    if os.path.basename(features) != "features" or os.path.basename(specs) != ".specs":
+        return None
+    try:
+        proc = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=os.path.dirname(specs),
+                              capture_output=True, text=True)
+    except OSError:
+        return None
+    return proc.stdout.strip() if proc.returncode == 0 else None
+
+
+def _stale(fdir, recorded):
+    """True when git can name HEAD and the recorded sha is not it."""
+    head = _git_head(fdir)
+    return bool(head) and not (head.startswith(recorded) or recorded.startswith(head))
+
+
+def _screens_errors(fdir, name):
+    """screens.md is the screens judge's verdict: it must exist, match, be round 1 or 2, and be current."""
+    path = os.path.join(fdir, "screens.md")
+    if not os.path.isfile(path):
+        return [f"{name}: profile is ui but there is no screens.md - a fresh screens judge compares each "
+                f"picture with its capture (wtk/references/ui-ux.md#screens-judge-ui)"]
+    with open(path, encoding="utf-8", errors="replace") as source:
+        lines = strip_fences(source.read())
+    errors = []
+    rounds = [int(m[1]) for m in (ROUND_RE.match(ln.strip()) for ln in lines) if m]
+    if not rounds:
+        errors.append(f"{name}: screens.md has no `**Round**:` line - the judge writes 1, and 2 on the last round")
+    elif rounds[0] > MAX_ROUNDS:
+        errors.append(f"{name}: screens.md reads `**Round**: {rounds[0]}` - there is no round 3; what still differs goes to the user")
+    judged = next((m[1] for m in (JUDGED_HEAD_RE.match(ln.strip()) for ln in lines) if m), None)
+    if not judged:
+        errors.append(f"{name}: screens.md names no `**HEAD**` - the judge writes the commit it judged")
+    elif _stale(fdir, judged):
+        errors.append(f"{name}: screens.md judged {judged} and HEAD is {_git_head(fdir)} - the judge runs again at HEAD")
+    verdicts = 0
+    for header, rows in find_tables(lines):
+        verdict, screen = column(header, "verdict"), column(header, "screen")
+        if verdict is None or screen is None:
+            continue
+        for row in rows:
+            verdicts += 1
+            if verdict >= len(row) or row[verdict].strip("` ").lower() != "matches":
+                errors.append(f"{name}: screens.md - '{row[0][:50]}' reads {row[verdict][:20] if verdict < len(row) else ''!r}, not matches")
+    if not verdicts:
+        errors.append(f"{name}: screens.md has no verdict table with `Screen` and `Verdict` columns")
+    return errors
+
+
+def _proof_counts(checks_lines):
+    """{check id: number of `Proof:` lines} outside fenced blocks."""
+    counts, current = {}, None
+    for ln in checks_lines:
+        if re.match(r"^#{1,2}\s+\S", ln):
+            current = None
+        m = CHECK_LINE_RE.match(ln.strip())
+        if m:
+            current = m[1]
+            counts[current] = 0
+        elif current and re.match(r"^\**\s*Proof\s*\**\s*:", ln.strip(), re.IGNORECASE):
+            counts[current] += 1
+    return counts
+
+
+def _proofs_errors(fdir, name, checks_lines):
+    """proofs.md is check_proofs.py's record: a row per `Proof:` line, each `pass`, written at the HEAD being gated."""
+    path = os.path.join(fdir, "proofs.md")
+    if not os.path.isfile(path):
+        return [f"{name}: no proofs.md - run check_proofs.py {name} at a clean HEAD"]
+    with open(path, encoding="utf-8", errors="replace") as source:
+        lines = strip_fences(source.read())
+    errors = []
+    recorded = re.search(r"\*\*HEAD\*\*\s*:\s*`?([0-9a-f]{4,40})", "\n".join(lines))
+    if not recorded:
+        errors.append(f"{name}: proofs.md names no `**HEAD**` - run check_proofs.py {name} again")
+    elif _stale(fdir, recorded[1]):
+        errors.append(f"{name}: proofs.md was written at {recorded[1]} and HEAD is {_git_head(fdir)} - run check_proofs.py {name} again")
+    rows, per_check = 0, {}
+    for header, table in find_tables(lines):
+        result = column(header, "result")
+        if result is None or column(header, "proof") is None:
+            continue
+        for row in table:
+            rows += 1
+            owner = re.match(r"(C\d+):", row[0])
+            if owner:
+                per_check[owner[1]] = per_check.get(owner[1], 0) + 1
+            if result >= len(row) or row[result] != "pass":
+                errors.append(f"{name}: proofs.md - {row[0][:60]} reads {row[result][:20] if result < len(row) else ''!r}")
+    if not rows:
+        errors.append(f"{name}: proofs.md has no proof rows - run check_proofs.py {name} again")
+    for cid, expected in sorted(_proof_counts(checks_lines).items(), key=lambda kv: int(kv[0][1:])):
+        if per_check.get(cid, 0) < expected:
+            errors.append(
+                f"{name}: proofs.md has {per_check.get(cid, 0)} row(s) for {cid} but checks.md names {expected} "
+                f"proof(s) - run check_proofs.py {name} again"
+            )
+    return errors
 
 
 def _verdict(lines):
@@ -168,7 +323,7 @@ def _check_feature(fdir, name):
     # The profile decides which steps run, so a report that quietly declares a cheaper one
     # than the feature was approved under makes an entire step disappear without a trace.
     report_profile = _profile(body)
-    approved_profile, policy_rows_exist = _checks_context(fdir)
+    approved_profile, policy_rows_exist, checks_lines = _checks_context(fdir)
     if report_profile is None:
         warnings.append(f"{name}: no `Profile:` line - a step that did not run is indistinguishable from one forgotten")
     elif approved_profile and report_profile != approved_profile:
@@ -184,6 +339,8 @@ def _check_feature(fdir, name):
             f"{name}: report is self-verified (author == verifier) - a degraded gate, "
             f"since a self-check reproduces the author's own blind spot"
         )
+
+    errors += _proofs_errors(fdir, name, _checks_context(fdir)[2])
 
     if verdict != "pass":
         return errors, warnings
@@ -211,6 +368,7 @@ def _check_feature(fdir, name):
 
     tables = find_tables(lines)
     if effective == "ui":
+        errors += _screens_errors(fdir, name)
         visual_lines = []
         in_visual = False
         for line in lines:
@@ -261,31 +419,46 @@ def _check_feature(fdir, name):
         if not evidence_rows:
             errors.append(f"{name}: ui requires a visual fidelity evidence table with {', '.join(required)}")
 
-    saw_faults = False
+    check_ids = {m[1] for m in (CHECK_LINE_RE.match(ln.strip()) for ln in checks_lines) if m}
+    judgment_errors, unsure = _judgments(name, tables, check_ids)
+    errors += judgment_errors
+    risk = read_risk(checks_lines) if effective in ("standard", "ui") else None
+    risk_ids = set(risk[0]) if risk else set()
+    fault_checks = set()
     survivors_run = survivors_recorded = 0
 
     for header, rows in tables:
         disposition = column(header, "disposition")
         if disposition is not None:
-            saw_faults = saw_faults or bool(rows)
+            check, mutation = column(header, "check"), column(header, "mutation")
             for r in rows:
                 cell = r[disposition].strip("` ") if disposition < len(r) else ""
+                label = r[mutation][:50] if mutation is not None and mutation < len(r) else r[0][:50]
+                ids = set(CID_RE.findall(r[check])) if check is not None and check < len(r) else set()
+                fault_checks |= ids
                 m = DISPOSITION_RE.match(cell)
                 if not m:
                     errors.append(
-                        f"{name}: PASS but mutant '{r[0][:50]}' has disposition {cell[:30]!r} - "
-                        f"expected killed, equivalent - <reason> or arid - <reason>; a survivor is a finding"
+                        f"{name}: PASS but mutant '{label}' has disposition {cell[:30]!r} - expected killed, "
+                        f"equivalent - <reason>, arid - <reason> or accepted - <reason>; a survivor is a finding"
                     )
                 elif m[1].lower() != "killed":
                     if not usable_value(m[2] or ""):
-                        errors.append(f"{name}: {m[1].lower()} mutant '{r[0][:50]}' needs a one-line reason")
+                        errors.append(f"{name}: {m[1].lower()} mutant '{label}' needs a one-line reason")
+                    if m[1].lower() == "accepted":
+                        if not ids:
+                            errors.append(f"{name}: accepted mutant '{label}' names no Check - an accepted survivor must sit outside the `Risk:` checks")
+                        elif ids & risk_ids:
+                            errors.append(
+                                f"{name}: accepted mutant '{label}' sits in `Risk:` check {', '.join(sorted(ids & risk_ids))} "
+                                f"- kill it with a test, or record it equivalent or arid"
+                            )
                     survivors_recorded += 1
 
         survived = column(header, "survived")
         if survived is not None and column(header, "command") is not None:
             command = column(header, "command")
             for r in rows:
-                saw_faults = True
                 if command >= len(r) or not usable_value(r[command]):
                     errors.append(f"{name}: mutation-run row names no command ({r[0][:40]})")
                 count = r[survived].strip("` ") if survived < len(r) else ""
@@ -314,12 +487,6 @@ def _check_feature(fdir, name):
                         f"{name}: PASS but a binding source leaves '{r[uncovered][:50]}' uncovered ({r[0][:40]})"
                     )
 
-        result = column(header, "result")
-        if result is not None and column(header, "check", "claim") is not None:
-            for r in rows:
-                if result < len(r) and r[result] and "pass" not in r[result].lower():
-                    errors.append(f"{name}: PASS but check {r[0][:20]} reports '{r[result][:30]}'")
-
         met = column(header, "expectation met", "met")
         if met is not None:
             for r in rows:
@@ -332,15 +499,17 @@ def _check_feature(fdir, name):
     if survivors_run > survivors_recorded:
         errors.append(
             f"{name}: PASS but the mutation run reports {survivors_run} survivor(s) and only "
-            f"{survivors_recorded} carry an equivalent or arid disposition - kill or record each one"
+            f"{survivors_recorded} carry an equivalent, arid or accepted disposition - kill or record each one"
         )
 
-    # Fault injection is profile-scoped (standard, ui), like tlc-implement. Under `light` a
-    # report with no fault rows is correct, and the profile line is what says so.
-    if effective in ("standard", "ui") and not saw_faults:
+    # Faults run where a weak test costs most: the `Risk:` checks and any check the Verifier is unsure of,
+    # one fault each, five at most. `Risk: none` with nothing unsure owes no fault row.
+    owed = risk_ids | unsure if effective in ("standard", "ui") else set()
+    missing = sorted(owed - fault_checks, key=lambda c: int(c[1:]))
+    if owed and len(owed) - len(missing) < min(MAX_FAULTS, len(owed)):
         errors.append(
-            f"{name}: profile is {effective} but there are no fault rows - a green suite proves the "
-            f"tests execute, only a killed mutant proves they can fail"
+            f"{name}: no fault row names {', '.join(missing)} - inject at least one fault per `Risk:` check "
+            f"and per `unsure` check (up to {MAX_FAULTS}) and put its check id in the Check column"
         )
 
     return errors, warnings

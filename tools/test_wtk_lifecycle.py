@@ -16,7 +16,7 @@ def make_feature(root: Path, name: str = "fixture") -> Path:
     target = root / ".specs" / "features" / name
     target.mkdir(parents=True)
     fixtures = ROOT / ".agents" / "skills" / "wtk-lean" / "scripts" / "fixtures"
-    for filename in ("plan.md", "checks.md", "verification.md"):
+    for filename in ("plan.md", "checks.md", "verification.md", "proofs.md"):
         shutil.copy2(fixtures / filename, target / filename)
     return target
 

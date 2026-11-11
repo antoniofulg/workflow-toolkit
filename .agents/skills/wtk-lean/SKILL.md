@@ -40,7 +40,7 @@ features. The phase references carry its entry points; profiles never waive inhe
    rows may be added when building discovers a door, entity, or interface; approved rows are never
    rewritten. Keep `Flow` and `Impact` current when the path changes.
 4. The coordinator dispatches one fresh Verifier over `<feature base>..HEAD` with every check in
-   the same turn after the feature's last commit. The builder reports and stops; verification is
+   the same turn after the feature's last commit, and under `ui` the screens judge beside it. The builder reports and stops; verification is
    never optional, delayed for another prompt, or self-authored.
 5. The declared profile is a floor. Its report names the profile and `validate_verification.py` must
    exit 0. An approved spec authorizes local edits and commits only; push, deploy, and production
@@ -60,9 +60,9 @@ profile: standard
 
 | Profile | Proof obligations |
 | --- | --- |
-| `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
-| `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
-| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, and one structural guard per screen |
+| `light` | `proofs.md` green at `HEAD`, a `Holds` judgment and one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
+| `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and a fault for each check on the `Risk:` line and each `unsure` row |
+| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, one structural guard per screen, and a `screens.md` verdict from the [screens judge](../wtk/references/ui-ux.md#screens-judge-ui) at `HEAD` |
 
 An empty input costs a recorded line, not a skipped step. `validate_verification.py` rejects a
 profile mismatch and missing sections required by `standard` or `ui`. If the declared floor is too
@@ -123,8 +123,9 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | When | Command |
 | --- | --- |
 | Before presenting the plan | `validate_plan.py <feature>` |
-| Before starting to build | `validate_checks.py <feature>` |
-| Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"` |
+| Before starting to build | `validate_checks.py <feature> --execute` (runs the `Build:` line once) |
+| Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"`; a pass prints what each open feature still owes |
+| After the last commit, on a clean tree | `check_proofs.py <feature>` |
 | Before declaring done | `validate_verification.py <feature>` |
 | At distillation | `lessons.py add ...` |
 | After editing a validator or template | `selftest.py` |
@@ -132,7 +133,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
 `validate_checks.py` catches missing proofs, coverage, swept rows and profile.
 `validate_verification.py` also requires, under `ui`, visual provenance and existing local captures.
-Approval and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
+`validate_checks.py` refuses a missing approval receipt; who approved which revision and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
 If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection
