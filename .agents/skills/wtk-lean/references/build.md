@@ -99,7 +99,10 @@ Without a project validator, validate before committing:
 python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on failed charge"
 ```
 
-Optional git-level guard, independent of any agent:
+A passing message also prints one `OWED` line per feature with checks and no `verification.md`:
+`check_proofs.py`, the fresh Verifier and, when a criterion cites a capture, the screens judge. The
+builder reports and stops there; the coordinator acts on it. Optional git-level guard,
+independent of any agent:
 
 ```bash
 hook="$(git rev-parse --git-path hooks)/commit-msg"

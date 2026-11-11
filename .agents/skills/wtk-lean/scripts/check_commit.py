@@ -20,8 +20,12 @@ What it checks:
   ERROR  - description is empty, starts uppercase, or ends with a period
   WARN   - header longer than 72 characters
 
+After a passing message it prints, for each feature under `<root>/.specs/features/` that has a
+checks.md and no verification.md, what the feature still owes: a command's output reaches the agent
+after a compaction, where a rule it read hours earlier may not.
+
 Usage:
-  python3 <skill-dir>/scripts/check_commit.py [msgfile]
+  python3 <skill-dir>/scripts/check_commit.py [msgfile] [--root DIR]
   python3 <skill-dir>/scripts/check_commit.py --message "feat(auth): add email validation"
   echo "fix(cart): prevent negative quantity" | python3 <skill-dir>/scripts/check_commit.py
 
@@ -36,6 +40,7 @@ import sys
 # Keep in step with the Types table in wtk/references/git.md.
 TYPES = ["feat", "fix", "refactor", "perf", "docs", "test", "build", "ci"]
 HEADER_RE = re.compile(r"^(?P<type>\w+)(?:\((?P<scope>[^)]+)\))?(?P<bang>!)?: (?P<desc>.+)$")
+CAPTURE_RE = re.compile(r"`([^`\s]+\.(?:png|jpe?g|webp|gif))`", re.IGNORECASE)
 
 
 def read_message(args):
@@ -88,11 +93,45 @@ def check(message):
     return (errors, warnings)
 
 
+def cites_capture(plan_path):
+    """True when a numbered criterion under plan.md's `## Criteria` cites a binding capture image."""
+    if not os.path.isfile(plan_path):
+        return False
+    inside = False
+    with open(plan_path, "r", encoding="utf-8", errors="replace") as f:
+        for ln in f:
+            if re.match(r"^#{1,2}\s+\S", ln):
+                inside = re.match(r"^#{1,2}\s+Criteria\b", ln, re.IGNORECASE) is not None
+            elif inside and re.match(r"^\s*\d+\.\s", ln):
+                if any(not c.endswith(".running.png") for c in CAPTURE_RE.findall(ln)):
+                    return True
+    return False
+
+
+def owed(root):
+    """One line per feature that has checks.md and no verification.md: what it still owes."""
+    base = os.path.join(root, ".specs", "features")
+    if not os.path.isdir(base):
+        return []
+    lines = []
+    for name in sorted(os.listdir(base)):
+        fdir = os.path.join(base, name)
+        if not os.path.isfile(os.path.join(fdir, "checks.md")) or os.path.exists(os.path.join(fdir, "verification.md")):
+            continue
+        judge = " and the screens judge" if cites_capture(os.path.join(fdir, "plan.md")) else ""
+        lines.append(
+            f"  OWED  {name}: run check_proofs.py {name}, then dispatch the fresh Verifier{judge}; "
+            f"done when validate_verification.py {name} exits 0"
+        )
+    return lines
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="check_commit.py", description="Validate a Conventional Commits message.")
     p.add_argument("msgfile", nargs="?", default=None,
                    help="a commit message file (as git passes to commit-msg), or the message itself")
     p.add_argument("--message", default=None, help="the commit message as a string")
+    p.add_argument("--root", default=".", help="project root that contains .specs/ (default: current dir)")
     args = p.parse_args(argv)
 
     message = read_message(args)
@@ -109,6 +148,8 @@ def main(argv=None):
         print("\ncheck_commit: FAIL - see https://www.conventionalcommits.org/en/v1.0.0/")
         return 1
     print("check_commit: OK")
+    for line in owed(args.root):
+        print(line)
     return 0
 
 

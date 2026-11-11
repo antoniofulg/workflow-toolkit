@@ -348,6 +348,62 @@ class CommitContractTests(unittest.TestCase):
             0,
         )
 
+    def _commit(self, root: Path, message: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(SCRIPTS / "check_commit.py"), "--message", message, "--root", str(root)],
+            capture_output=True, text=True,
+        )
+
+    def _open_feature(self, root: Path) -> Path:
+        feature = scaffold(root)
+        (feature / "verification.md").unlink()
+        return feature
+
+    def test_commit_names_owed_steps_for_open_feature(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._open_feature(root)
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            owed = [line for line in result.stdout.splitlines() if "OWED" in line]
+            self.assertEqual(len(owed), 1, result.stdout)
+            self.assertIn("fixture", owed[0])
+            self.assertIn("check_proofs.py", owed[0])
+            self.assertIn("Verifier", owed[0])
+            self.assertNotIn("screens judge", owed[0])
+
+    def test_commit_names_screens_judge_when_capture_cited(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = self._open_feature(root)
+            plan = feature / "plan.md"
+            source = plan.read_text(encoding="utf-8")
+            criterion = next(ln for ln in source.splitlines() if ln.lstrip().startswith("1. WHEN"))
+            plan.write_text(source.replace(criterion, criterion + " as drawn in `captures/billing.png`"), encoding="utf-8")
+            result = self._commit(root, "feat(wtk): add lean router")
+            owed = [line for line in result.stdout.splitlines() if "OWED" in line]
+            self.assertEqual(len(owed), 1, result.stdout)
+            self.assertIn("screens judge", owed[0])
+
+    def test_commit_prints_nothing_owed_without_open_feature(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("OWED", result.stdout)
+            scaffold(root)  # a feature with its verification.md owes nothing
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("OWED", result.stdout)
+
+    def test_commit_invalid_message_prints_no_owed_line(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._open_feature(root)
+            result = self._commit(root, "Updated stuff.")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertNotIn("OWED", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
