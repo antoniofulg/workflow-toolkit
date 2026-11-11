@@ -26,6 +26,8 @@ What it checks:
   ERROR  - PASS while a Coverage row leaves a member Unproven
   ERROR  - PASS while a binding source records a Contradiction or leaves an element Uncovered
   ERROR  - profile ui with missing, incomplete or non-PASS visual fidelity evidence
+  ERROR  - profile ui with no screens.md, a verdict other than `matches`, a `**Round**` above 2, or a
+           `**HEAD**` other than the current one
   ERROR  - PASS while a check row's Result is not PASS
   ERROR  - PASS while a Test policy row's expectation is not met
   ERROR  - the report's profile does not match the one checks.md was approved under
@@ -56,6 +58,9 @@ EVIDENCE_RE = re.compile(r"[\w./-]+\.[A-Za-z0-9]+:\d+")
 PROFILE_RE = re.compile(r"^\**Profile\**\s*:\s*`?(\w+)`?", re.IGNORECASE | re.MULTILINE)
 EMPTY_CELL = {"", "-", "—", "–", "none", "n/a", "na", "nothing"}
 DISPOSITION_RE = re.compile(r"^(killed|equivalent|arid)\b\s*(?:[-–—:]\s*(.*))?$", re.IGNORECASE)
+ROUND_RE = re.compile(r"^\**\s*Round\s*\**\s*:\s*\**\s*(\d+)", re.IGNORECASE)
+JUDGED_HEAD_RE = re.compile(r"^\**\s*HEAD\s*\**\s*:\s*\**\s*`?([0-9a-f]{4,40})", re.IGNORECASE)
+MAX_ROUNDS = 2
 UNMET_RE = re.compile(r"\b(no|not met|unmet|fail|failed|gap)\b", re.IGNORECASE)
 
 
@@ -140,6 +145,45 @@ def _git_head(fdir):
     return proc.stdout.strip() if proc.returncode == 0 else None
 
 
+def _stale(fdir, recorded):
+    """True when git can name HEAD and the recorded sha is not it."""
+    head = _git_head(fdir)
+    return bool(head) and not (head.startswith(recorded) or recorded.startswith(head))
+
+
+def _screens_errors(fdir, name):
+    """screens.md is the screens judge's verdict: it must exist, match, be round 1 or 2, and be current."""
+    path = os.path.join(fdir, "screens.md")
+    if not os.path.isfile(path):
+        return [f"{name}: profile is ui but there is no screens.md - a fresh screens judge compares each "
+                f"picture with its capture (wtk/references/ui-ux.md#screens-judge-ui)"]
+    with open(path, encoding="utf-8", errors="replace") as source:
+        lines = strip_fences(source.read())
+    errors = []
+    rounds = [int(m[1]) for m in (ROUND_RE.match(ln.strip()) for ln in lines) if m]
+    if not rounds:
+        errors.append(f"{name}: screens.md has no `**Round**:` line - the judge writes 1, and 2 on the last round")
+    elif rounds[0] > MAX_ROUNDS:
+        errors.append(f"{name}: screens.md reads `**Round**: {rounds[0]}` - there is no round 3; what still differs goes to the user")
+    judged = next((m[1] for m in (JUDGED_HEAD_RE.match(ln.strip()) for ln in lines) if m), None)
+    if not judged:
+        errors.append(f"{name}: screens.md names no `**HEAD**` - the judge writes the commit it judged")
+    elif _stale(fdir, judged):
+        errors.append(f"{name}: screens.md judged {judged} and HEAD is {_git_head(fdir)} - the judge runs again at HEAD")
+    verdicts = 0
+    for header, rows in find_tables(lines):
+        verdict, screen = column(header, "verdict"), column(header, "screen")
+        if verdict is None or screen is None:
+            continue
+        for row in rows:
+            verdicts += 1
+            if verdict >= len(row) or row[verdict].strip("` ").lower() != "matches":
+                errors.append(f"{name}: screens.md - '{row[0][:50]}' reads {row[verdict][:20] if verdict < len(row) else ''!r}, not matches")
+    if not verdicts:
+        errors.append(f"{name}: screens.md has no verdict table with `Screen` and `Verdict` columns")
+    return errors
+
+
 def _proofs_errors(fdir, name):
     """proofs.md is check_proofs.py's record: every row `pass`, written at the HEAD being gated."""
     path = os.path.join(fdir, "proofs.md")
@@ -149,11 +193,10 @@ def _proofs_errors(fdir, name):
         lines = strip_fences(source.read())
     errors = []
     recorded = re.search(r"\*\*HEAD\*\*\s*:\s*`?([0-9a-f]{4,40})", "\n".join(lines))
-    head = _git_head(fdir)
     if not recorded:
         errors.append(f"{name}: proofs.md names no `**HEAD**` - run check_proofs.py {name} again")
-    elif head and not (head.startswith(recorded[1]) or recorded[1].startswith(head)):
-        errors.append(f"{name}: proofs.md was written at {recorded[1]} and HEAD is {head} - run check_proofs.py {name} again")
+    elif _stale(fdir, recorded[1]):
+        errors.append(f"{name}: proofs.md was written at {recorded[1]} and HEAD is {_git_head(fdir)} - run check_proofs.py {name} again")
     rows = 0
     for header, table in find_tables(lines):
         result = column(header, "result")
@@ -257,6 +300,7 @@ def _check_feature(fdir, name):
 
     tables = find_tables(lines)
     if effective == "ui":
+        errors += _screens_errors(fdir, name)
         visual_lines = []
         in_visual = False
         for line in lines:

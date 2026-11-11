@@ -108,8 +108,9 @@ same finding facing the other way.
 
 **Arrangement is the one this step keeps missing.** A screen can pass every label, count and
 order check and still be a different composition - a ring where the design draws a bar, one column
-where there are two. Compare the captures for composition, not only for labels; a screen whose
-captures are missing or show another composition fails even when every check is green. Apply the binding-source contract and individual token adaptations in
+where there are two. The [screens judge](../../wtk/references/ui-ux.md#screens-judge-ui) compares the pictures with their
+captures for composition, not only for labels; a screen whose pictures are missing or diverge fails
+even when every check is green. Apply the binding-source contract and individual token adaptations in
 [UI/UX](../../wtk/references/ui-ux.md#verifying-the-built-screen), then the core's
 [visual evidence](../../wtk/references/verify-core.md#visual-evidence-ui).
 
@@ -117,6 +118,12 @@ captures are missing or show another composition fails even when every check is 
 colour and type weight out of reach, named against the screen they belong to. They may not say
 "visual fidelity is unproven" and stop - that sentence also covers everything a selector could
 have reached. Treat a blanket clause as a finding, then enumerate what it was covering.
+
+**The coordinator dispatches the screens judge beside you, in the same turn.** It is a fresh
+sub-agent that sees the captures and pictures and never the code, and it writes `screens.md`; its
+protocol and schema live in [UI/UX](../../wtk/references/ui-ux.md#screens-judge-ui). Do not judge
+the pictures yourself: a `diverges` row fails the feature, and `validate_verification.py` reads
+`screens.md` at `HEAD` under `ui`.
 
 ## 2. Account for every proof
 

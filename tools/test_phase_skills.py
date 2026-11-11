@@ -22,6 +22,28 @@ def frontmatter(path: Path) -> dict[str, str]:
     return {key.strip(): value.strip() for key, _, value in (line.partition(":") for line in lines[1:end])}
 
 
+def blocks(relative: str) -> list[str]:
+    """Logical lines of a skill file: a list item or paragraph joined with its continuation lines."""
+    out: list[str] = []
+    start_new = True
+    for line in (SKILLS / relative).read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            start_new = True
+        elif start_new or line.startswith(("- ", "|", "#", "```")):
+            out.append(line.strip())
+            start_new = line.startswith(("|", "#", "```"))
+        else:
+            out[-1] += " " + line.strip()
+    return out
+
+
+def owns(relative: str, *fragments: str) -> bool:
+    """True when one logical line of the file carries every fragment: the rule sits where it is owned."""
+    return any(all(fragment in block for fragment in fragments) for block in blocks(relative))
+
+UIUX = "wtk/references/ui-ux.md"
+
+
 def test_public_skill_contracts() -> None:
     for name in PUBLIC:
         path = SKILLS / name / "SKILL.md"
@@ -97,6 +119,34 @@ def test_router_references_resolve() -> None:
         assert (router / target).is_file(), f"missing router reference: {target}"
     for token in re.findall(r"(?:\.agents/skills/)?[\w./-]+/scripts/[\w-]+\.py", text):
         assert (ROOT / token.lstrip("./")).is_file(), f"{router}: missing {token}"
+
+
+def test_screens_judge_inputs_exclude_code() -> None:
+    assert owns(UIUX, "**Dispatch:**", "fresh screens judge", "same turn as the Verifier")
+    assert owns(UIUX, "**Inputs:**", "binding captures", "<capture>.running.png", "listed departures",
+                "never source, diff or handoff")
+    for relative in ("wtk-lean/references/verify.md", "wtk-implement/references/screens.md"):
+        path = SKILLS / relative
+        links = re.findall(r"\]\(([^)#]*ui-ux\.md)#screens-judge-ui\)", path.read_text(encoding="utf-8"))
+        assert links and all((path.parent / target).resolve() == (SKILLS / UIUX).resolve() for target in links), relative
+
+
+def test_screens_report_schema_is_defined() -> None:
+    assert owns(UIUX, "**Round**: 1")
+    assert owns(UIUX, "**HEAD**: <short sha")
+    assert owns(UIUX, "| Screen | Compared with | Verdict | Finding |")
+    assert owns(UIUX, "| Element | Result | Picture draws |")
+    assert owns(UIUX, "`differs` categories", "`controls`", "`arrangement`", "`copy`", "`drawing`", "`render`")
+    assert owns(UIUX, "**Verdict:**", "`diverges`", "`matches`")
+
+
+def test_screens_resized_tell_is_defined() -> None:
+    assert owns(UIUX, "**Resized:**", "reads smaller in the picture", "`differs - resized`")
+
+
+def test_screens_second_round_is_bounded() -> None:
+    assert owns(UIUX, "**Round 2:**", "reopens only the `differs` rows", "`differs - regression`",
+                "There is no round 3")
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:

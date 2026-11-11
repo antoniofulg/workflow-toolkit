@@ -36,6 +36,7 @@ def scaffold(root: Path, *, ui: bool = False) -> Path:
                 body += "\n" + (FIXTURES / "visual.md").read_text(encoding="utf-8")
         (feature / name).write_text(body, encoding="utf-8")
     if ui:
+        (feature / "screens.md").write_text((FIXTURES / "screens.md").read_text(encoding="utf-8"), encoding="utf-8")
         for name in ("reference.png", "full.png", "viewport.png"):
             (feature / name).write_bytes(PNG)
     return feature
@@ -362,6 +363,52 @@ class WorkflowValidatorTests(unittest.TestCase):
                     result = run_gate(root, "validate_verification")
                     self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                     self.assertIn(fragment, result.stdout)
+
+    def _stamp_head(self, feature: Path, head: str) -> None:
+        for name in ("proofs.md", "screens.md"):
+            path = feature / name
+            if path.exists():
+                path.write_text(path.read_text(encoding="utf-8").replace("e4f5a6b", head), encoding="utf-8")
+
+    def test_verification_ui_requires_matching_screens_at_head(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root, ui=True)
+            head = commit_all(root)
+            self._stamp_head(feature, head)
+            screens = feature / "screens.md"
+            original = screens.read_text(encoding="utf-8")
+            accepted = run_gate(root, "validate_verification")
+            self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
+            screens.unlink()
+            missing = run_gate(root, "validate_verification")
+            self.assertEqual(missing.returncode, 1, missing.stdout + missing.stderr)
+            self.assertIn("no screens.md", missing.stdout)
+            for title, (body, fragment) in {
+                "diverges": (original.replace("| matches |", "| diverges |"), "not matches"),
+                "stale HEAD": (original.replace(f"**HEAD**: {head}", "**HEAD**: deadbee"), "screens.md judged deadbee"),
+                "no HEAD": (original.replace(f"**HEAD**: {head}\n", ""), "names no `**HEAD**`"),
+                "no verdict table": (original.split("| Screen |")[0], "no verdict table"),
+            }.items():
+                with self.subTest(title=title):
+                    screens.write_text(body, encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn(fragment, result.stdout)
+
+    def test_verification_rejects_third_screens_round(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root, ui=True)
+            screens = feature / "screens.md"
+            original = screens.read_text(encoding="utf-8")
+            for round_number, accepted in ((1, True), (2, True), (3, False)):
+                with self.subTest(round=round_number):
+                    screens.write_text(original.replace("**Round**: 1", f"**Round**: {round_number}"), encoding="utf-8")
+                    result = run_gate(root, "validate_verification")
+                    self.assertEqual(result.returncode, 0 if accepted else 1, result.stdout + result.stderr)
+                    if not accepted:
+                        self.assertIn("there is no round 3", result.stdout)
 
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

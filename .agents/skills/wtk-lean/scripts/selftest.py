@@ -282,6 +282,21 @@ VISUAL_CASES = [
     ("validate_verification", "verification.md", "visual verdict unverified despite behavior PASS",
      lambda s: s.replace("no material drift | PASS |", "no material drift | unverified |"),
      1, "visual fidelity is not PASS"),
+    ("validate_verification", "screens.md", "a screen that diverges",
+     lambda s: s.replace("| matches |", "| diverges |"),
+     1, "not matches"),
+    ("validate_verification", "screens.md", "a third screens round",
+     lambda s: s.replace("**Round**: 1", "**Round**: 3"),
+     1, "there is no round 3"),
+    ("validate_verification", "screens.md", "no round line",
+     lambda s: s.replace("**Round**: 1\n", ""),
+     1, "no `**Round**:` line"),
+    ("validate_verification", "screens.md", "no judged HEAD",
+     lambda s: s.replace("**HEAD**: e4f5a6b\n", ""),
+     1, "names no `**HEAD**`"),
+    ("validate_verification", "screens.md", "no verdict table",
+     lambda s: s.split("| Screen |")[0],
+     1, "no verdict table"),
     ("validate_verification", "verification.md", "valid visual table masks a second legacy schema",
      lambda s: s + "\n| Source | Captures | Result |\n| --- | --- | --- |\n| mockup | missing.png | PASS |\n",
      1, "unsupported or incomplete provenance columns"),
@@ -318,6 +333,7 @@ def scaffold(ui=False):
             with open(target, "w", encoding="utf-8") as output:
                 output.write(body)
     if ui:
+        shutil.copyfile(os.path.join(FIXTURES, "screens.md"), os.path.join(fdir, "screens.md"))
         # Tiny local images prove only file availability, never fidelity or viewport correctness.
         png = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aGv0AAAAASUVORK5CYII=")
         for name in ("reference.png", "full.png", "viewport.png"):

@@ -40,7 +40,7 @@ features. The phase references carry its entry points; profiles never waive inhe
    rows may be added when building discovers a door, entity, or interface; approved rows are never
    rewritten. Keep `Flow` and `Impact` current when the path changes.
 4. The coordinator dispatches one fresh Verifier over `<feature base>..HEAD` with every check in
-   the same turn after the feature's last commit. The builder reports and stops; verification is
+   the same turn after the feature's last commit, and under `ui` the screens judge beside it. The builder reports and stops; verification is
    never optional, delayed for another prompt, or self-authored.
 5. The declared profile is a floor. Its report names the profile and `validate_verification.py` must
    exit 0. An approved spec authorizes local edits and commits only; push, deploy, and production
@@ -62,7 +62,7 @@ profile: standard
 | --- | --- |
 | `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
 | `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
-| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, and one structural guard per screen |
+| `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, one structural guard per screen, and a `screens.md` verdict from the [screens judge](../wtk/references/ui-ux.md#screens-judge-ui) at `HEAD` |
 
 An empty input costs a recorded line, not a skipped step. `validate_verification.py` rejects a
 profile mismatch and missing sections required by `standard` or `ui`. If the declared floor is too
