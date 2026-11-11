@@ -33,8 +33,10 @@ scope* are policy the user approved; there is nothing in the code for them to be
 
 ## Fault injection (`standard`, `ui`)
 
-A green suite proves the tests run. Fault injection proves they can catch a regression - it is
-the only step that produces that information, and under `light` it does not run.
+A green suite proves the tests run. Fault injection proves they can catch a regression, and it
+costs a suite run per fault, so it runs where a weak test costs most: the checks named on
+`checks.md`'s `Risk:` line and every check the Verifier marked `unsure`. With `Risk: none` and no
+`unsure` row it does not run, and under `light` it never runs.
 
 1. **Isolate.** `git worktree add <scratch> HEAD`, and prepare it with the project's restore/build
    command, or use the mutation tool's own sandbox when it never writes the real tree. Never mutate the real tree, and **never use
@@ -44,18 +46,18 @@ the only step that produces that information, and under `light` it does not run.
 3. **Inject.** When the project declares a mutation command, run it in the scratch with the scope
    the [mutation policy](test-contract.md#mutation) sets, and skip step 4. Record the run as one
    `Mutation run` row (command, scope, killed and survived counts) and each survivor as a
-   `Faults injected` row whose `Disposition` is `killed`, `equivalent - <reason>` or `arid - <reason>`. Otherwise inject a
+   `Faults injected` row whose `Disposition` is `killed`, `equivalent - <reason>`, `arid - <reason>`
+   or, outside the `Risk:` checks, `accepted - <reason>`; add a killed row naming each `Risk:` check
+   the run covered. Otherwise inject a
    **behaviour-level fault** in the new code: flip a condition, change a returned value or
    status, shift a bound by one, remove a required side effect.
 4. **Run the narrowest covering proof** in the scratch and confirm it FAILS - the mutant is killed.
 5. **Discard** the scratch and confirm the real tree's porcelain matches the baseline. If it
    differs, STOP, restore the tree, and treat the run as invalid.
 
-**Manual faults: one per distinct assertion surface, not per risky line.** Three mutations killed by the same
-two proofs ran the same experiment three times. Choose faults that force *different* proofs to fail,
-stop once every proof carrying a check has been made to fail once, and cap it at five however risky
-the feature looks - a quota that scales with risk costs most exactly where checks cluster in risky
-code. A second covering proof per fault adds a run and no information.
+**Manual faults: at least one per `Risk:` check and per `unsure` row, five at most.** Name the check
+in the `Check` column of each `Faults injected` row. Choose faults that force *different* proofs to
+fail; a second covering proof per fault adds a run and no information.
 
-**A surviving mutant is a finding, not a footnote.** It means the assertion would pass under a
-plausible wrong implementation. Resolve it under the [survivor policy](test-contract.md#mutation).
+**A surviving mutant on a `Risk:` check is a finding, not a footnote.** It means the assertion would
+pass under a plausible wrong implementation. Resolve it under the [survivor policy](test-contract.md#mutation).

@@ -22,6 +22,7 @@ derivation from them, which is where omissions surface.
 What it checks:
   ERROR  - no `## Approval` receipt with a non-empty `- Decision:` line (plan.md, else checks.md)
   ERROR  - no `Build:` line naming the repo's build, type check and lint command (or `none - <why>`)
+  ERROR  - profile standard/ui with no `Risk:` line (`none - <why>` or the check ids where a weak test costs most)
   ERROR  - no `Profile:` line, or an unknown profile
   ERROR  - a required section is missing (Checks, Coverage, Swept)
   ERROR  - a check with no `Proof:` line
@@ -33,7 +34,7 @@ What it checks:
   ERROR  - a Coverage row with a non-empty `Unproven` cell
   ERROR  - a swept dimension missing, or its landing left blank
   ERROR  - an `n/a` swept landing with no reason after it
-  ERROR  - a check id referenced in Coverage or Swept that is not defined
+  ERROR  - a check id referenced in Coverage, Swept or Risk that is not defined
   WARN   - a route in plan.md's Surface that nothing here mentions
   WARN   - a proof that names no test selector (a whole suite settles no single claim; a `run`
            proof is exempt - its pass line is its selector)
@@ -63,7 +64,7 @@ import re
 import subprocess
 import sys
 
-from native_evidence import RUN_PROOF_RE, approval_errors, intent_errors, read_runs, unquote
+from native_evidence import RUN_PROOF_RE, approval_errors, intent_errors, read_risk, read_runs, unquote
 
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
@@ -288,6 +289,16 @@ def check_file(path):
     elif build.lower().startswith("none") and len(build[4:].strip(" -–—:")) < 3:
         errors.append("`Build: none` with no reason - say why the repo has no build, type check or lint")
 
+    # Risk: faults run where a weak test costs most, so the line is required wherever they run.
+    risk = read_risk(lines)
+    if profile in ("standard", "ui") and risk is None:
+        errors.append(
+            f"profile is {profile} but there is no `Risk:` line - name the checks where a weak test costs most "
+            f"(`Risk: C3, C7 - <why>`) or `Risk: none - <why>`; the Verifier injects faults only there"
+        )
+    elif risk is not None and not risk[2]:
+        errors.append("`Risk:` line is malformed - write `Risk: none - <reason>` or `Risk: C3, C7 - <reason>`")
+
     # Sections.
     for name in REQUIRED_SECTIONS:
         if section_bounds(lines, name) is None:
@@ -408,8 +419,10 @@ def check_file(path):
                 )
 
     # Dangling references.
+    if risk is not None:
+        referenced |= set(risk[0])
     for cid in sorted(referenced - set(checks), key=lambda c: int(c[1:])):
-        errors.append(f"{cid} is referenced in Coverage or Swept but is not defined in ## Checks")
+        errors.append(f"{cid} is referenced in Coverage, Swept or Risk but is not defined in ## Checks")
 
     # The derivation. checks.md is derived from plan.md, so an interface reviewed there with
     # nothing pointing back at it here is either dead or unproven - and the plan naming it

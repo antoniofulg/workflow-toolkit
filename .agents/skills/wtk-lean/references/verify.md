@@ -59,16 +59,16 @@ Under every profile, apply the shared [verify core](../../wtk/references/verify-
 visual evidence, the swept re-read and fault injection. The steps below link each where it runs.
 
 `checks.md` carries a `Profile:` line, and `standard` is the default. Step 1 runs under `ui`. The
-`Coverage` recompute, the `Test policy` verdicts and fault injection run under `standard` and
-`ui`. Everything else runs always: the proofs at `HEAD`, each named test shown to exist and have
-run, one located assertion per check, the level and sampling judgment, and the `Swept existing`
-re-read.
+`Coverage` recompute and the `Test policy` verdicts run under `standard` and `ui`; fault
+injection runs under them only for the `Risk:` checks and `unsure` rows. Everything else runs
+always: `proofs.md` read at `HEAD`, one `## Checks` judgment per check, one located assertion per
+check, the level and sampling judgment, and the `Swept existing` re-read.
 
 **The report's profile must be the one `checks.md` was approved under, and the gate compares
 them.** A report declaring a cheaper profile than the feature was approved under makes a whole
 step disappear with nothing to see, which is worse than a FAIL: a mismatch is an error, not a
-preference. Under `standard` the report owes a `## Faults injected` section and a `## Coverage`
-section; under `ui` it also owes `## Binding sources`; where `checks.md` carries `Test policy`
+preference. Under `standard` the report owes a `## Coverage` section, and a `## Faults injected` section when
+`Risk:` lists checks or a row reads `unsure`; under `ui` it also owes `## Binding sources`; where `checks.md` carries `Test policy`
 rows, it owes a verdict on them. A step that produced no section did not run, and requiring the
 section is what makes "skipped" distinguishable from "forgotten".
 
@@ -125,36 +125,20 @@ protocol and schema live in [UI/UX](../../wtk/references/ui-ux.md#screens-judge-
 the pictures yourself: a `diverges` row fails the feature, and `validate_verification.py` reads
 `screens.md` at `HEAD` under `ui`.
 
-## 2. Account for every proof
+## 2. Read `proofs.md`
 
-Apply `.agents/skills/wtk/references/validation.md`: independently inspect each proof's recorded
-result and input baseline, then run proofs with missing or invalidated evidence. A fresh Verifier
-still covers every check; it does not rerun unaffected tests solely because the actor or HEAD changed.
-For reused evidence, identify the original command/log, baseline and why its relevant inputs remain
-equivalent. Batch the selected fresh proofs below.
-
-**Batch selected proofs by runner target, not one invocation per proof.** Runners take many
-files and many name patterns in a single call - `bin/rails test a_test.rb b_test.rb -n
-"/one|two/"`, `pytest f.py g.py -k "one or two"`, `jest --testPathPattern` with one
-`--testNamePattern` alternation. Elsewhere: `dotnet test --filter "Name~One|Name~Two"`,
-`mvn -Dtest="ATest#one+two"` or Gradle `--tests`, `ctest -R "one|two"`. Batching per *file* is the mistake that looks like batching: forty
-checks across twelve files is twelve process starts, and the process start is the cost.
-
-The guarantee is unchanged as long as **each named test appears in the output individually** as
-having run and passed. What is forbidden is substituting a verdict for a result: "the suite is
-green" settles no single check.
-
-Then confirm each named test **exists and ran**. A filter matching nothing exits zero on several
-runners - `passWithNoTests` and its equivalents - which would be a green check with no test behind
-it. Show the hit; a name that appears nowhere in the tree is a finding.
-
-Existing tests may prove a corrected behavior without being edited themselves. Confirm their
-assertions cover the affected invariant. An earlier result remains valid only after checking its
-causal inputs; neither an unchanged test file nor a new commit alone settles validity.
+`check_proofs.py` already ran every proof once at a clean `HEAD` and wrote `proofs.md`; do not rerun
+them. Confirm its `**HEAD**` is the commit you are verifying and every row reads `pass` (the gate
+refuses otherwise), and read the `Line` column: it is the output line that showed each test ran.
+A `no test ran` row is the builder's to fix. Rerun a proof yourself only to examine a doubt about
+its result, and say so in the report.
 
 ## 3. Check the assertion, not its presence
 
-For each check, confirm the assertion targets the **check-defined** value, not merely that an
+For each check, open the test its proof selects and write one `## Checks` row: the test, and
+`Holds` - `yes` when it would fail if the claim were false, `no` when it passes without holding the
+value, `unsure` when you cannot tell. A `no` or `unsure` is a finding; the row stands as `yes` only
+once the fix lands, otherwise write the closing commit in the `Holds` cell. Confirm the assertion targets the **check-defined** value, not merely that an
 assertion exists. Cite `file:line` and reproduce the assertion expression.
 
 Inspect the assertion and the relevant setup, fixtures and dependencies needed to establish its
@@ -205,9 +189,10 @@ Apply the [swept re-read](../../wtk/references/verify-core.md#swept-re-read).
 
 ## 4. Inject faults (`standard`, `ui`)
 
-Run [fault injection](../../wtk/references/verify-core.md#fault-injection-standard-ui) in a scratch worktree. Under `light`
-it does not run, which is what that row of the profile table means by "a test that would pass
-under a wrong implementation".
+Run [fault injection](../../wtk/references/verify-core.md#fault-injection-standard-ui) in a scratch
+worktree for each check on `checks.md`'s `Risk:` line and each `unsure` row, five faults at most,
+and name the check in each `Faults injected` row. With `Risk: none` and no `unsure` row there is
+nothing to inject and no section to write. Under `light` it never runs.
 
 ## 5. Walk the flow with the user (user-facing only)
 
@@ -246,9 +231,10 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 ## Checks
 
-| Check | Claim | Proof run | Evidence | Result |
-| --- | --- | --- | --- | --- |
-| C1 | suspends, never cancels | `<test command> <name filter: failed_charge_suspends>` exit 0 | `tests/billing/dunning_test.<ext>:118` - `<assertion: status == suspended>` | PASS |
+| Check | Test | Holds | Evidence |
+| --- | --- | --- | --- |
+| C1 | `tests/billing/dunning_test.<ext>` `failed_charge_suspends` | yes | `tests/billing/dunning_test.<ext>:118` - `<assertion: status == suspended>` |
+| C2 | `tests/billing/status_map_test.<ext>` `every_provider_status` | unsure - asserts two of nine; closed by `a1b2c3d` | `tests/billing/status_map_test.<ext>:30` - `<assertion>` |
 
 ## Coverage
 
@@ -264,10 +250,10 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 ## Faults injected
 
-| Mutation | Location | Disposition |
-| --- | --- | --- |
-| returned status `suspended` -> `cancelled` | `subscription.<ext>:88` | killed |
-| log level `info` -> `debug` | `subscription.<ext>:97` | arid - logging only, no decision reads it |
+| Check | Mutation | Location | Disposition |
+| --- | --- | --- | --- |
+| C1 | returned status `suspended` -> `cancelled` | `subscription.<ext>:88` | killed |
+| C2 | log level `info` -> `debug` | `subscription.<ext>:97` | arid - logging only, no decision reads it |
 
 ## Mutation run
 
@@ -281,8 +267,10 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 ```
 
 A non-empty `Contradiction` or `Uncovered` cell, a `Disposition` other than `killed`,
-`equivalent - <reason>` or `arid - <reason>`, more run survivors than equivalent/arid rows, a non-empty
-`Unproven` cell, a check whose `Result` is not PASS, or an unmet `Test policy` row all mean the
+`equivalent - <reason>`, `arid - <reason>` or (outside `Risk:` checks) `accepted - <reason>`, more run
+survivors than recorded survivor rows, a non-empty
+`Unproven` cell, a check whose `Holds` is not `yes` without a closing commit, a `proofs.md` row that is not `pass` or
+was written at another `HEAD`, or an unmet `Test policy` row all mean the
 verdict is FAIL. The gate script reads those columns and refuses a PASS its own rows contradict,
 so do not soften a row to fit a verdict - change the verdict.
 
@@ -301,7 +289,7 @@ name the feature explicitly rather than letting it search.
 
 **Checks**: 12/12 proven with located evidence
 **Coverage**: 5 sets recomputed, 0 members unproven
-**Faults**: 4 injected, 4 killed
+**Faults**: 2 injected on `Risk:` checks, 2 killed
 **Gate**: 138 passed, 0 failed
 **Report**: `.specs/features/<feature>/verification.md`
 
@@ -311,7 +299,7 @@ name the feature explicitly rather than letting it search.
 
 ## What fails the feature
 
-A FAIL, an unresolved surviving mutant, an unmet `Test policy` row, a check contradicting a binding
+A FAIL, a surviving mutant on a `Risk:` check, an unmet `Test policy` row, a check contradicting a binding
 source, an element or an **arrangement** a binding source decides that neither a check nor a PASS
 paired capture covers, a blanket exemption in
 place of an enumerated one, a binding source recorded as opened that nobody actually saw, an

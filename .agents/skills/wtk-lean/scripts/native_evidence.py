@@ -6,6 +6,7 @@ import re
 
 RUN_RE = re.compile(r"^\**\s*Run\s+([\w-]+)\s*\**\s*:\s*(.+)$", re.IGNORECASE)
 RUN_PROOF_RE = re.compile(r"^run\s+([\w-]+)\s*\|\s*(.*)$", re.IGNORECASE)
+RISK_RE = re.compile(r"^\**\s*Risk\s*\**\s*:\s*(.+)$", re.IGNORECASE)
 EMPTY_VALUES = {"", "-", "—", "–", "none", "n/a", "na", "nothing", "pending", "unresolved"}
 
 
@@ -101,3 +102,19 @@ def read_runs(lines):
         if match:
             runs[match[1]] = unquote(match[2])
     return runs
+
+
+def read_risk(lines):
+    """The first `Risk:` line outside fences as (check ids, reason, well formed); None when absent.
+
+    `Risk: none - <reason>` gives no ids. The line names the checks where a weak test costs most:
+    faults are injected there, and a surviving fault there is never merely accepted.
+    """
+    for line in lines:
+        match = RISK_RE.match(line.strip())
+        if match:
+            head, _, reason = unquote(match[1]).partition(" - ")
+            none = head.strip().lower() == "none"
+            ids = [] if none else re.findall(r"\bC\d+\b", head)
+            return ids, reason.strip(), (none or bool(ids)) and usable_value(reason)
+    return None

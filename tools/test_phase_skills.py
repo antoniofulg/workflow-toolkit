@@ -149,6 +149,24 @@ def test_screens_second_round_is_bounded() -> None:
                 "There is no round 3")
 
 
+def test_verifier_judges_each_check_test() -> None:
+    verify = "wtk-lean/references/verify.md"
+    assert owns(verify, "write one `## Checks` row", "the test", "`Holds`", "`yes`", "`no`", "`unsure`")
+    assert owns(verify, "read `proofs.md`") or owns(verify, "## 2. Read `proofs.md`")
+    assert owns(verify, "| Check | Test | Holds | Evidence |")
+    assert owns(verify, "for each check on `checks.md`'s `Risk:` line and each `unsure` row", "five faults at most")
+    assert owns("wtk/references/verify-core.md", "`Risk:` line", "`unsure`", "does not run")
+
+
+def test_pruning_keeps_mandatory_mutation() -> None:
+    contract = "wtk/references/test-contract.md"
+    assert owns(contract, "Pruning and test review", "keep a mutation or manual-fault run over their whole scope mandatory")
+    assert owns(contract, "Re-run mutation over the scope")
+    assert owns(contract, "Outside the `Risk:` checks a survivor is recorded `accepted - <reason>`")
+    review = (SKILLS / "wtk-test-review/SKILL.md").read_text(encoding="utf-8")
+    assert "**Mutate.**" in review and "test-contract.md#mutation" in review
+
+
 def test_ui_and_delivery_boundaries_stay_local() -> None:
     uiux = (ROOT / ".agents/skills/wtk/references/ui-ux.md").read_text(encoding="utf-8")
     ship = (SKILLS / "wtk-ship/SKILL.md").read_text(encoding="utf-8")

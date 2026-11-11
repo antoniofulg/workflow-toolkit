@@ -60,8 +60,8 @@ profile: standard
 
 | Profile | Proof obligations |
 | --- | --- |
-| `light` | proofs at `HEAD`, named tests exist and ran, one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
-| `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and one fault per assertion surface |
+| `light` | `proofs.md` green at `HEAD`, a `Holds` judgment and one located assertion per check, level/sampling gaps, and `Swept existing` re-read |
+| `standard` | light plus recomputed `Coverage`, `Test policy` verdicts, and a fault for each check on the `Risk:` line and each `unsure` row |
 | `ui` | standard plus binding-source comparison, per-screen enumeration proven by paired captures, one structural guard per screen, and a `screens.md` verdict from the [screens judge](../wtk/references/ui-ux.md#screens-judge-ui) at `HEAD` |
 
 An empty input costs a recorded line, not a skipped step. `validate_verification.py` rejects a

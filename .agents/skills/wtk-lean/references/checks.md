@@ -48,6 +48,11 @@ CI or the package manifest runs over the code this feature touches; `Build: none
 repo has none. `validate_checks.py <feature> --execute` runs it once before the first change, so a
 red baseline is not mistaken for the feature's fault.
 
+Under `standard` and `ui`, a `Risk:` line names the checks where a weak test costs most - a
+returned value, a bound, a guard, money or access - as `Risk: C3, C7 - <why>`, or `Risk: none -
+<why>`. The Verifier injects faults only there and for any check it marks `unsure`; elsewhere a
+surviving fault is recorded `accepted - <reason>` instead of becoming another test.
+
 `check_proofs.py` runs each group once and passes the proof when every word after `|` appears, in
 that order, on one line of the group's output with ANSI codes stripped. Copy the line from a real
 run and keep the pass marker (`✓`, `PASSED`, `ok`, `= .`): a renamed test, or a filter that selects
@@ -165,6 +170,7 @@ build under them and leave the files alone.
 # <Feature> checks
 
 Profile: standard
+Risk: <none | C1, C3> - <why a weak test costs most there>
 Build: `<the repo's build, type check and lint command>`
 Run unit: `<test command that prints a line per test>`
 Plan: `.specs/features/<feature>/plan.md`
@@ -269,7 +275,7 @@ python3 <skill-dir>/scripts/validate_checks.py <feature>
 ```
 
 Add `--execute` before the first change of the build (see [build.md](build.md)). It fails a checks-only feature without `## Intent`, a check with no `Proof:`, a `run` proof with
-no `Run` line or pass line, a missing `Build:` line, duplicate ids,
+no `Run` line or pass line, a missing `Build:` line, a missing `Risk:` line under `standard` or `ui`, duplicate ids,
 incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
 selector, vague claims and a plan Surface interface absent from checks. It refuses a missing
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval) or

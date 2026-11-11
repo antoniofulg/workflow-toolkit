@@ -410,6 +410,115 @@ class WorkflowValidatorTests(unittest.TestCase):
                     if not accepted:
                         self.assertIn("there is no round 3", result.stdout)
 
+    def _edit(self, feature: Path, name: str, old: str, new: str) -> None:
+        path = feature / name
+        source = path.read_text(encoding="utf-8")
+        self.assertIn(old, source)
+        path.write_text(source.replace(old, new), encoding="utf-8")
+
+    def test_checks_rejects_missing_risk_line(self) -> None:
+        for profile, accepted in (("standard", False), ("ui", False), ("light", True)):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                checks = (feature / "checks.md").read_text(encoding="utf-8")
+                risk = next(ln for ln in checks.splitlines() if ln.startswith("Risk:"))
+                self._edit(feature, "checks.md", risk + "\n", "")
+                self._edit(feature, "checks.md", "Profile: standard", f"Profile: {profile}")
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 0 if accepted else 1, result.stdout + result.stderr)
+                if not accepted:
+                    self.assertIn("no `Risk:` line", result.stdout)
+
+    def test_verification_requires_holds_yes_per_check(self) -> None:
+        row5 = next(ln for ln in (FIXTURES / "verification.md").read_text(encoding="utf-8").splitlines() if ln.startswith("| C5 |"))
+        c4 = "`suspended_denies_paid_groups` | yes |"
+        cases = {
+            "no row for a check": (row5 + "\n", "", "has no row for C5"),
+            "no without a closing commit": (c4, "`suspended_denies_paid_groups` | no - asserts the status only |", "no closing commit"),
+            "unsure without a closing commit": (c4, "`suspended_denies_paid_groups` | unsure - looser than the claim |", "no closing commit"),
+            "a Holds outside the three values": (c4, "`suspended_denies_paid_groups` | maybe |", "expected yes, no or unsure"),
+            "no test named": ("| C4 | `test/billing/access_test.rb` `suspended_denies_paid_groups` |", "| C4 | - |", "row C4 names no test"),
+        }
+        for title, (old, new, fragment) in cases.items():
+            with self.subTest(title=title), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                self._edit(feature, "verification.md", old, new)
+                result = run_gate(root, "validate_verification")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn(fragment, result.stdout)
+        with tempfile.TemporaryDirectory() as raw:  # a non-yes row stands once its closing commit is written
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "verification.md", c4, "`suspended_denies_paid_groups` | no - asserted the status only; closed by a1b2c3d4 |")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_verification_requires_faults_for_risk_and_unsure(self) -> None:
+        c9 = "`missing_subscription_id_is_422` | yes |"
+        unsure = "`missing_subscription_id_is_422` | unsure - asserts the status only; closed by a1b2c3d4 |"
+        c7_row = "| C7 | removed the `409` on a concurrent delivery | `app/webhooks/ingest.rb:44` | killed |"
+        with tempfile.TemporaryDirectory() as raw:  # a listed Risk check with no fault row
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "verification.md", c7_row + "\n", "")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no fault row names C7", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:  # no fault rows at all
+            root = Path(raw)
+            feature = scaffold(root)
+            report = (feature / "verification.md").read_text(encoding="utf-8")
+            (feature / "verification.md").write_text(report[:report.index("## Faults injected")] + report[report.index("## Gate"):], encoding="utf-8")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no fault row names C7, C8", result.stdout)
+        with tempfile.TemporaryDirectory() as raw:  # an unsure row owes a fault even under Risk: none
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "checks.md", "Risk: C7, C8 - the concurrency and idempotency guards would pass silently with a weak test", "Risk: none - covered by the type system")
+            self._edit(feature, "verification.md", c9, unsure)
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("no fault row names C9", result.stdout)
+            self._edit(feature, "verification.md", "| C11 | bound", "| C9 | bound")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_verification_accepts_no_faults_without_risk(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            self._edit(feature, "checks.md", "Risk: C7, C8 - the concurrency and idempotency guards would pass silently with a weak test", "Risk: none - covered by the type system")
+            report = (feature / "verification.md").read_text(encoding="utf-8")
+            (feature / "verification.md").write_text(report[:report.index("## Faults injected")] + report[report.index("## Gate"):], encoding="utf-8")
+            result = run_gate(root, "validate_verification")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_fault_disposition_accepted_only_outside_risk(self) -> None:
+        source = (FIXTURES / "verification.md").read_text(encoding="utf-8")
+        inside = "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | killed |"
+        outside = "| C11 | log level `info` -> `debug` on the retry trace | `app/models/billing/dunning.rb:40` | arid - logging only, no decision reads it |"
+        self.assertIn(inside, source)
+        self.assertIn(outside, source)
+        cases = [
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | killed |", True),
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | equivalent - same result on every input |", True),
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | arid - never read |", True),
+            (inside, "| C8 | removed the delivery-id guard | `app/webhooks/ingest.rb:31` | accepted - rare path |", False),
+            (outside, outside.replace("arid - logging only, no decision reads it", "accepted - logging only"), True),
+            (outside, outside.replace("arid - logging only, no decision reads it", "accepted"), False),
+            (outside, outside.replace("| C11 |", "| - |").replace("arid - logging only, no decision reads it", "accepted - logging only"), False),
+        ]
+        for old, new, accepted in cases:
+            with self.subTest(row=new), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                self._edit(feature, "verification.md", old, new)
+                result = run_gate(root, "validate_verification")
+                self.assertEqual(result.returncode == 0, accepted, result.stdout + result.stderr)
+
     def test_approval_checks_only_uses_intent_without_synthetic_plan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

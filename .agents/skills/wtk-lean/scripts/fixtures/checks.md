@@ -1,6 +1,7 @@
 # Dunning on failed charge - checks
 
 Profile: standard
+Risk: C7, C8 - the concurrency and idempotency guards would pass silently with a weak test
 Build: `bin/rubocop app/billing`
 Run billing: `bin/rails test test/billing/dunning_test.rb test/billing/status_map_test.rb -v`
 Plan: `.specs/features/billing/plan.md`
