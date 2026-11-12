@@ -6,6 +6,9 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- `wtk-plan-review` runs an on-demand peer review of an unapproved Lean plan with reviewers the user picks;
+  `validate_findings.py` rejects a missing or malformed findings file, and `wtk-lean` offers the review when
+  the plan is risky. The full WTK set is now 16 skills.
 - `check_proofs.py` runs every proof once at a clean `HEAD` and writes `proofs.md`; the Verifier reads
   it instead of rerunning proofs, and the completion gate requires it green at `HEAD`. Checks gain
   `Run <name>:` groups and `Proof: run <name> | <pass line>`, so a renamed test or an empty filter
