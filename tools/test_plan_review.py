@@ -10,8 +10,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SKILLS = ROOT / ".agents/skills"
+from test_phase_skills import ROOT, SKILLS, owns
+
+SKILL = "wtk-plan-review/SKILL.md"
+PROMPT = "wtk-plan-review/references/reviewer-prompt.md"
 VALIDATOR = SKILLS / "wtk-plan-review/scripts/validate_findings.py"
 
 KEYS = ("schema_version", "review_kind", "round", "readiness", "reviewer", "generated_at")
@@ -115,6 +117,63 @@ def test_validator_argument_errors_exit_2() -> None:
     assert run("--round", "0", "some-path.md") == 2
     assert run("--round", "x", "some-path.md") == 2
     assert run("--round", "-1", "some-path.md") == 2
+
+
+def test_skill_asks_for_reviewers() -> None:
+    assert owns(SKILL, "list the reviewers the host can dispatch", "pick one or more", "before any dispatch")
+    assert owns(SKILL, "no resolvable `plan.md`", "`no plan found`", "dispatch nothing")
+
+
+def test_skill_dispatches_named_reviewers() -> None:
+    assert owns(SKILL, "Reviewers named in the request", "dispatched without asking")
+
+
+def test_skill_never_substitutes_reviewer() -> None:
+    assert owns(SKILL, "cannot dispatch", "is named", "never substitute another reviewer")
+
+
+def test_prompt_scopes_reviewer() -> None:
+    assert owns(SKILL, "Dispatch each reviewer as a fresh session that did not author the plan")
+    assert owns(SKILL, "writes only `.wtk-plan-review/<feature>/round<N>-<reviewer>.md`")
+    prompt = (SKILLS / PROMPT).read_text(encoding="utf-8")
+    for fragment in ("{plan_path}", "{checks_path}", "`## Sources`", "exactly one file, `{findings_path}`"):
+        assert fragment in prompt, fragment
+    assert owns(PROMPT, "Checks, when present")
+
+
+def test_prompt_template_passes_validator() -> None:
+    prompt = (SKILLS / PROMPT).read_text(encoding="utf-8")
+    template = re.search(r"```\n(---\n.*?)```", prompt, re.DOTALL).group(1)
+    filled = template.replace("{round}", "1").replace("{reviewer}", "claude-opus")
+    filled = filled.replace("READY|BLOCKED|NEEDS_REWORK", "READY").replace("<ISO-8601 timestamp>", "2026-11-12T10:00:00Z")
+    result = validate(filled)
+    assert result.returncode == 0, output(result)
+
+
+def test_skill_reports_incomplete_review() -> None:
+    assert owns(SKILL, "validate_findings.py --round <N> <file>", "on each file")
+    assert owns(SKILL, "missing or invalid file is an incomplete review", "never `ready`")
+    assert owns(SKILL, "`incomplete review` when any file failed", "`ready` only when every file is valid")
+
+
+def test_prompt_targets_plan_shape() -> None:
+    assert owns(PROMPT, "`Flow`", "`Impact`", "`Relations`", "`Surface`", "`Landing`", "`Out of scope`")
+    assert owns(PROMPT, "DO NOT report what `validate_plan.py` already rejects")
+
+
+def test_skill_merges_and_applies_selected_only() -> None:
+    assert owns(SKILL, "one merged list", "tagged `<reviewer> B-001`")
+    assert owns(SKILL, "Edit `plan.md` only for the selected items")
+
+
+def test_skill_writes_disposition() -> None:
+    assert owns(SKILL, "round<N>-disposition.md", "| Finding | Reviewer | Disposition | Changed |")
+    assert owns(SKILL, "one row per finding", "`applied`", "`declined - <reason>`")
+
+
+def test_skill_rounds_opt_in_and_no_approval() -> None:
+    assert owns(SKILL, "Run another round only when the user asks", "the changed plan", "the prior findings", "the disposition")
+    assert owns(SKILL, "never writes the plan's `## Approval` receipt")
 
 
 if __name__ == "__main__":
