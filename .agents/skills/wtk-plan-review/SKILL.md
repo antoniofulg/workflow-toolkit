@@ -26,8 +26,8 @@ ambiguous. With no resolvable `plan.md`, report `no plan found` and dispatch not
 - Reviewers named in the request are dispatched without asking.
 - Otherwise list the reviewers the host can dispatch - the roles in the user's routing table
   ([agent selection](../wtk/references/agent-selection.md)) and the host's other agent harnesses -
-  and ask the user to pick one or more before any dispatch. This stage is the exception to
-  "dispatch without asking": the human picks.
+  and ask the user to pick one or more before any dispatch, as the `plan_review` stage in
+  agent selection requires.
 - A picked reviewer the host cannot dispatch is named and its dispatch stops; never substitute
   another reviewer. Reviewers that can run proceed.
 
@@ -41,7 +41,7 @@ ambiguous. With no resolvable `plan.md`, report `no plan found` and dispatch not
    invalid file is an incomplete review for that reviewer: report its defects, never `ready`.
 3. Report one outcome: `incomplete review` when any file failed (still present the valid files'
    findings), `findings to select` when a valid file holds items, `ready` only when every file is
-   valid and none holds a blocker or nit.
+   valid, reads `readiness: READY` and holds no blocker or nit.
 4. Present one merged list, blockers first, each item tagged `<reviewer> B-001` with its title and
    section. Ask the user which items to apply.
 5. Edit `plan.md` only for the selected items, then rerun `validate_plan.py` from `wtk-lean`. Do not

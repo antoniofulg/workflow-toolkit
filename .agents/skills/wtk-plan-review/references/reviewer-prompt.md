@@ -83,6 +83,6 @@ Replace `None.` in `# Blockers` or `# Nits` with one item per finding:
 - Suggested fix: <concrete change>
 ```
 
-Nits use `## N-001 - <short title>` with Section, Issue and Suggested fix. `READY` allows no blocker.
+Nits use `## N-001 - <short title>` with Section, Issue and Suggested fix. `READY` allows no blocker; `BLOCKED` and `NEEDS_REWORK` need at least one.
 Do not write `TBD`, `TODO` or `PLACEHOLDER`. Set `reviewer` to the reviewer name you were given,
 plus the resolved model when your host exposes it.

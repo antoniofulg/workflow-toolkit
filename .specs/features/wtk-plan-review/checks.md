@@ -3,11 +3,11 @@
 Profile: standard
 Plan: `.specs/features/wtk-plan-review/plan.md`
 Build: `python3 .agents/skills/wtk-lean/scripts/selftest.py`
-Risk: C6, C13 - the two paths that could turn a missing or contradictory review into a false `READY`
+Risk: C6, C13, C27 - the two paths that could turn a missing or contradictory review into a false `READY`
 
 ## Intent
 
-26 checks in 4 slices · 3 one-way doors · 0 open
+27 checks in 4 slices · 3 one-way doors · 0 open
 
 ## Checks
 
@@ -40,6 +40,9 @@ Proof: `python3 tools/test_plan_review.py -k test_validator_rejects_placeholder_
 
 **C8** - A missing path or `--round`, or a `--round` of `0` or a non-integer, exits 2 (PREV-01, AC 7)
 Proof: `python3 tools/test_plan_review.py -k test_validator_argument_errors_exit_2`
+
+**C27** - `BLOCKED` or `NEEDS_REWORK` with no `B-NNN` item exits 1, so a self-contradictory review cannot validate (PREV-01, AC 6)
+Proof: `python3 tools/test_plan_review.py -k test_validator_rejects_non_ready_without_blocker`
 
 ### S2 - User-picked reviewers review the plan and the user selects findings
 
@@ -106,12 +109,12 @@ Proof: `python3 tools/test_plan_review.py -k test_readme_credits_upstream`
 
 | Set (size) | Member -> proof | Unproven |
 | --- | --- | --- |
-| `validate_findings.py` exit codes (3) | 0 C1 · 1 C2 C3 C4 C5 C6 C7 · 2 C8 | - |
+| `validate_findings.py` exit codes (3) | 0 C1 · 1 C2 C3 C4 C5 C6 C7 C27 · 2 C8 | - |
 | readiness values (3) | `READY` C1 · `BLOCKED` C1 · `NEEDS_REWORK` C1 | - |
 | frontmatter keys (6) | `schema_version` C3 · `review_kind` C3 · `round` C3 C4 · `readiness` C3 C4 · `reviewer` C3 · `generated_at` C3 | - |
 | headings (5) | `# Summary` C3 · `# Blockers` C3 C5 · `# Nits` C3 C5 · `# Evidence` C3 · `# Deferred Or Follow-Up` C3 | - |
 | placeholder words (3) | `TBD` C7 · `TODO` C7 · `PLACEHOLDER` C7 | - |
-| skill outcomes (4) | `ready` C13 · `findings to select` C15 · `incomplete review` C13 · `no plan found` C9 | - |
+| skill outcomes (4) | `ready` C13 C27 · `findings to select` C15 · `incomplete review` C13 · `no plan found` C9 | - |
 | offer triggers (4) | live `Landing` alternative C18 · `Relations` changes existing data C18 · consumed `Surface` changes C18 · security surface C18 | - |
 | disposition values (2) | `applied` C16 · `declined - <reason>` C16 | - |
 | Surface interfaces (4) | `wtk-plan-review [feature] [--reviewers r1,r2] [--round N]` C9 C10 · `validate_findings.py --round N <path>` C1 C8 · `round<N>-<reviewer>.md` C1 C3 · stage key `plan_review` C24 | - |

@@ -100,6 +100,13 @@ def test_validator_rejects_ready_with_blocker() -> None:
     assert result.returncode == 1 and "READY" in output(result)
 
 
+def test_validator_rejects_non_ready_without_blocker() -> None:
+    for readiness in ("BLOCKED", "NEEDS_REWORK"):
+        result = validate(findings(readiness=readiness, blockers="None."))
+        assert result.returncode == 1 and readiness in output(result), f"{readiness}: {output(result)}"
+        assert validate(findings(readiness=readiness, blockers=BLOCKER)).returncode == 0
+
+
 def test_validator_rejects_placeholder_words() -> None:
     for word in ("TBD", "TODO", "PLACEHOLDER"):
         result = validate(findings(readiness="READY", blockers="None.", extra=f"\nOpen: {word} later.\n"))
@@ -153,7 +160,7 @@ def test_prompt_template_passes_validator() -> None:
 def test_skill_reports_incomplete_review() -> None:
     assert owns(SKILL, "validate_findings.py --round <N> <file>", "on each file")
     assert owns(SKILL, "missing or invalid file is an incomplete review", "never `ready`")
-    assert owns(SKILL, "`incomplete review` when any file failed", "`ready` only when every file is valid")
+    assert owns(SKILL, "`incomplete review` when any file failed", "`ready` only when every file is valid", "reads `readiness: READY`")
 
 
 def test_prompt_targets_plan_shape() -> None:

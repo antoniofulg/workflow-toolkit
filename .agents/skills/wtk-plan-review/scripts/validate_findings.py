@@ -81,8 +81,11 @@ def defects(text: str, round_number: int) -> list[str]:
             blockers = bool(items)
         if not items and not any(line.strip() == "None." for line in lines):
             found.append(f"section {heading} must hold None. or at least one {prefix}-NNN item")
-    if front.get("readiness") == "READY" and blockers:
+    readiness = front.get("readiness")
+    if readiness == "READY" and blockers:
         found.append("readiness is READY but # Blockers holds an item")
+    if readiness in ("BLOCKED", "NEEDS_REWORK") and not blockers:
+        found.append(f"readiness is {readiness} but # Blockers holds no item")
     found.extend(f"placeholder word: {word}" for word in sorted(set(PLACEHOLDER.findall(text))))
     return found
 
