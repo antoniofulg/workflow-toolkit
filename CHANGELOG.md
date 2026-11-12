@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [6.3.0] - 2026-11-12
+
 ### Added
 
 - `wtk-plan-review` runs an on-demand peer review of an unapproved Lean plan with reviewers the user picks;

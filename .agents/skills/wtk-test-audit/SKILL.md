@@ -4,7 +4,7 @@ description: Audit a whole test suite for cost and flakiness from CI data and cl
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '6.2.0'
+  version: '6.3.0'
 ---
 
 # Test audit

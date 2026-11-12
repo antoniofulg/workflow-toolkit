@@ -3,7 +3,7 @@ name: wtk-qa-execute
 description: Execute planned QA through existing public interfaces and record evidence or defects. Use when a Verifier walks QA; Don't use for planning, product fixes, or framework setup.
 metadata:
   author: Antonio Fulgêncio
-  version: '6.2.0'
+  version: '6.3.0'
 ---
 
 # QA Execute
