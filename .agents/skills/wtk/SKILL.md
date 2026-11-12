@@ -69,8 +69,9 @@ Load shared references only for the current operation:
 - A user explicitly names a capability (`wtk-deep-review`, `wtk-qa`, `wtk-ship`, or
   another `wtk-*` skill): invoke that capability directly and do not reopen planning.
 - A capability requested in plain words routes the same way: "review in depth" → `wtk-deep-review`,
-  "check reuse" → `wtk-reuse-review`, "walk QA" → `wtk-qa`, "ship it" → `wtk-ship`, "check
-  knowledge" → `wtk-knowledge-check`, "review the tests of X" → `wtk-test-review`, "reduce test cost" → `wtk-test-audit`.
+  "peer review the plan" → `wtk-plan-review`, "check reuse" → `wtk-reuse-review`, "walk QA" →
+  `wtk-qa`, "ship it" → `wtk-ship`, "check knowledge" → `wtk-knowledge-check`, "review the tests of
+  X" → `wtk-test-review`, "reduce test cost" → `wtk-test-audit`.
 
 When `wtk-discover` resolves an idea that entered through this router, continue into the integrated
 Lean route after the discovery decision. Direct invocation of `wtk-discover` retains its upstream

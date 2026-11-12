@@ -546,6 +546,13 @@ Point at `Flow`, at `Impact`, and at any `Landing` door that still has a live al
 those are the three a reviewer would want named, not buried. Where `Relations` changes data
 that already exists or `Surface` changes something already consumed, say that too.
 
+When one of these holds - a `Landing` door with a live alternative, `Relations` changes data that
+already exists, `Surface` changes an interface already consumed, or a security surface declared at
+Specify - end the presentation with one line offering
+[`wtk-plan-review`](../../wtk-plan-review/SKILL.md) and naming the triggers that hold. With no
+trigger, or for a checks-only feature, offer nothing. The offer adds no stop: one answer may decline
+the review and approve the plan.
+
 Then continue into [checks.md](checks.md). Every interface's outcomes, every door, and every entity
 here owes a set row or a check there - that derivation is the next step's job, and it is the one
 that catches what this file left implicit.

@@ -14,7 +14,7 @@ from typing import Any
 
 
 STAGES = (
-    "planning", "exploration", "design", "implementation", "verification", "qa",
+    "planning", "plan_review", "exploration", "design", "implementation", "verification", "qa",
     "deep_review", "remediation", "delivery",
 )
 SNAPSHOT_VERSION = 4

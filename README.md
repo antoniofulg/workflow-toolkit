@@ -24,6 +24,7 @@ unit; phase skills are listed for discoverability and are not a supported subset
 | `wtk-knowledge-check` | Check a project's optional `knowledge/` bundle. |
 | `wtk-qa`, `wtk-qa-plan`, `wtk-qa-execute` | Plan and execute user-visible QA. |
 | `wtk-deep-review` | Run an independent implementation review. |
+| `wtk-plan-review` | Peer review an unapproved Lean plan with reviewers you pick. |
 | `wtk-ship` | Close and deliver proven work when the project authorizes it. |
 
 The canonical source paths are the `.agents/skills/<name>/` directories in this repository.
@@ -33,7 +34,7 @@ Choose an installer supported by your agent host. For example, the
 ```bash
 npx skills@latest add antoniofulg/workflow-toolkit \
   --skill wtk wtk-deep-review wtk-discover wtk-implement \
-  wtk-knowledge-check wtk-lean wtk-plan wtk-qa wtk-qa-execute \
+  wtk-knowledge-check wtk-lean wtk-plan wtk-plan-review wtk-qa wtk-qa-execute \
   wtk-qa-plan wtk-reuse-review wtk-setup wtk-ship wtk-test-audit \
   wtk-test-review \
   --agent '*' --copy --yes
@@ -42,7 +43,7 @@ npx skills@latest add antoniofulg/workflow-toolkit \
 Use `npx skills@latest list` to inspect the project installation. The full WTK set carries the
 shared phase dependencies. WTK does not provide a package installer executable.
 
-The full 15-skill WTK set is self-contained: its scripts, assets, and conditional references live
+The full 16-skill WTK set is self-contained: its scripts, assets, and conditional references live
 below the distributed skill directories.
 
 **Runtime requirements.** The bundled validators need Python 3, and `wtk-knowledge-check` needs Bun.
@@ -69,7 +70,7 @@ reinstall from the unpinned source to advance beyond that revision.
 If WTK remains on 2.0.x, inspect the `wtk*` entries in the project's `skills-lock.json`. To leave
 a pinned revision, rerun the [complete install command above](#install-the-skills) with the bare
 `antoniofulg/workflow-toolkit` source, without a tag, commit or `/tree/<ref>` suffix. This replaces
-the recorded WTK source/ref and refreshes all 15 skills. Review the installed files and lockfile
+the recorded WTK source/ref and refreshes all 16 skills. Review the installed files and lockfile
 diff, then commit them in the consuming project. Future updates follow the default branch.
 
 For a global installation, use `npx skills@latest update --global`; its tracking file is
@@ -287,6 +288,6 @@ the skill directories.
 Project-owned WTK skills are MIT or CC BY 4.0 as declared in their frontmatter. `wtk-lean` retains
 its Tech Leads Club attribution in [its notice](.agents/skills/wtk-lean/NOTICE.md). The project-owned
 adaptations are maintained by Antonio Fulgêncio; `wtk-deep-review` and the QA skills were inspired by
-[Pedro Nauck's skills](https://github.com/pedronauck/skills/tree/main/skills/mine) and the integrated
-Lean route by [Tech Leads Club](https://github.com/tech-leads-club/agent-skills/tree/main/skills).
+[Pedro Nauck's skills](https://github.com/pedronauck/skills/tree/main/skills/mine), and `wtk-plan-review`
+by his `spec-peer-review`; the integrated Lean route by [Tech Leads Club](https://github.com/tech-leads-club/agent-skills/tree/main/skills).
 Optional companion projects retain their own licenses and provenance.
