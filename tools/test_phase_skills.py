@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / ".agents/skills"
 PUBLIC = (
     "wtk", "wtk-deep-review", "wtk-discover", "wtk-implement", "wtk-knowledge-check",
-    "wtk-lean", "wtk-plan", "wtk-qa", "wtk-qa-execute", "wtk-qa-plan",
+    "wtk-lean", "wtk-plan", "wtk-plan-review", "wtk-qa", "wtk-qa-execute", "wtk-qa-plan",
     "wtk-reuse-review", "wtk-ship", "wtk-test-audit", "wtk-test-review",
 )
 

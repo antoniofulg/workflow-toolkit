@@ -195,6 +195,48 @@ def test_lean_plan_offer_adds_no_stop() -> None:
     assert owns(LEAN_PLAN, "The offer adds no stop", "one answer may decline the review and approve the plan")
 
 
+def test_router_routes_plan_review() -> None:
+    assert owns("wtk/SKILL.md", '"peer review the plan"', "`wtk-plan-review`")
+
+
+def test_plan_review_stage_selectable() -> None:
+    assert owns("wtk/references/agent-selection.md", "`plan_review`", "`wtk-plan-review`", "on demand", "human picks")
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp).resolve()
+        for command in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", "init"]):
+            subprocess.run(["git", "-C", str(root), *command], check=True, capture_output=True)
+        row = {
+            "role": "verifier", "provider": "host", "model": "model-x", "effort": "high",
+            "rationale": "The human picked this reviewer for the plan.", "limitations": [],
+        }
+        selection = root / "selection.json"
+        selection.write_text(json.dumps({
+            "version": 4, "feature": "demo", "checkout": str(root), "stages": {"plan_review": row},
+        }), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SKILLS / "wtk-lean/scripts/workflow_route.py"), "--root", str(root),
+             "--feature", "demo", "--selection-file", str(selection)],
+            capture_output=True, text=True,
+        )
+        assert result.returncode == 0, output(result)
+        assert json.loads(result.stdout)["stages"] == {"plan_review": row}
+
+
+def test_review_output_ignored() -> None:
+    lines = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+    assert ".wtk-plan-review/*" in lines
+    ignored = subprocess.run(
+        ["git", "-C", str(ROOT), "check-ignore", "-q", ".wtk-plan-review/demo/round1-reviewer.md"],
+    )
+    assert ignored.returncode == 0
+
+
+def test_readme_credits_upstream() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    paragraph = next(block for block in readme.split("\n\n") if "Pedro Nauck" in block)
+    assert "`wtk-plan-review`" in paragraph and "`spec-peer-review`" in paragraph
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-k", dest="pattern")

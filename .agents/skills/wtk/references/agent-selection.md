@@ -27,6 +27,7 @@ do not create an agent or load every skill merely to fill the table.
 | Stage key | Responsibility supplied by the selected skill |
 | --- | --- |
 | `planning` | `wtk-discover`, `wtk-plan` or the Plan/Checks phase of `wtk-lean`, including fresh non-author feature criteria review under [project requirements](project-requirements.md#review-criteria-before-dependent-feature-build) |
+| `plan_review` | `wtk-plan-review`, on demand, with reviewers the human picks |
 | `exploration` | A bounded read-only trace supporting the selected phase |
 | `design` | The relevant design/UI guidance when a design is needed |
 | `implementation` | `wtk-lean` Build or `wtk-implement`; one sequential builder |
@@ -42,7 +43,7 @@ When the host exposes neither, record `inherited` and name the unknown field.
 ## Dispatch without asking
 
 Do not ask the human to approve roles. State the selection and dispatch. A role the human names
-wins.
+wins. The one exception is `plan_review`: the human picks its reviewers.
 
 Reuse a selection for unchanged retries, resume and handoff. If a host lacks the selected role,
 stop that dispatch and name the missing role. Never substitute another role, model or effort.

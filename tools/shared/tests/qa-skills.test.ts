@@ -804,7 +804,7 @@ describe("adoption and public setup", () => {
       skill,
       readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").match(/^  version: '(.+)'$/m)?.[1],
     ]);
-    expect(skillVersions.length).toBe(15);
+    expect(skillVersions.length).toBe(16);
     expect(skillVersions).toEqual(skillVersions.map(([skill]) => [skill, manifest.version]));
     const agentBlockedSkills = readdirSync(skillsRoot).filter((skill) =>
       readFileSync(join(skillsRoot, skill, "SKILL.md"), "utf8").includes("disable-model-invocation"),
@@ -845,6 +845,7 @@ describe("Bun tooling runtime contract", () => {
       "tools/test_deep_review_token_metrics.py",
       "tools/test_native_agent_routing.py",
       "tools/test_phase_skills.py",
+      "tools/test_plan_review.py",
       "tools/test_tlc_validators.py",
       "tools/test_wtk_lifecycle.py",
     ];
