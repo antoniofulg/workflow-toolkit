@@ -176,6 +176,25 @@ def test_skill_rounds_opt_in_and_no_approval() -> None:
     assert owns(SKILL, "never writes the plan's `## Approval` receipt")
 
 
+LEAN_PLAN = "wtk-lean/references/plan.md"
+
+
+def test_lean_plan_offers_review_on_triggers() -> None:
+    assert owns(
+        LEAN_PLAN, "offering", "wtk-plan-review", "one line", "naming the triggers that hold",
+        "`Landing` door with a live alternative", "`Relations` changes data that already exists",
+        "`Surface` changes an interface already consumed", "security surface declared at Specify",
+    )
+
+
+def test_lean_plan_no_offer_without_trigger() -> None:
+    assert owns(LEAN_PLAN, "With no trigger, or for a checks-only feature, offer nothing")
+
+
+def test_lean_plan_offer_adds_no_stop() -> None:
+    assert owns(LEAN_PLAN, "The offer adds no stop", "one answer may decline the review and approve the plan")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-k", dest="pattern")
