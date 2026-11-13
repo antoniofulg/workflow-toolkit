@@ -4,7 +4,7 @@ description: Route Workflow Toolkit work to the smallest applicable procedure, i
 license: CC-BY-4.0
 metadata:
   author: Antonio Fulgêncio
-  version: '6.3.0'
+  version: '6.4.0'
 ---
 
 # Workflow Toolkit
