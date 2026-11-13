@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- The test contract forbids copy- and style-only assertions by default (labels, headings, button
+  text, CSS values, colours, class names); a mixed test keeps only its behaviour assertions.
+- A new unstable-test rule: a test that passes and fails on one unchanged revision gets one
+  root-cause attempt, then deletion, with a cheaper-layer replacement first for a behaviour test.
+  Quarantine stays opt-in through the `quarantine` setting. `wtk-test-review` and `wtk-test-audit`
+  flag both.
+
 ## [6.3.0] - 2026-11-12
 
 ### Added
