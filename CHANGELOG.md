@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [6.4.0] - 2026-11-13
+
 ### Changed
 
 - The test contract forbids copy- and style-only assertions by default (labels, headings, button

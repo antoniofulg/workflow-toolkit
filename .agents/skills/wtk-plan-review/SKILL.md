@@ -3,7 +3,7 @@ name: wtk-plan-review
 description: Run an on-demand peer review of an unapproved Lean plan with reviewers the user picks, then apply only the findings the user selects. Use when asked to peer review the plan or when wtk-lean offers it; not implementation review, an automatic gate, or plan approval.
 license: CC-BY-4.0
 metadata:
-  version: '6.3.0'
+  version: '6.4.0'
 ---
 
 # Plan review
