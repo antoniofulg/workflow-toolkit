@@ -1,6 +1,7 @@
 # Test Contract
 
-**Read when:** writing, planning, or reviewing tests, or deriving feature checks.
+**Read when:** writing, planning, or reviewing tests, handling an unstable test, or deriving feature
+checks.
 
 **Why this exists:** "All branches covered" cannot be audited. Named cases with claims and proofs can.
 A test that mirrors the implementation, or exists only to raise coverage, proves nothing.
@@ -46,7 +47,7 @@ scope and survivor policy.
 | Layer | Use for | Cost |
 | --- | --- | --- |
 | Unit | Pure rules, validation, transformation, every error path | Cheapest |
-| Component | UI states in a simulated DOM with the server stubbed: copy, enabled/disabled, empty/loading/error, validation messages, a click changing state, dialogs, ARIA, conditional rendering by role or plan | Cheap |
+| Component | UI states in a simulated DOM with the server stubbed: enabled/disabled, empty/loading/error, validation messages, a click changing state, dialogs, ARIA, conditional rendering by role or plan | Cheap |
 | Integration | Crossing a boundary: repository, handler, queue; rules, atomicity, permissions, tenancy, rows written or refused | Moderate |
 | End-to-end | Only what needs the real browser and stack: real layout (viewport, overflow, scroll, geometry), hydration, focus across navigation, drag and drop, service workers, cross-tab, OAuth redirects, real network failure, and one main journey per feature | Most expensive, deliberately scarce |
 
@@ -89,13 +90,16 @@ proof when no new failure is distinguished. Reviewers reject additions without t
 When consolidating cases, follow [pruning](#pruning). Similar test names or shared setup alone do
 not establish equivalent coverage.
 
-Forbidden by default — allowed only when that artifact is the product contract and no stronger gate
-already owns it:
+A test earns its place by catching a behaviour failure: a state change, data outcome, navigation,
+access rule or keyboard/focus result. Forbidden by default — allowed only when that artifact is the
+product contract and no stronger gate already owns it:
 
-- Tests asserting prose, copy or documentation content
+- Tests asserting prose, copy, labels, headings, button text or documentation content
 - Snapshot tests standing in for behavioural assertions
-- Tests over generated files, config shape, or CSS
+- Tests over generated files, config shape, CSS values, colours or class names
 - A second suite duplicating an existing one because the existing one was hard to find
+
+A mixed test keeps its behaviour assertions and drops the copy or style ones.
 
 For instruction products, assert routing, metadata, resolvable references and safety boundaries;
 do not freeze line wrapping, incidental wording or historical release prose. Compare release
@@ -139,12 +143,30 @@ Removing a redundant test is its own reviewed change, never part of a fix or a r
      producing artifacts no assertion or gate reads;
    - (d) a duplicate suite.
 4. Map every candidate assertion, in every parameterised case, to the kept proof's own assertion.
-5. Delete in its own `test(...)` commit, never inside a fix.
+5. Delete in its own `test(...)` commit, never inside a fix. In that commit, update every quarantine
+   list, CI timing file, triage count and doc that names the removed test.
 6. Re-run mutation over the scope, or without a tool the manual faults the removed test used to
    kill. The kill set must not shrink; a new survivor reverts that deletion.
 7. A fresh Verifier checks the mapping.
 8. Never prune a member of the permanent security smoke suite; any other SEC proof needs a named
    lower-layer replacement.
+
+## Unstable tests
+
+A test is unstable when the same revision, with no change, both passes and fails: a pass on retry,
+a CI flaky warning, or mixed results across reruns. Confirm it by rerunning that unchanged revision;
+a test that fails every run is a real failure, fixed as one. Find offenders from CI annotations or
+reruns across recent runs, and fix the most frequent first.
+
+1. Make one attempt at the root cause: wait on a condition, isolate data per test, split a long
+   serial test, finish animations before sampling. A cause in the product is a bug: file it and keep
+   the test.
+2. If that attempt finds no cause, delete the test. Before deleting a behaviour test, find its proof
+   at a cheaper layer; if none exists, write that unit or integration replacement first. Delete as
+   [pruning](#pruning) step 5 states.
+3. The outcome is a fixed test or a deleted one; retry loops are not an outcome. A project with a
+   declared `quarantine` [setting](project-settings.md) may hold the test within its cap and expiry;
+   at expiry, step 2 applies.
 
 ## Test execution cost
 

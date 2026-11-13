@@ -54,7 +54,10 @@ mutation tool, and no numeric threshold. Name every default you took in the repo
      the unit or integration test that asserts the same outcome through the same contract, or
      marked as having none; never a `@smoke` cohort member or the sole proof of a journey or of
      wiring;
-   - **forbidden subject** - copy, snapshots, config or CSS, unless that artifact is the contract;
+   - **forbidden subject** - copy, snapshots, config or style, unless that artifact is the contract;
+     in a mixed test, propose dropping only those assertions;
+   - **unstable** - passes and fails on the same unchanged revision, handled under
+     [unstable tests](../wtk/references/test-contract.md#unstable-tests);
    - **artifact-only** - its only effect is producing artifacts no assertion or gate reads; a
      removal candidate without a mutation run, since it kills nothing by construction;
    - **duplicate suite**.

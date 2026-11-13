@@ -27,7 +27,7 @@ Load shared references only for the current operation:
 | Choose checks or reuse evidence | [Validation](references/validation.md) |
 | Start, reuse or close an application/test environment | [Runtime lifecycle](references/runtime-lifecycle.md) |
 | Report completion or commit evidence | [Evidence](references/evidence.md) |
-| Derive tests or choose their layer | [Test contract](references/test-contract.md) |
+| Write, review or derive tests, choose their layer, or handle an unstable test | [Test contract](references/test-contract.md) |
 | Review code or act on findings | [Review rounds](references/review-rounds.md) |
 | Create a branch or isolate a checkout | [Git](references/git.md) |
 | PRD/RFC/ADR work, decision-store ownership, or artifact retention | [Artifacts](references/artifacts.md) |

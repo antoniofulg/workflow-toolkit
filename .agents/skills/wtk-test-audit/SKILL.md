@@ -44,14 +44,17 @@ report. Install nothing.
    teardown call is where the clock ran out; find the slow step in the trace or step timings.
    Check library behaviour in the vendor docs before trusting a theory. A flake that reproduces
    locally is a product race, not a test defect: file the bug, keep the test, never weaken it.
+   Every other flake follows [unstable tests](../wtk/references/test-contract.md#unstable-tests):
+   one root-cause attempt, then a fix or a REMOVE proposal.
 3. **Classify every expensive test.** Split files by cost across two or three read-only auditors
    with a call budget each and the instruction to report what they have and mark the rest
    NOT CHECKED. Each test gets exactly one class:
-   - **REMOVE**, naming the covering test;
+   - **REMOVE**, naming the covering test, or the copy or style that is its only subject;
    - **ARTIFACT-ONLY**: its only effect is output no assertion or gate reads;
    - **TO-COMPONENT**: every assertion is a UI state the component layer proves;
    - **TO-INTEGRATION**: it re-asserts rows, refusals or permissions an integration test owns;
-   - **TRIM**, naming the assertions or the repeated viewport or theme that move;
+   - **TRIM**, naming the assertions that move or drop, such as copy, style, or a repeated
+     viewport or theme;
    - **KEEP**, with the browser-only reason from the layer table.
 
    Estimate the seconds saved per test, list what was not checked, and label every estimate as
