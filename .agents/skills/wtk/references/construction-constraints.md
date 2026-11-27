@@ -52,7 +52,8 @@ extension points. File ownership does not authorize recreating a shared implemen
 unusable prerequisites keep dependent work blocked: return the gap to the coordinator; repair only
 from real evidence, and ask only if authority or the contract must change.
 
-Implementation order and extraction remain the builder's choice within these constraints. At
+Extraction, and implementation order where the route does not fix it, remain the builder's choice
+within these constraints. At
 phase boundaries, preserve their current state through [context recovery](context-handoff.md).
 
 ## Verify

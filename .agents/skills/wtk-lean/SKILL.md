@@ -83,8 +83,8 @@ thin, ask the user to raise it rather than silently changing the profile.
 ```
 
 Create each file when its phase produces content. For a change under roughly three files with no
-one-way door, write only `checks.md` with `## Intent` and the native
-[approval receipt](../wtk/references/construction-constraints.md#native-feature-approval). The
+one-way door, write only `request.md`, saved verbatim before anything else, and `checks.md` with
+`## Intent` and the native [approval receipt](../wtk/references/construction-constraints.md#native-feature-approval). The
 current request can authorize that bounded intent; create no synthetic plan or redundant approval stop.
 
 The plan is the human review boundary. Write the problem, walk the surfaces, write criteria, then
@@ -98,7 +98,7 @@ implementation detail stay in the diff.
 `checks.md` derives proof-backed checks from the plan and joins every enumerated interface, entity,
 outcome, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
 distinct: the first freezes reviewed shape, the second freezes obligations, and the third is the
-independent evidence. An unresolved architecture choice needs its own ADR/RFC/spike before it can
+independent evidence. `request.md` is none of them: the user's words, written once and never rewritten. An unresolved architecture choice needs its own ADR/RFC/spike before it can
 be recorded as a `Landing` decision.
 
 ## Phase references

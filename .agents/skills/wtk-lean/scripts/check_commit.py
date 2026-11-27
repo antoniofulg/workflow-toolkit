@@ -158,7 +158,7 @@ def untracked(root):
         return []
     shown = ", ".join(entries[:UNTRACKED_SHOWN])
     more = f", {len(entries) - UNTRACKED_SHOWN} more" if len(entries) > UNTRACKED_SHOWN else ""
-    return [f"  UNTRACKED  {shown}{more}: delete, git-ignore or commit each before the build ends"]
+    return [f"  UNTRACKED  {shown}{more}: commit what belongs to the work, delete or git-ignore what a tool left behind"]
 
 
 def main(argv=None):

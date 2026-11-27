@@ -27,7 +27,8 @@ One builder takes every slice in order. Do not estimate size or ask about a tran
 Build the first slice thin and end to end - the shortest path a user can walk - before any other,
 then one slice at a time. Never build one layer for every slice first: a layer nobody has used looks
 right until integration fails late. A slice that turns out to be a layer is cut again by outcome
-before it is built.
+before it is built; the cut regroups the same approved criteria and checks and changes none of them,
+and changing one is renegotiation.
 
 ## What is fixed and what is not
 
@@ -110,8 +111,8 @@ repository asks for one and the script runs with `--allow-trailers`. A passing m
 one `OWED` line per feature with checks and no `verification.md`: `check_proofs.py`, the fresh
 Verifier and, when a criterion cites a capture, the screens judge. The builder runs `check_proofs.py`
 (see [Then stop](#then-stop)); the coordinator dispatches the rest. It also prints one `UNTRACKED`
-line for what `git status` shows untracked outside `.specs/`: delete what a tool left behind or
-git-ignore it, and never commit it to clear the line. Optional git-level guard, independent of any
+line for what `git status` shows untracked outside `.specs/`: commit what belongs to the work, delete
+or git-ignore what a tool left behind. Optional git-level guard, independent of any
 agent:
 
 ```bash
