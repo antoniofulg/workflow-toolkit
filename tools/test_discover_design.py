@@ -55,6 +55,12 @@ def padding(count: int) -> str:
     return " ".join(["Alpha beta gamma delta epsilon."] * (count // 5)) + "\n"
 
 
+def exact(count: int) -> str:
+    """Exactly `count` words, in short sentences."""
+    rest = count % 5
+    return padding(count - rest) + (" ".join(["Alpha"] * rest) + ".\n" if rest else "")
+
+
 def add_slices(text: str, names: list[str]) -> str:
     """Append rfc slices, each with an index row, an Order entry and a section."""
     text = rep(text, "| [Receipt](#receipt) | a receipt is sent after confirmation | blocked by the sender address |\n",
@@ -177,6 +183,20 @@ class ValidatorTest(unittest.TestCase):
         # words in a heading count
         heading = run(rep(FIXTURE, summary_end, "\n### " + " ".join(["alpha"] * 2100) + "\n" + summary_end))
         self.assertTrue(any("the part read together is" in w for w in warnings(heading)), heading.stdout)
+        # the boundary: 2,000 words between Summary and Slices pass, 2,001 warn
+        at = run(rep(FIXTURE, summary_end, "\n" + exact(2000 - reading) + summary_end))
+        self.assertEqual(reported(at, "from Summary to Slices"), 2000, at.stdout)
+        self.assertEqual((at.returncode, warnings(at)), (0, []), at.stdout)
+        past = run(rep(FIXTURE, summary_end, "\n" + exact(2001 - reading) + summary_end))
+        self.assertEqual(reported(past, "from Summary to Slices"), 2001, past.stdout)
+        self.assertEqual(warnings(past), ["WARN  the part read together is 2001 words, over the 2000 budget"], past.stdout)
+        # the whole document: 4,000 words pass, 4,001 warn
+        references = "\n## References\n"
+        at = run(rep(FIXTURE, references, references + "\n" + exact(4000 - total)))
+        self.assertEqual(reported(at, "in all"), 4000, at.stdout)
+        self.assertEqual((at.returncode, warnings(at)), (0, []), at.stdout)
+        past = run(rep(FIXTURE, references, references + "\n" + exact(4001 - total)))
+        self.assertEqual(warnings(past), ["WARN  whole document is 4001 words, over the 4000 budget"], past.stdout)
 
     def test_word_budget_grows_per_slice_beyond_eight(self) -> None:
         eight = add_slices(FIXTURE, ["Alpha", "Bravo", "Charlie", "Delta", "Echo"])
@@ -192,10 +212,18 @@ class ValidatorTest(unittest.TestCase):
         pad = "\n## References\n\n" + padding(4100 - total_nine)
         at_nine = run(rep(nine, "\n## References\n", pad))
         self.assertEqual((at_nine.returncode, warnings(at_nine)), (0, []), at_nine.stdout)
-        # 4,300 words: over the 9-slice budget of 4,250
-        pad = "\n## References\n\n" + padding(4300 - total_nine)
-        over = run(rep(nine, "\n## References\n", pad))
-        self.assertTrue(any("over the 4250 budget" in w for w in warnings(over)), over.stdout)
+        # the boundary of the 9-slice budget: 4,250 words pass, 4,251 warn
+        references = "\n## References\n"
+        at = run(rep(nine, references, references + "\n" + exact(4250 - total_nine)))
+        self.assertEqual(reported(at, "in all"), 4250, at.stdout)
+        self.assertEqual((at.returncode, warnings(at)), (0, []), at.stdout)
+        past = run(rep(nine, references, references + "\n" + exact(4251 - total_nine)))
+        self.assertEqual(warnings(past), ["WARN  whole document is 4251 words, over the 4250 budget"], past.stdout)
+        # the same boundary for 8 slices stays at 4,000
+        at = run(rep(eight, references, references + "\n" + exact(4000 - total_eight)))
+        self.assertEqual((at.returncode, warnings(at)), (0, []), at.stdout)
+        past = run(rep(eight, references, references + "\n" + exact(4001 - total_eight)))
+        self.assertEqual(warnings(past), ["WARN  whole document is 4001 words, over the 4000 budget"], past.stdout)
 
     def test_portuguese_headings_and_labels_are_recognised(self) -> None:
         headings = {
