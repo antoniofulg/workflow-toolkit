@@ -307,6 +307,20 @@ def test_discover_frontmatter_stays_the_packs() -> None:
     assert fields["version"].strip("'\"") == json.loads((ROOT / "package.json").read_text(encoding="utf-8"))["version"]
 
 
+def test_discover_provenance_pins_upstream() -> None:
+    meta = json.loads((SKILLS / "wtk-discover/.skill-meta.json").read_text(encoding="utf-8"))
+    assert meta["sourceCommit"] == "d4ab26545b16ed7cfec01bd7fdee0f5305b89d86"
+    # the registry hash of the upstream skill directory at that commit
+    assert meta["contentHash"] == "e76c2dc3b32297bb54aaf511266f96273fecd94dbdc9f18d2fcc93be5c250748"
+    assert meta["license"] == "CC-BY-4.0"
+
+
+def test_notice_names_the_discover_adaptation() -> None:
+    assert owns("../../NOTICE.md", "`wtk-discover`", "adaptation", "`tlc-discover`",
+                "(.agents/skills/wtk-discover/.skill-meta.json)")
+    assert (ROOT / ".agents/skills/wtk-discover/.skill-meta.json").is_file()
+
+
 def test_ui_and_delivery_boundaries_stay_local() -> None:
     uiux = (ROOT / ".agents/skills/wtk/references/ui-ux.md").read_text(encoding="utf-8")
     ship = (SKILLS / "wtk-ship/SKILL.md").read_text(encoding="utf-8")
