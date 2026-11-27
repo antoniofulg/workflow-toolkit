@@ -1,0 +1,45 @@
+{
+  "checkout": "/Users/antoniofulg/Projects/my-workflow",
+  "feature": "tlc-lean-3-2-adoption",
+  "git_head": "345d47f452e3f0156ee16714f184504594ee055a",
+  "profile": null,
+  "stages": {
+    "implementation": {
+      "effort": "high",
+      "limitations": [
+        "maxTurns 150"
+      ],
+      "model": "sonnet",
+      "provider": "claude-code",
+      "rationale": "Reference prose, two script changes and their contract tests need one sequential coding worker.",
+      "role": "implementer",
+      "scope": "The approved feature checks C1-C22"
+    },
+    "planning": {
+      "effort": "medium",
+      "limitations": [
+        "read-only tools",
+        "maxTurns 100"
+      ],
+      "model": "sonnet",
+      "provider": "claude-code",
+      "rationale": "A fresh non-author session reviews the criteria and checks before the build.",
+      "role": "verifier",
+      "scope": "Criteria review of plan.md and checks.md"
+    },
+    "verification": {
+      "effort": "medium",
+      "limitations": [
+        "read-only tools except verification.md",
+        "maxTurns 100"
+      ],
+      "model": "sonnet",
+      "provider": "claude-code",
+      "rationale": "No risk area is touched, so the ordinary fresh Verifier covers the full feature range.",
+      "role": "verifier",
+      "scope": "Every check over the feature base to HEAD"
+    }
+  },
+  "verification_profile": "standard",
+  "version": 4
+}
