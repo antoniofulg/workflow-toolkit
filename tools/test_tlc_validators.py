@@ -886,6 +886,30 @@ class CommitContractTests(unittest.TestCase):
             self.assertNotIn(".specs", lines[0])
             self.assertNotIn("ignored.log", lines[0])
 
+    def test_commit_untracked_is_scoped_to_root(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = Path(raw)
+            root = repo / "app"
+            root.mkdir()
+            (root / "tracked.txt").write_text("x", encoding="utf-8")
+            (repo / "kept.txt").write_text("x", encoding="utf-8")
+            commit_all(repo)
+            (root / ".specs/features/demo").mkdir(parents=True)
+            (root / ".specs/features/demo/request.md").write_text("x", encoding="utf-8")
+            (root / "src").mkdir()
+            (root / "src/new.txt").write_text("x", encoding="utf-8")
+            (repo / "elsewhere.txt").write_text("x", encoding="utf-8")
+            (repo / "other").mkdir()
+            (repo / "other/stray.txt").write_text("x", encoding="utf-8")
+            lines = self._untracked_lines(self._commit(root, "feat(wtk): add lean router"))
+            self.assertEqual(len(lines), 1, lines)
+            self.assertIn("src/", lines[0])
+            for absent in ("app/", ".specs", "elsewhere.txt", "other"):
+                self.assertNotIn(absent, lines[0])
+            (root / "src/new.txt").unlink()
+            (root / "src").rmdir()
+            self.assertEqual(self._untracked_lines(self._commit(root, "feat(wtk): add lean router")), [])
+
     def test_commit_invalid_message_prints_no_untracked_line(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

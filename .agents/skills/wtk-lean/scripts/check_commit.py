@@ -24,7 +24,7 @@ What it checks:
 
 After a passing message it prints, for each feature under `<root>/.specs/features/` that has a
 checks.md and no verification.md, what the feature still owes, and one UNTRACKED line naming what
-`git status` at --root shows as untracked outside `.specs/`: a command's output reaches the agent
+`git status` shows as untracked under --root outside its `.specs/`: a command's output reaches the agent
 after a compaction, where a rule it read hours earlier may not.
 
 Usage:
@@ -137,17 +137,22 @@ def owed(root):
 
 
 def untracked(root):
-    """One line naming the untracked entries outside `.specs/`; nothing when git cannot say."""
+    """One line naming the untracked entries under --root outside `.specs/`; nothing when git cannot say."""
+    env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
     try:
+        # Porcelain paths are relative to the repository top, so a --root below it needs its prefix removed.
+        prefix = subprocess.run(["git", "rev-parse", "--show-prefix"], cwd=root, capture_output=True, text=True, env=env)
         proc = subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=normal"],
-            cwd=root, capture_output=True, text=True, env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"},
+            ["git", "status", "--porcelain", "--untracked-files=normal", "--", "."],
+            cwd=root, capture_output=True, text=True, env=env,
         )
     except OSError:
         return []
-    if proc.returncode != 0:
+    if proc.returncode != 0 or prefix.returncode != 0:
         return []
+    prefix = prefix.stdout.strip()
     entries = [ln[3:].strip('"') for ln in proc.stdout.splitlines() if ln.startswith("?? ")]
+    entries = [(e[len(prefix):] if e.startswith(prefix) else e) or "." for e in entries]
     entries = [e for e in entries if not e.startswith(".specs/")]
     if not entries:
         return []

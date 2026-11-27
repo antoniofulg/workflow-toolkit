@@ -8,7 +8,7 @@ Run selftest: `python3 .agents/skills/wtk-lean/scripts/selftest.py -v`
 
 ## Intent
 
-23 checks in 5 slices · 2 one-way doors · 0 open
+24 checks in 5 slices · 2 one-way doors · 0 open
 
 ## Checks
 
@@ -70,6 +70,9 @@ Proof: `python3 tools/test_tlc_validators.py -k test_commit_invalid_message_prin
 **C14** - No message at all exits 2 (LEAN-02, AC 6)
 Proof: `python3 tools/test_tlc_validators.py -k test_commit_without_message_exits_2`
 
+**C24** - When `--root` is a subdirectory of a git repository, the `UNTRACKED` line names entries relative to `--root`, excludes that root's `.specs/`, and leaves out untracked entries outside `--root` (LEAN-02, AC 8, AC 9)
+Proof: `python3 tools/test_tlc_validators.py -k test_commit_untracked_is_scoped_to_root`
+
 **C15** - The hook file the Lean build reference shows for a repository that asks for trailers passes `--allow-trailers`, and running `check_commit.py` with the flags that hook shows accepts a message carrying a trailer (LEAN-02, AC 7)
 Proof: `python3 tools/test_phase_skills.py -k test_lean_hook_can_allow_trailers`
 
@@ -108,12 +111,12 @@ Proof: `sh -c 'grep -q "request.md" CHANGELOG.md && grep -q -- "--allow-trailers
 | `request.md` states (3) | missing C1 · blank C2 · present C3 | - |
 | trailer forms (8) | `Co-Authored-By` × documented case C7 · lower case C7 · leading whitespace C7 · space before the colon C7 · `Made-with` × documented case C7 · lower case C7 · leading whitespace C7 · space before the colon C7, table-driven over all 8 | - |
 | untracked list sizes (4) | 1 entry C10 · 8 entries C10 · 9 entries C10 · one directory of 3 files C10 | - |
-| untracked exclusions (3) | not a git work tree C11 · under `.specs/` C12 · git-ignored C12 | - |
+| untracked exclusions (4) | not a git work tree C11 · under `.specs/` C12 · git-ignored C12 · outside a `--root` that is a subdirectory C24 | - |
 | readers handed `request.md` (2) | the criteria reviewer C23 · the Verifier C6 | - |
 | one-way doors (2) | the request artifact C1, C5 · the trailer rejection default C7, C9 | - |
 | assemblies that copy the fixture file list (2) | `selftest.py` `scaffold()` C4 · `tools/test_tlc_validators.py` `scaffold()` C3 | - |
 
-- Claims naming an outcome, interface or response shape: C1, C7, C9, C10, C14 - each has a proof that runs the script
+- Claims naming an outcome, interface or response shape: C1, C7, C9, C10, C14, C24 - each has a proof that runs the script
 - Every existing `validate_checks` and `validate_verification` test passes through one of the two `scaffold()` helpers, so a helper that omits `request.md` turns those suites red
 - No other check claims more than the single case its proof exercises
 
