@@ -253,6 +253,60 @@ def test_discover_format_stays_interface_neutral() -> None:
     assert owns(fmt, "data part may describe a store that is not a SQL table")
 
 
+DISCOVER_SKILL = "wtk-discover/SKILL.md"
+
+
+def test_discover_two_questions_rule() -> None:
+    assert owns(DISCOVER_SKILL, "earns its place by passing one of two questions",
+                "two people on the team disagree about it, or be surprised by it",
+                "somebody outside the team have to be told, or data migrated")
+
+
+def test_discover_handover_runs_the_validator() -> None:
+    assert owns(DISCOVER_SKILL, "Run the validator", "<skill-dir>/scripts/validate_design.py", "Fix every error")
+    assert (SKILLS / "wtk-discover/scripts/validate_design.py").is_file()
+
+
+def test_discover_fresh_reader_review() -> None:
+    assert owns(DISCOVER_SKILL, "hand it only the document and the repository",
+                "quote the two lines that conflict")
+    assert owns(DISCOVER_SKILL, "Where no fresh reader is available, say so in the handover")
+    assert owns(DISCOVER_SKILL, "Know when to stop",
+                "Stop when a run raises no question about something hard to reverse that Open does not already list")
+
+
+def test_discover_judgment_questions() -> None:
+    text = (SKILLS / DISCOVER_SKILL).read_text(encoding="utf-8")
+    steps = [text.index(marker) for marker in ("**1. Run the validator.**", "**2. Give it to a reader", "**3. Answer what only judgment can.**")]
+    assert steps == sorted(steps)
+    assert owns(DISCOVER_SKILL, "Can a person stop after the Summary")
+    assert owns(DISCOVER_SKILL, "every behaviour row, data field and contract line pass one of the two questions")
+    assert text.index("Can a person stop after the Summary") > steps[2]
+
+
+def test_discover_keeps_project_additions() -> None:
+    additions = {
+        "artifact handoff": ("artifact handoff", "artifacts.md#product-and-decision-artifacts"),
+        "Evidence section": ("### Evidence",),
+        "signal table": ("| Signal | Focused evidence | What it can settle |",),
+        "decision store": ("project decision store", "artifacts.md#decision-store"),
+        "wtk-plan handoff": ("Planning starts from the document in `wtk-plan`",),
+        "product-signal example heading": ("### Example 4: Discovery from a product signal",),
+        "product-signal example": ("Analytics shows checkout abandonment", "error tracking has payment errors"),
+        "identifier ceiling": ("Identifier ceiling: route, command, event, exported symbol, table, column, class, glossary term",),
+        "artifact path": (".design/<name>.md",),
+        "vertical slice": ("organised by **vertical slice**",),
+    }
+    for name, fragments in additions.items():
+        assert owns(DISCOVER_SKILL, *fragments), name
+
+
+def test_discover_frontmatter_stays_the_packs() -> None:
+    fields = frontmatter(SKILLS / DISCOVER_SKILL)
+    assert fields["name"] == "wtk-discover"
+    assert fields["version"].strip("'\"") == json.loads((ROOT / "package.json").read_text(encoding="utf-8"))["version"]
+
+
 def test_ui_and_delivery_boundaries_stay_local() -> None:
     uiux = (ROOT / ".agents/skills/wtk/references/ui-ux.md").read_text(encoding="utf-8")
     ship = (SKILLS / "wtk-ship/SKILL.md").read_text(encoding="utf-8")

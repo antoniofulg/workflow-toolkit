@@ -315,5 +315,16 @@ class TemplateTest(unittest.TestCase):
             self.assertIn(fragment, text)
 
 
+    def test_skill_budget_matches_validator_constants(self) -> None:
+        validator = load_validator()
+        skill = (DISCOVER / "SKILL.md").read_text(encoding="utf-8")
+        line = next((l for l in skill.splitlines() if l.startswith("**Size is a number")), "")
+        for constant in (validator.READ_BUDGET, validator.TOTAL_BUDGET, validator.PER_SLICE):
+            self.assertIn(f"{constant:,}", line, f"the skill's size rule does not state {constant:,}")
+        numbers = {int(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\d", line)}
+        self.assertEqual(numbers, {validator.READ_BUDGET, validator.TOTAL_BUDGET, validator.PER_SLICE})
+        self.assertEqual((validator.BUDGET_SLICES, "beyond eight" in line), (8, True))
+
+
 if __name__ == "__main__":
     unittest.main()
