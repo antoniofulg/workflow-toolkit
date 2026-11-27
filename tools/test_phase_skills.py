@@ -205,6 +205,20 @@ def test_lean_hook_can_allow_trailers() -> None:
     assert allowed.returncode == 0, allowed.stdout
 
 
+def test_lean_answers_are_not_the_approval() -> None:
+    assert owns("wtk-lean/references/plan.md", "Answers", "not the approval", "presented again",
+                "never recorded as the receipt's `Decision`")
+
+
+def test_lean_capture_is_not_the_whole_request() -> None:
+    assert owns("wtk-lean/references/plan.md", "shows part of the request", "each sentence",
+                "no capture draws", "criterion or a question", "what the user sees")
+
+
+def test_lean_asks_about_sample_data() -> None:
+    assert owns("wtk-lean/references/plan.md", "Ask", "running app", "sample data", "handover")
+
+
 def test_lean_provenance_pins_upstream() -> None:
     meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
     assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"
