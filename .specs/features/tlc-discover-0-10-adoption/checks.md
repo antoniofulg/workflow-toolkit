@@ -46,7 +46,7 @@ Proof: `python3 tools/test_discover_design.py -k test_word_budget_warns_and_igno
 **C8** - A document with nine slices raises the total budget by 250 words (DISC-01, AC 7)
 Proof: `python3 tools/test_discover_design.py -k test_word_budget_grows_per_slice_beyond_eight`
 
-**C9** - The fixture with its headings and its labels replaced by the Portuguese set exits 0, and with the headings replaced and the labels left in English exits 1 (DISC-01, AC 8)
+**C9** - The fixture with its headings, its labels and its status words replaced by the Portuguese set exits 0, and so does the fixture with only its headings replaced (DISC-01, AC 8)
 Proof: `python3 tools/test_discover_design.py -k test_portuguese_headings_and_labels_are_recognised`
 
 **C10** - No path, and two paths, each print the usage text and exit 2 (DISC-01, AC 9)
