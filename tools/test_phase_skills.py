@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -187,6 +189,20 @@ def test_lean_verifier_reads_request_record() -> None:
 
 def test_lean_criteria_reviewer_gets_request_record() -> None:
     assert owns("wtk-lean/references/checks.md", "fresh criteria review", "handing the reviewer", "`request.md`")
+
+
+def test_lean_hook_can_allow_trailers() -> None:
+    build = (SKILLS / "wtk-lean/references/build.md").read_text(encoding="utf-8")
+    hook = next(block for block in re.findall(r"```bash\n(.*?)```", build, re.S) if "#!/bin/sh" in block)
+    command = next(line for line in hook.splitlines() if "check_commit.py" in line)
+    flags = re.findall(r"\s(--[a-z-]+)", command.split("check_commit.py", 1)[1])
+    assert "--allow-trailers" in flags and '"$@"' in command, command
+    script = str(SKILLS / "wtk-lean/scripts/check_commit.py")
+    message = "feat(wtk): add lean router\n\nCo-Authored-By: Bot <bot@example.test>"
+    refused = subprocess.run([sys.executable, script, "--message", message], capture_output=True, text=True)
+    allowed = subprocess.run([sys.executable, script, "--message", message, *flags], capture_output=True, text=True)
+    assert refused.returncode == 1, refused.stdout
+    assert allowed.returncode == 0, allowed.stdout
 
 
 def test_lean_provenance_pins_upstream() -> None:

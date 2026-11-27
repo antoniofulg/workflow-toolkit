@@ -100,14 +100,29 @@ Without a project validator, validate before committing:
 python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on failed charge"
 ```
 
-A passing message also prints one `OWED` line per feature with checks and no `verification.md`:
-`check_proofs.py`, the fresh Verifier and, when a criterion cites a capture, the screens judge. The
-builder runs `check_proofs.py` (see [Then stop](#then-stop)); the coordinator dispatches the rest.
-Optional git-level guard, independent of any agent:
+A message with a `Co-Authored-By` or `Made-with` trailer fails: no agent trailer, unless the
+repository asks for one and the script runs with `--allow-trailers`. A passing message also prints
+one `OWED` line per feature with checks and no `verification.md`: `check_proofs.py`, the fresh
+Verifier and, when a criterion cites a capture, the screens judge. The builder runs `check_proofs.py`
+(see [Then stop](#then-stop)); the coordinator dispatches the rest. It also prints one `UNTRACKED`
+line for what `git status` shows untracked outside `.specs/`: delete what a tool left behind or
+git-ignore it, and never commit it to clear the line. Optional git-level guard, independent of any
+agent:
 
 ```bash
 hook="$(git rev-parse --git-path hooks)/commit-msg"
 ln -sf "$(pwd)/<skill-dir>/scripts/check_commit.py" "$hook" && chmod +x "$hook"
+```
+
+A repository that asks for trailers installs a hook file instead, because a symlink cannot pass a flag:
+
+```bash
+hook="$(git rev-parse --git-path hooks)/commit-msg"
+cat > "$hook" <<'EOF'
+#!/bin/sh
+exec python3 "$(git rev-parse --show-toplevel)/<skill-dir>/scripts/check_commit.py" --allow-trailers "$@"
+EOF
+chmod +x "$hook"
 ```
 
 Skip the hook if the project manages hooks its own way. When a slice's proofs are all green, mark
