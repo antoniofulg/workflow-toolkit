@@ -235,12 +235,16 @@ def test_verifier_leaves_app_data_alone() -> None:
 
 def test_lean_provenance_pins_upstream() -> None:
     meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
-    assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"
+    assert meta["sourceCommit"] == "586a794efa688358e456b942b1849b76672115ae"
     # the registry hash of the upstream skill directory at that commit
-    assert meta["contentHash"] == "65cf4acff0a88093eafc9d34a36ca3a03a74c78301b1b4025e517ecc18e66a44"
+    assert meta["contentHash"] == "788382a643dcb946c6062764e7a5af73995aaf2724357b1c478fa494b1723262"
     notice = (SKILLS / "wtk-lean/NOTICE.md").read_text(encoding="utf-8")
     for adapted in ("proof runner", "build preflight", "compaction gates", "screens judge"):
         assert adapted in notice, adapted
+    assert owns("wtk-lean/NOTICE.md", "3.2.0", "`586a794`")
+    for adapted in ("request record", "commit trailer and untracked check", "capture rule", "tracer-bullet slice order"):
+        assert owns("wtk-lean/NOTICE.md", "3.2.0", adapted), adapted
+    assert owns("wtk-lean/NOTICE.md", "keeps the checks, proofs and Verifier report", "3.x removed")
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:
