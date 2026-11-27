@@ -21,6 +21,7 @@ derivation from them, which is where omissions surface.
 
 What it checks:
   ERROR  - no `## Approval` receipt with a non-empty `- Decision:` line (plan.md, else checks.md)
+  ERROR  - `request.md` beside checks.md is missing or has no non-blank line
   ERROR  - no `Build:` line naming the repo's build, type check and lint command (or `none - <why>`)
   ERROR  - profile standard/ui with no `Risk:` line (`none - <why>` or the check ids where a weak test costs most)
   ERROR  - no `Profile:` line, or an unknown profile
@@ -64,7 +65,7 @@ import re
 import subprocess
 import sys
 
-from native_evidence import RUN_PROOF_RE, approval_errors, intent_errors, read_risk, read_runs, unquote
+from native_evidence import RUN_PROOF_RE, approval_errors, intent_errors, read_risk, read_runs, request_errors, unquote
 
 PROFILES = ("light", "standard", "ui")
 REQUIRED_SECTIONS = ["Checks", "Coverage", "Swept"]
@@ -265,7 +266,7 @@ def check_file(path):
     with open(path, "r", encoding="utf-8") as f:
         raw = f.read().splitlines()
     lines = strip_fences(raw)
-    errors, warnings = intent_errors(path) + approval_errors(path), []
+    errors, warnings = intent_errors(path) + approval_errors(path) + request_errors(path), []
 
     # Profile.
     profile = None

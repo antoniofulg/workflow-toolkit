@@ -26,6 +26,12 @@ The closure gate still requires every criterion to land in `Flow`, `Relations` o
 
 ## Before asking anything
 
+**Save the request first.** Before the first question, write the user's request verbatim - every
+sentence, as given - to `.specs/features/<feature>/request.md`, then a `Captures:` line listing each
+capture it came with by path, or `none`. Write it once and never rewrite it: the Verifier and a
+resumed session read it from there after the chat is gone, and `validate_checks.py` refuses a
+feature without it, a checks-only one included.
+
 Read [project requirements](../../wtk/references/project-requirements.md) before deriving criteria,
 including applicable project rules and selected required driver instructions. This also applies
 when the short path skips this plan file: land requirements in `checks.md` instead.

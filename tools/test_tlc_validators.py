@@ -28,7 +28,7 @@ PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4
 def scaffold(root: Path, *, ui: bool = False) -> Path:
     feature = root / ".specs/features/fixture"
     feature.mkdir(parents=True)
-    for name in ("plan.md", "checks.md", "verification.md", "proofs.md"):
+    for name in ("request.md", "plan.md", "checks.md", "verification.md", "proofs.md"):
         body = (FIXTURES / name).read_text(encoding="utf-8")
         if ui:
             body = body.replace("Profile: standard", "Profile: ui").replace("**Profile**: standard", "**Profile**: ui")
@@ -205,6 +205,33 @@ class WorkflowValidatorTests(unittest.TestCase):
             result = run_gate(root, "validate_checks")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertNotIn("Approval", result.stdout)
+
+    def test_checks_rejects_missing_request_record(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            (feature / "request.md").unlink()
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("ERROR request.md:", result.stdout)
+
+    def test_checks_rejects_blank_request_record(self) -> None:
+        for body in ("", "\n", "  \n\t\n"):
+            with self.subTest(body=body), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                (feature / "request.md").write_text(body, encoding="utf-8")
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("ERROR request.md:", result.stdout)
+
+    def test_checks_accepts_request_record(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            scaffold(root)
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("request.md", result.stdout)
 
     def test_checks_rejects_empty_decision(self) -> None:
         for decision in ("- Decision:", "- Decision:   ", "- Decision: <actual user words>", "- Decision: -"):

@@ -20,7 +20,8 @@ either dead or unproven, and both are findings.
 
 Apply [project requirements](../../wtk/references/project-requirements.md) before deriving checks,
 including for checks-only features. Carry source-backed landings and gap dispositions from the
-plan, reconcile omissions, and obtain its fresh criteria review before dependent feature build.
+plan, reconcile omissions, and obtain its fresh criteria review before dependent feature build,
+handing the reviewer `request.md`, not a paraphrase.
 With no plan, keep `## Intent` and the
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
 in this file.
@@ -277,7 +278,7 @@ python3 <skill-dir>/scripts/validate_checks.py <feature>
 Add `--execute` before the first change of the build (see [build.md](build.md)). It fails a checks-only feature without `## Intent`, a check with no `Proof:`, a `run` proof with
 no `Run` line or pass line, a missing `Build:` line, a missing `Risk:` line under `standard` or `ui`, duplicate ids,
 incomplete coverage, missing swept dimensions or profile. It warns on a proof without a test
-selector, vague claims and a plan Surface interface absent from checks. It refuses a missing
+selector, vague claims and a plan Surface interface absent from checks. It refuses a missing `request.md`, a missing
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval) or
 an empty `Decision`. It does not judge who approved or proof adequacy; the independent review
 retains those obligations.

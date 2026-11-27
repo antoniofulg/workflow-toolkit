@@ -12,9 +12,9 @@ Apply [project requirements](../../wtk/references/project-requirements.md#build-
 inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
 before dependent edits. This applies under every profile, including checks-only features.
 Run `validate_checks.py <feature> --execute` before the first change: it runs the `Build:` line once,
-and a red baseline stops the build for the user. The same run refuses a feature whose
-[approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval) has no
-`Decision`, so a resumed builder with none stops and asks.
+and a red baseline stops the build for the user. The same run refuses a feature with no `request.md`
+or whose [approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+has no `Decision`, so a resumed builder with none stops and asks.
 Record new user decisions in their receiving turn via
 [live recovery](../../wtk/references/context-handoff.md); a batch checkpoint is too late.
 

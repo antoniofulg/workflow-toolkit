@@ -170,6 +170,25 @@ def test_pruning_keeps_mandatory_mutation() -> None:
     assert "**Mutate.**" in review and "test-contract.md#mutation" in review
 
 
+def test_lean_request_record_is_written_at_plan() -> None:
+    assert owns("wtk-lean/references/plan.md", "Before the first question", "verbatim",
+                "`.specs/features/<feature>/request.md`", "`Captures:` line", "by path")
+    assert owns("wtk-lean/SKILL.md", "request.md", "the user's request, verbatim")
+
+
+def test_lean_verifier_reads_request_record() -> None:
+    verify = "wtk-lean/references/verify.md"
+    assert owns(verify, "**It receives:**", "`request.md`")
+    assert owns(verify, "Hand it this file", "`request.md`")
+    assert owns(verify, "Derive concerns and sources from", "`request.md`", "sentence by sentence",
+                "not only against the plan")
+    assert "original request" not in (SKILLS / verify).read_text(encoding="utf-8")
+
+
+def test_lean_criteria_reviewer_gets_request_record() -> None:
+    assert owns("wtk-lean/references/checks.md", "fresh criteria review", "handing the reviewer", "`request.md`")
+
+
 def test_lean_provenance_pins_upstream() -> None:
     meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
     assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"

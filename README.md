@@ -221,13 +221,14 @@ The public hierarchy is `Feature -> Slice -> Check`:
 4. One fresh Verifier checks the complete feature range independently.
 5. QA, Deep Review, and delivery run only when their changed surface and project policy require them.
 
-The feature artifacts are `.specs/features/<feature>/plan.md`, `checks.md`, and `verification.md`.
+The feature artifacts are `.specs/features/<feature>/request.md`, `plan.md`, `checks.md`, and `verification.md`.
 The project decides its validation command, provider route, QA adapter, and delivery authority.
 
 Feature approval is separate from execution settings: record who approved which revision and scope
 in the native plan/task `## Approval`, in the receiving turn, as
 [construction constraints](.agents/skills/wtk/references/construction-constraints.md#native-feature-approval)
-describes. Lean's `validate_checks.py` refuses a feature whose receipt has no non-empty `Decision`; the
+describes. Lean's `validate_checks.py` refuses a feature with no `request.md` or whose receipt has no non-empty
+`Decision`; the
 Verifier confirms who approved which revision. Local edits/commits do not authorize remote delivery.
 
 Live recovery records decisions immediately, dispatch intent before send, and actual host identity

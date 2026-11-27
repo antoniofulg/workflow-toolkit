@@ -76,6 +76,7 @@ thin, ask the user to raise it rather than silently changing the profile.
 ├── LESSONS.md                  # rendered by scripts/lessons.py - never hand-edit
 ├── lessons.json                # machine-owned
 └── features/<feature>/
+    ├── request.md              # the user's request, verbatim, plus its captures by path
     ├── plan.md                 # problem, flow, impact, remaining shape, criteria, then audit tables
     ├── checks.md               # claims + proofs, the coverage join, test policy, swept
     └── verification.md         # the Verifier's report
@@ -133,7 +134,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
 `validate_checks.py` catches missing proofs, coverage, swept rows and profile.
 `validate_verification.py` also requires, under `ui`, visual provenance and existing local captures.
-`validate_checks.py` refuses a missing approval receipt; who approved which revision and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
+`validate_checks.py` refuses a missing `request.md` or approval receipt; who approved which revision and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
 If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection
