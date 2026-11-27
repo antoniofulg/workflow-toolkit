@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import re
 import subprocess
 import sys
@@ -71,6 +72,20 @@ def reported(result: subprocess.CompletedProcess, label: str) -> int:
     match = re.search(rf"words: (\d+) {label}", result.stdout)
     assert match, result.stdout
     return int(match.group(1))
+
+
+def load_validator():
+    spec = importlib.util.spec_from_file_location("validate_design", SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def template() -> str:
+    text = (DISCOVER / "references/document-format.md").read_text(encoding="utf-8")
+    match = re.search(r"````markdown\n(.*?)\n````", text, flags=re.S)
+    assert match, "the format reference has no template block"
+    return match.group(1)
 
 
 class ValidatorTest(unittest.TestCase):
@@ -281,6 +296,23 @@ class ValidatorTest(unittest.TestCase):
 
     def test_validator_is_upstream_byte_for_byte(self) -> None:
         self.assertEqual(hashlib.sha256(SCRIPT.read_bytes()).hexdigest(), UPSTREAM_SHA256)
+
+
+class TemplateTest(unittest.TestCase):
+    def test_template_carries_the_validated_section_set(self) -> None:
+        text, validator = template(), load_validator()
+        # the seven sections the validator requires, with Open between Key decisions and Slices
+        names = ("summary", "context", "success", "scope", "how", "decisions", "open", "slices")
+        headings = [line[3:].strip().lower() for line in text.splitlines() if line.startswith("## ")]
+        positions = []
+        for name in names:
+            accepted = validator.H[name][0]
+            self.assertEqual(headings.count(accepted), 1, f"template needs exactly one '## {accepted}'")
+            positions.append(headings.index(accepted))
+        self.assertEqual(positions, sorted(positions), "template headings are out of order")
+        for fragment in ("| **Status** |", "| **Ready to plan?** |", "| Item | Where it stands | Blocks | Where |",
+                         "| Slice | Delivers | Status |", "**Order:**", "**Behaviour**", "**Contract**", "**Data**"):
+            self.assertIn(fragment, text)
 
 
 if __name__ == "__main__":

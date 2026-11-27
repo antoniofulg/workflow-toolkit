@@ -247,6 +247,12 @@ def test_lean_provenance_pins_upstream() -> None:
     assert owns("wtk-lean/NOTICE.md", "keeps the checks, proofs and Verifier report", "3.x removed")
 
 
+def test_discover_format_stays_interface_neutral() -> None:
+    fmt = "wtk-discover/references/document-format.md"
+    assert owns(fmt, "contract line may be a command", "an exported symbol", "an event topic")
+    assert owns(fmt, "data part may describe a store that is not a SQL table")
+
+
 def test_ui_and_delivery_boundaries_stay_local() -> None:
     uiux = (ROOT / ".agents/skills/wtk/references/ui-ux.md").read_text(encoding="utf-8")
     ship = (SKILLS / "wtk-ship/SKILL.md").read_text(encoding="utf-8")
