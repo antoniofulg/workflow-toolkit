@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -944,6 +945,28 @@ class DeepReviewContractTests(unittest.TestCase):
 
     def one_cohort_per_file(self, files: int = 3) -> list[dict]:
         return [{"id": f"C{i}", "name": f"file {i}", "risk": "normal", "files": [f"file{i}.txt"]} for i in range(files)]
+
+    def test_each_prompt_carries_a_validation_command_scoped_to_its_job(self) -> None:
+        # A reviewer repairs its own artifact before returning; parallel reviewers never share a status file.
+        with tempfile.TemporaryDirectory() as raw:
+            root = init_repo(raw)
+            out, build = full_fixture(root, {"sweeps": ["consistency"], "cohorts": self.one_cohort_per_file()}, lines=300)
+            self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
+            jobs = json.loads((out / "jobs.json").read_text(encoding="utf-8"))["jobs"]
+            self.assertEqual(len(jobs), 4)
+            for job in jobs:
+                prompt = (root / job["prompt"]).read_text(encoding="utf-8")
+                found = re.search(r"run `(python3 [^`]*run_jobs\.py [^`]*)`", prompt)
+                self.assertIsNotNone(found, job["label"])
+                script, *args = shlex.split(found.group(1))[1:]
+                self.assertEqual(Path(script).resolve(), RUN_JOBS)
+                if job["kind"] == "sweep":  # no owned hunks and no bound rules here: the empty payload is complete
+                    (root / job["output"]).write_text(json.dumps(valid_payload()), encoding="utf-8")
+                result = run_script(RUN_JOBS, root, *args)
+                self.assertEqual(result.returncode, 0 if job["kind"] == "sweep" else 1, result.stdout + result.stderr)
+                status = json.loads((out / "runs" / f"{job['label']}-status.json").read_text(encoding="utf-8"))
+                self.assertEqual([row["label"] for row in status["jobs"]], [job["label"]])
+            self.assertFalse((out / "runs/jobs-status.json").exists())
 
     def test_sweeps_require_three_or_more_cohorts(self) -> None:
         # Sweeps duplicate cohort findings on small diffs; three 300-line files make room for 3 cohorts at concurrency 3.

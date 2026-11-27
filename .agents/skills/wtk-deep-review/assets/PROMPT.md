@@ -32,7 +32,7 @@ REVIEW:
 {{coverage_contract}}
 
 OUTPUT CONTRACT: write ONLY valid JSON matching this schema to `{{output}}` — no other file, nothing to stdout: `{{schema}}`
-Empty defect/advisory arrays are valid only with complete coverage. Validate the JSON before returning; the final response states only that the artifact was written.
+Empty defect/advisory arrays are valid only with complete coverage. Then run `{{validate_command}}`: it checks this job alone and writes only its status file. Exit 0 accepts the artifact. On exit 1, correct what it prints in the same artifact, keep every other result and coverage row, and run it again. On exit 3 the source changed under the review: stop and say so. The final response states only that the artifact was written.
 <!-- /template -->
 
 <!-- template:sweep -->
@@ -48,5 +48,5 @@ Find concrete cross-cohort hypotheses through this lens, enumerate every occurre
 {{coverage_contract}}
 
 OUTPUT CONTRACT: write ONLY valid JSON matching this schema to `{{output}}` — no other file, nothing to stdout: `{{schema}}`
-Empty result arrays are valid only after the full lens and rule accounting. Validate the JSON before returning; the final response states only that the artifact was written.
+Empty result arrays are valid only after the full lens and rule accounting. Then run `{{validate_command}}`: it checks this job alone and writes only its status file. Exit 0 accepts the artifact. On exit 1, correct what it prints in the same artifact, keep every other result and coverage row, and run it again. On exit 3 the source changed under the review: stop and say so. The final response states only that the artifact was written.
 <!-- /template -->

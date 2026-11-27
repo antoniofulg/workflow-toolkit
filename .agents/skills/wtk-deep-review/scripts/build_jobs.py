@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shlex
 import sys
 from collections import Counter, defaultdict
 from math import ceil
@@ -48,12 +49,12 @@ TARGET_COHORT_CHANGED_LINES = 400
 REVIEWER_PLACEHOLDERS = {
     "cohort_name", "risk", "target", "file_list", "scope_instruction", "context",
     "taxonomy", "rules_block", "diff_command", "base", "output", "schema",
-    "lane_instruction", "coverage_contract", "prior_findings",
+    "lane_instruction", "coverage_contract", "prior_findings", "validate_command",
 }
 SWEEP_PLACEHOLDERS = {
     "sweep_key", "lens", "target", "context", "manifest", "taxonomy",
     "diff_command", "output", "schema", "rules_block",
-    "coverage_contract",
+    "coverage_contract", "validate_command",
 }
 
 DEFAULT_LENSES = {
@@ -98,6 +99,14 @@ def positive_int(value: str) -> int:
     if parsed < 1:
         raise argparse.ArgumentTypeError("must be at least 1")
     return parsed
+
+
+def validate_command(repo: Path, out: Path, label: str) -> str:
+    """The reviewer's own gate: one job and its own status file, so parallel reviewers never share one."""
+    return shlex.join([
+        "python3", f"{skill_rel(repo)}/scripts/run_jobs.py", "--out", rel(out, repo), "--validate-only",
+        "--only", label, "--status-file", rel(out / "runs" / f"{label}-status.json", repo),
+    ])
 
 
 def load_template(name: str) -> str:
@@ -467,6 +476,7 @@ def main() -> int:
                     "actionable maintainability or project-rule improvements in `advisories`."
                 ),
                 "coverage_contract": coverage_contract(required_hunks, [rule["id"] for rule in bound_rules]),
+                "validate_command": validate_command(repo, out, label),
             })
             (prompts_dir / f"{label}.md").write_text(prompt, encoding="utf-8")
             jobs.append({
@@ -490,6 +500,7 @@ def main() -> int:
                 "output": rel(output, repo),
                 "rules_block": block,
                 "coverage_contract": coverage_contract([], [rule["id"] for rule in bound_rules]),
+                "validate_command": validate_command(repo, out, label),
             })
             (prompts_dir / f"{label}.md").write_text(prompt, encoding="utf-8")
             jobs.append({

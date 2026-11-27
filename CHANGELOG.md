@@ -25,6 +25,9 @@ All notable changes to this project are documented here.
   will know it worked, Scope, How it works, Key decisions with `D<n>` codes, one Open table and Slices
   with Behaviour, Contract and Data parts. An in-flight design is rewritten to the new section set;
   the validator refuses the old one. `wtk-discover` is pinned in `.skill-meta.json`.
+- Deep Review reviewer and sweep prompts carry `run_jobs.py --validate-only` scoped to their own job
+  and status file, so a reviewer repairs an invalid artifact in its own context instead of costing a
+  re-dispatch.
 - The Lean plan reads each sentence of the request against its captures, asks whether the running app
   should hold their sample data, and treats answers as plan changes, never as the approval. The Lean
   build makes the first slice thin and end to end and forbids one layer per slice; the shared verify

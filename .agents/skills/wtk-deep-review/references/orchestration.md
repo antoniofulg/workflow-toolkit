@@ -57,7 +57,7 @@ Defect cohorts are the only default review lane. Sweeps remain **opt-in and rare
 
 ## Engines
 
-The jobs contract makes engines interchangeable. Use the project-selected mechanism, record its actual name in context-pack.md, and always close the loop with `run_jobs.py --validate-only`. Validation rejects missing coverage rows, in-diff anchors outside job ownership, and unassigned rule ids.
+The jobs contract makes engines interchangeable. Use the project-selected mechanism, record its actual name in context-pack.md, and always close the loop with `run_jobs.py --validate-only`. Each materialized prompt carries that gate scoped to its own job and status file, so a reviewer repairs an invalid artifact before it returns; the stage gate stays the coordinator's. Validation rejects missing coverage rows, in-diff anchors outside job ownership, and unassigned rule ids.
 
 **Skill-directed dispatch.** Follow [agent selection](../../wtk/references/agent-selection.md)
 before reviewer work. Dispatch the materialized prompts in the current checkout to the
