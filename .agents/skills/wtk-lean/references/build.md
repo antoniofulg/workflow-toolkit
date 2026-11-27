@@ -12,9 +12,9 @@ Apply [project requirements](../../wtk/references/project-requirements.md#build-
 inherited applicable guidance, confirm the criteria-review disposition, and preserve blocking gaps
 before dependent edits. This applies under every profile, including checks-only features.
 Run `validate_checks.py <feature> --execute` before the first change: it runs the `Build:` line once,
-and a red baseline stops the build for the user. The same run refuses a feature whose
-[approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval) has no
-`Decision`, so a resumed builder with none stops and asks.
+and a red baseline stops the build for the user. The same run refuses a feature with no `request.md`
+or whose [approval receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
+has no `Decision`, so a resumed builder with none stops and asks.
 Record new user decisions in their receiving turn via
 [live recovery](../../wtk/references/context-handoff.md); a batch checkpoint is too late.
 
@@ -22,7 +22,13 @@ For a selected image or design, load [UI/UX](../../wtk/references/ui-ux.md) befo
 freeze its contract and complete the builder capture/compare/fix loop before handoff.
 
 One builder takes every slice in order. Do not estimate size or ask about a transfer up front;
-[Running out of context](#running-out-of-context) covers an actual limit. Never split a slice.
+[Running out of context](#running-out-of-context) covers an actual limit. Never split a slice for size.
+
+Build the first slice thin and end to end - the shortest path a user can walk - before any other,
+then one slice at a time. Never build one layer for every slice first: a layer nobody has used looks
+right until integration fails late. A slice that turns out to be a layer is cut again by outcome
+before it is built; the cut regroups the same approved criteria and checks and changes none of them,
+and changing one is renegotiation.
 
 ## What is fixed and what is not
 
@@ -30,7 +36,7 @@ Fixed: the checks, the `Test policy` rows, and the proofs each check names. Lowe
 renegotiation with the user, visible in the diff.
 
 Yours, within explicit [construction constraints](../../wtk/references/construction-constraints.md):
-order, decomposition, how many commits, where files go, naming, error shapes and helper extraction.
+decomposition inside a slice, how many commits, where files go, naming, error shapes and helper extraction.
 Check that reference before dependent work when reuse, order or approval is prescribed.
 
 The plan's shape sections have a rule each, and the split matters because it is what keeps one
@@ -100,14 +106,29 @@ Without a project validator, validate before committing:
 python3 <skill-dir>/scripts/check_commit.py --message "feat(billing): suspend on failed charge"
 ```
 
-A passing message also prints one `OWED` line per feature with checks and no `verification.md`:
-`check_proofs.py`, the fresh Verifier and, when a criterion cites a capture, the screens judge. The
-builder runs `check_proofs.py` (see [Then stop](#then-stop)); the coordinator dispatches the rest.
-Optional git-level guard, independent of any agent:
+A message with a `Co-Authored-By` or `Made-with` trailer fails: no agent trailer, unless the
+repository asks for one and the script runs with `--allow-trailers`. A passing message also prints
+one `OWED` line per feature with checks and no `verification.md`: `check_proofs.py`, the fresh
+Verifier and, when a criterion cites a capture, the screens judge. The builder runs `check_proofs.py`
+(see [Then stop](#then-stop)); the coordinator dispatches the rest. It also prints one `UNTRACKED`
+line for what `git status` shows untracked outside `.specs/`: commit what belongs to the work, delete
+or git-ignore what a tool left behind. Optional git-level guard, independent of any
+agent:
 
 ```bash
 hook="$(git rev-parse --git-path hooks)/commit-msg"
 ln -sf "$(pwd)/<skill-dir>/scripts/check_commit.py" "$hook" && chmod +x "$hook"
+```
+
+A repository that asks for trailers installs a hook file instead, because a symlink cannot pass a flag:
+
+```bash
+hook="$(git rev-parse --git-path hooks)/commit-msg"
+cat > "$hook" <<'EOF'
+#!/bin/sh
+exec python3 "$(git rev-parse --show-toplevel)/<skill-dir>/scripts/check_commit.py" --allow-trailers "$@"
+EOF
+chmod +x "$hook"
 ```
 
 Skip the hook if the project manages hooks its own way. When a slice's proofs are all green, mark

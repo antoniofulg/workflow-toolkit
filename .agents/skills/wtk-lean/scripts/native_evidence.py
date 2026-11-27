@@ -90,6 +90,23 @@ def approval_errors(checks_path):
     ]
 
 
+def request_errors(checks_path):
+    """The request record is gated on presence: `request.md` beside checks.md with a non-blank line.
+
+    The chat that held the request does not survive a compaction, so the Verifier and a resumed
+    builder read it from here. Whether it is verbatim and lists its captures stays the Verifier's judgment.
+    """
+    path = os.path.join(os.path.dirname(os.path.abspath(checks_path)), "request.md")
+    if os.path.isfile(path):
+        with open(path, encoding="utf-8") as source:
+            if source.read().strip():
+                return []
+    return [
+        "request.md: missing or empty - save the user's request verbatim beside plan.md "
+        "before the plan; never rebuild it from memory"
+    ]
+
+
 def unquote(text):
     return text.strip().strip("`").strip()
 

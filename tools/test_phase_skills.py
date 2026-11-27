@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -170,14 +172,79 @@ def test_pruning_keeps_mandatory_mutation() -> None:
     assert "**Mutate.**" in review and "test-contract.md#mutation" in review
 
 
+def test_lean_request_record_is_written_at_plan() -> None:
+    assert owns("wtk-lean/references/plan.md", "Before the first question", "verbatim",
+                "`.specs/features/<feature>/request.md`", "`Captures:` line", "by path")
+    assert owns("wtk-lean/SKILL.md", "request.md", "the user's request, verbatim")
+
+
+def test_lean_verifier_reads_request_record() -> None:
+    verify = "wtk-lean/references/verify.md"
+    assert owns(verify, "**It receives:**", "`request.md`")
+    assert owns(verify, "Hand it this file", "`request.md`")
+    assert owns(verify, "Derive concerns and sources from", "`request.md`", "sentence by sentence",
+                "not only against the plan")
+    assert "original request" not in (SKILLS / verify).read_text(encoding="utf-8")
+
+
+def test_lean_criteria_reviewer_gets_request_record() -> None:
+    assert owns("wtk-lean/references/checks.md", "fresh criteria review", "handing the reviewer", "`request.md`")
+
+
+def test_lean_hook_can_allow_trailers() -> None:
+    build = (SKILLS / "wtk-lean/references/build.md").read_text(encoding="utf-8")
+    hook = next(block for block in re.findall(r"```bash\n(.*?)```", build, re.S) if "#!/bin/sh" in block)
+    command = next(line for line in hook.splitlines() if "check_commit.py" in line)
+    flags = re.findall(r"\s(--[a-z-]+)", command.split("check_commit.py", 1)[1])
+    assert "--allow-trailers" in flags and '"$@"' in command, command
+    script = str(SKILLS / "wtk-lean/scripts/check_commit.py")
+    message = "feat(wtk): add lean router\n\nCo-Authored-By: Bot <bot@example.test>"
+    refused = subprocess.run([sys.executable, script, "--message", message], capture_output=True, text=True)
+    allowed = subprocess.run([sys.executable, script, "--message", message, *flags], capture_output=True, text=True)
+    assert refused.returncode == 1, refused.stdout
+    assert allowed.returncode == 0, allowed.stdout
+
+
+def test_lean_answers_are_not_the_approval() -> None:
+    assert owns("wtk-lean/references/plan.md", "Answers", "not the approval", "presented again",
+                "never recorded as the receipt's `Decision`")
+
+
+def test_lean_capture_is_not_the_whole_request() -> None:
+    assert owns("wtk-lean/references/plan.md", "shows part of the request", "each sentence",
+                "no capture draws", "criterion or a question", "what the user sees")
+
+
+def test_lean_asks_about_sample_data() -> None:
+    assert owns("wtk-lean/references/plan.md", "Ask", "running app", "sample data", "handover")
+
+
+def test_lean_first_slice_is_end_to_end() -> None:
+    build = "wtk-lean/references/build.md"
+    assert owns(build, "first slice", "thin", "end to end", "before any other")
+    assert owns(build, "Never build one layer for every slice first")
+    assert owns(build, "slice that turns out to be a layer", "cut again by outcome", "before it is built")
+    text = (SKILLS / build).read_text(encoding="utf-8")
+    assert "order, decomposition" not in text
+
+
+def test_verifier_leaves_app_data_alone() -> None:
+    assert owns("wtk/references/verify-core.md", "changes no data the running app holds",
+                "outside the repository", "stubbed response", "throwaway copy", "names which in the report")
+
+
 def test_lean_provenance_pins_upstream() -> None:
     meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
-    assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"
+    assert meta["sourceCommit"] == "586a794efa688358e456b942b1849b76672115ae"
     # the registry hash of the upstream skill directory at that commit
-    assert meta["contentHash"] == "65cf4acff0a88093eafc9d34a36ca3a03a74c78301b1b4025e517ecc18e66a44"
+    assert meta["contentHash"] == "788382a643dcb946c6062764e7a5af73995aaf2724357b1c478fa494b1723262"
     notice = (SKILLS / "wtk-lean/NOTICE.md").read_text(encoding="utf-8")
     for adapted in ("proof runner", "build preflight", "compaction gates", "screens judge"):
         assert adapted in notice, adapted
+    assert owns("wtk-lean/NOTICE.md", "3.2.0", "`586a794`")
+    for adapted in ("request record", "commit trailer and untracked check", "capture rule", "tracer-bullet slice order"):
+        assert owns("wtk-lean/NOTICE.md", "3.2.0", adapted), adapted
+    assert owns("wtk-lean/NOTICE.md", "keeps the checks, proofs and Verifier report", "3.x removed")
 
 
 def test_ui_and_delivery_boundaries_stay_local() -> None:

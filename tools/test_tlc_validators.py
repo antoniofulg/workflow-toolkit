@@ -28,7 +28,7 @@ PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4
 def scaffold(root: Path, *, ui: bool = False) -> Path:
     feature = root / ".specs/features/fixture"
     feature.mkdir(parents=True)
-    for name in ("plan.md", "checks.md", "verification.md", "proofs.md"):
+    for name in ("request.md", "plan.md", "checks.md", "verification.md", "proofs.md"):
         body = (FIXTURES / name).read_text(encoding="utf-8")
         if ui:
             body = body.replace("Profile: standard", "Profile: ui").replace("**Profile**: standard", "**Profile**: ui")
@@ -205,6 +205,33 @@ class WorkflowValidatorTests(unittest.TestCase):
             result = run_gate(root, "validate_checks")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertNotIn("Approval", result.stdout)
+
+    def test_checks_rejects_missing_request_record(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            feature = scaffold(root)
+            (feature / "request.md").unlink()
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("ERROR request.md:", result.stdout)
+
+    def test_checks_rejects_blank_request_record(self) -> None:
+        for body in ("", "\n", "  \n\t\n"):
+            with self.subTest(body=body), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                feature = scaffold(root)
+                (feature / "request.md").write_text(body, encoding="utf-8")
+                result = run_gate(root, "validate_checks")
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("ERROR request.md:", result.stdout)
+
+    def test_checks_accepts_request_record(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            scaffold(root)
+            result = run_gate(root, "validate_checks")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("request.md", result.stdout)
 
     def test_checks_rejects_empty_decision(self) -> None:
         for decision in ("- Decision:", "- Decision:   ", "- Decision: <actual user words>", "- Decision: -"):
@@ -716,11 +743,17 @@ class CommitContractTests(unittest.TestCase):
             0,
         )
 
-    def _commit(self, root: Path, message: str) -> subprocess.CompletedProcess:
+    def _commit(self, root: Path, message: str, *flags: str) -> subprocess.CompletedProcess:
         return subprocess.run(
-            [sys.executable, str(SCRIPTS / "check_commit.py"), "--message", message, "--root", str(root)],
+            [sys.executable, str(SCRIPTS / "check_commit.py"), "--message", message, "--root", str(root), *flags],
             capture_output=True, text=True,
         )
+
+    def _repo(self, root: Path) -> None:
+        subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+
+    def _untracked_lines(self, result: subprocess.CompletedProcess) -> list[str]:
+        return [line for line in result.stdout.splitlines() if "UNTRACKED" in line]
 
     def _open_feature(self, root: Path) -> Path:
         feature = scaffold(root)
@@ -771,6 +804,128 @@ class CommitContractTests(unittest.TestCase):
             result = self._commit(root, "Updated stuff.")
             self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
             self.assertNotIn("OWED", result.stdout)
+
+    def test_commit_rejects_agent_trailer(self) -> None:
+        forms = {
+            "Co-Authored-By": ("Co-Authored-By: Bot <bot@example.test>", "co-authored-by: Bot <bot@example.test>",
+                               "  Co-Authored-By: Bot <bot@example.test>", "Co-Authored-By : Bot <bot@example.test>"),
+            "Made-with": ("Made-with: Cursor", "made-with: Cursor", "  Made-with: Cursor", "Made-with : Cursor"),
+        }
+        for name, lines in forms.items():
+            for line in lines:
+                with self.subTest(trailer=line), tempfile.TemporaryDirectory() as raw:
+                    result = self._commit(Path(raw), f"feat(wtk): add lean router\n\nBody text.\n\n{line}")
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    errors = [ln for ln in result.stdout.splitlines() if "ERROR" in ln]
+                    self.assertEqual(len(errors), 1, result.stdout)
+                    self.assertIn(name.lower(), errors[0].lower())
+
+    def test_commit_accepts_trailer_words_mid_line(self) -> None:
+        body = "Thanks to Ada, see Co-Authored-By: in the notes.\nRenamed from Made-with: tooling."
+        result = self._commit(Path(tempfile.gettempdir()), f"feat(wtk): add lean router\n\n{body}")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_commit_allows_trailer_with_flag(self) -> None:
+        message = "feat(wtk): add lean router\n\nCo-Authored-By: Bot <bot@example.test>\nMade-with: Cursor"
+        with tempfile.TemporaryDirectory() as raw:
+            self.assertEqual(self._commit(Path(raw), message).returncode, 1)
+            result = self._commit(Path(raw), message, "--allow-trailers")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_commit_lists_untracked_entries(self) -> None:
+        cases = {"one entry": 1, "eight entries": 8, "nine entries": 9}
+        for title, count in cases.items():
+            with self.subTest(title), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                self._repo(root)
+                names = [f"u{index}.txt" for index in range(1, count + 1)]
+                for name in names:
+                    (root / name).write_text("x", encoding="utf-8")
+                result = self._commit(root, "feat(wtk): add lean router")
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                lines = self._untracked_lines(result)
+                self.assertEqual(len(lines), 1, result.stdout)
+                self.assertEqual([name for name in names if name in lines[0]], names[:8])
+                self.assertEqual("1 more" in lines[0], count == 9, lines[0])
+                self.assertNotIn("more", lines[0] if count < 9 else lines[0].replace("1 more", ""))
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._repo(root)
+            (root / "out").mkdir()
+            for name in ("a.txt", "b.txt", "c.txt"):
+                (root / "out" / name).write_text("x", encoding="utf-8")
+            lines = self._untracked_lines(self._commit(root, "feat(wtk): add lean router"))
+            self.assertEqual(len(lines), 1, lines)
+            self.assertIn("out/", lines[0])
+            self.assertNotIn("a.txt", lines[0])
+            self.assertNotIn("more", lines[0])
+
+    def test_commit_skips_untracked_outside_git(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "stray.txt").write_text("x", encoding="utf-8")
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(self._untracked_lines(result), [])
+
+    def test_commit_untracked_excludes_specs_and_ignored(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._repo(root)
+            (root / ".git/info/exclude").write_text("ignored.log\n", encoding="utf-8")
+            (root / "ignored.log").write_text("x", encoding="utf-8")
+            (root / ".specs/features/demo").mkdir(parents=True)
+            (root / ".specs/features/demo/request.md").write_text("x", encoding="utf-8")
+            result = self._commit(root, "feat(wtk): add lean router")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(self._untracked_lines(result), [])
+            (root / "real.txt").write_text("x", encoding="utf-8")
+            lines = self._untracked_lines(self._commit(root, "feat(wtk): add lean router"))
+            self.assertEqual(len(lines), 1, lines)
+            self.assertIn("real.txt", lines[0])
+            self.assertNotIn(".specs", lines[0])
+            self.assertNotIn("ignored.log", lines[0])
+
+    def test_commit_untracked_is_scoped_to_root(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = Path(raw)
+            root = repo / "app"
+            root.mkdir()
+            (root / "tracked.txt").write_text("x", encoding="utf-8")
+            (repo / "kept.txt").write_text("x", encoding="utf-8")
+            commit_all(repo)
+            (root / ".specs/features/demo").mkdir(parents=True)
+            (root / ".specs/features/demo/request.md").write_text("x", encoding="utf-8")
+            (root / "src").mkdir()
+            (root / "src/new.txt").write_text("x", encoding="utf-8")
+            (repo / "elsewhere.txt").write_text("x", encoding="utf-8")
+            (repo / "other").mkdir()
+            (repo / "other/stray.txt").write_text("x", encoding="utf-8")
+            lines = self._untracked_lines(self._commit(root, "feat(wtk): add lean router"))
+            self.assertEqual(len(lines), 1, lines)
+            self.assertIn("src/", lines[0])
+            for absent in ("app/", ".specs", "elsewhere.txt", "other"):
+                self.assertNotIn(absent, lines[0])
+            (root / "src/new.txt").unlink()
+            (root / "src").rmdir()
+            self.assertEqual(self._untracked_lines(self._commit(root, "feat(wtk): add lean router")), [])
+
+    def test_commit_invalid_message_prints_no_untracked_line(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._repo(root)
+            (root / "stray.txt").write_text("x", encoding="utf-8")
+            for message in ("Updated stuff.", "feat(wtk): add lean router\n\nCo-Authored-By: Bot <bot@example.test>"):
+                result = self._commit(root, message)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertEqual(self._untracked_lines(result), [])
+
+    def test_commit_without_message_exits_2(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPTS / "check_commit.py"), "--root", tempfile.gettempdir()],
+            capture_output=True, text=True, input="",
+        )
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

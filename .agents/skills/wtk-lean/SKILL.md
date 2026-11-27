@@ -76,14 +76,15 @@ thin, ask the user to raise it rather than silently changing the profile.
 ├── LESSONS.md                  # rendered by scripts/lessons.py - never hand-edit
 ├── lessons.json                # machine-owned
 └── features/<feature>/
+    ├── request.md              # the user's request, verbatim, plus its captures by path
     ├── plan.md                 # problem, flow, impact, remaining shape, criteria, then audit tables
     ├── checks.md               # claims + proofs, the coverage join, test policy, swept
     └── verification.md         # the Verifier's report
 ```
 
 Create each file when its phase produces content. For a change under roughly three files with no
-one-way door, write only `checks.md` with `## Intent` and the native
-[approval receipt](../wtk/references/construction-constraints.md#native-feature-approval). The
+one-way door, write only `request.md`, saved verbatim before anything else, and `checks.md` with
+`## Intent` and the native [approval receipt](../wtk/references/construction-constraints.md#native-feature-approval). The
 current request can authorize that bounded intent; create no synthetic plan or redundant approval stop.
 
 The plan is the human review boundary. Write the problem, walk the surfaces, write criteria, then
@@ -97,7 +98,7 @@ implementation detail stay in the diff.
 `checks.md` derives proof-backed checks from the plan and joins every enumerated interface, entity,
 outcome, and door to a check. `plan.md`, `checks.md`, and `verification.md` therefore stay
 distinct: the first freezes reviewed shape, the second freezes obligations, and the third is the
-independent evidence. An unresolved architecture choice needs its own ADR/RFC/spike before it can
+independent evidence. `request.md` is none of them: the user's words, written once and never rewritten. An unresolved architecture choice needs its own ADR/RFC/spike before it can
 be recorded as a `Landing` decision.
 
 ## Phase references
@@ -124,7 +125,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 | --- | --- |
 | Before presenting the plan | `validate_plan.py <feature>` |
 | Before starting to build | `validate_checks.py <feature> --execute` (runs the `Build:` line once) |
-| Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"`; a pass prints what each open feature still owes |
+| Before each commit | the project's commit validator, else `check_commit.py --message "<msg>"`; an agent trailer fails, a pass prints what each open feature still owes and the untracked files |
 | After the last commit, on a clean tree | `check_proofs.py <feature>` |
 | Before declaring done | `validate_verification.py <feature>` |
 | At distillation | `lessons.py add ...` |
@@ -133,7 +134,7 @@ project root; pass `--root` when cwd differs. A non-zero exit stops the phase.
 The validators own structural detail: `validate_plan.py` checks reviewable shape before presentation;
 `validate_checks.py` catches missing proofs, coverage, swept rows and profile.
 `validate_verification.py` also requires, under `ui`, visual provenance and existing local captures.
-`validate_checks.py` refuses a missing approval receipt; who approved which revision and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
+`validate_checks.py` refuses a missing `request.md` or approval receipt; who approved which revision and image fidelity are judgments the independent Verifier owns. Run `selftest.py` after validator/template changes.
 If execution is unavailable, inspect the same obligations and report the degraded path.
 
 ## Execution selection

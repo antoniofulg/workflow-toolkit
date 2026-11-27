@@ -17,6 +17,10 @@ the compaction gates (the approval receipt gate and the owed-steps line after a 
 screens judge (`screens.md`). The `Risk:` line, the `Holds` judgment and the risk-scoped faults are
 Workflow Toolkit's own.
 
+Also adapted from upstream 3.2.0 (commit `586a794`): the request record (`request.md`), the commit
+trailer and untracked check, the capture rule, and the tracer-bullet slice order. Workflow Toolkit
+keeps the checks, proofs and Verifier report that upstream 3.x removed.
+
 ## License
 
 Creative Commons Attribution 4.0 International (CC BY 4.0).

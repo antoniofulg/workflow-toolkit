@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- `request.md`: the Lean plan saves the user's request verbatim, with its captures by path, before the
+  first question; `validate_checks.py` refuses a feature without it, and the criteria reviewer and the
+  Verifier read it, the Verifier sentence by sentence. An in-flight feature adds the file.
+- `check_commit.py` rejects a `Co-Authored-By` or `Made-with` trailer unless `--allow-trailers`, and
+  prints one `UNTRACKED` line for untracked files outside `.specs/`. `build.md` shows a hook file that
+  passes the flag for a repository that asks for trailers.
+
+### Changed
+
+- The Lean plan reads each sentence of the request against its captures, asks whether the running app
+  should hold their sample data, and treats answers as plan changes, never as the approval. The Lean
+  build makes the first slice thin and end to end and forbids one layer per slice; the shared verify
+  core forbids changing the running app's data.
+- `wtk-lean` is re-pinned to upstream `tlc-spec-lean` 3.2.0 (`586a794`); the checks, proofs and
+  Verifier report upstream removed stay.
+
 ## [6.4.0] - 2026-11-13
 
 ### Changed

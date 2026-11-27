@@ -51,8 +51,8 @@ Load shared references only for the current operation:
 - An unshaped idea, an analytics/error signal requiring a product or architecture decision, or
   competing solution alternatives: read and invoke `wtk-discover`. It may conclude build,
   build smaller/differently, not now, or do not build.
-- An existing integrated Lean feature directory with `plan.md`, `checks.md`, or
-  `verification.md`: resume the matching `wtk-lean` phase; do not route it to the modular entries.
+- An existing integrated Lean feature directory with `request.md`, `plan.md`,
+  `checks.md`, or `verification.md`: resume the matching `wtk-lean` phase (`request.md` alone: Plan); do not route it to the modular entries.
 - A decided feature without Lean artifacts: read and invoke `wtk-lean`, which runs Plan → Checks →
   Build → Verify using `.specs/features/<feature>/plan.md`, `checks.md`, and `verification.md`.
 - A decided design or ticket that needs the modular upstream contract: read and invoke `wtk-plan`,

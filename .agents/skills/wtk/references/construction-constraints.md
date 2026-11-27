@@ -31,8 +31,8 @@ beside `## Intent` in `checks.md`; create no synthetic plan. Use these literal f
 ```
 
 Fill the fields only from observed evidence and cite the actual source whenever available. No
-validator judges the receipt beyond its presence: Lean's `validate_checks.py` refuses a feature whose
-receipt lacks a non-empty `Decision`, and the Verifier judges who approved which revision. If the
+validator judges the receipt beyond its presence: Lean's `validate_checks.py` refuses a feature with
+no `request.md` or whose receipt lacks a non-empty `Decision`, and the Verifier judges who approved which revision. If the
 current request already authorizes bounded checks-only or decided modular work, record that
 request: do not add a redundant approval pause.
 Otherwise use the existing review boundary, not an extra mandatory stop.
@@ -52,7 +52,8 @@ extension points. File ownership does not authorize recreating a shared implemen
 unusable prerequisites keep dependent work blocked: return the gap to the coordinator; repair only
 from real evidence, and ask only if authority or the contract must change.
 
-Implementation order and extraction remain the builder's choice within these constraints. At
+Extraction, and implementation order where the route does not fix it, remain the builder's choice
+within these constraints. At
 phase boundaries, preserve their current state through [context recovery](context-handoff.md).
 
 ## Verify

@@ -82,8 +82,8 @@ verdicts. If only an experiment can settle the question, use a bounded spike ins
 
 ## Rules
 
-1. **`.specs/features/` is transient Lean workflow state.** `plan.md`, `checks.md`, `verification.md`,
-   and snapshots travel with the feature through worktrees and gates, then the complete feature
+1. **`.specs/features/` is transient Lean workflow state.** `request.md`, `plan.md`, `checks.md`,
+   `verification.md`, and snapshots travel with the feature through worktrees and gates, then the complete feature
    directory is deleted after verification and required promotion.
 2. **Promote before cleanup.** Anything that must outlive the feature moves to its real home:
    - A project decision → the resolved [decision store](#decision-store)

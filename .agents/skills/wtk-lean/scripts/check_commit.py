@@ -18,14 +18,17 @@ What it checks:
   ERROR  - header does not match  type(scope)!: description
   ERROR  - type is not one of the allowed Conventional Commits types (`chore` is not one)
   ERROR  - description is empty, starts uppercase, or ends with a period
+  ERROR  - a line after the header starts with `Co-Authored-By` or `Made-with` and a colon, in any
+           letter case (an agent trailer), unless --allow-trailers
   WARN   - header longer than 72 characters
 
 After a passing message it prints, for each feature under `<root>/.specs/features/` that has a
-checks.md and no verification.md, what the feature still owes: a command's output reaches the agent
+checks.md and no verification.md, what the feature still owes, and one UNTRACKED line naming what
+`git status` shows as untracked under --root outside its `.specs/`: a command's output reaches the agent
 after a compaction, where a rule it read hours earlier may not.
 
 Usage:
-  python3 <skill-dir>/scripts/check_commit.py [msgfile] [--root DIR]
+  python3 <skill-dir>/scripts/check_commit.py [msgfile] [--root DIR] [--allow-trailers]
   python3 <skill-dir>/scripts/check_commit.py --message "feat(auth): add email validation"
   echo "fix(cart): prevent negative quantity" | python3 <skill-dir>/scripts/check_commit.py
 
@@ -35,11 +38,14 @@ Exit codes: 0 pass, 1 violation, 2 usage error.
 import argparse
 import os
 import re
+import subprocess
 import sys
 
 # Keep in step with the Types table in wtk/references/git.md.
 TYPES = ["feat", "fix", "refactor", "perf", "docs", "test", "build", "ci"]
 HEADER_RE = re.compile(r"^(?P<type>\w+)(?:\((?P<scope>[^)]+)\))?(?P<bang>!)?: (?P<desc>.+)$")
+TRAILER_RE = re.compile(r"^\s*(?:Co-Authored-By|Made-with)\s*:", re.IGNORECASE)
+UNTRACKED_SHOWN = 8
 CAPTURE_RE = re.compile(r"`([^`\s]+\.(?:png|jpe?g|webp|gif))`", re.IGNORECASE)
 
 
@@ -58,7 +64,7 @@ def read_message(args):
     return ""
 
 
-def check(message):
+def check(message, allow_trailers=False):
     errors, warnings = [], []
     # Ignore comment lines (git puts '#' comments in the message file).
     lines = [ln for ln in message.splitlines() if not ln.lstrip().startswith("#")]
@@ -69,6 +75,10 @@ def check(message):
         return (["empty commit message"], warnings)
 
     header = lines[0].rstrip()
+    if not allow_trailers:
+        for ln in lines[1:]:
+            if TRAILER_RE.match(ln):
+                errors.append(f"agent trailer '{ln.strip()}' - drop it, or pass --allow-trailers when the repo asks for one")
     if len(header) > 72:
         warnings.append(f"header is {len(header)} chars (>72): {header[:60]}...")
 
@@ -126,12 +136,39 @@ def owed(root):
     return lines
 
 
+def untracked(root):
+    """One line naming the untracked entries under --root outside `.specs/`; nothing when git cannot say."""
+    env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
+    try:
+        # Porcelain paths are relative to the repository top, so a --root below it needs its prefix removed.
+        prefix = subprocess.run(["git", "rev-parse", "--show-prefix"], cwd=root, capture_output=True, text=True, env=env)
+        proc = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=normal", "--", "."],
+            cwd=root, capture_output=True, text=True, env=env,
+        )
+    except OSError:
+        return []
+    if proc.returncode != 0 or prefix.returncode != 0:
+        return []
+    prefix = prefix.stdout.strip()
+    entries = [ln[3:].strip('"') for ln in proc.stdout.splitlines() if ln.startswith("?? ")]
+    entries = [(e[len(prefix):] if e.startswith(prefix) else e) or "." for e in entries]
+    entries = [e for e in entries if not e.startswith(".specs/")]
+    if not entries:
+        return []
+    shown = ", ".join(entries[:UNTRACKED_SHOWN])
+    more = f", {len(entries) - UNTRACKED_SHOWN} more" if len(entries) > UNTRACKED_SHOWN else ""
+    return [f"  UNTRACKED  {shown}{more}: commit what belongs to the work, delete or git-ignore what a tool left behind"]
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="check_commit.py", description="Validate a Conventional Commits message.")
     p.add_argument("msgfile", nargs="?", default=None,
                    help="a commit message file (as git passes to commit-msg), or the message itself")
     p.add_argument("--message", default=None, help="the commit message as a string")
     p.add_argument("--root", default=".", help="project root that contains .specs/ (default: current dir)")
+    p.add_argument("--allow-trailers", action="store_true",
+                   help="accept Co-Authored-By and Made-with trailers, for a repository that asks for them")
     args = p.parse_args(argv)
 
     message = read_message(args)
@@ -139,7 +176,7 @@ def main(argv=None):
         print("check_commit: no message provided (pass a file, --message, or pipe via stdin).", file=sys.stderr)
         return 2
 
-    errors, warnings = check(message)
+    errors, warnings = check(message, args.allow_trailers)
     for w in warnings:
         print(f"  WARN  {w}")
     for e in errors:
@@ -148,7 +185,7 @@ def main(argv=None):
         print("\ncheck_commit: FAIL - see https://www.conventionalcommits.org/en/v1.0.0/")
         return 1
     print("check_commit: OK")
-    for line in owed(args.root):
+    for line in owed(args.root) + untracked(args.root):
         print(line)
     return 0
 

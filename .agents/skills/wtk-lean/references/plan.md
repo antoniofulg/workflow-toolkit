@@ -26,6 +26,12 @@ The closure gate still requires every criterion to land in `Flow`, `Relations` o
 
 ## Before asking anything
 
+**Save the request first.** Before the first question, write the user's request verbatim - every
+sentence, as given - to `.specs/features/<feature>/request.md`, then a `Captures:` line listing each
+capture it came with by path, or `none`. Write it once and never rewrite it: the Verifier and a
+resumed session read it from there after the chat is gone, and `validate_checks.py` refuses a
+feature without it, a checks-only one included.
+
 Read [project requirements](../../wtk/references/project-requirements.md) before deriving criteria,
 including applicable project rules and selected required driver instructions. This also applies
 when the short path skips this plan file: land requirements in `checks.md` instead.
@@ -137,6 +143,12 @@ duplicating it in both places produces two answers that disagree.
 `n/a - <reason>`.** The `n/a` escape is mandatory and it is what stops the list from inventing
 scope: a webhook has no empty state, and saying so costs a line. `None - no user-facing surface`
 is a complete answer for a feature that exposes none.
+
+A capture shows part of the request, not the whole of it. Read each sentence of the request against
+the captures: what the request names and no capture draws - a column past the edge, a state nobody
+drew - gets a criterion or a question, and a screen criterion says what the user sees, not only what
+a response carries. Ask whether the running app should hold the captures' sample data at handover,
+so the user can open the captured states; that is the user's call.
 
 Two of these hide better than the rest. An **error shape** is decided by whoever writes the first
 handler, so it gets decided by accident and then copied. An **empty state** is invisible until the
@@ -377,7 +389,9 @@ existing nor as a door. Judgment calls stay yours.
 
 Present the plan at the existing human review boundary. On receiving approval, write its
 [`## Approval` receipt](../../wtk/references/construction-constraints.md#native-feature-approval)
-in that turn; never prefill it while drafting.
+in that turn; never prefill it while drafting. Answers to your questions are not the approval: they
+change the plan, so write them in; the plan that holds them is presented again, and an answer is
+never recorded as the receipt's `Decision`.
 
 ## Template: `.specs/features/<feature>/plan.md`
 
