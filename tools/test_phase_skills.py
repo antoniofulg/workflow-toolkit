@@ -219,6 +219,20 @@ def test_lean_asks_about_sample_data() -> None:
     assert owns("wtk-lean/references/plan.md", "Ask", "running app", "sample data", "handover")
 
 
+def test_lean_first_slice_is_end_to_end() -> None:
+    build = "wtk-lean/references/build.md"
+    assert owns(build, "first slice", "thin", "end to end", "before any other")
+    assert owns(build, "Never build one layer for every slice first")
+    assert owns(build, "slice that turns out to be a layer", "cut again by outcome", "before it is built")
+    text = (SKILLS / build).read_text(encoding="utf-8")
+    assert "order, decomposition" not in text
+
+
+def test_verifier_leaves_app_data_alone() -> None:
+    assert owns("wtk/references/verify-core.md", "changes no data the running app holds",
+                "outside the repository", "stubbed response", "throwaway copy", "names which in the report")
+
+
 def test_lean_provenance_pins_upstream() -> None:
     meta = json.loads((SKILLS / "wtk-lean/.skill-meta.json").read_text(encoding="utf-8"))
     assert meta["sourceCommit"] == "e74dc8a7e8d59bb36f267afd089580e0858e224a"

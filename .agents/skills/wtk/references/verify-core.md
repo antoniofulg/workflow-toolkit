@@ -14,6 +14,12 @@ requirement.
 A check with no located `file:line` counts as not proven - per check, never one citation standing
 in for twenty. Search before concluding something is absent, and show the search.
 
+## The running app
+
+The Verifier changes no data the running app holds and nothing outside the repository (a scratch
+worktree of it counts as inside). To reach a state the data lacks it uses a stubbed response in the
+browser or a throwaway copy of the data, and names which in the report.
+
 ## Visual evidence (`ui`)
 
 Independently inspect the source and implementation captures; record missing evidence or material

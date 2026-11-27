@@ -22,7 +22,12 @@ For a selected image or design, load [UI/UX](../../wtk/references/ui-ux.md) befo
 freeze its contract and complete the builder capture/compare/fix loop before handoff.
 
 One builder takes every slice in order. Do not estimate size or ask about a transfer up front;
-[Running out of context](#running-out-of-context) covers an actual limit. Never split a slice.
+[Running out of context](#running-out-of-context) covers an actual limit. Never split a slice for size.
+
+Build the first slice thin and end to end - the shortest path a user can walk - before any other,
+then one slice at a time. Never build one layer for every slice first: a layer nobody has used looks
+right until integration fails late. A slice that turns out to be a layer is cut again by outcome
+before it is built.
 
 ## What is fixed and what is not
 
@@ -30,7 +35,7 @@ Fixed: the checks, the `Test policy` rows, and the proofs each check names. Lowe
 renegotiation with the user, visible in the diff.
 
 Yours, within explicit [construction constraints](../../wtk/references/construction-constraints.md):
-order, decomposition, how many commits, where files go, naming, error shapes and helper extraction.
+decomposition inside a slice, how many commits, where files go, naming, error shapes and helper extraction.
 Check that reference before dependent work when reuse, order or approval is prescribed.
 
 The plan's shape sections have a rule each, and the split matters because it is what keeps one
