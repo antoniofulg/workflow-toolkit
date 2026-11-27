@@ -967,6 +967,9 @@ class DeepReviewContractTests(unittest.TestCase):
                 status = json.loads((out / "runs" / f"{job['label']}-status.json").read_text(encoding="utf-8"))
                 self.assertEqual([row["label"] for row in status["jobs"]], [job["label"]])
             self.assertFalse((out / "runs/jobs-status.json").exists())
+            (root / "file0.txt").write_text("drifted\n", encoding="utf-8")
+            drifted = run_script(RUN_JOBS, root, *args)  # the last job is the sweep, valid until the source moved
+            self.assertEqual(drifted.returncode, 3, drifted.stdout + drifted.stderr)
 
     def test_sweeps_require_three_or_more_cohorts(self) -> None:
         # Sweeps duplicate cohort findings on small diffs; three 300-line files make room for 3 cohorts at concurrency 3.
