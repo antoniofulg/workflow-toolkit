@@ -18,6 +18,8 @@ All notable changes to this project are documented here.
   rule for what a fact needs to earn a place, and a handover that runs the validator, gives the
   document and the repository to a fresh reader who quotes the lines that conflict, and stops when a
   run raises nothing hard to reverse that Open does not list.
+- README lists `ci-speedup` as an optional companion for slow GitHub Actions workflows; which tests can
+  be cheaper stays with `wtk-test-audit`.
 
 ### Changed
 
