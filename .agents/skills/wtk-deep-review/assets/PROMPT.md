@@ -5,7 +5,7 @@ The single source of truth for every prompt the fan-out dispatches. `build_jobs.
 Placeholders are `{{snake_case}}` tokens. Mandatory sets live in `build_jobs.py` (`REVIEWER_PLACEHOLDERS`, `SWEEP_PLACEHOLDERS`).
 
 <!-- template:reviewer -->
-Review cohort "{{cohort_name}}" (risk: {{risk}}) of {{target}}. Read-only: never modify product, test, docs, or generated source — your only write is the output file named in the OUTPUT CONTRACT.
+Review cohort "{{cohort_name}}" (risk: {{risk}}) of {{target}}. Read-only: never modify product, test, docs, or generated source — you write only the output file named in the OUTPUT CONTRACT; the gate you run at the end writes its own status file.
 
 {{lane_instruction}}
 
@@ -32,11 +32,11 @@ REVIEW:
 {{coverage_contract}}
 
 OUTPUT CONTRACT: write ONLY valid JSON matching this schema to `{{output}}` — no other file, nothing to stdout: `{{schema}}`
-Empty defect/advisory arrays are valid only with complete coverage. Validate the JSON before returning; the final response states only that the artifact was written.
+Empty defect/advisory arrays are valid only with complete coverage. Then run `{{validate_command}}`: it checks this job alone and writes only its status file. Exit 0 accepts the artifact. On exit 1, correct what it prints in the same artifact, keep every other result and coverage row, and run it again. On exit 3 the source changed under the review: stop and say so. The final response states only that the artifact was written, or that you had no shell to run the gate.
 <!-- /template -->
 
 <!-- template:sweep -->
-Global sweep "{{sweep_key}}" over {{target}}: {{lens}}. Read-only: never modify product, test, docs, or generated source — your only write is the output file named in the OUTPUT CONTRACT.
+Global sweep "{{sweep_key}}" over {{target}}: {{lens}}. Read-only: never modify product, test, docs, or generated source — you write only the output file named in the OUTPUT CONTRACT; the gate you run at the end writes its own status file.
 
 Read `{{context}}`, `{{manifest}}`, and `{{taxonomy}}` in full. Work from the manifest's selected files and hunks; read any repository file you need and see changes with `{{diff_command}}`.
 
@@ -48,5 +48,5 @@ Find concrete cross-cohort hypotheses through this lens, enumerate every occurre
 {{coverage_contract}}
 
 OUTPUT CONTRACT: write ONLY valid JSON matching this schema to `{{output}}` — no other file, nothing to stdout: `{{schema}}`
-Empty result arrays are valid only after the full lens and rule accounting. Validate the JSON before returning; the final response states only that the artifact was written.
+Empty result arrays are valid only after the full lens and rule accounting. Then run `{{validate_command}}`: it checks this job alone and writes only its status file. Exit 0 accepts the artifact. On exit 1, correct what it prints in the same artifact, keep every other result and coverage row, and run it again. On exit 3 the source changed under the review: stop and say so. The final response states only that the artifact was written, or that you had no shell to run the gate.
 <!-- /template -->
