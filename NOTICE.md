@@ -9,6 +9,11 @@ source URL, commit, content hash, and license are recorded in
 [`.agents/skills/wtk-lean/.skill-meta.json`](.agents/skills/wtk-lean/.skill-meta.json); attribution
 is retained in [`.agents/skills/wtk-lean/NOTICE.md`](.agents/skills/wtk-lean/NOTICE.md).
 
+The Discover skill `wtk-discover` is an adaptation of Tech Leads Club's `tlc-discover`, with the
+design validator `validate_design.py` copied unchanged. Its reviewed source URL, commit, content
+hash, and license are recorded in
+[`.agents/skills/wtk-discover/.skill-meta.json`](.agents/skills/wtk-discover/.skill-meta.json).
+
 Project-owned skill adaptations retain their per-file `CC-BY-4.0` frontmatter.
 
 Security lifecycle, Ponytail, adaptive-guidelines, and repository-intelligence tools are optional

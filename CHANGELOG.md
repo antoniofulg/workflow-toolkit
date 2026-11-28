@@ -12,9 +12,19 @@ All notable changes to this project are documented here.
 - `check_commit.py` rejects a `Co-Authored-By` or `Made-with` trailer unless `--allow-trailers`, and
   prints one `UNTRACKED` line for untracked files outside `.specs/`. `build.md` shows a hook file that
   passes the flag for a repository that asks for trailers.
+- `wtk-discover` adopts upstream `tlc-discover` 0.10.0: `scripts/validate_design.py` checks a design
+  document's sections, anchors, decisions, slices, order and blocked slices, and warns on a word budget
+  of about 2,000 words for the part read together and 4,000 in all. The skill adds the two-questions
+  rule for what a fact needs to earn a place, and a handover that runs the validator, gives the
+  document and the repository to a fresh reader who quotes the lines that conflict, and stops when a
+  run raises nothing hard to reverse that Open does not list.
 
 ### Changed
 
+- The design document has a fixed section set: a status header, Summary, Context and problem, How we
+  will know it worked, Scope, How it works, Key decisions with `D<n>` codes, one Open table and Slices
+  with Behaviour, Contract and Data parts. An in-flight design is rewritten to the new section set;
+  the validator refuses the old one. `wtk-discover` is pinned in `.skill-meta.json`.
 - The Lean plan reads each sentence of the request against its captures, asks whether the running app
   should hold their sample data, and treats answers as plan changes, never as the approval. The Lean
   build makes the first slice thin and end to end and forbids one layer per slice; the shared verify
