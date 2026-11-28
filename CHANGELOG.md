@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [6.5.0] - 2026-11-28
+
 ### Added
 
 - `request.md`: the Lean plan saves the user's request verbatim, with its captures by path, before the
