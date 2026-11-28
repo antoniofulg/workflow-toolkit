@@ -21,7 +21,7 @@ sources:
   - id: validation
     resource: ../../../.agents/skills/wtk/references/validation.md
     title: Gates — Fix verification
-    last_modified: 2026-11-07
+    last_modified: 2026-11-28
   - id: review-rounds
     resource: ../../../.agents/skills/wtk/references/review-rounds.md
     title: Review Rounds — filed issues and Minor batches
@@ -29,7 +29,7 @@ sources:
   - id: agent-selection
     resource: ../../../.agents/skills/wtk/references/agent-selection.md
     title: Agent selection — dispatch without asking
-    last_modified: 2026-11-07
+    last_modified: 2026-11-28
 ---
 
 # Fix verification
@@ -68,7 +68,8 @@ A rule that adds a Verifier to many fixes would also add a model question to eac
 removed the human approval of provider, model and effort instead of adding a timeout or a standing
 approval.[^maintainer-decisions] A later decision moved model and effort into agent roles: a
 risk-area Verifier is `verifier-risk`, any other `verifier`, and no WTK run picks a model per
-task.[^role-models][^agent-selection]
+task.[^role-models][^agent-selection] The one exception is an on-demand plan review, whose reviewers
+the human picks.[^agent-selection]
 
 This does not touch feature approval: `## Approval` receipts still record the user's decision on
 feature shape. [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md) records the

@@ -1,5 +1,11 @@
 # Update log
 
+## 2026-11-28
+
+* **Ingestion**: Added the maintainer-approved Lean 3.2, Discover 0.10 and Deep Review adoptions to `raw/` and added [Upstream adoption](/decisions/upstream-adoption.md): Lean keeps the checks and proofs upstream 3.x removed, Discover copies the upstream validator unchanged, and Deep Review ports single pieces.
+* **Ingestion**: Updated [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md): `request.md` joins the Lean artifacts, the verify core leaves the running app's data unchanged, answers are never the approval, and AD-035 narrows to the artifacts WTK still uses.
+* **Lint**: Re-read the changed README, Lean planning, artifact lifecycle, discovery, validation and agent-selection sources and bumped `last_modified` in [Artifact ownership](/design/artifact-ownership.md) and [Fix verification](/decisions/fix-verification.md); the latter now names the plan-review exception to role-owned models.
+
 ## 2026-11-11
 
 * **Ingestion**: Added the maintainer-approved TLC spec-lean 2.2 adoption to `raw/` and updated [Workflow Toolkit contract](/decisions/workflow-toolkit-contract.md): the approval receipt is now gated on presence (reversing the 2026-11-06 convention-only decision), fault injection is scoped to `Risk:` checks, and the Lean upstream pin moved to `e74dc8a`.

@@ -14,7 +14,7 @@ sources:
   - id: readme
     resource: ../../../README.md
     title: Public artifact and companion guidance
-    last_modified: 2026-11-11
+    last_modified: 2026-11-28
   - id: memory
     resource: ../../../.agents/skills/wtk-lean/references/memory.md
     title: Lean memory — project decision-store ownership
@@ -22,15 +22,15 @@ sources:
   - id: plan
     resource: ../../../.agents/skills/wtk-lean/references/plan.md
     title: Lean planning — active decisions and unresolved choices
-    last_modified: 2026-11-06
+    last_modified: 2026-11-28
   - id: lifecycle
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact lifecycle — promotion before feature cleanup
-    last_modified: 2026-11-06
+    last_modified: 2026-11-28
   - id: discovery
     resource: ../../../.agents/skills/wtk-discover/SKILL.md
     title: WTK discovery — product framing and technical shape
-    last_modified: 2026-11-06
+    last_modified: 2026-11-28
   - id: tlc-prd
     resource: https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-prd/SKILL.md
     title: TLC PRD
@@ -63,7 +63,7 @@ of upstream artifact names, AD-036's adapted execution model, and AD-037's trans
 Together they distinguish the inherited artifact shape from WTK's decision to remove completed
 feature directories after verification and durable promotion.[^upstream-origin][^lifecycle]
 
-In consuming projects, `.specs/features/<feature>/` holds the plan, proof obligations, and verification
+In consuming projects, `.specs/features/<feature>/` holds the saved request, the plan, proof obligations, and verification
 state. `.specs/STATE.md` is the default shared decision log and handoff location. Neither implies
 that an architectural decision must originate inside a feature directory. A choice constraining
 future features is recorded when made, and an existing project ADR store takes precedence over
