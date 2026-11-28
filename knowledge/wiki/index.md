@@ -36,3 +36,4 @@ Add a concept when a source earns one.
 * [Interaction efficiency](design/interaction-efficiency.md) - Connect common completion paths, native form semantics, acceptance criteria, and QA evidence.
 * [Construction constraints](architecture/construction-constraints.md) - Preserve explicit reuse, construction order, and approval requirements across planning, delegation, verification, and resume.
 * [Artifact ownership](design/artifact-ownership.md) - Separate durable decisions from transient feature proof, and route PRD, RFC, and ADR work without duplicating discovery.
+* [Upstream adoption](decisions/upstream-adoption.md) - WTK takes from each upstream only what fits its proof contract — Lean keeps the checks and proofs upstream 3.x removed, Discover copies the upstream validator unchanged, and Deep Review ports single pieces of a diverged fork.

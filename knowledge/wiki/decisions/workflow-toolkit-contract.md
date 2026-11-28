@@ -4,7 +4,7 @@ title: Workflow Toolkit contract
 description: Workflow Toolkit replaces the task pipeline with upstream-shaped Lean and modular routes, sequential whole-slice builds, one full-feature Verifier over a shared verify core, and transient feature artifacts.
 tags: [workflow-toolkit, lean, verification, lifecycle]
 status: stable
-generated: { by: claude/sonnet-5.5, at: 2026-11-11T21:00:00Z }
+generated: { by: claude/fable-5.2, at: 2026-11-28T03:30:00Z }
 sources:
   - id: maintainer-contract
     resource: ../../raw/2026-09-12-workflow-toolkit-contract.md
@@ -33,11 +33,11 @@ sources:
   - id: toolkit-router
     resource: ../../../.agents/skills/wtk/SKILL.md
     title: Workflow Toolkit route contract
-    last_modified: 2026-11-07
+    last_modified: 2026-11-28
   - id: artifact-lifecycle
     resource: ../../../.agents/skills/wtk/references/artifacts.md
     title: Artifact Lifecycle
-    last_modified: 2026-11-06
+    last_modified: 2026-11-28
   - id: maintainer-settings
     resource: ../../raw/2026-11-04-fix-verification-and-execution-settings.md
     title: Maintainer decision removing model approval
@@ -49,11 +49,15 @@ sources:
   - id: upstream-pin
     resource: ../../../.agents/skills/wtk-lean/.skill-meta.json
     title: Lean skill upstream source metadata
-    last_modified: 2026-11-11
+    last_modified: 2026-11-28
   - id: lean-2-2
     resource: ../../raw/2026-11-11-tlc-lean-2-2-adoption.md
     title: Maintainer-approved TLC spec-lean 2.2 adoption
     last_modified: 2026-11-11
+  - id: adoptions
+    resource: ../../raw/2026-11-27-upstream-adoptions-lean-discover-deep-review.md
+    title: Maintainer-approved Lean 3.2, Discover 0.10 and Deep Review adoptions
+    last_modified: 2026-11-27
   - id: generalization
     resource: ../../raw/2026-11-06-skill-pack-generalization.md
     title: Maintainer-approved skill-pack generalization
@@ -61,7 +65,7 @@ sources:
   - id: verify-core
     resource: ../../../.agents/skills/wtk/references/verify-core.md
     title: Verify Core — obligations both verify routes share
-    last_modified: 2026-11-11
+    last_modified: 2026-11-28
   - id: dx
     resource: ../../../.agents/skills/wtk/references/dx.md
     title: Public surface contract
@@ -86,10 +90,10 @@ existed; current runtime and documentation do not preserve those paths.[^state-a
 | Concern | Current contract | Boundary it protects |
 | --- | --- | --- |
 | Public identity | The full `wtk` and `wtk-*` skill set installed as one set through a skill installer | Ponytail and security lifecycle stay optional external skills.[^state-ad-041][^state-ad-042] |
-| Planning shapes | Integrated Lean owns `plan.md`, `checks.md`, and `verification.md`; direct modular discovery/planning retains `.design/`, `.tasks/`, and `.checks/` | Each upstream shape remains recognizable instead of passing through a local compatibility schema.[^toolkit-router][^state-ad-035] |
+| Planning shapes | Integrated Lean owns `request.md`, `plan.md`, `checks.md`, and `verification.md`; direct modular discovery/planning retains `.design/`, `.tasks/`, and `.checks/` | Each shape stays recognizable instead of passing through a local compatibility schema. Since upstream Lean 3.x removed `checks.md` and the verification report, the Lean shape is the 2.2 one plus 3.2's additions.[^toolkit-router][^state-ad-035][^adoptions] |
 | Build and proof | `Feature -> Slice -> Check`; builders run sequentially, hand off only between whole observable slices, and make coherent commits before one fresh independent Verifier covers the complete feature | Builder decomposition stays flexible while slice integrity, author/verifier independence, and complete-feature proof stay fixed.[^state-ad-036] |
-| Shared verification | Lean and modular verify procedures link one verify core for approval, evidence or zero, visual evidence, the swept re-read and scratch-worktree fault injection, which Lean scopes to `Risk:` checks and `unsure` rows; each keeps its route-specific steps | The two routes cannot drift on the obligations they share, and survivors outside risk do not grow the suite.[^verify-core][^generalization][^lean-2-2] |
-| Approval | `## Approval` is gated on presence: `validate_checks.py` refuses a missing receipt or an empty `Decision`, and the Verifier still judges who approved which revision | A compaction loses the chat that held the approval, so the receipt must survive on disk; markdown still cannot authenticate authority, so judgment of it stays with the independent Verifier. This reverses the 2026-11-06 convention-only decision.[^generalization][^lean-2-2] |
+| Shared verification | Lean and modular verify procedures link one verify core for approval, evidence or zero, visual evidence, the swept re-read, leaving the running app's data unchanged, and scratch-worktree fault injection, which Lean scopes to `Risk:` checks and `unsure` rows; each keeps its route-specific steps | The two routes cannot drift on the obligations they share, and survivors outside risk do not grow the suite.[^verify-core][^generalization][^lean-2-2][^adoptions] |
+| Approval | `## Approval` is gated on presence: `validate_checks.py` refuses a missing receipt or an empty `Decision`, and the Verifier still judges who approved which revision. Answers to the agent's questions change the plan and are never the receipt | A compaction loses the chat that held the approval, so the receipt must survive on disk; markdown still cannot authenticate authority, so judgment of it stays with the independent Verifier. This reverses the 2026-11-06 convention-only decision.[^generalization][^lean-2-2] The gate does not show which text was approved: on 2026-11-27 two receipts covered a recommendation list while the plans came later.[^adoptions] |
 | Public surfaces | Both planning routes load `wtk/references/dx.md` when a public surface changes; compatibility and language follow the project's declared policy | One contract serves Lean and modular planning.[^dx][^generalization] |
 | Profiles and capabilities | Lean profiles are `light`, `standard`, and `ui`, with `standard` as default; security, UI, QA, review, and delivery load when their owning trigger applies | Conditional dispatch is not permission to skip a mandatory check. Deep Review runs on demand.[^state-ad-036][^state-ad-042] |
 | Agent settings | The coordinator picks each stage's role from the user's routing table and states it without human approval; model and effort come from the role's agent file, a role the human names wins, and the feature snapshot records each role with its resolved settings | WTK does not write agent files, copy the routing table or choose a model.[^state-ad-042][^role-models] Feature approval stays separate.[^maintainer-settings] |
@@ -97,7 +101,10 @@ existed; current runtime and documentation do not preserve those paths.[^state-a
 
 The Lean source metadata remains part of the drift boundary, not merely attribution: local
 adaptations can be compared with the recorded upstream source while preserving distinct integrated
-and modular contracts.[^upstream-pin][^maintainer-contract]
+and modular contracts.[^upstream-pin][^maintainer-contract] Upstream and local now differ on purpose:
+[Upstream adoption](/decisions/upstream-adoption.md) records why Lean keeps the checks, proofs and
+Verifier report that upstream 3.x removed, which narrows AD-035 to artifact names and formats WTK
+still uses.[^adoptions][^state-ad-035]
 
 ## Supersession graph
 
@@ -133,4 +140,5 @@ and modular contracts.[^upstream-pin][^maintainer-contract]
 [^generalization]: Decisions 5, 7 and 8: approval judged by the Verifier, `dx.md` location, shared verify core.
 [^verify-core]: The shared obligations and the links from both verify procedures.
 [^lean-2-2]: Decisions 1 and 6 of the 2026-11-11 adoption: the presence-gated approval and risk-scoped faults.
+[^adoptions]: Decisions 1 and 2 of the 2026-11-27 adoptions, and the open approval point.
 [^dx]: Public surface contract and its project-owned compatibility and language policy.
